@@ -43,7 +43,7 @@ RSC=rc.exe
 # PROP Ignore_Export_Lib 0
 # PROP Target_Dir ""
 # ADD BASE CPP /nologo /MD /W3 /GX /O2 /D "WIN32" /D "NDEBUG" /D "_WINDOWS" /D "_AFXDLL" /Yu"stdafx.h" /FD /c
-# ADD CPP /nologo /MD /W3 /GX /O2 /I "LibSndFile\src" /D "WIN32" /D "NDEBUG" /D "_WINDOWS" /D "_AFXDLL" /D "_MBCS" /D "_ENGLISH" /FR /Yu"stdafx.h" /FD /c
+# ADD CPP /nologo /MD /W3 /GX /O2 /I "LibSndFile\src" /D "WIN32" /D "NDEBUG" /D "_WINDOWS" /D "_AFXDLL" /D "_MBCS" /FR /Yu"stdafx.h" /FD /c
 # ADD BASE MTL /nologo /D "NDEBUG" /mktyplib203 /win32
 # ADD MTL /nologo /D "NDEBUG" /mktyplib203 /win32
 # ADD BASE RSC /l 0x407 /d "NDEBUG" /d "_AFXDLL"
@@ -53,7 +53,7 @@ BSC32=bscmake.exe
 # ADD BSC32 /nologo
 LINK32=link.exe
 # ADD BASE LINK32 /nologo /subsystem:windows /machine:I386
-# ADD LINK32 winmm.lib htmlhelp.lib id3lib.lib zlib.lib /nologo /subsystem:windows /machine:I386 /libpath:"ID3Lib\libprj\Release" /libpath:"ID3Lib/zlib"
+# ADD LINK32 winmm.lib htmlhelp.lib id3lib.lib zlib.lib delayimp.lib /nologo /subsystem:windows /machine:I386 /libpath:"ID3Lib\libprj\Release" /libpath:"ID3Lib/zlib"
 
 !ELSEIF  "$(CFG)" == "lameFE - Win32 Debug"
 
@@ -69,7 +69,7 @@ LINK32=link.exe
 # PROP Ignore_Export_Lib 0
 # PROP Target_Dir ""
 # ADD BASE CPP /nologo /MDd /W3 /Gm /GX /ZI /Od /D "WIN32" /D "_DEBUG" /D "_WINDOWS" /D "_AFXDLL" /Yu"stdafx.h" /FD /GZ /c
-# ADD CPP /nologo /MDd /W3 /Gm /GX /ZI /Od /I "LibSndFile\src" /D "WIN32" /D "_DEBUG" /D "_WINDOWS" /D "_AFXDLL" /D "_MBCS" /D "ENGLISH" /FR /Yu"stdafx.h" /FD /GZ /c
+# ADD CPP /nologo /MDd /W3 /Gm /GX /ZI /Od /I "LibSndFile\src" /D "WIN32" /D "NDEBUG" /D "_WINDOWS" /D "_AFXDLL" /D "_MBCS" /FR /Yu"stdafx.h" /FD /GZ /c
 # ADD BASE MTL /nologo /D "_DEBUG" /mktyplib203 /win32
 # ADD MTL /nologo /D "_DEBUG" /mktyplib203 /win32
 # ADD BASE RSC /l 0x407 /d "_DEBUG" /d "_AFXDLL"
@@ -79,7 +79,7 @@ BSC32=bscmake.exe
 # ADD BSC32 /nologo
 LINK32=link.exe
 # ADD BASE LINK32 /nologo /subsystem:windows /debug /machine:I386 /pdbtype:sept
-# ADD LINK32 winmm.lib htmlhelp.lib id3libD.lib zlibD.lib /nologo /subsystem:windows /debug /machine:I386 /pdbtype:sept /libpath:"ID3Lib\libprj\Debug" /libpath:"ID3Lib/zlib"
+# ADD LINK32 winmm.lib htmlhelp.lib id3libD.lib zlibD.lib delayimp.lib /nologo /subsystem:windows /pdb:none /map /debug /machine:I386 /libpath:"ID3Lib\libprj\Debug" /libpath:"ID3Lib/zlib"
 
 !ENDIF 
 
@@ -145,6 +145,10 @@ SOURCE=.\EncoderSheet.cpp
 # Begin Source File
 
 SOURCE=.\EncodingStatusDlg.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\ExtButton.cpp
 # End Source File
 # Begin Source File
 
@@ -221,6 +225,14 @@ SOURCE=.\Mfccddb.cpp
 # Begin Source File
 
 SOURCE=.\MultimediaFile.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\MyComboBox.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\MyEditCtrl.cpp
 # End Source File
 # Begin Source File
 
@@ -325,6 +337,10 @@ SOURCE=.\EncodingStatusDlg.h
 # End Source File
 # Begin Source File
 
+SOURCE=.\ExtButton.h
+# End Source File
+# Begin Source File
+
 SOURCE=.\ExtListCtrl.h
 # End Source File
 # Begin Source File
@@ -398,6 +414,14 @@ SOURCE=.\mmfile.h
 # Begin Source File
 
 SOURCE=.\MultimediaFile.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\MyComboBox.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\MyEditCtrl.h
 # End Source File
 # Begin Source File
 
@@ -554,6 +578,30 @@ SOURCE=.\res\Toolbar_hi.bmp
 # Begin Source File
 
 SOURCE=.\res\Toolbar_hi_deact.bmp
+# End Source File
+# End Group
+# Begin Group "installer"
+
+# PROP Default_Filter "*.nsi"
+# Begin Source File
+
+SOURCE=.\installer\lameFE.ini
+# End Source File
+# Begin Source File
+
+SOURCE=.\installer\lameFE2_2.nsi
+# End Source File
+# Begin Source File
+
+SOURCE=.\installer\lameFE2_de.nsi
+# End Source File
+# Begin Source File
+
+SOURCE=.\installer\lameFE2_en.nsi
+# End Source File
+# Begin Source File
+
+SOURCE=.\installer\readme.ini
 # End Source File
 # End Group
 # Begin Source File

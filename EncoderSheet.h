@@ -25,6 +25,7 @@
 // EncoderSheet.h : Header-Datei
 //
 #include "BladeMP3EncDLL.h"
+#include "MyComboBox.h"
 
 /////////////////////////////////////////////////////////////////////////////
 // Dialogfeld CEncoderSheet 
@@ -47,11 +48,11 @@ public:
 	//{{AFX_DATA(CEncoderSheet)
 	enum { IDD = IDD_ENCODER_PAGE };
 	CEdit	c_abr;
-	CComboBox	c_maxBitrate;
-	CComboBox	m_qualityPreset;
-	CComboBox	c_vbrQuality;
-	CComboBox	c_vbrMethod;
-	CComboBox	c_MPEG;
+	CMyComboBox	c_maxBitrate;
+	CMyComboBox	m_qualityPreset;
+	CMyComboBox	c_vbrQuality;
+	CMyComboBox	c_vbrMethod;
+	CMyComboBox	c_MPEG;
 	CButton	c_private;
 	CButton	c_original;
 	CButton	c_writeId3v1;
@@ -59,8 +60,8 @@ public:
 	CButton c_convertTo16Bit;
 	CButton	c_copyright;
 	CButton	c_checkSum;
-	CComboBox	c_channels;
-	CComboBox	c_bitsPerSample;
+	CMyComboBox	c_channels;
+	CMyComboBox	c_bitsPerSample;
 	CString	m_encoderVersion;
 	CButton c_tlen;
 	int		m_abr;

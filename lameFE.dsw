@@ -99,10 +99,10 @@ Package=<4>
     Project_Dep_Name CDRip
     End Project Dependency
     Begin Project Dependency
-    Project_Dep_Name libsndfile
+    Project_Dep_Name id3lib
     End Project Dependency
     Begin Project Dependency
-    Project_Dep_Name id3lib
+    Project_Dep_Name zlib
     End Project Dependency
 }}}
 
@@ -146,6 +146,18 @@ Package=<4>
     Begin Project Dependency
     Project_Dep_Name libsndfile
     End Project Dependency
+}}}
+
+###############################################################################
+
+Project: "zlib"=.\ID3Lib\zlib\prj\zlib.dsp - Package Owner=<4>
+
+Package=<5>
+{{{
+}}}
+
+Package=<4>
+{{{
 }}}
 
 ###############################################################################

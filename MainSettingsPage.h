@@ -28,6 +28,7 @@
 /////////////////////////////////////////////////////////////////////////////
 // Dialogfeld CMainSettingsPage 
 
+
 class CMainSettingsPage : public CPropertyPage
 {
 	DECLARE_DYNCREATE(CMainSettingsPage)
@@ -50,7 +51,6 @@ public:
 	CButton	c_writeCDPlayerIni;
 	CButton	c_readCDPlayerIni;
 	CStatic	c_playerPath;
-	CStatic	c_outputPath;
 	CButton	c_silent;
 	CButton	c_shutdownOnFinished;
 	CButton	c_playFiles;
@@ -82,7 +82,6 @@ public:
 protected:
 	// Generierte Nachrichtenzuordnungsfunktionen
 	//{{AFX_MSG(CMainSettingsPage)
-	afx_msg void OnOutput();
 	afx_msg void OnPlayer();
 	afx_msg void OnPlayFiles();
 	//}}AFX_MSG

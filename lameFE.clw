@@ -2,13 +2,13 @@
 
 [General Info]
 Version=1
-LastClass=CLameFEView
-LastTemplate=CDialog
+LastClass=CExtButton
+LastTemplate=CButton
 NewFileInclude1=#include "stdafx.h"
 NewFileInclude2=#include "lameFE.h"
 LastPage=0
 
-ClassCount=11
+ClassCount=15
 Class1=CLameFEApp
 Class2=CLameFEDoc
 Class3=CLameFEView
@@ -16,8 +16,8 @@ Class4=CMainFrame
 
 ResourceCount=40
 Resource1=IDR_MAINFRAME (Englisch (USA) - _GERMAN)
-Resource2=IDD_ENCODER_PAGE (Englisch (USA))
-Resource8=IDD_LAMEFE_PAGE (Englisch (USA))
+Resource2=IDD_LAMEFE_PAGE (Englisch (USA))
+Resource8=IDD_ALBUMINFOCTRL (Englisch (USA))
 Resource9=IDD_ABOUTBOX (_GERMAN)
 Resource10=IDD_FREEDB_QUERY (Englisch (USA) - _ENGLISH)
 Resource11=IDD_STATUS_DIALOG (_GERMAN)
@@ -27,22 +27,22 @@ Resource14=IDD_CDRIP_PAGE (_GERMAN)
 Resource15=IDD_FREEDB_QUERY (Englisch (USA) - _GERMAN)
 Resource16=IDD_SETUPWIZARD (Englisch (USA))
 Resource17=IDD_TRACKLIST (_GERMAN)
-Resource18=IDD_TRACKLIST (Englisch (USA))
-Resource19=IDD_ALBUMINFOCTRL (Englisch (USA))
+Resource18=IDD_CDDB_QUERY (Englisch (USA))
+Resource19=IDD_CDRIP_PAGE (Englisch (USA))
 Resource20=IDD_PLUGINPAGE (_GERMAN)
 Resource21=IDD_ID3EDIT (_GERMAN)
 Resource22=IDD_ALBUM_INFO_EDITOR (Englisch (USA))
 Resource23=IDR_MAINFRAME (_GERMAN)
-Resource24=IDD_LOGGING_PAGE
-Resource25=IDD_CDRIP_PAGE (Englisch (USA))
+Resource24=IDD_TRACKLIST (Englisch (USA))
+Resource25=IDR_SYSTRAY_MENU
 Resource26="IDD_LAMEFE_DIALOG" (_ENGLISH)
 Resource27=IDD_CDDB_SETUP (_GERMAN)
 Resource28=IDR_PLAYER (Englisch (USA))
-Resource29=IDD_CDDB_SETUP (Englisch (USA))
+Resource29=IDD_STATUS_DIALOG (Englisch (USA))
 Class5=CAboutDlg
 Resource3=IDD_CDDB_QUERY (_GERMAN)
 Resource4=IDD_SETUPWIZARD (_GERMAN)
-Resource5=IDD_PLUGINPAGE (Englisch (USA))
+Resource5=IDD_ENCODER_PAGE (Englisch (USA))
 Resource6=IDD_FREEDB_STATUS (_GERMAN)
 Resource7=IDD_LAMEFE_PAGE (_GERMAN)
 Class6=CExtendeListView
@@ -50,17 +50,21 @@ Class7=CExtListCtrl
 Resource30=IDD_PATH_AND_FILENAMES (Englisch (USA))
 Resource31=IDR_SYSTRAY_MENU (_GERMAN)
 Resource32=IDD_ID3EDIT (Englisch (USA))
-Resource33=IDD_FREEDB_STATUS (Englisch (USA))
-Resource34=IDD_ABOUTBOX (Englisch (USA))
-Resource35=IDD_CDDB_QUERY (Englisch (USA))
+Resource33=IDD_FILENAMES (Englisch (USA))
+Resource34=IDD_PLUGINPAGE (Englisch (USA))
+Resource35=IDD_FREEDB_STATUS (Englisch (USA))
 Resource36=IDR_CD_PLAYER
 Class8=CFilenamePage
 Class9=CLogginPage
-Resource37=IDD_FILENAMES (Englisch (USA))
-Resource38=IDR_SYSTRAY_MENU
+Resource37=IDD_ABOUTBOX (Englisch (USA))
+Resource38=IDD_CDDB_SETUP (Englisch (USA))
 Class10=CAlbumInfoEditor
-Resource39=IDD_STATUS_DIALOG (Englisch (USA))
+Resource39=IDD_LOGGING_PAGE
 Class11=CAlbumInfoCtrl
+Class12=CMyEditCtrl
+Class13=CMyComboBox
+Class14=CMyButton
+Class15=CExtButton
 Resource40=IDR_MAINFRAME (Englisch (USA))
 
 [CLS:CLameFEApp]
@@ -90,7 +94,7 @@ Type=0
 HeaderFile=MainFrm.h
 ImplementationFile=MainFrm.cpp
 Filter=T
-LastObject=ID_ID3TAGS_ID3TAGEDITOR
+LastObject=IDC_BUFFERS
 BaseClass=CFrameWnd
 VirtualFilter=fWC
 
@@ -551,6 +555,7 @@ ImplementationFile=ExtListCtrl.cpp
 BaseClass=CListCtrl
 Filter=W
 VirtualFilter=FWC
+LastObject=CExtListCtrl
 
 [DLG:IDD_FREEDB_QUERY (Englisch (USA) - _ENGLISH)]
 Type=1
@@ -735,31 +740,30 @@ Control30=IDC_ID3TAG,button,1342242822
 [DLG:IDD_LAMEFE_PAGE (Englisch (USA))]
 Type=1
 Class=?
-ControlCount=24
-Control1=IDC_OUTPUT,button,1342242816
+ControlCount=23
+Control1=IDC_STATIC,button,1342177287
 Control2=IDC_PLAYER,button,1342242816
-Control3=IDC_SILENT,button,1342242819
-Control4=IDC_FINISH_DLG,button,1342242819
-Control5=IDC_BEEP,button,1342242819
-Control6=IDC_PLAY_FILES,button,1342242819
-Control7=IDC_M3U,button,1342242819
-Control8=IDC_EXIT_FINISHED,button,1342242819
-Control9=IDC_SHUTDOWN,button,1342242819
-Control10=IDC_OUTPUT_PATH,static,1342308864
-Control11=IDC_PLAYER_PATH,static,1342308864
-Control12=IDC_STATIC,button,1342177287
-Control13=IDC_STATIC,button,1342177287
+Control3=IDC_PLAYER_PATH,static,1342308864
+Control4=IDC_STATIC,button,1342177287
+Control5=IDC_FINISH_DLG,button,1342242819
+Control6=IDC_FOCUS,button,1342242819
+Control7=IDC_PLAY_SOUND,button,1342242819
+Control8=IDC_BEEP,button,1342242819
+Control9=IDC_PLAY_FILES,button,1342242819
+Control10=IDC_ENQUEUE_FILES,button,1476460547
+Control11=IDC_M3U,button,1342242819
+Control12=IDC_SHUTDOWN,button,1342242819
+Control13=IDC_EXIT_FINISHED,button,1342242819
 Control14=IDC_STATIC,button,1342177287
-Control15=IDC_CPLAYERINI_ALWAYS_READ,button,1342242819
-Control16=IDC_CPLAYERINI_ALWAYS_WRITE,button,1342242819
-Control17=IDC_CDTEXT_ALWAYSREAD,button,1342242819
-Control18=IDC_ENQUEUE_FILES,button,1476460547
-Control19=IDC_FOCUS,button,1342242819
-Control20=IDC_PLAY_SOUND,button,1342242819
-Control21=IDC_SAVE_WINDOW_STATE,button,1342242819
-Control22=IDC_USE_HIGH_COLOR_ICONS,button,1342242819
-Control23=IDC_SHOW_SPLASH,button,1342242819
-Control24=IDC_ALBUMEDIT,button,1342242819
+Control15=IDC_SILENT,button,1342242819
+Control16=IDC_CPLAYERINI_ALWAYS_READ,button,1342242819
+Control17=IDC_CPLAYERINI_ALWAYS_WRITE,button,1342242819
+Control18=IDC_CDTEXT_ALWAYSREAD,button,1342242819
+Control19=IDC_STATIC,button,1342177287
+Control20=IDC_SAVE_WINDOW_STATE,button,1342242819
+Control21=IDC_USE_HIGH_COLOR_ICONS,button,1342242819
+Control22=IDC_SHOW_SPLASH,button,1342242819
+Control23=IDC_ALBUMEDIT,button,1342242819
 
 [DLG:IDD_STATUS_DIALOG (Englisch (USA))]
 Type=1
@@ -850,7 +854,7 @@ Control31=IDC_STATIC,static,1342308352
 [DLG:IDD_FILENAMES (Englisch (USA))]
 Type=1
 Class=CFilenamePage
-ControlCount=18
+ControlCount=20
 Control1=IDC_RENAME,button,1342254595
 Control2=IDC_FORMAT,edit,1350631552
 Control3=IDC_STATIC,button,1342177287
@@ -868,7 +872,9 @@ Control14=IDC_STATIC,static,1342308866
 Control15=IDC_PLAYLIST_FILENAME,edit,1350631552
 Control16=IDC_STATIC,static,1342308354
 Control17=IDC_PLAYLIST_VIS,static,1342308352
-Control18=IDC_STATIC,static,1342308353
+Control18=IDC_STATIC,button,1342177287
+Control19=IDC_PATH,button,1342242816
+Control20=IDC_OUTPUTPATH,static,1342308864
 
 [DLG:IDD_ENCODER_PAGE (Englisch (USA))]
 Type=1
@@ -997,6 +1003,40 @@ HeaderFile=AlbumInfoCtrl.h
 ImplementationFile=AlbumInfoCtrl.cpp
 BaseClass=CDialog
 Filter=D
-LastObject=IDC_GENRE
+LastObject=IDC_ALBUMNAME
 VirtualFilter=dWC
+
+[CLS:CMyEditCtrl]
+Type=0
+HeaderFile=MyEditCtrl.h
+ImplementationFile=MyEditCtrl.cpp
+BaseClass=CEdit
+Filter=W
+LastObject=CMyEditCtrl
+
+[CLS:CMyComboBox]
+Type=0
+HeaderFile=MyComboBox.h
+ImplementationFile=MyComboBox.cpp
+BaseClass=CComboBox
+Filter=W
+VirtualFilter=cWC
+
+[CLS:CMyButton]
+Type=0
+HeaderFile=MyButton.h
+ImplementationFile=MyButton.cpp
+BaseClass=CButton
+Filter=W
+VirtualFilter=BWC
+LastObject=CMyButton
+
+[CLS:CExtButton]
+Type=0
+HeaderFile=ExtButton.h
+ImplementationFile=ExtButton.cpp
+BaseClass=CButton
+Filter=W
+VirtualFilter=BWC
+LastObject=CExtButton
 

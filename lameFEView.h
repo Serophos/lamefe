@@ -19,6 +19,7 @@
 #include "OutPlugin.h"
 #include "ExtListCtrl.h"
 #include "AlbumInfoCtrl.h"
+#include "MyComboBox.h"
 
 typedef CArray<CPlugin, CPlugin>  CPluginArray;
 typedef CArray<CMultimediaFile*, CMultimediaFile*>	CMMFArray;
@@ -39,8 +40,8 @@ public:
 
 	CAlbumInfoCtrl m_aAlbumInfoCtrl;
 	CExtListCtrl	m_ctrlList;
-	CComboBox	c_inputDevice;
-	CComboBox	c_outputDevice;
+	CMyComboBox	c_inputDevice;
+	CMyComboBox	c_outputDevice;
 	CButton		c_configureOut;
 	CButton		c_configureIn;
 	CString		m_strInputDevice;
@@ -134,6 +135,7 @@ private:
 	CToolBar		*m_pToolBar;
 	CBitmap			m_listBkImage;
 	CToolTipCtrl*   m_pToolTip;
+	HINSTANCE		m_hCDRipDll;
 
 //	CMenu			*m_pMenu;
 };

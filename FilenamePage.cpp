@@ -5,6 +5,8 @@
 #include "lameFE.h"
 #include "FilenamePage.h"
 #include "cfgFile.h"
+//#include "FolderDialog.h"
+#include "PathDialog.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -51,6 +53,7 @@ void CFilenamePage::DoDataExchange(CDataExchange* pDX)
 	DDX_Text(pDX, IDC_PLAYLIST_FILENAME, m_strPlaylist);
 	DDX_Text(pDX, IDC_PLAYLIST_VIS, m_strPlaylistPrev);
 	DDX_Check(pDX, IDC_RENAME, m_bRename);
+	DDX_Text(pDX, IDC_OUTPUTPATH, m_strOutputPath);
 	//}}AFX_DATA_MAP
 }
 
@@ -58,6 +61,7 @@ void CFilenamePage::DoDataExchange(CDataExchange* pDX)
 BEGIN_MESSAGE_MAP(CFilenamePage, CPropertyPage)
 	//{{AFX_MSG_MAP(CFilenamePage)
 	ON_BN_CLICKED(IDC_RENAME, OnRename)
+	ON_BN_CLICKED(IDC_PATH, OnPath)
 	ON_EN_CHANGE(IDC_ALBUM_MODE_FILENAME, OnChangeAlbumModeFilename)
 	ON_EN_CHANGE(IDC_FORMAT, OnChangeFormat)
 	ON_EN_CHANGE(IDC_PLAYLIST_FILENAME, OnChangePlaylistFilename)
@@ -94,6 +98,7 @@ BOOL CFilenamePage::OnInitDialog()
 	m_strFilename  = cfg.GetStringValue("formatstr");
 	m_strAlbumMode = cfg.GetStringValue("albumstr");
 	m_strPlaylist  = cfg.GetStringValue("playliststr");
+	m_strOutputPath = cfg.GetStringValue("output");
 	m_bRename = cfg.GetValue("rename");
 	
 	CreatePreview(m_strAlbumMode, m_strAlbumPrev);
@@ -148,7 +153,10 @@ void CFilenamePage::CreatePreview(CString &in, CString &out)
 	in.Replace('>', ')');
 	in.Replace('|', '-');
 	in.Remove(':');
-	
+	if(in.GetAt(0) == '\\'){
+
+		in = in.Right(in.GetLength() - 1);
+	}
 	out = in;
 	out.Replace("%1", "<Artist>");
 	out.Replace("%2", "<Song>");
@@ -192,7 +200,7 @@ void CFilenamePage::OnOK()
 	cfg.SetStringValue("playliststr", m_strPlaylist);
 	cfg.SetStringValue("albumstr", m_strAlbumMode);
 	cfg.SetValue("rename", m_bRename);
-
+	cfg.SetStringValue("output", m_strOutputPath);
 	CPropertyPage::OnOK();
 }
 
@@ -205,4 +213,18 @@ BOOL CFilenamePage::PreTranslateMessage(MSG* pMsg)
 	}
 
 	return CPropertyPage::PreTranslateMessage(pMsg);
+}
+
+void CFilenamePage::OnPath()
+{
+
+	UpdateData(TRUE);
+
+	CPathDialog dlg("Select output folder", "Select output directory. Non existent directories will be created.", m_strOutputPath);
+	int nResult = dlg.DoModal();
+	if(nResult == IDOK){
+
+		m_strOutputPath = dlg.GetPathName();
+		UpdateData(FALSE);
+	}
 }

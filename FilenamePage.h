@@ -7,6 +7,7 @@
 // FilenamePage.h : Header-Datei
 //
 
+#include "MyEditCtrl.h"
 /////////////////////////////////////////////////////////////////////////////
 // Dialogfeld CFilenamePage 
 
@@ -25,15 +26,17 @@ public:
 // Dialogfelddaten
 	//{{AFX_DATA(CFilenamePage)
 	enum { IDD = IDD_FILENAMES };
-	CEdit	m_ctrlAlbum;
-	CEdit	m_ctrlPlaylist;
-	CEdit	m_ctrlFilename;
+	CMyEditCtrl	m_ctrlAlbum;
+	CMyEditCtrl	m_ctrlPlaylist;
+	CMyEditCtrl	m_ctrlFilename;
+	CStatic m_ctrlPath;
 	CString	m_strAlbumMode;
 	CString	m_strAlbumPrev;
 	CString	m_strFilenamePrev;
 	CString	m_strFilename;
 	CString	m_strPlaylist;
 	CString	m_strPlaylistPrev;
+	CString m_strOutputPath;
 	BOOL	m_bRename;
 	//}}AFX_DATA
 
@@ -50,6 +53,7 @@ public:
 
 // Implementierung
 protected:
+	void OnPath();
 	// Generierte Nachrichtenzuordnungsfunktionen
 	//{{AFX_MSG(CFilenamePage)
 	afx_msg void OnRename();

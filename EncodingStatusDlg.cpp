@@ -138,7 +138,7 @@ BOOL CEncodingStatusDlg::OnInitDialog()
 	
 	m_eThreadFinished.ResetEvent();
 	// Fire of thread
-	m_pThread = AfxBeginThread( EncoderFunc, (void*)this);
+	m_pThread = AfxBeginThread(EncoderFunc, (void*)this);
 	
 	TraySetIcon(IDR_MAINFRAME);
 	TraySetToolTip("lameFE");
@@ -151,7 +151,7 @@ BOOL CEncodingStatusDlg::OnInitDialog()
 	SetForegroundWindow();
 
 	m_logOut.InsertColumn(0, "Status Messages", LVCFMT_RIGHT, 400);
-	m_logOut.Init();
+	m_logOut.Init(FALSE);
 	// Create imaglist and attach it to the tracklist
 	// Create 256 color image lists
 	HIMAGELIST hList = ImageList_Create(16,16, ILC_COLOR8 |ILC_MASK , 3, 1);
@@ -898,7 +898,7 @@ BOOL CEncodingStatusDlg::RipToSingleFile(){
 		BYTE* pbtStream= new BYTE[nBufferSize + dwSampleBufferSize * sizeof(SHORT)];
 
 		CDEX_ERR ripErr;
-		CEncoderFeeder ef(&e, dwSampleBufferSize, 256, m_bAbortEnc);
+		CEncoderFeeder ef(&e, dwSampleBufferSize, 512, m_bAbortEnc);
 		
 		// Read all chunks
 		while((ripErr=CR_RipChunk(pbtStream + nOffset, &nNumBytesRead, m_bAbortEnc)) != CDEX_RIPPING_DONE  && !m_bAbortEnc){
@@ -1173,7 +1173,7 @@ BOOL CEncodingStatusDlg::RipToAny()
 			BYTE* pbtStream= new BYTE[nBufferSize + dwSampleBufferSize * sizeof(SHORT)];
 
 			CDEX_ERR ripErr;
-			CEncoderFeeder ef(&e, dwSampleBufferSize, 256, m_bAbortEnc);
+			CEncoderFeeder ef(&e, dwSampleBufferSize, 512, m_bAbortEnc);
 			
 			// Read all chunks
 			while((ripErr=CR_RipChunk(pbtStream + nOffset, &nNumBytesRead, m_bAbortEnc)) != CDEX_RIPPING_DONE  && !m_bAbortEnc){

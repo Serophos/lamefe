@@ -65,6 +65,12 @@ void CAlbumInfoCtrl::DoDataExchange(CDataExchange* pDX)
 {
 	CDialog::DoDataExchange(pDX);
 	//{{AFX_DATA_MAP(CAlbumInfoCtrl)
+	DDX_Control(pDX, IDC_YEAR, m_cYear);
+	DDX_Control(pDX, IDC_TRACKNUMBER, m_cTrackNumber);
+	DDX_Control(pDX, IDC_SONGTITLE, m_cSongTitle);
+	DDX_Control(pDX, IDC_SONGINTERPRET, m_cSongInterpret);
+	DDX_Control(pDX, IDC_COMMENT, m_cComment);
+	DDX_Control(pDX, IDC_ALBUMNAME, m_cAlbumInfo);
 	DDX_Control(pDX, IDC_GENRE, m_ctrlGenre);
 	DDX_Text(pDX, IDC_ALBUMNAME, m_strAlbum);
 	DDX_Text(pDX, IDC_COMMENT, m_strComment);
@@ -188,4 +194,9 @@ void CAlbumInfoCtrl::Clear()
 	m_strSong		= "";
 
 	UpdateData(FALSE);
+}
+
+void CAlbumInfoCtrl::OnCancel()
+{
+
 }

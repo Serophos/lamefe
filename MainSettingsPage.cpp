@@ -20,8 +20,6 @@
 #include "lameFE.h"
 #include "MainSettingsPage.h"
 #include "cfgFile.h"
-#include "FolderDialog.h"
-#include "PathDialog.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -63,7 +61,7 @@ void CMainSettingsPage::DoDataExchange(CDataExchange* pDX)
 	DDX_Control(pDX, IDC_CPLAYERINI_ALWAYS_WRITE, c_writeCDPlayerIni);
 	DDX_Control(pDX, IDC_CPLAYERINI_ALWAYS_READ, c_readCDPlayerIni);
 	DDX_Control(pDX, IDC_PLAYER_PATH, c_playerPath);
-	DDX_Control(pDX, IDC_OUTPUT_PATH, c_outputPath);
+	//DDX_Control(pDX, IDC_OUTPUT_PATH, c_outputPath);
 	DDX_Control(pDX, IDC_SILENT, c_silent);
 	DDX_Control(pDX, IDC_SHUTDOWN, c_shutdownOnFinished);
 	DDX_Control(pDX, IDC_PLAY_FILES, c_playFiles);
@@ -73,7 +71,6 @@ void CMainSettingsPage::DoDataExchange(CDataExchange* pDX)
 	DDX_Control(pDX, IDC_BEEP, c_beep);
 	DDX_Control(pDX, IDC_SHOW_SPLASH, c_showSplash);
 	DDX_Control(pDX, IDC_ALBUMEDIT, c_showAlbumEditor);
-	DDX_Text(pDX, IDC_OUTPUT_PATH, m_outputPath);
 	DDX_Text(pDX, IDC_PLAYER_PATH, m_playerPath);
 	//}}AFX_DATA_MAP
 }
@@ -81,7 +78,7 @@ void CMainSettingsPage::DoDataExchange(CDataExchange* pDX)
 
 BEGIN_MESSAGE_MAP(CMainSettingsPage, CPropertyPage)
 	//{{AFX_MSG_MAP(CMainSettingsPage)
-	ON_BN_CLICKED(IDC_OUTPUT, OnOutput)
+	//ON_BN_CLICKED(IDC_OUTPUT, OnOutput)
 	ON_BN_CLICKED(IDC_PLAYER, OnPlayer)
 	ON_BN_CLICKED(IDC_PLAY_FILES, OnPlayFiles)
 	ON_BN_CLICKED(IDC_USE_HIGH_COLOR_ICONS, OnHighColorIcons)
@@ -117,7 +114,7 @@ BOOL CMainSettingsPage::OnInitDialog()
 	m_pToolTip->AddTool(&c_quitOnFinished, IDS_TOOL_QUIT);
 	m_pToolTip->AddTool(&c_shutdownOnFinished, IDS_TOOL_SHUTDOWN);
 	m_pToolTip->AddTool(&c_silent, IDS_TOOL_SILENT);
-	m_pToolTip->AddTool(&c_outputPath, IDS_TOOL_OUTPUTPATH);
+//	m_pToolTip->AddTool(&c_outputPath, IDS_TOOL_OUTPUTPATH);
 	m_pToolTip->AddTool(&c_playerPath, IDS_TOOL_EXTPLAYER);
 	m_pToolTip->AddTool(&c_readCDPlayerIni, IDS_TOOL_READCDPINI);
 	m_pToolTip->AddTool(&c_writeCDPlayerIni, IDS_TOOL_WRITECDPINI);
@@ -140,7 +137,7 @@ BOOL CMainSettingsPage::OnInitDialog()
 	c_enqueueFiles.SetCheck(cfg.GetValue("enqueue"));
 	c_quitOnFinished.SetCheck(cfg.GetValue("quit"));
 	c_shutdownOnFinished.SetCheck(cfg.GetValue("shutdown"));
-	m_outputPath = cfg.GetStringValue("output");
+	//m_outputPath = cfg.GetStringValue("output");
 	m_playerPath = cfg.GetStringValue("extplayer");
 	c_silent.SetCheck(cfg.GetValue("silent"));
 	c_readCDPlayerIni.SetCheck(cfg.GetValue("readcdplayerini"));
@@ -170,7 +167,7 @@ void CMainSettingsPage::OnOK()
 	cfg.SetValue("play", c_playFiles.GetCheck());
 	cfg.SetValue("quit", c_quitOnFinished.GetCheck());
 	cfg.SetValue("shutdown", c_shutdownOnFinished.GetCheck());
-	cfg.SetStringValue("output", m_outputPath);
+	//cfg.SetStringValue("output", m_outputPath);
 	cfg.SetStringValue("extplayer", m_playerPath);
 	cfg.SetValue("silent", c_silent.GetCheck());
 	cfg.SetValue("readcdplayerini", c_readCDPlayerIni.GetCheck());
@@ -185,20 +182,11 @@ void CMainSettingsPage::OnOK()
 	cfg.SetValue("showtagedit", c_showAlbumEditor.GetCheck());
 }
 
-void CMainSettingsPage::OnOutput() 
-{
-
-	UpdateData(TRUE);
-
-	CPathDialog dlg("Select output folder", "Select output directory. Non existent directories will be created.", m_outputPath);
-	int nResult = dlg.DoModal();
-	if(nResult == IDOK){
-
-		m_outputPath = dlg.GetPathName();
-		UpdateData(FALSE);
-	}
-
-}
+//DEL void CMainSettingsPage::OnOutput() 
+//DEL {
+//DEL 
+//DEL 
+//DEL }
 
 void CMainSettingsPage::OnPlayer() 
 {

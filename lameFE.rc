@@ -363,66 +363,67 @@ STYLE WS_CHILD | WS_DISABLED | WS_CAPTION
 CAPTION "CD ROM && Ripper"
 FONT 8, "MS Sans Serif"
 BEGIN
-    LTEXT           "&CD ROM",IDC_STATIC,28,32,52,12,SS_CENTERIMAGE
-    COMBOBOX        IDC_CD_DRIVE,85,32,309,68,CBS_DROPDOWNLIST | WS_VSCROLL | 
+    LTEXT           "&CD ROM",IDC_STATIC,22,19,52,12,SS_CENTERIMAGE
+    COMBOBOX        IDC_CD_DRIVE,79,19,309,68,CBS_DROPDOWNLIST | WS_VSCROLL | 
                     WS_TABSTOP
-    LTEXT           "CD &ROM Type",IDC_STATIC,28,51,52,13,SS_CENTERIMAGE
-    COMBOBOX        IDC_CDROM_TYPE,85,51,90,69,CBS_DROPDOWNLIST | WS_VSCROLL | 
+    LTEXT           "CD &ROM Type",IDC_STATIC,22,38,52,13,SS_CENTERIMAGE
+    COMBOBOX        IDC_CDROM_TYPE,79,38,90,69,CBS_DROPDOWNLIST | WS_VSCROLL | 
                     WS_TABSTOP
-    LTEXT           "Ripping &Method",IDC_STATIC,184,51,58,13,SS_CENTERIMAGE
-    COMBOBOX        IDC_RIPPING_METHOD,248,51,146,69,CBS_DROPDOWNLIST | 
+    LTEXT           "Ripping &Method",IDC_STATIC,178,38,58,13,SS_CENTERIMAGE
+    COMBOBOX        IDC_RIPPING_METHOD,242,38,146,69,CBS_DROPDOWNLIST | 
                     WS_VSCROLL | WS_TABSTOP
     CONTROL         "&Eject CD when done",IDC_EJECT,"Button",BS_AUTOCHECKBOX | 
-                    WS_TABSTOP,28,70,80,13
-    LTEXT           "CD &Speed",IDC_STATIC,184,70,58,13,SS_CENTERIMAGE
-    EDITTEXT        IDC_CD_SPEED,248,70,44,13,ES_AUTOHSCROLL | ES_NUMBER
+                    WS_TABSTOP,22,57,80,13
+    LTEXT           "CD &Speed",IDC_STATIC,178,57,58,13,SS_CENTERIMAGE
+    EDITTEXT        IDC_CD_SPEED,242,57,44,13,ES_AUTOHSCROLL | ES_NUMBER
     CONTROL         "&Lock CD Drive during extraction",IDC_LOCK,"Button",
-                    BS_AUTOCHECKBOX | WS_TABSTOP,28,88,147,13
-    LTEXT           "Spin &up time (sec)",IDC_STATIC,184,88,58,12
-    EDITTEXT        IDC_CD_SPIN_UP,248,88,44,12,ES_AUTOHSCROLL | ES_NUMBER
+                    BS_AUTOCHECKBOX | WS_TABSTOP,22,75,147,13
+    LTEXT           "Spin &up time (sec)",IDC_STATIC,178,75,58,12
+    EDITTEXT        IDC_CD_SPIN_UP,242,75,44,12,ES_AUTOHSCROLL | ES_NUMBER
     CONTROL         "Swap channels",IDC_SWAP,"Button",BS_AUTOCHECKBOX | 
-                    WS_TABSTOP,28,104,115,12
+                    WS_TABSTOP,22,91,115,12
     CONTROL         "Use native &NT SCSI Library",IDC_NATIVE,"Button",
-                    BS_AUTOCHECKBOX | WS_TABSTOP,28,120,147,12
+                    BS_AUTOCHECKBOX | WS_TABSTOP,22,107,147,12
     CONTROL         "Select all &tracks by default",IDC_SELECT_ALL,"Button",
-                    BS_AUTOCHECKBOX | WS_TABSTOP,184,105,108,11
-    GROUPBOX        "CD ROM (CDRip.dll)",IDC_STATIC,20,20,381,122
-    GROUPBOX        "CDRip.dll version",IDC_STATIC,20,147,381,50
-    LTEXT           "Version",IDC_Version,28,160,366,30
+                    BS_AUTOCHECKBOX | WS_TABSTOP,178,92,108,11
+    GROUPBOX        "CD ROM (CDRip.dll)",IDC_STATIC,7,7,407,148
+    GROUPBOX        "CDRip.dll version",IDC_STATIC,7,159,407,51
+    LTEXT           "Version",IDC_Version,22,171,366,30
     CONTROL         "&Write CUE-Sheet file when ripping complete album",
-                    IDC_CUE,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,184,122,
+                    IDC_CUE,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,178,109,
                     204,10
 END
 
 IDD_FILENAMES DIALOGEX 0, 0, 405, 214
 STYLE WS_CHILD | WS_DISABLED | WS_CAPTION
-CAPTION "Filenames"
-FONT 8, "MS Sans Serif", 0, 0, 0x1
+CAPTION "Path && Filenames"
+FONT 8, "MS Sans Serif"
 BEGIN
     CONTROL         "&Save files as:",IDC_RENAME,"Button",BS_AUTOCHECKBOX | 
-                    BS_RIGHT | BS_VCENTER | BS_MULTILINE | WS_TABSTOP,14,28,
+                    BS_RIGHT | BS_VCENTER | BS_MULTILINE | WS_TABSTOP,14,65,
                     58,15
-    EDITTEXT        IDC_FORMAT,76,28,257,15,ES_AUTOHSCROLL
-    GROUPBOX        "Filename Setup",IDC_STATIC,8,7,330,55
+    EDITTEXT        IDC_FORMAT,76,65,257,15,ES_AUTOHSCROLL
+    GROUPBOX        "Filename Setup",IDC_STATIC,8,44,330,55
     CTEXT           "\nIdentifiers:\n\n%1 = Artist\n%2 = Title\n%3 = Album\n%4 = Year\n%5 = Genre\n\n%a = Track # (leading zero)\n%b = Total # Tracks\n%c = Disc ID (Hexadecimal)\n%d = Vol. ID (Hexadecimal)\n\n\\ = new folder",
                     IDC_STATIC,344,11,54,196,0,WS_EX_STATICEDGE
-    LTEXT           "<filenamepreview>",IDC_FILENAME_VIS,76,47,257,8
-    RTEXT           "Preview:",IDC_STATIC,14,47,58,8
-    GROUPBOX        "Album Mode",IDC_STATIC,8,69,330,53
+    LTEXT           "<filenamepreview>",IDC_FILENAME_VIS,76,84,257,8
+    RTEXT           "Preview:",IDC_STATIC,14,84,58,8
+    GROUPBOX        "Album Mode",IDC_STATIC,8,103,330,53
     CTEXT           "This filename will be used in Album Mode when ripping a complete Audio CD into a single file:",
-                    IDC_STATIC,14,79,317,8
-    RTEXT           "Filename:",IDC_STATIC,14,93,58,12,SS_CENTERIMAGE
-    EDITTEXT        IDC_ALBUM_MODE_FILENAME,76,91,257,14,ES_AUTOHSCROLL
-    RTEXT           "Preview:",IDC_STATIC,14,108,58,8
-    LTEXT           "<filenamepreview>",IDC_ALBUM_MODE_VIS,76,108,257,8
-    GROUPBOX        "Playlist",IDC_STATIC,8,128,330,49
-    RTEXT           "Save Playlist as:",IDC_STATIC,14,142,58,14,
+                    IDC_STATIC,14,113,317,8
+    RTEXT           "Filename:",IDC_STATIC,14,127,58,12,SS_CENTERIMAGE
+    EDITTEXT        IDC_ALBUM_MODE_FILENAME,76,125,257,14,ES_AUTOHSCROLL
+    RTEXT           "Preview:",IDC_STATIC,14,142,58,8
+    LTEXT           "<filenamepreview>",IDC_ALBUM_MODE_VIS,76,142,257,8
+    GROUPBOX        "Playlist",IDC_STATIC,8,158,330,49
+    RTEXT           "Save Playlist as:",IDC_STATIC,14,172,58,14,
                     SS_CENTERIMAGE
-    EDITTEXT        IDC_PLAYLIST_FILENAME,76,142,257,14,ES_AUTOHSCROLL
-    RTEXT           "Preview:",IDC_STATIC,14,163,58,8
-    LTEXT           "<filenamepreview>",IDC_PLAYLIST_VIS,76,163,257,8
-    CTEXT           "Illegal characters in the filename will be replaced as followed:\n/ = -    | = -    "" = '    < = (    > = )\n*  and ? and : will be removed",
-                    IDC_STATIC,8,182,330,25,0,WS_EX_STATICEDGE
+    EDITTEXT        IDC_PLAYLIST_FILENAME,76,172,257,14,ES_AUTOHSCROLL
+    RTEXT           "Preview:",IDC_STATIC,14,193,58,8
+    LTEXT           "<filenamepreview>",IDC_PLAYLIST_VIS,76,193,257,8
+    GROUPBOX        "Base Output Path",IDC_STATIC,8,7,330,34
+    PUSHBUTTON      "&Path...",IDC_PATH,14,20,58,14
+    LTEXT           "not set",IDC_OUTPUTPATH,76,21,257,13,SS_CENTERIMAGE
 END
 
 IDD_LAMEFE_PAGE DIALOG DISCARDABLE  0, 0, 421, 196
@@ -430,53 +431,52 @@ STYLE WS_CHILD | WS_DISABLED | WS_CAPTION
 CAPTION "&General"
 FONT 8, "MS Sans Serif"
 BEGIN
-    PUSHBUTTON      "&Output path",IDC_OUTPUT,16,21,56,14
-    PUSHBUTTON      "&External Player",IDC_PLAYER,16,41,56,14
-    CONTROL         "Always over&write existing files",IDC_SILENT,"Button",
-                    BS_AUTOCHECKBOX | WS_TABSTOP,220,81,188,10
+    GROUPBOX        "External Player",IDC_STATIC,7,7,407,34
+    PUSHBUTTON      "&External Player",IDC_PLAYER,16,21,56,14
+    LTEXT           "[system default]",IDC_PLAYER_PATH,81,22,327,13,
+                    SS_CENTERIMAGE
+    GROUPBOX        "TO-DO when finished Encoding / Ripping",IDC_STATIC,7,47,
+                    201,144
     CONTROL         "Show &notification dialog",IDC_FINISH_DLG,"Button",
-                    BS_AUTOCHECKBOX | WS_TABSTOP,16,81,184,10
+                    BS_AUTOCHECKBOX | WS_TABSTOP,16,60,184,10
+    CONTROL         "Bring Status Window up to front (get focus)",IDC_FOCUS,
+                    "Button",BS_AUTOCHECKBOX | WS_TABSTOP,16,72,180,10
+    CONTROL         "Play soun&d...",IDC_PLAY_SOUND,"Button",BS_AUTOCHECKBOX | 
+                    WS_TABSTOP,16,84,184,10
     CONTROL         "&Beep (Systemspeaker)",IDC_BEEP,"Button",
-                    BS_AUTOCHECKBOX | WS_TABSTOP,16,117,175,8
+                    BS_AUTOCHECKBOX | WS_TABSTOP,16,97,175,10
     CONTROL         "&Play file(s) [external player required]",
                     IDC_PLAY_FILES,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,16,
-                    128,175,8
+                    110,175,10
+    CONTROL         "Enqueue &file(s)",IDC_ENQUEUE_FILES,"Button",
+                    BS_AUTOCHECKBOX | WS_DISABLED | WS_TABSTOP,27,122,173,10
     CONTROL         "Generate M&3U Playlist",IDC_M3U,"Button",
-                    BS_AUTOCHECKBOX | WS_TABSTOP,16,153,175,8
-    CONTROL         "E&xit lameFE",IDC_EXIT_FINISHED,"Button",
-                    BS_AUTOCHECKBOX | WS_TABSTOP,16,177,175,8
+                    BS_AUTOCHECKBOX | WS_TABSTOP,16,133,175,10
     CONTROL         "&Shutdown Windows",IDC_SHUTDOWN,"Button",
-                    BS_AUTOCHECKBOX | WS_TABSTOP,16,166,175,8
-    LTEXT           "not set",IDC_OUTPUT_PATH,81,22,327,13,SS_CENTERIMAGE
-    LTEXT           "[system default]",IDC_PLAYER_PATH,81,41,327,14,
-                    SS_CENTERIMAGE
-    GROUPBOX        "Path && External Player",IDC_STATIC,7,7,407,56
-    GROUPBOX        "TO-DO when finished Encoding / Ripping",IDC_STATIC,7,67,
-                    201,124
-    GROUPBOX        "Miscellaneous",IDC_STATIC,213,67,201,124
+                    BS_AUTOCHECKBOX | WS_TABSTOP,16,146,175,10
+    CONTROL         "E&xit lameFE",IDC_EXIT_FINISHED,"Button",
+                    BS_AUTOCHECKBOX | WS_TABSTOP,16,158,175,10
+    GROUPBOX        "Miscellaneous",IDC_STATIC,213,47,201,69
+    CONTROL         "Always over&write existing files",IDC_SILENT,"Button",
+                    BS_AUTOCHECKBOX | WS_TABSTOP,220,60,188,10
     CONTROL         "&Always read CDPlayer.ini on new CDs",
                     IDC_CPLAYERINI_ALWAYS_READ,"Button",BS_AUTOCHECKBOX | 
-                    WS_TABSTOP,220,94,188,8
+                    WS_TABSTOP,220,73,188,10
     CONTROL         "Always write CDdb Queries to CDPlayer.ini",
                     IDC_CPLAYERINI_ALWAYS_WRITE,"Button",BS_AUTOCHECKBOX | 
-                    WS_TABSTOP,220,106,188,8
+                    WS_TABSTOP,220,85,188,10
     CONTROL         "Always look for CDText information on CD",
                     IDC_CDTEXT_ALWAYSREAD,"Button",BS_AUTOCHECKBOX | 
-                    WS_TABSTOP,220,118,188,10
-    CONTROL         "Enqueue &file(s)",IDC_ENQUEUE_FILES,"Button",
-                    BS_AUTOCHECKBOX | WS_DISABLED | WS_TABSTOP,28,141,163,8
-    CONTROL         "Bring Status Window up to front (get focus)",IDC_FOCUS,
-                    "Button",BS_AUTOCHECKBOX | WS_TABSTOP,16,93,180,10
-    CONTROL         "Play soun&d...",IDC_PLAY_SOUND,"Button",BS_AUTOCHECKBOX | 
-                    WS_TABSTOP,16,105,184,10
+                    WS_TABSTOP,220,97,188,10
+    GROUPBOX        "Look && Feel",IDC_STATIC,213,119,201,72
     CONTROL         "Sa&ve window state and position",IDC_SAVE_WINDOW_STATE,
-                    "Button",BS_AUTOCHECKBOX | WS_TABSTOP,220,130,188,10
+                    "Button",BS_AUTOCHECKBOX | WS_TABSTOP,220,133,188,10
     CONTROL         "&Use highcolor toolbar icons",IDC_USE_HIGH_COLOR_ICONS,
-                    "Button",BS_AUTOCHECKBOX | WS_TABSTOP,220,143,188,10
+                    "Button",BS_AUTOCHECKBOX | WS_TABSTOP,220,145,188,10
     CONTROL         "Show Splashs&creen",IDC_SHOW_SPLASH,"Button",
-                    BS_AUTOCHECKBOX | WS_TABSTOP,220,155,188,10
+                    BS_AUTOCHECKBOX | WS_TABSTOP,220,158,188,10
     CONTROL         "Always show Album &Tag Editor",IDC_ALBUMEDIT,"Button",
-                    BS_AUTOCHECKBOX | WS_TABSTOP,220,167,188,10
+                    BS_AUTOCHECKBOX | WS_TABSTOP,220,173,188,10
 END
 
 IDD_STATUS_DIALOG DIALOGEX 0, 0, 402, 234
@@ -671,13 +671,12 @@ BEGIN
 
     IDD_CDRIP_PAGE, DIALOG
     BEGIN
-        LEFTMARGIN, 7
-        RIGHTMARGIN, 414
-        VERTGUIDE, 184
-        TOPMARGIN, 7
-        BOTTOMMARGIN, 210
-        HORZGUIDE, 116
-        HORZGUIDE, 132
+        VERTGUIDE, 22
+        VERTGUIDE, 178
+        VERTGUIDE, 242
+        VERTGUIDE, 388
+        HORZGUIDE, 126
+        HORZGUIDE, 147
     END
 
     IDD_FILENAMES, DIALOG
@@ -692,22 +691,8 @@ BEGIN
         VERTGUIDE, 344
         TOPMARGIN, 7
         BOTTOMMARGIN, 207
-        HORZGUIDE, 18
-        HORZGUIDE, 43
-        HORZGUIDE, 55
-        HORZGUIDE, 62
-        HORZGUIDE, 69
-        HORZGUIDE, 93
-        HORZGUIDE, 105
-        HORZGUIDE, 116
-        HORZGUIDE, 122
-        HORZGUIDE, 128
-        HORZGUIDE, 142
-        HORZGUIDE, 156
-        HORZGUIDE, 171
-        HORZGUIDE, 177
-        HORZGUIDE, 182
-        HORZGUIDE, 201
+        HORZGUIDE, 21
+        HORZGUIDE, 34
     END
 
     IDD_LAMEFE_PAGE, DIALOG
@@ -726,9 +711,10 @@ BEGIN
         HORZGUIDE, 22
         HORZGUIDE, 35
         HORZGUIDE, 41
-        HORZGUIDE, 55
-        HORZGUIDE, 67
-        HORZGUIDE, 81
+        HORZGUIDE, 47
+        HORZGUIDE, 70
+        HORZGUIDE, 173
+        HORZGUIDE, 183
     END
 
     IDD_STATUS_DIALOG, DIALOG

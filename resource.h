@@ -129,12 +129,14 @@
 #define IDC_FILE_STATUS_BAR             1075
 #define IDC_FILE_X_OF_Y                 1076
 #define IDC_ERRORS                      1077
+#define IDC_OUTPUTPATH                  1077
 #define IDC_LIST_MSG                    1079
 #define IDC_FILE_MSG                    1080
 #define IDC_IN                          1081
 #define IDC_OUT                         1082
 #define IDC_ID3_TAG                     1083
 #define IDC_PRESETS                     1084
+#define IDC_COMBO2                      1086
 #define IDC_SONG_A                      1089
 #define IDC_ARTIST_A                    1090
 #define IDC_ALBUM_A                     1091
@@ -446,7 +448,7 @@
 #define IDS_TOOL_CONFIGUREOUT           40169
 #define IDS_TOOL_INPUTDEVICE            40170
 #define IDS_TOOL_OUTPUTDEVICE           40171
-#define IDS_TOOL_ALWAYSTAGEDIT			40172
+#define IDS_TOOL_ALWAYSTAGEDIT          40172
 
 // Next default values for new objects
 // 
@@ -455,7 +457,7 @@
 #define _APS_3D_CONTROLS                     1
 #define _APS_NEXT_RESOURCE_VALUE        170
 #define _APS_NEXT_COMMAND_VALUE         32802
-#define _APS_NEXT_CONTROL_VALUE         1074
+#define _APS_NEXT_CONTROL_VALUE         1087
 #define _APS_NEXT_SYMED_VALUE           101
 #endif
 #endif

@@ -10,6 +10,8 @@
 /////////////////////////////////////////////////////////////////////////////
 // Dialogfeld CLogginPage 
 
+#include "MyEditCtrl.h"
+
 #include "resource.h"
 
 class CLogginPage : public CPropertyPage
@@ -26,9 +28,9 @@ public:
 // Dialogfelddaten
 	//{{AFX_DATA(CLogginPage)
 	enum { IDD = IDD_LOGGING_PAGE };
-	CEdit	m_startSession;
-	CEdit	m_logEntry;
-	CEdit	m_endSession;
+	CMyEditCtrl	m_startSession;
+	CMyEditCtrl	m_logEntry;
+	CMyEditCtrl	m_endSession;
 	CString	m_strEndSession;
 	CString	m_strLogEntry;
 	CString	m_strStartSession;

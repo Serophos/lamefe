@@ -24,6 +24,8 @@
 #endif // _MSC_VER > 1000
 // CDDBPage.h : Header-Datei
 //
+#include "MyEditCtrl.h"
+#include "MyComboBox.h"
 
 /////////////////////////////////////////////////////////////////////////////
 // Dialogfeld CCDDBPage 
@@ -44,12 +46,12 @@ public:
 	//{{AFX_DATA(CCDDBPage)
 	enum { IDD = IDD_CDDB_SETUP };
 	CButton	c_authentication;
-	CEdit	c_userName;
-	CEdit	c_password;
-	CEdit	c_proxyPort;
-	CEdit	c_proxyAddress;
+	CMyEditCtrl	c_userName;
+	CMyEditCtrl	c_password;
+	CMyEditCtrl	c_proxyPort;
+	CMyEditCtrl	c_proxyAddress;
 	CButton	c_useProxy;
-	CComboBox	c_remoteServer;
+	CMyComboBox	c_remoteServer;
 	CString	m_address;
 	CString	m_eMail;
 	CString	m_location;

@@ -25,6 +25,10 @@
 // CDROMPage.h : Header-Datei
 //
 
+#include "MyEditCtrl.h"
+#include "MyComboBox.h"
+
+
 /////////////////////////////////////////////////////////////////////////////
 // Dialogfeld CCDROMPage 
 
@@ -45,16 +49,16 @@ public:
 // Dialogfelddaten
 	//{{AFX_DATA(CCDROMPage)
 	enum { IDD = IDD_CDRIP_PAGE };
-	CEdit	c_spinUpTime;
+	CMyEditCtrl	c_spinUpTime;
 	CButton	c_nativeSCSI;
-	CEdit	c_cdSpeed;
+	CMyEditCtrl	c_cdSpeed;
 	CButton	c_select;
 	CButton	c_swapChannels;
-	CComboBox	c_rippingMethod;
+	CMyComboBox	c_rippingMethod;
 	CButton	c_lockDrive;
 	CButton	c_ejectWhenFinished;
-	CComboBox	c_cdromType;
-	CComboBox	c_cdDrive;
+	CMyComboBox	c_cdromType;
+	CMyComboBox	c_cdDrive;
 	CString	m_cdRipInfo;
 	CString	m_cdripVersion;
 	int		m_cdSpeed;

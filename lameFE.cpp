@@ -23,7 +23,10 @@
 #include "lameFEDoc.h"
 #include "lameFEView.h"
 #include "lameFESplash.h"
+#include "cdrip\cdrip.h"
 #include "cfgFile.h"
+
+#pragma comment(linker, "/delayload:CDRip.dll")
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -161,7 +164,7 @@ BOOL CLameFEApp::InitInstance()
 
 char *pArrCredit[] = { "LAMEFE\b",
 						"",
-						 "lameFE 2.2 Beta 3\n",
+						 STR_VERSION_DLG,
 						 "",
 						 "Copyright (c) 2002 \f",
 						 "Thees Christian Winkler \f",
@@ -612,3 +615,76 @@ void CLameFEApp::OnAppAbout()
 
 /////////////////////////////////////////////////////////////////////////////
 // CLameFEApp-Nachrichtenbehandlungsroutinen
+
+BOOL CLameFEApp::InitCDRipDLL()
+{
+
+/*	USES_CONVERSION;
+
+	LTRACE( _T( "Entering CCDexApp::LoadCDRipLibrary()" ) );
+
+	CDEX_ERR bReturn = CDEX_OK;
+
+	g_bRipperPresent = FALSE;
+
+	if ( m_hCDRipDll )
+	{
+		g_config.Save();
+
+		CR_DeInit();
+
+		if ( 0 == ::FreeLibrary( m_hCDRipDll ) )
+		{
+			LTRACE( GetLastErrorString() );
+
+		}
+		m_hCDRipDll = NULL;
+	}
+
+	if ( FALSE == LoadDLL(  _T( "CDRip.dll" ),
+							_T( "\\CDRip" ),
+							m_hCDRipDll,
+							TRUE,
+							FALSE ) )
+	{
+		bReturn = CDEX_ERROR;
+	}
+	else
+	{
+		CString strMsg;
+
+		bReturn = CR_Init( W2A( g_config.GetIniFileName() ) );
+
+		// Initialize the CD-ROM ripper
+		if ( CDEX_OK == bReturn )
+		{
+			g_bRipperPresent = TRUE;
+		}
+
+		switch ( bReturn )
+		{
+			case CDEX_NATIVEEASPINOTSUPPORTED:
+				AfxMessageBox( g_language.GetString( IDS_NATIVEASPINOTSUPPORTED ) );
+			break;
+			case CDEX_FAILEDTOLOADASPIDRIVERS:
+				AfxMessageBox( g_language.GetString( IDS_FAILEDTOLOADASPIDRIVERS ) );
+			break;
+			case CDEX_FAILEDTOGETASPISTATUS:
+				AfxMessageBox( g_language.GetString( IDS_FAILEDTOGETASPISTATUS ) );
+			break;
+			case CDEX_NATIVEEASPISUPPORTEDNOTSELECTED:
+				AfxMessageBox( g_language.GetString( IDS_ASPIFAILEDSUGGESTNATIVENTSCSI ) );
+			break;
+
+			case CDEX_OK:
+			break;
+			default:
+				ASSERT( FALSE );
+
+		}
+	}
+
+	LTRACE( _T( "Leaving CCDexApp::LoadCDRipLibrary(), return value %d" ), bReturn );
+*/
+	return FALSE;
+}

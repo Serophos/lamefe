@@ -91,10 +91,19 @@ CString CMultimediaFile::GetSaveAs(CString wdir, CString strExt)
 	}
 */
 	//tmp = strFormat;
-	strFormat.Replace("%1", m_id3Info.GetArtist());
-	strFormat.Replace("%2", m_id3Info.GetSong());
-	strFormat.Replace("%3", m_id3Info.GetAlbum());
-	strFormat.Replace("%5", m_id3Info.GetGenre());
+	tmp = m_id3Info.GetArtist();
+	tmp.Remove('\\');
+	strFormat.Replace("%1", tmp);
+	tmp =  m_id3Info.GetSong();
+	tmp.Remove('\\');
+	strFormat.Replace("%2", tmp);
+	tmp = m_id3Info.GetAlbum();
+	tmp.Remove('\\');
+	strFormat.Replace("%3", tmp);
+	tmp = m_id3Info.GetGenre();
+	tmp.Remove('\\');
+	strFormat.Replace("%5", tmp);
+
 	strFormat.Replace("%c", "0x00000000");
 	strFormat.Replace("%d", "0x00000000");
 	

@@ -189,7 +189,7 @@ void CLogFile::SetErrorMsg(int nEntry, CString strMessage)
 {
 
 	m_staErrors.SetAt(m_nCurrentEntry, strMessage);
-	m_msgOut->InsertItem(nLog++, strMessage, (strMessage == "Encoded successfully" ? 0 : 1));
+	m_msgOut->InsertItem(nLog, strMessage, (strMessage == "Encoded successfully" ? 0 : 1));
 	m_msgOut->EnsureVisible(nLog++, FALSE);
 }
 

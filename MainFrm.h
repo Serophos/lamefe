@@ -9,18 +9,15 @@
 #pragma once
 #endif // _MSC_VER > 1000
 
+
 class CMainFrame : public CFrameWnd
 {
 	
 protected: // Nur aus Serialisierung erzeugen
 	CMainFrame();
+	virtual ~CMainFrame();
 	DECLARE_DYNCREATE(CMainFrame)
 
-// Attribute
-public:
-
-// Operationen
-public:
 
 // Überladungen
 	// Vom Klassenassistenten generierte Überladungen virtueller Funktionen
@@ -32,20 +29,19 @@ public:
 
 // Implementierung
 public:
+	BOOL CheckCOMCTL32DLL();
+	
 	void OnViewAlbumTagEditor();
-	virtual ~CMainFrame();
 #ifdef _DEBUG
 	virtual void AssertValid() const;
 	virtual void Dump(CDumpContext& dc) const;
 #endif
 
 protected:  // Eingebundene Elemente der Steuerleiste
-//	CDialogBar  m_wndAlbumInfoBar;
 	CStatusBar  m_wndStatusBar;
 	CToolBar    m_wndToolBar;
 	CReBar      m_wndReBar;
 	CBitmap     m_bmToolbarHi; 
-//	CDialogBar      m_wndDlgBar;
 
 // Generierte Message-Map-Funktionen
 protected:

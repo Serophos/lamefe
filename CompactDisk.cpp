@@ -680,10 +680,18 @@ CString CCompactDisc::GetSaveAs(int nTrack, CString wd, CString ext)
 		}
 	}
 */
-	strFormat.Replace("%1", GetCDTrack(nTrack)->m_id3Info.GetArtist());
-	strFormat.Replace("%2", GetCDTrack(nTrack)->m_id3Info.GetSong());
-	strFormat.Replace("%3", GetCDTrack(nTrack)->m_id3Info.GetAlbum());
-	strFormat.Replace("%5", GetCDTrack(nTrack)->m_id3Info.GetGenre());
+	tmp = GetCDTrack(nTrack)->m_id3Info.GetArtist();
+	tmp.Remove('\\');
+	strFormat.Replace("%1", tmp);
+	tmp =  GetCDTrack(nTrack)->m_id3Info.GetSong();
+	tmp.Remove('\\');
+	strFormat.Replace("%2", tmp);
+	tmp =  GetCDTrack(nTrack)->m_id3Info.GetAlbum();
+	tmp.Remove('\\');
+	strFormat.Replace("%3", tmp);
+	tmp = GetCDTrack(nTrack)->m_id3Info.GetGenre();
+	tmp.Remove('\\');
+	strFormat.Replace("%5", tmp);
 
 	tmp.Format("0x%X", GetDiscID());
 	strFormat.Replace("%c", tmp);
@@ -705,7 +713,7 @@ CString CCompactDisc::GetSaveAs(int nTrack, CString wd, CString ext)
 	strFormat.Replace('>', ')');
 	strFormat.Replace('|', '-');
 	strFormat.Remove(':');
-	strFormat.Remove('\\');
+	//strFormat.Remove('\\');
 	strFormat.Remove('.');
 	
 	if(strFormat.GetLength() > _MAX_FNAME){
@@ -797,7 +805,7 @@ CString CCompactDisc::GetStartTime(int nTrack)
 	int		nFrame;
 	CString strTime;
 
-	strTime = "00:00.00";
+	strTime = "00:00:00";
 
 	DWORD dwSectors = GetCDTrack(nTrack)->m_dwStartSector;
 
@@ -805,7 +813,7 @@ CString CCompactDisc::GetStartTime(int nTrack)
 	nSecs	= (int)(fmod(dwSectors, 60*TRACKSPERSEC) / TRACKSPERSEC);
 	nFrame	= dwSectors % TRACKSPERSEC;
 
-	strTime.Format("%u:%02u.%02u", nMins, nSecs, nFrame);
+	strTime.Format("%02u:%02u:%02u", nMins, nSecs, nFrame);
 
 	return strTime;
 }

@@ -12,6 +12,8 @@
 static char THIS_FILE[] = __FILE__;
 #endif
 
+#pragma comment(lib, "version")
+
 /////////////////////////////////////////////////////////////////////////////
 // CMainFrame
 
@@ -48,27 +50,22 @@ CMainFrame::~CMainFrame()
 
 int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
 {
+
 	if (CFrameWnd::OnCreate(lpCreateStruct) == -1)
 		return -1;
 
 
 
-	if (!m_wndToolBar.CreateEx(this) ||
+	if (!m_wndToolBar.CreateEx(this, TBSTYLE_FLAT | TBSTYLE_TRANSPARENT ) ||
 		!m_wndToolBar.LoadToolBar(IDR_MAINFRAME))
 	{
 		TRACE0("Symbolleiste konnte nicht erstellt werden\n");
 		return -1;      // Fehler bei Erstellung
 	}
 	
-	/*if (!m_wndAlbumInfoBar.Create(this, IDD_ALBUMINFOBAR, 
-		CBRS_ALIGN_TOP, AFX_IDW_DIALOGBAR))
-	{
-		TRACE0("Dialogleiste konnte nicht erstellt werden\n");
-		return -1;		// Fehler bei Erstellung
-	}*/
 	cfgFile cfg;
 	// set high color icons if possible
-	if ((::GetDeviceCaps(GetDC()->m_hDC,BITSPIXEL) > 8) && cfg.GetValue("usehighcoloricons")) 
+	if ((::GetDeviceCaps(GetDC()->m_hDC,BITSPIXEL) > 8) && cfg.GetValue("usehighcoloricons") && CheckCOMCTL32DLL()) 
 	{
 		//m_bmToolbarHi.LoadMappedBitmap(IDB_TOOLBAR_HI);
 		//m_wndToolBar.SetBitmap( (HBITMAP)m_bmToolbarHi );
@@ -96,7 +93,7 @@ int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	
 	}
 	
-	m_wndToolBar.SetBarStyle(m_wndToolBar.GetBarStyle() | CBRS_TOOLTIPS | CBRS_FLYBY | CBRS_SIZE_DYNAMIC );
+	m_wndToolBar.SetBarStyle(m_wndToolBar.GetBarStyle() | CBRS_TOOLTIPS | CBRS_FLYBY | CBRS_SIZE_DYNAMIC);
 
 	if (!m_wndReBar.Create(this) ||
 		!m_wndReBar.AddBar(&m_wndToolBar)
@@ -218,4 +215,73 @@ void CMainFrame::OnViewShowstatusline()
 }
 
 
+BOOL CMainFrame::CheckCOMCTL32DLL()
+{
 
+	BOOL bReturn = FALSE;
+    LPBYTE  lpVersionData; 
+    DWORD   dwLangCharset; 
+
+ 	TCHAR lpszModuleName[ MAX_PATH + 1 ] = { '\0',};
+	
+	// Get Comctl32.dll product version
+	GetSystemDirectory( lpszModuleName,	MAX_PATH );
+	
+	strcat(lpszModuleName, "\\COMCTL32.DLL");
+
+	DWORD dwHandle;     
+    DWORD dwDataSize = ::GetFileVersionInfoSize(lpszModuleName, &dwHandle); 
+    if ( dwDataSize == 0 ){
+
+        return FALSE;
+	}
+
+    lpVersionData = new BYTE[dwDataSize]; 
+    if(!::GetFileVersionInfo((LPTSTR)lpszModuleName, dwHandle, dwDataSize, (void**)lpVersionData)){
+
+		delete[] lpVersionData; 
+		lpVersionData = NULL;
+		dwLangCharset = 0;
+
+        return FALSE;
+    }
+
+    UINT nQuerySize;
+    DWORD* pTransTable;
+    if (!::VerQueryValue(lpVersionData, "\\VarFileInfo\\Translation",
+                         (void **)&pTransTable, &nQuerySize)){
+
+		delete[] lpVersionData; 
+		lpVersionData = NULL;
+		dwLangCharset = 0;
+
+        return FALSE;
+    }
+
+    // Swap the words to have lang-charset in the correct format
+    dwLangCharset = MAKELONG(HIWORD(pTransTable[0]), LOWORD(pTransTable[0]));
+
+    // Query version information value
+    LPVOID lpData;
+    CString strVersion, strBlockName;
+
+    strBlockName.Format(_T("\\StringFileInfo\\%08lx\\%s"), dwLangCharset, "FileVersion");
+
+    if(::VerQueryValue((void **)lpVersionData, strBlockName.GetBuffer(0), &lpData, &nQuerySize)){
+
+        strVersion = (LPCTSTR)lpData;
+	}
+
+    strBlockName.ReleaseBuffer();
+
+	float fVersion = 0.0f;
+	_stscanf(strVersion, "%f", & fVersion);
+
+	bReturn = (fVersion >= 4.70);
+
+	delete[] lpVersionData; 
+	lpVersionData = NULL;
+	dwLangCharset = 0;
+
+	return bReturn;
+}

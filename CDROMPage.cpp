@@ -87,9 +87,9 @@ END_MESSAGE_MAP()
 
 void CCDROMPage::init(CString wdir, BOOL bRipperPresent)
 {
+
 	wd = wdir;
 	m_bRipperPresent = bRipperPresent;
-
 }
 
 void CCDROMPage::OnOK()
@@ -177,7 +177,7 @@ BOOL CCDROMPage::OnInitDialog()
 	m_pToolTip->AddTool(&c_spinUpTime, IDS_TOOL_SPINUP);
 	m_pToolTip->AddTool(&c_nativeSCSI, IDS_TOOL_NTSCSI);
 	m_pToolTip->AddTool(&c_cdSpeed, IDS_TOOL_CDSPEED);
-
+	//m_pToolTip->AddTool(&m_cNumBuffers, "test");
 	m_pToolTip->Activate(TRUE);
 
 	m_cdripVersion.Format("CDRip.dll Version %.2f\n(c) 1998-2002 by Albert L. Faber\nhttp://www.cdex.n3.net", (float)CR_GetCDRipVersion()/100);
@@ -231,7 +231,6 @@ void CCDROMPage::initControls()
 	c_lockDrive.SetCheck(cfg.GetValue("lock"));
 	c_select.SetCheck(cfg.GetValue("select"));
 	c_cue.SetCheck(cfg.GetValue("writecue"));
-
 
 	UpdateData(FALSE);
 }

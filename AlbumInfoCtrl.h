@@ -8,7 +8,8 @@
 //
 
 #include "ID3Info.h"
-//#include "MessageIDs.h"
+#include "MyEditCtrl.h"
+#include "MyComboBox.h"
 
 /////////////////////////////////////////////////////////////////////////////
 // Dialogfeld CAlbumInfoCtrl 
@@ -18,6 +19,7 @@ class CAlbumInfoCtrl : public CDialog
 {
 // Konstruktion
 public:
+	void OnCancel();
 	void Clear();
 	void EnableControls(BOOL bEnable);
 	void SetInfo(CID3Info* info);
@@ -26,7 +28,13 @@ public:
 // Dialogfelddaten
 	//{{AFX_DATA(CAlbumInfoCtrl)
 	enum { IDD = IDD_ALBUMINFOCTRL };
-	CComboBox	m_ctrlGenre;
+	CMyEditCtrl	m_cYear;
+	CMyEditCtrl	m_cTrackNumber;
+	CMyEditCtrl	m_cSongTitle;
+	CMyEditCtrl	m_cSongInterpret;
+	CMyEditCtrl	m_cComment;
+	CMyEditCtrl	m_cAlbumInfo;
+	CMyComboBox	m_ctrlGenre;
 	CString	m_strAlbum;
 	CString	m_strComment;
 	CString	m_strGenre;

@@ -27,13 +27,12 @@
 #include "EncodingStatusDlg.h"
 #include "SettingsSheet.h"
 #include "cfgFile.h"
-//#include "WaveFile.h"
 #include "CDTrack.h"
 #include "CDdbQueryDlg.h"
 #include "mfccddb.h"
 #include "CPlugin.h"
 #include "MyFileDialog.h"
-//#include "MessageIDs.h"
+
 
 #include <direct.h>
 
@@ -123,6 +122,7 @@ CLameFEView::CLameFEView()
 
 	m_pToolTip = NULL;
 	m_bTagEditorVisible = FALSE;
+	m_hCDRipDll = NULL;
 }
 
 CLameFEView::~CLameFEView()
@@ -331,6 +331,12 @@ void CLameFEView::OnId3tagsReadfreedbserver()
 void CLameFEView::OnId3tagsSavecuesheet() 
 {
 
+	if(!m_compactDisc.GetNumAudioTracks()){
+		
+		AfxMessageBox(IDS_MAIN_NOAUDIOCD, MB_OK+MB_ICONSTOP);
+		return;
+	}
+
 	if(!m_compactDisc.WriteCueSheet(wd, ".mp3")){
 
 		AfxMessageBox(IDS_CUESHEETFAILED, MB_OK + MB_ICONSTOP);
@@ -492,6 +498,7 @@ void CLameFEView::OnSelchangeDevices(BOOL bReset){
 BOOL CLameFEView::GetOutputDevices()
 {
 
+	TRACE("Entering CLameFEView::GetOutputDevices()\n");
 	// We have always the lame encoder as output device:
 	c_outputDevice.AddString("MPEG I/II Layer 3 (lame_enc.dll)");
 	
@@ -514,17 +521,42 @@ BOOL CLameFEView::GetOutputDevices()
 
 	c_outputDevice.SetCurSel(0);
 
+	TRACE("Entering CLameFEView::GetOutputDevices()\n");
 	return TRUE;
 }
 
 BOOL CLameFEView::GetInputDevices()
 {
 
+	TRACE("Entering CLameFEView::GetInputDevices()\n");
+
 	// We have always CD-Ripping as input device:
 	// So Init CD-Ripper and iterate through all available drives.
 	
+	USES_CONVERSION;
+
 	CDEX_ERR cResult = CDEX_OK;
+
 	nNumCDDrives = 0;
+
+	if(m_hCDRipDll){
+
+		CR_DeInit();
+
+		if(::FreeLibrary(m_hCDRipDll) == 0){
+
+			TRACE("::FreeLibrary() == 0\n");
+		}
+
+		m_hCDRipDll = NULL;
+	}
+
+	m_hCDRipDll = LoadLibrary(wd + "\\CDRip.dll");
+
+	if(!m_hCDRipDll){
+
+		cResult = CDEX_ERROR;
+	}
 
 	cResult = CR_Init(wd + "\\lameFE.ini");
 
@@ -545,6 +577,9 @@ BOOL CLameFEView::GetInputDevices()
 			case CDEX_NATIVEEASPISUPPORTEDNOTSELECTED:
 				AfxMessageBox(IDS_FAILEDASPINOTSELECTED, MB_OK+MB_ICONSTOP);
 			break;
+			case CDEX_ERROR:
+				AfxMessageBox("Error loading library", MB_OK+MB_ICONSTOP);
+				break;
 			case CDEX_OK:
 				TRACE("why are we here? hהההה\n");
 			break;
@@ -597,6 +632,7 @@ BOOL CLameFEView::GetInputDevices()
 		c_inputDevice.AddString(strDevice);
 	}
 
+	TRACE("Leaving CLameFEView::GetInputDevices()\n");
 	return TRUE;
 }
 
@@ -684,7 +720,7 @@ void CLameFEView::OnTimer(UINT nIDEvent)
 {
 
 	
-	(AfxGetMainWnd())->SetWindowText("LameFE 2.2 Beta 3");
+	(AfxGetMainWnd())->SetWindowText(STR_VERSION);
 
 	if((nNumCDDrives == 0) || (IsPluginMode()) || ! IsWindowVisible()){
 
@@ -925,11 +961,20 @@ void CLameFEView::ResetFileList()
 
 void CLameFEView::OnDestroy() 
 {
+	
 	KillTimer(TIMERID2);
+
 	OnId3tagsId3tageditor();
 	m_ctrlList.DeleteAllItems();
 	ResetFileList();
-	
+
+	if(m_hCDRipDll != NULL){
+		
+		CR_LockCD(FALSE); //Just to be sure :)
+		CR_DeInit();
+		FreeLibrary(m_hCDRipDll);
+	}
+
 	cfgFile cfg;
 	RECT rc;
 	AfxGetApp()->m_pMainWnd->GetWindowRect(&rc);
@@ -937,8 +982,6 @@ void CLameFEView::OnDestroy()
 	cfg.SetValue("window.y", rc.top);
 	cfg.SetValue("window.cx", rc.right-rc.left);
 	cfg.SetValue("window.cy", rc.bottom-rc.top);
-
-	CR_LockCD(FALSE); //Just to be sure :)
 
 	CFormView::OnDestroy();
 

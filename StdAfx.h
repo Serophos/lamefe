@@ -11,6 +11,7 @@
 #endif // _MSC_VER > 1000
 
 #define VC_EXTRALEAN		// Selten verwendete Teile der Windows-Header nicht einbinden
+#define OEMRESOURCE
 
 #include <afxwin.h>         // MFC-Kern- und -Standardkomponenten
 #include <afxext.h>         // MFC-Erweiterungen
@@ -20,12 +21,21 @@
 #include <afxcmn.h>			// MFC-Unterstützung für gängige Windows-Steuerelemente
 #endif // _AFX_NO_AFXCMN_SUPPORT
 
+#include <ATLCONV.H>
 #include <afxtempl.h>
 #include <afxmt.h>
 #include <htmlhelp.h>
 #include <afxsock.h>        // MFC socket support
 #include <commctrl.h>
 #include <mmsystem.h>
+
+/*#include <iostream.h>
+#include "vector"
+#include "list"
+using namespace std ;
+*/
+#define STR_VERSION		"LameFE 2.2 Beta 4"
+#define STR_VERSION_DLG "LameFE 2.2 Beta 4 \n"
 
 //{{AFX_INSERT_LOCATION}}
 // Microsoft Visual C++ fügt unmittelbar vor der vorhergehenden Zeile zusätzliche Deklarationen ein.

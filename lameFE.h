@@ -29,6 +29,7 @@
 
 #include "resource.h"       // Hauptsymbole
 
+
 /////////////////////////////////////////////////////////////////////////////
 // CLameFEApp:
 // Siehe lameFE.cpp für die Implementierung dieser Klasse
@@ -37,6 +38,7 @@
 class CLameFEApp : public CWinApp
 {
 public:
+	BOOL InitCDRipDLL();
 	CLameFEApp();
 
 // Überladungen
@@ -53,6 +55,11 @@ public:
 		//    Innerhalb dieser generierten Quelltextabschnitte NICHTS VERÄNDERN!
 	//}}AFX_MSG
 	DECLARE_MESSAGE_MAP()
+
+protected:
+
+//	HINSTANCE	m_hCDRipDll;
+
 };
 
 
