@@ -41,6 +41,8 @@ CCDROMPage::CCDROMPage() : CPropertyPage(CCDROMPage::IDD)
 	m_cdSpeed = 0;
 	m_spinUpTime = 0;
 	m_nativeSCSI = FALSE;
+	m_nTimeOut = 0;
+	m_numBuffers = -1;
 	//}}AFX_DATA_INIT
 	m_pToolTip = NULL;
 }
@@ -54,6 +56,13 @@ void CCDROMPage::DoDataExchange(CDataExchange* pDX)
 {
 	CPropertyPage::DoDataExchange(pDX);
 	//{{AFX_DATA_MAP(CCDROMPage)
+	DDX_Control(pDX, IDC_CHECKFORNEWCD, c_checkNewCD);
+	DDX_Control(pDX, IDC_NUMBUFFERS, c_numBuffers);
+	DDX_Control(pDX, IDC_BATCH_TIMEOUTEDIT, c_nBatchTimeOut);
+	DDX_Control(pDX, IDC_BATCH_BEEP, c_batchBeep);
+	DDX_Control(pDX, IDC_BATCHTIMEOUT, c_batchTimeOut);
+	DDX_Control(pDX, IDC_BATCHALLDRIVES, c_batchAllDrives);
+	DDX_Control(pDX, IDC_BATCH_FREEDB, c_batchFreeDB);
 	DDX_Control(pDX, IDC_CD_SPIN_UP, c_spinUpTime);
 	DDX_Control(pDX, IDC_NATIVE, c_nativeSCSI);
 	DDX_Control(pDX, IDC_CD_SPEED, c_cdSpeed);
@@ -71,6 +80,9 @@ void CCDROMPage::DoDataExchange(CDataExchange* pDX)
 	DDV_MinMaxInt(pDX, m_spinUpTime, 0, 120);
 	DDX_Check(pDX, IDC_NATIVE, m_nativeSCSI);
 	DDX_Control(pDX, IDC_CUE, c_cue);
+	DDX_Text(pDX, IDC_BATCH_TIMEOUTEDIT, m_nTimeOut);
+	DDV_MinMaxInt(pDX, m_nTimeOut, 1, 360);
+	DDX_CBIndex(pDX, IDC_NUMBUFFERS, m_numBuffers);
 	//}}AFX_DATA_MAP
 }
 
@@ -79,6 +91,7 @@ BEGIN_MESSAGE_MAP(CCDROMPage, CPropertyPage)
 	//{{AFX_MSG_MAP(CCDROMPage)
 	ON_BN_CLICKED(IDC_NATIVE, OnNative)
 	ON_CBN_SELCHANGE(IDC_CD_DRIVE, OnSelchangeCdDrive)
+	ON_BN_CLICKED(IDC_BATCHTIMEOUT, OnBatchtimeout)
 	//}}AFX_MSG_MAP
 END_MESSAGE_MAP()
 
@@ -151,8 +164,48 @@ void CCDROMPage::SaveSettings()
 	cfg.SetValue("eject", c_ejectWhenFinished.GetCheck());
 	cfg.SetValue("select", c_select.GetCheck());
 	cfg.SetValue("writecue", c_cue.GetCheck());
+	cfg.SetValue("BatchUseAllDrives", c_batchAllDrives.GetCheck());
+	cfg.SetValue("BatchBeepOnFinishCD", c_batchBeep.GetCheck());
+	cfg.SetValue("BatchFreeDB", c_batchFreeDB.GetCheck());
+	cfg.SetValue("BatchTimesOut", c_batchTimeOut.GetCheck());
+	cfg.SetValue("BatchTimesOutAfterMin", m_nTimeOut);
+	cfg.SetValue("nNumReadBuffers", m_numBuffers);
+	cfg.SetValue("CheckForNewCD", c_checkNewCD.GetCheck());
 }
 
+void CCDROMPage::initControls()
+{
+
+	if(m_bRipperPresent){
+
+		CDROMPARAMS cdParams;
+
+		CR_GetCDROMParameters(&cdParams);
+		
+		m_cdSpeed = cdParams.nSpeed;
+		m_spinUpTime = cdParams.nSpinUpTime;
+		c_swapChannels.SetCheck(cdParams.bSwapLefRightChannel);
+
+		c_cdromType.SetCurSel(CR_GetCDROMType());
+		c_rippingMethod.SetCurSel(cdParams.nRippingMode + cdParams.nParanoiaMode); 
+	}
+	
+	cfgFile cfg(wd);
+	c_ejectWhenFinished.SetCheck(cfg.GetValue("eject"));
+	c_lockDrive.SetCheck(cfg.GetValue("lock"));
+	c_select.SetCheck(cfg.GetValue("select"));
+	c_cue.SetCheck(cfg.GetValue("writecue"));
+	c_checkNewCD.SetCheck(cfg.GetValue("CheckForNewCD"));
+
+	m_numBuffers = cfg.GetValue("nNumReadBuffers");
+	c_batchAllDrives.SetCheck(cfg.GetValue("BatchUseAllDrives"));
+	c_batchBeep.SetCheck(cfg.GetValue("BatchBeepOnFinishCD"));
+	c_batchFreeDB.SetCheck(cfg.GetValue("BatchFreeDB"));
+	c_batchTimeOut.SetCheck(cfg.GetValue("BatchTimesOut"));
+	m_nTimeOut = cfg.GetValue("BatchTimesOutAfterMin");
+	UpdateData(FALSE);
+	OnBatchtimeout();
+}
 BOOL CCDROMPage::OnInitDialog()
 {
 
@@ -166,7 +219,6 @@ BOOL CCDROMPage::OnInitDialog()
 	   return TRUE;
 	}
 
-	//m_pToolTip->AddTool(this, "Encoder Settings");
 	m_pToolTip->AddTool(&c_cdDrive, IDS_TOOL_DEFAULTDRIVE);
 	m_pToolTip->AddTool(&c_cdromType, IDS_TOOL_CDROMTYPE);
 	m_pToolTip->AddTool(&c_ejectWhenFinished, IDS_TOOL_EJECTCD);
@@ -177,9 +229,15 @@ BOOL CCDROMPage::OnInitDialog()
 	m_pToolTip->AddTool(&c_spinUpTime, IDS_TOOL_SPINUP);
 	m_pToolTip->AddTool(&c_nativeSCSI, IDS_TOOL_NTSCSI);
 	m_pToolTip->AddTool(&c_cdSpeed, IDS_TOOL_CDSPEED);
-	//m_pToolTip->AddTool(&m_cNumBuffers, "test");
+	m_pToolTip->AddTool(&c_batchAllDrives, IDS_TOOL_BATCHALLCDS);
+	m_pToolTip->AddTool(&c_batchBeep, IDS_TOOL_BATCHBEEP);
+	m_pToolTip->AddTool(&c_batchFreeDB, IDS_TOOL_BATCHFREEDB);
+	m_pToolTip->AddTool(&c_batchTimeOut, IDS_TOOL_BATCHTIMESOUT);
+	m_pToolTip->AddTool(&c_nBatchTimeOut, IDS_TOOL_BATCHTIME);
+	m_pToolTip->AddTool(&c_numBuffers, IDS_TOOL_READBUFFERS);
+	m_pToolTip->AddTool(&c_cue, IDS_TOOL_WRITECUE);
 	m_pToolTip->Activate(TRUE);
-
+	
 	m_cdripVersion.Format("CDRip.dll Version %.2f\n(c) 1998-2002 by Albert L. Faber\nhttp://www.cdex.n3.net", (float)CR_GetCDRipVersion()/100);
 
 	CDROMPARAMS cdParams;
@@ -209,31 +267,6 @@ BOOL CCDROMPage::OnInitDialog()
 	return TRUE;
 }
 
-void CCDROMPage::initControls()
-{
-
-	if(m_bRipperPresent){
-
-		CDROMPARAMS cdParams;
-
-		CR_GetCDROMParameters(&cdParams);
-		
-		m_cdSpeed = cdParams.nSpeed;
-		m_spinUpTime = cdParams.nSpinUpTime;
-		c_swapChannels.SetCheck(cdParams.bSwapLefRightChannel);
-
-		c_cdromType.SetCurSel(CR_GetCDROMType());
-		c_rippingMethod.SetCurSel(cdParams.nRippingMode + cdParams.nParanoiaMode); 
-	}
-	
-	cfgFile cfg(wd);
-	c_ejectWhenFinished.SetCheck(cfg.GetValue("eject"));
-	c_lockDrive.SetCheck(cfg.GetValue("lock"));
-	c_select.SetCheck(cfg.GetValue("select"));
-	c_cue.SetCheck(cfg.GetValue("writecue"));
-
-	UpdateData(FALSE);
-}
 
 void CCDROMPage::OnNative() 
 {
@@ -269,3 +302,9 @@ BOOL CCDROMPage::PreTranslateMessage(MSG* pMsg)
 	return CPropertyPage::PreTranslateMessage(pMsg);
 }
 
+
+void CCDROMPage::OnBatchtimeout() 
+{
+
+	c_nBatchTimeOut.EnableWindow(c_batchTimeOut.GetCheck());
+}

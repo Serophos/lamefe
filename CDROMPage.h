@@ -49,6 +49,13 @@ public:
 // Dialogfelddaten
 	//{{AFX_DATA(CCDROMPage)
 	enum { IDD = IDD_CDRIP_PAGE };
+	CButton	c_checkNewCD;
+	CMyComboBox	c_numBuffers;
+	CMyEditCtrl	c_nBatchTimeOut;
+	CButton	c_batchBeep;
+	CButton	c_batchTimeOut;
+	CButton	c_batchAllDrives;
+	CButton	c_batchFreeDB;
 	CMyEditCtrl	c_spinUpTime;
 	CButton	c_nativeSCSI;
 	CMyEditCtrl	c_cdSpeed;
@@ -65,6 +72,8 @@ public:
 	int		m_spinUpTime;
 	BOOL	m_nativeSCSI;
 	CButton c_cue;
+	int		m_nTimeOut;
+	int		m_numBuffers;
 	//}}AFX_DATA
 
 
@@ -83,6 +92,7 @@ protected:
 	//{{AFX_MSG(CCDROMPage)
 	afx_msg void OnNative();
 	afx_msg void OnSelchangeCdDrive();
+	afx_msg void OnBatchtimeout();
 	//}}AFX_MSG
 	DECLARE_MESSAGE_MAP()
 
