@@ -5,6 +5,7 @@
 #include "lameFE.h"
 #include "cfgFile.h"
 #include "MainFrm.h"
+#include "Utils.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -64,12 +65,16 @@ int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	}
 	
 	cfgFile cfg;
-	// set high color icons if possible
-	if ((::GetDeviceCaps(GetDC()->m_hDC,BITSPIXEL) > 8) && cfg.GetValue("usehighcoloricons") && CheckCOMCTL32DLL()) 
-	{
-		//m_bmToolbarHi.LoadMappedBitmap(IDB_TOOLBAR_HI);
-		//m_wndToolBar.SetBitmap( (HBITMAP)m_bmToolbarHi );
 
+	if(!Utils::CheckCOMTL32Dll()){  // Version of Common Controls library is too old
+
+		cfg.SetValue("usehighcoloricons", FALSE);
+		TRACE("Deactivated highcoloricons as Common Controls library is too old\n");
+	}
+
+	// set high color icons if possible
+	if ((::GetDeviceCaps(GetDC()->m_hDC,BITSPIXEL) > 8) && cfg.GetValue("usehighcoloricons")) 
+	{
 	
 		CImageList	imageList;
 		CBitmap		bitmap;
@@ -215,73 +220,73 @@ void CMainFrame::OnViewShowstatusline()
 }
 
 
-BOOL CMainFrame::CheckCOMCTL32DLL()
-{
-
-	BOOL bReturn = FALSE;
-    LPBYTE  lpVersionData; 
-    DWORD   dwLangCharset; 
-
- 	TCHAR lpszModuleName[ MAX_PATH + 1 ] = { '\0',};
-	
-	// Get Comctl32.dll product version
-	GetSystemDirectory( lpszModuleName,	MAX_PATH );
-	
-	strcat(lpszModuleName, "\\COMCTL32.DLL");
-
-	DWORD dwHandle;     
-    DWORD dwDataSize = ::GetFileVersionInfoSize(lpszModuleName, &dwHandle); 
-    if ( dwDataSize == 0 ){
-
-        return FALSE;
-	}
-
-    lpVersionData = new BYTE[dwDataSize]; 
-    if(!::GetFileVersionInfo((LPTSTR)lpszModuleName, dwHandle, dwDataSize, (void**)lpVersionData)){
-
-		delete[] lpVersionData; 
-		lpVersionData = NULL;
-		dwLangCharset = 0;
-
-        return FALSE;
-    }
-
-    UINT nQuerySize;
-    DWORD* pTransTable;
-    if (!::VerQueryValue(lpVersionData, "\\VarFileInfo\\Translation",
-                         (void **)&pTransTable, &nQuerySize)){
-
-		delete[] lpVersionData; 
-		lpVersionData = NULL;
-		dwLangCharset = 0;
-
-        return FALSE;
-    }
-
-    // Swap the words to have lang-charset in the correct format
-    dwLangCharset = MAKELONG(HIWORD(pTransTable[0]), LOWORD(pTransTable[0]));
-
-    // Query version information value
-    LPVOID lpData;
-    CString strVersion, strBlockName;
-
-    strBlockName.Format(_T("\\StringFileInfo\\%08lx\\%s"), dwLangCharset, "FileVersion");
-
-    if(::VerQueryValue((void **)lpVersionData, strBlockName.GetBuffer(0), &lpData, &nQuerySize)){
-
-        strVersion = (LPCTSTR)lpData;
-	}
-
-    strBlockName.ReleaseBuffer();
-
-	float fVersion = 0.0f;
-	_stscanf(strVersion, "%f", & fVersion);
-
-	bReturn = (fVersion >= 4.70);
-
-	delete[] lpVersionData; 
-	lpVersionData = NULL;
-	dwLangCharset = 0;
-
-	return bReturn;
-}
+//DEL BOOL CMainFrame::CheckCOMCTL32DLL()
+//DEL {
+//DEL 
+//DEL 	BOOL bReturn = FALSE;
+//DEL     LPBYTE  lpVersionData; 
+//DEL     DWORD   dwLangCharset; 
+//DEL 
+//DEL  	TCHAR lpszModuleName[ MAX_PATH + 1 ] = { '\0',};
+//DEL 	
+//DEL 	// Get Comctl32.dll product version
+//DEL 	GetSystemDirectory( lpszModuleName,	MAX_PATH );
+//DEL 	
+//DEL 	strcat(lpszModuleName, "\\COMCTL32.DLL");
+//DEL 
+//DEL 	DWORD dwHandle;     
+//DEL     DWORD dwDataSize = ::GetFileVersionInfoSize(lpszModuleName, &dwHandle); 
+//DEL     if ( dwDataSize == 0 ){
+//DEL 
+//DEL         return FALSE;
+//DEL 	}
+//DEL 
+//DEL     lpVersionData = new BYTE[dwDataSize]; 
+//DEL     if(!::GetFileVersionInfo((LPTSTR)lpszModuleName, dwHandle, dwDataSize, (void**)lpVersionData)){
+//DEL 
+//DEL 		delete[] lpVersionData; 
+//DEL 		lpVersionData = NULL;
+//DEL 		dwLangCharset = 0;
+//DEL 
+//DEL         return FALSE;
+//DEL     }
+//DEL 
+//DEL     UINT nQuerySize;
+//DEL     DWORD* pTransTable;
+//DEL     if (!::VerQueryValue(lpVersionData, "\\VarFileInfo\\Translation",
+//DEL                          (void **)&pTransTable, &nQuerySize)){
+//DEL 
+//DEL 		delete[] lpVersionData; 
+//DEL 		lpVersionData = NULL;
+//DEL 		dwLangCharset = 0;
+//DEL 
+//DEL         return FALSE;
+//DEL     }
+//DEL 
+//DEL     // Swap the words to have lang-charset in the correct format
+//DEL     dwLangCharset = MAKELONG(HIWORD(pTransTable[0]), LOWORD(pTransTable[0]));
+//DEL 
+//DEL     // Query version information value
+//DEL     LPVOID lpData;
+//DEL     CString strVersion, strBlockName;
+//DEL 
+//DEL     strBlockName.Format(_T("\\StringFileInfo\\%08lx\\%s"), dwLangCharset, "FileVersion");
+//DEL 
+//DEL     if(::VerQueryValue((void **)lpVersionData, strBlockName.GetBuffer(0), &lpData, &nQuerySize)){
+//DEL 
+//DEL         strVersion = (LPCTSTR)lpData;
+//DEL 	}
+//DEL 
+//DEL     strBlockName.ReleaseBuffer();
+//DEL 
+//DEL 	float fVersion = 0.0f;
+//DEL 	_stscanf(strVersion, "%f", & fVersion);
+//DEL 
+//DEL 	bReturn = (fVersion >= 4.70);
+//DEL 
+//DEL 	delete[] lpVersionData; 
+//DEL 	lpVersionData = NULL;
+//DEL 	dwLangCharset = 0;
+//DEL 
+//DEL 	return bReturn;
+//DEL }

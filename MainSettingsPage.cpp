@@ -20,6 +20,7 @@
 #include "lameFE.h"
 #include "MainSettingsPage.h"
 #include "cfgFile.h"
+#include "Utils.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -225,6 +226,13 @@ void CMainSettingsPage::OnPlayFiles()
 
 void CMainSettingsPage::OnHighColorIcons()
 {
+
+	if(!Utils::CheckCOMTL32Dll()){
+
+		AfxMessageBox(IDS_OLDCOMTL32DLL, MB_OK+MB_ICONEXCLAMATION);
+		c_highColBar.SetCheck(FALSE);
+		return;
+	}
 
 	AfxMessageBox(IDS_RESTARTLAME, MB_OK+MB_ICONINFORMATION);
 }

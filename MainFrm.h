@@ -29,7 +29,6 @@ protected: // Nur aus Serialisierung erzeugen
 
 // Implementierung
 public:
-	BOOL CheckCOMCTL32DLL();
 	
 	void OnViewAlbumTagEditor();
 #ifdef _DEBUG
