@@ -125,6 +125,7 @@ void CAlbumInfoCtrl::SetInfo(CID3Info *info)
 void CAlbumInfoCtrl::OnChangeAlbumname() 
 {
 
+	TRACE("Entering CAlbumInfoCtrl::OnChangeAlbumname()\n");
 	if(!IsWindowVisible() || !m_bDataChanged){
 
 		// Window is not visible so of course has no focus
@@ -147,6 +148,7 @@ void CAlbumInfoCtrl::OnChangeAlbumname()
 	// message has been send so set modified flag to false
 	m_bDataChanged = FALSE;
 
+	TRACE("Leaving CAlbumInfoCtrl::OnChangeAlbumname()\n");
 }
 
 BOOL CAlbumInfoCtrl::OnInitDialog()
@@ -166,7 +168,11 @@ BOOL CAlbumInfoCtrl::OnInitDialog()
 void CAlbumInfoCtrl::OnChangeAlbumInfo() 
 {
 
+	TRACE("Entering CAlbumInfoCtrl::OnChangeAlbumInfo()\n");
+
 	m_bDataChanged = TRUE;	
+
+	TRACE("Leaving CAlbumInfoCtrl::OnChangeAlbumInfo()\n");
 }
 
 void CAlbumInfoCtrl::EnableControls(BOOL bEnable)
@@ -199,4 +205,9 @@ void CAlbumInfoCtrl::Clear()
 void CAlbumInfoCtrl::OnCancel()
 {
 
+}
+
+void CAlbumInfoCtrl::OnOK()
+{
+	OnChangeAlbumname();
 }

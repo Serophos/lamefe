@@ -19,6 +19,7 @@ class CAlbumInfoCtrl : public CDialog
 {
 // Konstruktion
 public:
+	void OnOK();
 	void OnCancel();
 	void Clear();
 	void EnableControls(BOOL bEnable);
