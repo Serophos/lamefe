@@ -6,9 +6,72 @@
 </HEAD><BODY>
 <UL>
 	<LI> <OBJECT type="text/sitemap">
-		<param name="Name" value="MP3">
-		<param name="Name" value="MP3 Configure LAME Encoder">
+		<param name="Name" value="Album backup">
+		<param name="Name" value="Album Backup">
+		<param name="Local" value="Help.html#ripping_modes">
+		</OBJECT>
+	<LI> <OBJECT type="text/sitemap">
+		<param name="Name" value="ASPI driver">
+		<param name="Name" value="How to upgrade ASPI driver">
+		<param name="Local" value="Help.html#faq_aspi">
+		</OBJECT>
+	<LI> <OBJECT type="text/sitemap">
+		<param name="Name" value="Batch processing">
+		<param name="Name" value="Ripping modes">
+		<param name="Local" value="Help.html#ripping_modes">
+		<param name="Name" value="Use all drives in batch processing mode">
+		<param name="Local" value="Help.html#batch_alldrives">
+		</OBJECT>
+	<LI> <OBJECT type="text/sitemap">
+		<param name="Name" value="Decoder">
+		<param name="Name" value="Select Decoder">
+		<param name="Local" value="Help.html#2.2">
+		<param name="Name" value="Configure Decoder">
+		<param name="Local" value="Help.html#2.2.1">
+		</OBJECT>
+	<LI> <OBJECT type="text/sitemap">
+		<param name="Name" value="Encoder">
+		<param name="Name" value="Select an Encoder">
+		<param name="Local" value="Help.html#2.1">
+		<param name="Name" value="Configure Encoder">
 		<param name="Local" value="Help.html#2.1.1">
+		</OBJECT>
+	<LI> <OBJECT type="text/sitemap">
+		<param name="Name" value="FreeDB">
+		<param name="Name" value="FreeDB">
+		<param name="Local" value="Help.html#3.2">
+		</OBJECT>
+	<LI> <OBJECT type="text/sitemap">
+		<param name="Name" value="ID3 Tags">
+		<param name="Name" value="ID3 Tags">
+		<param name="Local" value="Help.html#3">
+		</OBJECT>
+	<LI> <OBJECT type="text/sitemap">
+		<param name="Name" value="Plugin">
+		<param name="Name" value="Encoder Plugin">
+		<param name="Local" value="Help.html#2.2">
+		<param name="Name" value="Decoder Plugin">
+		<param name="Local" value="Help.html#2.1">
+		</OBJECT>
+	<LI> <OBJECT type="text/sitemap">
+		<param name="Name" value="Proxy Server">
+		<param name="Name" value="Using FreeDB server with proxy">
+		<param name="Local" value="Help.html#faq_proxy">
+		</OBJECT>
+	<LI> <OBJECT type="text/sitemap">
+		<param name="Name" value="Ripper">
+		<param name="Name" value="CD Ripper">
+		<param name="Local" value="Help.html#2.2.2">
+		</OBJECT>
+	<LI> <OBJECT type="text/sitemap">
+		<param name="Name" value="Trouble shooting">
+		<param name="Name" value="Trouble shooting / F.A.Q.">
+		<param name="Local" value="Help.html#4">
+		</OBJECT>
+	<LI> <OBJECT type="text/sitemap">
+		<param name="Name" value="Windows NT">
+		<param name="Name" value="Running LameFE under Windows NT/2000/XP as User">
+		<param name="Local" value="Help.html#faq_nt">
 		</OBJECT>
 </UL>
 </BODY></HTML>
