@@ -24,7 +24,6 @@
 
 #include "CDRip/CDRip.h"
 #include "CDPlayerIni.h"
-#include "EncodingStatusDlg.h"
 #include "SettingsSheet.h"
 #include "cfgFile.h"
 #include "CDTrack.h"
@@ -71,8 +70,9 @@ BEGIN_MESSAGE_MAP(CLameFEView, CFormView)
 	ON_COMMAND(ID_FILE_OPEN, OnFileOpen)
 	ON_COMMAND(ID_REMOVE_FILE, OnRemoveFile)
 	ON_COMMAND(ID_FILE_STARTENCODING, OnFileStartencoding)
-	ON_COMMAND(ID_APP_EXIT, OnAppExit)
+	ON_COMMAND(ID_BATCH_ALBUM, OnFileStartBatchAlbum)
 	ON_COMMAND(ID_START_TO_SINGLE_FILE, OnFileStartAlbum)
+	ON_COMMAND(ID_APP_EXIT, OnAppExit)
 	ON_COMMAND(ID_VIEW_RELOADCD, OnViewReloadcd)
 	ON_COMMAND(ID_VIEW_SELECTALLTRACKSFILES, OnViewSelectalltracksfiles)
 	ON_COMMAND(ID_ID3TAGS_SAVECUESHEET, OnId3tagsSavecuesheet)
@@ -90,6 +90,7 @@ BEGIN_MESSAGE_MAP(CLameFEView, CFormView)
 	ON_UPDATE_COMMAND_UI(ID_ID3TAGS_SAVECUESHEET, OnUpdateCDControls)
 	ON_UPDATE_COMMAND_UI(ID_ID3TAGS_SAVETOCDPLAYERINI, OnUpdateCDControls)
 	ON_UPDATE_COMMAND_UI(ID_START_TO_SINGLE_FILE, OnUpdateCDControls)
+	ON_UPDATE_COMMAND_UI(ID_BATCH_ALBUM, OnUpdateCDControls)
 	ON_UPDATE_COMMAND_UI(ID_VIEW_RELOADCD, OnUpdateCDControls)
 	//}}AFX_MSG_MAP
 	ON_REGISTERED_MESSAGE(UWM_ALBUMINFO_UPDATED, OnAlbumInfoUpdated)
@@ -176,6 +177,7 @@ CLameFEDoc* CLameFEView::GetDocument() // Die endgültige (nicht zur Fehlersuche 
 void CLameFEView::OnAlbumInfoUpdated(WPARAM wParam,LPARAM lParam)
 {
 
+	TRACE("Entering CLameFEView::OnAlbumInfoUpdated()\n");
 	if(!m_bTagEditorVisible){
 
 		return;
@@ -214,10 +216,16 @@ void CLameFEView::OnAlbumInfoUpdated(WPARAM wParam,LPARAM lParam)
 
 	if(!IsPluginMode()){
 
-		RefreshTrackList();
-		m_ctrlList.SetSelItems(nSelCnt, pIndex);
+		CString strTmp;
+
+		for(i = 0; i < m_ctrlList.GetItemCount(); i++){
+
+			strTmp.Format("%s - %s", m_compactDisc.GetCDTrack(i)->m_id3Info.GetArtist(), m_compactDisc.GetCDTrack(i)->m_id3Info.GetSong());
+			m_ctrlList.SetItemText(i, 1, strTmp);
+		}
 	}
 	delete pIndex;
+	TRACE("Leaving CLameFEView::OnAlbumInfoUpdated()\n");
 }
 
 void CLameFEView::OnId3tagsId3tageditor() 
@@ -271,6 +279,7 @@ void CLameFEView::OnId3tagsReadcdplayerini()
 	
 	RefreshTrackList();
 	m_ctrlList.SetSelItems(iCnt, pIndex);
+	SetAlbumInfo();
 	delete pIndex;
 }
 
@@ -290,6 +299,7 @@ void CLameFEView::OnId3tagsReadcdtext()
 
 	RefreshTrackList();
 	m_ctrlList.SetSelItems(iCnt, pIndex);
+	SetAlbumInfo();
 	delete pIndex;
 }
 
@@ -325,7 +335,7 @@ void CLameFEView::OnId3tagsReadfreedbserver()
 		CCDPlayerIni cdini(&m_compactDisc);
 		cdini.Write();
 	}
-
+	SetAlbumInfo();
 }
 
 void CLameFEView::OnId3tagsSavecuesheet() 
@@ -462,6 +472,10 @@ void CLameFEView::OnInitialUpdate()
 		OnId3tagsId3tageditor();
 	}
 
+	m_bCheckCD = cfg.GetValue("CheckForNewCD");
+
+	ResizeControls();
+	ReadCDContents();
 }
 
 void CLameFEView::OnSelchangeDevices(){
@@ -722,7 +736,7 @@ void CLameFEView::OnTimer(UINT nIDEvent)
 	
 	(AfxGetMainWnd())->SetWindowText(STR_VERSION);
 
-	if((nNumCDDrives == 0) || (IsPluginMode()) || ! IsWindowVisible()){
+	if((nNumCDDrives == 0) || (IsPluginMode()) || ! IsWindowVisible() || !m_bCheckCD){
 
 		return;
 	}
@@ -762,7 +776,8 @@ void CLameFEView::ShowSettingsDialog(int nTab)
 
 	CR_SetActiveCDROM(nActiveCD);
 	CR_SaveSettings();
-	//OnSelchangeDevices(FALSE);
+	cfgFile cfg(wd);
+	m_bCheckCD = cfg.GetValue("CheckForNewCD");
 }
 
 void CLameFEView::OnSettingsPreferences() 
@@ -1000,7 +1015,7 @@ void CLameFEView::RefreshTrackList()
 		if(m_compactDisc.GetCDTrack(i)->IsAudioTrack()){
 
 			m_ctrlList.InsertItem(i, tmp, 0);
-			tmp.Format("%s", m_compactDisc.GetCDTrack(i)->m_id3Info.GetArtist() + " - " + m_compactDisc.GetCDTrack(i)->m_id3Info.GetSong());
+			tmp.Format("%s - %s", m_compactDisc.GetCDTrack(i)->m_id3Info.GetArtist(), m_compactDisc.GetCDTrack(i)->m_id3Info.GetSong());
 		}
 		else{
 			
@@ -1019,20 +1034,28 @@ void CLameFEView::OnFileStartAlbum()
 {
 
 	OnViewSelectalltracksfiles();
-	StartEncoding(TRUE);
+	StartEncoding(ALBUMMODE);
+}
+
+void CLameFEView::OnFileStartBatchAlbum()
+{
+
+	OnViewSelectalltracksfiles();
+	StartEncoding(BATCHALBUMMODE);
 }
 
 void CLameFEView::OnFileStartencoding() 
 {
 
-	StartEncoding(FALSE);
+	StartEncoding(NORMALMODE);
 }
 
-void CLameFEView::StartEncoding(BOOL bAlbumMode)
+void CLameFEView::StartEncoding(modes mEMode)
 {
 
 	int     nInputDevice    = c_inputDevice.GetCurSel();
-	
+	cfgFile cfg(wd);
+
 	if((!m_compactDisc.GetNumTracks() && nInputDevice  < nNumCDDrives) ||
 		(!m_mmFiles.GetSize() && nInputDevice  >= nNumCDDrives)){
 
@@ -1104,19 +1127,26 @@ void CLameFEView::StartEncoding(BOOL bAlbumMode)
 		}
 
 
-		esdlg.SetJob(RIP_TO_MP3, dllName, bAlbumMode);  //RIP_TO_MP3 = RIP_TO_ANY
+		esdlg.SetJob(RIP_TO_ENCODER, dllName, mEMode); 
 		esdlg.SetCDROM(&m_compactDisc);
 	}
 	else{  //input from file
 		
-		esdlg.SetJob(ANY_TO_MP3, dllName); //ANY_TO_MP3 = ANY_TO_ANY :)
+		esdlg.SetJob(ANY_TO_ENCODER, dllName); 
 		esdlg.SetFiles(&m_mmFiles);
 	}
 	
-	GetTopLevelParent()->ShowWindow(SW_MINIMIZE);
-	GetTopLevelParent()->ShowWindow(SW_HIDE);
+	if(cfg.GetValue("hideduringenc")){
+
+		GetTopLevelParent()->ShowWindow(SW_MINIMIZE);
+		GetTopLevelParent()->ShowWindow(SW_HIDE);
+	}
+	m_bCheckCD = FALSE;
+
 	int nResult = esdlg.DoModal();
+	
 	GetTopLevelParent()->ShowWindow(SW_SHOWNORMAL);
+	m_bCheckCD = cfg.GetValue("CheckForNewCD");
 	
 	if(nResult == IDCANCEL){
 
@@ -1124,7 +1154,7 @@ void CLameFEView::StartEncoding(BOOL bAlbumMode)
 		return;
 	}
 
-	cfgFile cfg(wd);
+	//cfgFile cfg(wd);
 	if(cfg.GetValue("quit")){
 
 		//AfxGetApp()->ExitInstance();

@@ -20,10 +20,10 @@
 #include "ExtListCtrl.h"
 #include "AlbumInfoCtrl.h"
 #include "MyComboBox.h"
+#include "EncodingStatusDlg.h"
 
 typedef CArray<CPlugin, CPlugin>  CPluginArray;
 typedef CArray<CMultimediaFile*, CMultimediaFile*>	CMMFArray;
-//typedef CArray<COutPlugin, COutPlugin> COutPluginArray;
 
 class CLameFEView : public CFormView
 {
@@ -119,9 +119,11 @@ protected:
 
 
 private:
+	BOOL m_bCheckCD;
 	BOOL m_bTagEditorVisible;
 	void ShowSettingsDialog(int nTab);
-	void StartEncoding(BOOL bAlbumMode);
+	void OnFileStartBatchAlbum();
+	void StartEncoding(modes m_mEMode);
 	void RefreshTrackList();
 	void ReadCDContents();
 	int nNumCDDrives;
