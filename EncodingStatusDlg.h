@@ -97,6 +97,7 @@ private:
 
 	// Private Encoding stuff
 	BOOL	LameFEPlugin2MP3(CString plugin, CMultimediaFile *mFile, int nPos);
+	BOOL	WinampPlugin2Encoder(CString plugin, CMultimediaFile *mFile, int nPos);
 	BOOL	RipToAny();
 	BOOL	RipToSingleFile();
 	BOOL	AnyToEncoder();

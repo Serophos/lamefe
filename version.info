@@ -1,0 +1,15 @@
+LameFE 2.2 Release Candidate 1
+New in version 2.2 RC 1:
+==========================================
+· Support for Winamp plugins
+· Upgraded to Lame 3.93.1
+· Renamed LAME Quality presets to match 
+  names known from LAME.EXE
+· Select default decoder
+· Setup preset path
+· Bugfix: Windows 9x/2000 COMCTL32.DLL load error
+· Bugfix: Wrong settings handling for LAME
+· Bugfix: VBR/ABR encoder initialisiation failes
+· Bugfix: Encoder crash on Mono files
+· Upgraded CDRip.dll to include several bugfixes
+· Other minor changes and bugfixes

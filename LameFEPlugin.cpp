@@ -105,7 +105,7 @@ CString CLameFEPlugin::GetInfoString()
 	}
 
 	CString strResult;
-	strResult.Format("%s\nThis plugin supports following file extensions %s", inModule->description,  inModule->FileExtensions);
+	strResult.Format("%s", inModule->description);
 	return 	strResult;
 }
 

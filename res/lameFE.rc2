@@ -11,6 +11,7 @@
 // Fügen Sie hier manuell bearbeitete Ressourcen hinzu...
 
 /////////////////////////////////////////////////////////////////////////////
+/*
 
 STRINGTABLE DISCARDABLE 
 BEGIN
@@ -43,6 +44,9 @@ BEGIN
 	IDS_TOOL_CONFIGUREOUT	"Configure Output Device"
 	IDS_TOOL_INPUTDEVICE	"Select Input Source / Device"
 	IDS_TOOL_OUTPUTDEVICE	"Select Target Encoder"
+	IDS_BATCHNEXTCD			"Please insert the next CD into the drive %s"
+	IDS_BATCHTIMEDOUT		"Timeout limit exceeded. Batchmode canceled."
+	IDS_BATCHCDDRIVE		"Switching to drive %s"
 END
 
 STRINGTABLE DISCARDABLE 
@@ -63,7 +67,7 @@ BEGIN
     IDS_ENC_RIPPERROR       "Error ripping audiotrack"
     IDS_ENC_NUMERRORS       "%d error(s)"
     IDS_ENC_VIEW_LOG_ERR    "There have been errors during encoding. View logfile?"
-	IDS_ENC_DISCARD_LOG		"Do you want to save, print or discard the log messages?"
+	IDS_ENC_DISCARD_LOG		"Do you want to save or discard the log messages?"
 END
 
 STRINGTABLE DISCARDABLE 
@@ -92,7 +96,7 @@ BEGIN
     IDS_CDDB_ERR_WINSOCK    "Error initializing Winsock!"
     IDS_CDDB_ERR            "Could not connect to server.\n[Error: %d, Response:%s]"
     IDS_NOSELECTION         "No file selected."
-	IDS_BKSLHWARN			"The filename stringe may not start with a ""\\"". The filename / folders will be created relatively to the Base Output Path. If your Base Path is for example ""C:\\My Music"" and your filename-string is ""%1\%1 - %3"" your file will be saved as\n""C:\\My Music\\<Artist>\\<Artist> - <Songtitle>.mp3"".\nThe leading backslash will be removed from the string."
+	IDS_BKSLHWARN			"The filename string may not start with a ""\\"". The filename / folders will be created relatively to the Base Output Path. If your Base Path is for example ""C:\\My Music"" and your filename-string is ""%1\%1 - %3"" your file will be saved as\n""C:\\My Music\\<Artist>\\<Artist> - <Songtitle>.mp3"".\nThe leading backslash will be removed from the string."
 	IDS_DBLBACKSLASH		"Double backslash (\\\\) found. This is not alowed as it will create a zerolength directory-name. It will be removed automatically now."
     IDS_FILEOPENERR         "Error opening file %s"
     IDS_INVBITRATE          "Invalid bitrate. Only 16bit files are currently supported. This has %d bits per sample"
@@ -193,3 +197,20 @@ BEGIN
 	IDS_UNSUPPORTEDFILE			"Unsupported filetype : %s"
 	IDS_LOGSAVEDSUCCESS			"Logfile saved successfully as %s"
 END
+
+STRINGTABLE DISCARDABLE		  //"Tooltips may be this long -----------------------------------------------------"
+BEGIN
+	IDS_TOOL_READBUFFERS		"Number of buffers to store audiodata ripped from CD before sending to Encoder"
+	IDS_TOOL_BATCHALLCDS		"Looks for CDs in all CD Drives available"
+	IDS_TOOL_BATCHFREEDB		"If no albuminformation is found on local sources, a freeDB server is queried"
+	IDS_TOOL_BATCHTIMESOUT		"LameFE can stop the batch mode when no new CD is insterted after a certain time"
+	IDS_TOOL_BATCHBEEP			"Beep systemspeaker when a CD is finished and next one can be loaded"
+	IDS_TOOL_BATCHTIME			"Time in minutes to wait before leaving batchmode when no new CD is loaded"
+	IDS_TOOL_ENCTHREADP			"Higher priority <-> faster encoding but less cpu ressources for other programs"
+	IDS_TOOL_WRITECUE			"Write a cuesheet (for Nero i.e.) when ripping a complete album to a single file"
+	IDS_TOOL_HIDEMAINWND		"Hide the main window when encoding. Status Window minimizes to tray"
+	IDS_TOOL_ENQUEUE			"Append files to the end of a loaded playlist (player must support ""/enqueue"")"
+    IDS_TOOL_FILEFORMAT			"Identifiers:\n\%1 = Artist\t\t%2 = Title\t\t%3 = Album\n%4 = Year\t\t%5 = Genre\t\t%a = Track # (leading zero)\n%b = Total # Tracks\t%c = Disc ID (Hexadec.)\t%d = Vol. ID (Hexadecimal)\n\\ = subfolder\t\tL = lower case\t\tU = upper case\n\t\t\t(example: %L1 or % U2)"
+END
+
+*/

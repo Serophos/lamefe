@@ -29,6 +29,7 @@
 #define IDS_LOOKNFEEL                   136
 #define IDB_SPLASH                      137
 #define IDS_NONESELECTED                137
+#define IDS_PRESET_BLANKNAME            138
 #define IDB_FREEDB                      139
 #define IDD_SETTINGS                    139
 #define IDD_SETTINGS_FILENAMES          139
@@ -71,6 +72,7 @@
 #define IDR_MAINFRAMESMALL              184
 #define IDD_PLUGINPAGE                  185
 #define IDB_MENUITEMS                   185
+#define IDD_SETTINGS_DECODER            188
 #define SPLASH                          190
 #define IDD_SETUPWIZARD                 192
 #define IDR_LIST_MENU                   195
@@ -179,6 +181,7 @@
 #define IDC_NUMBUFFERS                  1094
 #define IDC_CHECK3                      1095
 #define IDC_CHECKFORNEWCD               1095
+#define IDC_SHOW_TAGEDITOR_ONFILE       1095
 #define IDC_TRACK_A                     1096
 #define IDC_APPENDDISCID                1096
 #define IDC_AM_ARTIST                   1097
@@ -207,6 +210,12 @@
 #define IDC_SELECTPRESET                1116
 #define IDC_REFRESH                     1117
 #define IDC_PRESETDESCRIPTION           1117
+#define IDC_PRESETPATH                  1119
+#define IDC_DEFAULT_FILE                1120
+#define IDC_PRESET_PATH_DISPLAY         1122
+#define IDC_WINAMP_PATH                 1123
+#define IDC_PATH_WINAMP                 1124
+#define IDC_OUTSAMPLERATE               1125
 #define IDC_EJECT_CD                    1128
 #define IDC_ENCODER_VERSION             1130
 #define IDC_BITSPERSAMPLE               1132
@@ -397,7 +406,9 @@
 #define ID_POPUP_ADDTOLIST              40045
 #define IDS_CDDB_ERR_WINSOCK            40046
 #define IDS_CDDB_ERR                    40047
+#define IDS_ENCODER_ERROR_INVALIDINPUTSTREAM 40048
 #define IDS_CDDBONWAVERR                40049
+#define IDS_ENCODER_ERROR_SAMPLERATEBITRATEMISMATCH 40049
 #define IDS_MAIN_DATATRACK              40050
 #define IDS_NOSELECTION                 40052
 #define IDS_FILEOPENERR                 40057
@@ -542,9 +553,9 @@
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_3D_CONTROLS                     1
-#define _APS_NEXT_RESOURCE_VALUE        188
+#define _APS_NEXT_RESOURCE_VALUE        189
 #define _APS_NEXT_COMMAND_VALUE         32816
-#define _APS_NEXT_CONTROL_VALUE         1119
+#define _APS_NEXT_CONTROL_VALUE         1126
 #define _APS_NEXT_SYMED_VALUE           101
 #endif
 #endif

@@ -6,7 +6,6 @@
 #include "./MACLib/MACLib.h"
 #include "../out_plugin.h"
 #include "ConfigDlg.h"
-//#include "cfgFile.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW

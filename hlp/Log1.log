@@ -1,32 +1,26 @@
 Microsoft HTML Help Compiler 4.73.8198
 
-Compiling d:\cpp\lameFE\hlp\lameFE.chm
+Compiling c:\cpp\lameFE2\hlp\lameFE.chm
 
-HHC5003: Error: Compilation failed while compiling ..\Manual\web\Manual.htm.
+HHC3001: Warning: The file "c:\cpp\lameFE2\hlp\Help.html" has a link to a non-existent file: "c:\cpp\lameFE2\hlp\nc.css".
+
+Compile time: 0 minutes, 6 seconds
+17	Topics
+18	Local links
+7	Internet links
+26	Graphics
+
+
+Created c:\cpp\lameFE2\hlp\lameFE.chm, 554,964 bytes
+Compression decreased file by 152,216 bytes.
+Microsoft HTML Help Compiler 4.73.8198
+
+Compiling c:\cpp\lameFE2\hlp\lameFE.chm
+
+HHC5013: Error: TOC Error: URL reference cannot be resolved "Help.htm#l2.2.1"
+HHC3001: Warning: The file "c:\cpp\lameFE2\hlp\toc.hhc" has a link to a non-existent file: "c:\cpp\lameFE2\hlp\Help.htm".
+HHC3001: Warning: The file "c:\cpp\lameFE2\hlp\Help.html" has a link to a non-existent file: "c:\cpp\lameFE2\hlp\nc.css".
 
 
 The following files were not compiled:
-..\Manual\web\Manual.htm
-Microsoft HTML Help Compiler 4.73.8198
-
-Compiling d:\cpp\lameFE\hlp\lameFE.chm
-
-HHC5003: Error: Compilation failed while compiling ..\Manual\web\Manual.htm.
-
-
-The following files were not compiled:
-..\Manual\web\Manual.htm
-Microsoft HTML Help Compiler 4.73.8198
-
-Compiling d:\cpp\lameFE\hlp\lameFE.chm
-
-
-Compile time: 0 minutes, 5 seconds
-2	Topics
-0	Local links
-6	Internet links
-16	Graphics
-
-
-Created d:\cpp\lameFE\hlp\lameFE.chm, 246,622 bytes
-Compression decreased file by 143,042 bytes.
+HHC5010: Error: Cannot open "c:\cpp\lameFE2\hlp\lameFE.chm". Compilation stopped.

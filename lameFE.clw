@@ -2,13 +2,13 @@
 
 [General Info]
 Version=1
-LastClass=CLameFEView
-LastTemplate=generic CWnd
+LastClass=CSettingsDlg
+LastTemplate=CDialog
 NewFileInclude1=#include "stdafx.h"
 NewFileInclude2=#include "lamefe.h"
 LastPage=0
 
-ClassCount=29
+ClassCount=30
 Class1=CAlbumInfoCtrl
 Class2=CCDdbQueryDlg
 Class3=CCheckNewVersion
@@ -33,37 +33,39 @@ Class21=CSettingsLameFE
 Class22=CSettingsLookNFeel
 Class23=CTrayDialog
 
-ResourceCount=24
+ResourceCount=25
 Resource1=IDR_INT_PLAYER (Englisch (USA))
 Resource2=IDR_MAINFRAMESMALL (Englisch (USA))
-Resource3=IDD_ABOUTBOX (Englisch (USA))
-Resource4=IDR_MAINFRAME
-Resource5=IDD_SETTINGS_LOOKNFEEL (Englisch (USA))
-Resource6=IDD_SETTINGS_BATCHMODE
+Resource3=IDD_SETTINGS_CDRIPPER (Englisch (USA))
+Resource4=IDD_SETTINGS_FILENAMES
+Resource5=IDD_CDDB_QUERY (Englisch (USA))
+Resource6=IDD_SETTINGS_PLUGINCODEC (Englisch (USA))
 Resource7=IDD_SETTINGS_MP3 (Englisch (USA))
-Resource8=IDR_SYSTRAY_MENU
-Resource9=IDD_SETTINGSDIALOG
+Resource8=IDD_TRACKLIST (Englisch (USA))
+Resource9=IDD_CHECKNEWVERSION (Englisch (USA))
 Resource10=IDD_LAMEFE_PAGE (Englisch (USA))
-Resource11=IDD_SETTINGS_PLUGINCODEC (Englisch (USA))
-Resource12=IDD_SETTINGS_CDRIPPER (Englisch (USA))
+Resource11=IDD_SETTINGSDIALOG
+Resource12=IDD_SETTINGS_BATCHMODE
 Resource13=IDD_FILENAMES (Englisch (USA))
 Resource14=IDD_PRESETBAR
 Resource15=IDD_SETTINGS_LAMEFE (Englisch (USA))
-Resource16=IDD_FREEDB_STATUS (Englisch (USA))
-Resource17=IDD_ALBUMINFOCTRL (Englisch (USA))
-Resource18=IDD_CHECKNEWVERSION (Englisch (USA))
-Resource19=IDD_TRACKLIST (Englisch (USA))
-Resource20=IDD_SETTINGS_FILENAMES
+Resource16=IDR_SYSTRAY_MENU
+Resource17=IDD_SETTINGS_DECODER
+Resource18=IDD_SETTINGS_FREEDB (Englisch (USA))
+Resource19=IDD_ABOUTBOX (Englisch (USA))
+Resource20=IDD_FREEDB_STATUS (Englisch (USA))
 Class24=CSettingsFreeDB
 Class25=CSettingsBatchMode
 Class26=CSettingsCDRipper
 Class27=CSettingsMP3
-Resource21=IDD_CDDB_QUERY (Englisch (USA))
+Resource21=IDD_SETTINGS_LOOKNFEEL (Englisch (USA))
 Class28=CSettingsPlugin
 Resource22=IDD_STATUS_DIALOG (Englisch (USA))
-Resource23=IDD_SETTINGS_FREEDB (Englisch (USA))
+Resource23=IDR_MAINFRAME
 Class29=CMyDialogBar
-Resource24=IDR_MAINFRAME (Englisch (USA))
+Resource24=IDD_ALBUMINFOCTRL (Englisch (USA))
+Class30=CSettingsDecoder
+Resource25=IDR_MAINFRAME (Englisch (USA))
 
 [CLS:CAlbumInfoCtrl]
 Type=0
@@ -206,6 +208,7 @@ HeaderFile=SettingsDlg.h
 ImplementationFile=SettingsDlg.cpp
 Filter=D
 VirtualFilter=dWC
+LastObject=IDC_APPLY
 
 [CLS:CSettingsFilenames]
 Type=0
@@ -218,12 +221,14 @@ Type=0
 BaseClass=CMySettingsPage
 HeaderFile=SettingsLameFE.h
 ImplementationFile=SettingsLameFE.cpp
+LastObject=IDC_PRESETPATH
 
 [CLS:CSettingsLookNFeel]
 Type=0
 BaseClass=CMySettingsPage
 HeaderFile=SettingsLookNFeel.h
 ImplementationFile=SettingsLookNFeel.cpp
+LastObject=IDC_SHOW_TAGEDITOR_ONFILE
 
 [CLS:CTrayDialog]
 Type=0
@@ -401,7 +406,7 @@ Control21=IDC_STATIC,static,1342308352
 [DLG:IDD_SETTINGS_LOOKNFEEL (Englisch (USA))]
 Type=1
 Class=CSettingsLookNFeel
-ControlCount=11
+ControlCount=12
 Control1=IDC_STATIC,button,1342177287
 Control2=IDC_SILENT,button,1342242819
 Control3=IDC_CPLAYERINI_ALWAYS_READ,button,1342242819
@@ -413,11 +418,12 @@ Control8=IDC_USE_HIGH_COLOR_ICONS,button,1342242819
 Control9=IDC_SHOW_SPLASH,button,1342242819
 Control10=IDC_ALBUMEDIT,button,1342242819
 Control11=IDC_HIDEMWND_ENC,button,1342242819
+Control12=IDC_SHOW_TAGEDITOR_ONFILE,button,1342242819
 
 [DLG:IDD_SETTINGS_MP3 (Englisch (USA))]
 Type=1
 Class=CSettingsMP3
-ControlCount=34
+ControlCount=36
 Control1=IDC_STATIC,static,1342308864
 Control2=IDC_MPEG,combobox,1344339971
 Control3=IDC_STATIC,static,1342308864
@@ -452,6 +458,8 @@ Control31=IDC_STATIC,static,1342308864
 Control32=IDC_STATIC,button,1342177287
 Control33=IDC_STATIC,static,1342308352
 Control34=IDC_DELETE,button,1342242816
+Control35=IDC_STATIC,static,1342308864
+Control36=IDC_OUTSAMPLERATE,combobox,1344339971
 
 [DLG:IDD_LAMEFE_PAGE (Englisch (USA))]
 Type=1
@@ -652,7 +660,7 @@ Control14=IDC_COMMENT,edit,1350631552
 [DLG:IDD_SETTINGS_LAMEFE (Englisch (USA))]
 Type=1
 Class=CSettingsLameFE
-ControlCount=13
+ControlCount=16
 Control1=IDC_STATIC,button,1342177287
 Control2=IDC_PLAYER,button,1342242816
 Control3=IDC_PLAYER_PATH,static,1342308864
@@ -666,6 +674,9 @@ Control10=IDC_ENQUEUE_FILES,button,1476460547
 Control11=IDC_M3U,button,1342242819
 Control12=IDC_SHUTDOWN,button,1342242819
 Control13=IDC_EXIT_FINISHED,button,1342242819
+Control14=IDC_STATIC,button,1342177287
+Control15=IDC_PRESET_PATH_DISPLAY,static,1342308864
+Control16=IDC_PRESETPATH,button,1342242816
 
 [TB:IDR_MAINFRAME (Englisch (USA))]
 Type=1
@@ -707,7 +718,7 @@ CommandCount=6
 Type=0
 HeaderFile=SettingsFreeDB.h
 ImplementationFile=SettingsFreeDB.cpp
-BaseClass=CDialog
+BaseClass=CMySettingsPage
 Filter=D
 LastObject=CSettingsFreeDB
 
@@ -733,7 +744,7 @@ HeaderFile=SettingsMP3.h
 ImplementationFile=SettingsMP3.cpp
 BaseClass=CMySettingsPage
 Filter=D
-LastObject=CSettingsMP3
+LastObject=IDC_MPEG
 
 [DLG:IDD_SETTINGS_PLUGINCODEC (Englisch (USA))]
 Type=1
@@ -811,4 +822,26 @@ Class=?
 ControlCount=2
 Control1=IDC_SELECTPRESET,combobox,1344340227
 Control2=IDC_STATIC,static,1342308352
+
+[DLG:IDD_SETTINGS_DECODER]
+Type=1
+Class=CSettingsDecoder
+ControlCount=9
+Control1=IDC_STATIC,button,1342177287
+Control2=IDC_STATIC,static,1342308352
+Control3=IDC_DEFAULT_FILE,button,1342177289
+Control4=IDC_DEFAULT_CD,button,1342177289
+Control5=IDC_STATIC,button,1342177287
+Control6=IDC_STATIC,static,1342308352
+Control7=IDC_PATH_WINAMP,static,1342308864
+Control8=IDC_WINAMP_PATH,button,1342242816
+Control9=IDC_STATIC,static,1342308352
+
+[CLS:CSettingsDecoder]
+Type=0
+HeaderFile=SettingsDecoder.h
+ImplementationFile=SettingsDecoder.cpp
+BaseClass=CMySettingsPage
+Filter=D
+LastObject=IDC_PATH_WINAMP
 

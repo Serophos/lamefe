@@ -17,16 +17,47 @@
 */
 
 #include "stdafx.h"
-#include "stdafx.h"
 #include "Ini.h"
 #include "Encoder.h"
-
+#include "Resource.h"
 
 #ifdef _DEBUG
 #undef THIS_FILE
 static char THIS_FILE[]=__FILE__;
 #define new DEBUG_NEW
 #endif
+
+/*
+//[VERSION][LAYER][BITRATE]
+DWORD MPEGBitrates[3][3][15] = 
+{
+	{
+		{0,32,64,96,128,160,192,224,256,288,320,352,384,416,448},
+		{0,32,48,56,64 ,80 ,96 ,112,128,160,192,224,256,320,384},
+		{0,32,40,48,56 ,64 ,80 ,96 ,112,128,160,192,224,256,320}
+	},
+	{
+		{0,32,48,56,64,80,96,112,128,144,160,176,192,224,256},
+		{0, 8,16,24,32,40,48,56 , 64, 80, 96,112,128,144,160},
+		{0, 8,16,24,32,40,48,56 , 64, 80, 96,112,128,144,160}
+	},
+	{
+		{0, 8,16,24,32,40,48,56 , 64, 80, 96,112,128,144,160},
+		{0, 8,16,24,32,40,48,56 , 64, 80, 96,112,128,144,160},
+		{0, 8,16,24,32,40,48,56 , 64, 80, 96,112,128,144,160},
+	}
+};
+
+//[VERSION][SAMPLERATE]
+const int MP3SampleRates[3][3] =
+{
+	{ 48000, 44100, 32000 },	
+	{ 24000, 22050, 16000 },	
+	{  8000, 11025, 11025 }		
+};
+*/
+extern DWORD MP3SampleRates[3][3];
+extern DWORD MPEGBitrates[3][3][15]; 
 
 //////////////////////////////////////////////////////////////////////
 // Konstruktion/Destruktion
@@ -57,6 +88,9 @@ CEncoder::CEncoder(CString wdir)
 
 	outputPlugin		= NULL;
 	outModule			= NULL;
+
+	m_bDownMixToMono = FALSE;
+	m_bUpMixToStereo = FALSE;
 
 	m_albumInfo.album	= "";
 	m_albumInfo.artist	= "";
@@ -160,7 +194,10 @@ void CEncoder::PassBuffer(LPVOID pnBuffer, DWORD dwRead)
 	}
 	else{
 
-		beEncodeChunk(hbeStream, dwRead, (short*)pnBuffer, pMP3Buffer, &dwWrite);
+		
+		dwRead = ProcessData((short*)pnBuffer, dwRead);
+
+		beEncodeChunk(hbeStream, dwRead, (short*)m_psInputStream, pMP3Buffer, &dwWrite);
 
 		// Check result
 		if(err != BE_ERR_SUCCESSFUL)
@@ -210,18 +247,59 @@ BOOL CEncoder::PrepareMP3(CString strFilename, int nNumchannels, int nSamplerate
 
 	TRACE("Entering CEncoder::PrepareMP3()\n");
 
+	strFileOut = strFilename;
+
+	//////////////////////////////////////////////////////////
+	// Get Preset and Encoder settings
+	//////////////////////////////////////////////////////////
 	CIni cfg;
 	CString strPreset;
 
 	cfg.SetIniFileName(wd + "\\LameFE.ini");
 	strPreset = cfg.GetValue("L.A.M.E.", "PresetName", "default");
-	cfg.SetIniFileName(wd + "\\" + strPreset + ".ini");
+	cfg.SetIniFileName(cfg.GetValue("LameFE", "PresetPath", wd) + "\\" + strPreset + ".ini");
 	
-	pFileOut = fopen(strFilename, "wb+");
-	strFileOut = strFilename;
 
-////////////////////////////////////////////////////////////////////////////////
-///////////// Now start encoding
+	/////////////////////////////////////////////////////////
+	// Now Init Encoder with proper settings
+	/////////////////////////////////////////////////////////
+
+	// Divide sample rate by two for MPEG2
+	if ((cfg.GetValue("L.A.M.E.", "MpegVer", 0) == 1) && (nSamplerate >= 32000))
+	{
+		m_dResampleRatio = 2.0;
+		nSamplerate = nSamplerate / 2;  // ACHTUNG!!!
+	}
+
+	INT nMode = cfg.GetValue("L.A.M.E.", "Channels", BE_MP3_MODE_STEREO);
+
+	// mask mode, just to be sure (due to an old hack)
+	nMode&= 0x0F;
+
+	// Do we have to downmix/upmix ?
+	if(nMode == BE_MP3_MODE_MONO){
+
+		if (nNumchannels == 2){
+
+			m_bDownMixToMono = TRUE;
+		}
+		else{
+
+			m_bDownMixToMono = FALSE;
+		}
+	}
+	else{
+
+		if (nNumchannels == 1){
+
+			m_bUpMixToStereo = TRUE;
+		}
+		else{
+
+			m_bUpMixToStereo=FALSE;
+		}
+	}
+
 
 	memset(&beConfig,0,sizeof(beConfig));					// clear all fields
 
@@ -238,14 +316,25 @@ BOOL CEncoder::PrepareMP3(CString strFilename, int nNumchannels, int nSamplerate
 
 	//Samplerate of input file
 	beConfig.format.LHV1.dwSampleRate	= nSamplerate;
-	//Downsample rate
-	beConfig.format.LHV1.dwReSampleRate	= 0;  //Encoder decides
+
+	// Set OutputSampleRate 
+	if(cfg.GetValue("L.A.M.E.", "OutSampleRate", 0) == 0){
+
+		beConfig.format.LHV1.dwReSampleRate = 0;
+	}
+	else{
+
+		beConfig.format.LHV1.dwReSampleRate = MP3SampleRates[cfg.GetValue("L.A.M.E.", "MpegVer", 0)][cfg.GetValue("L.A.M.E.", "OutSampleRate", 1) - 1];
+	}
+	
 	//Number of channels
-	beConfig.format.LHV1.nMode			= (nNumchannels == 1 ? BE_MP3_MODE_MONO : (LONG)cfg.GetValue("L.A.M.E.", "Channels", 1));		
+	beConfig.format.LHV1.nMode			= nMode;		
 	//CBR bitrate / VBR min bitrate
-	beConfig.format.LHV1.dwBitrate		= (DWORD)FormatBps(cfg.GetValue("L.A.M.E.", "Bitrate", 14));				
+	beConfig.format.LHV1.dwBitrate		= (DWORD)FormatBps(cfg.GetValue("L.A.M.E.", "MpegVer", 0), 
+		                                                    cfg.GetValue("L.A.M.E.", "Bitrate", 11));				
 	//VBR max bitrate
-	beConfig.format.LHV1.dwMaxBitrate	= (DWORD)FormatBps(cfg.GetValue("L.A.M.E.", "MaxBitrate", 16));
+	beConfig.format.LHV1.dwMaxBitrate	= (DWORD)FormatBps(cfg.GetValue("L.A.M.E.", "MpegVer", 0),
+		                                                    cfg.GetValue("L.A.M.E.", "MaxBitrate", 13));
 	//Quality preset
 	beConfig.format.LHV1.nPreset		= cfg.GetValue("L.A.M.E.", "QualityPreset", 0);
 	//MPEG Version. This is for future use and isn't supported by the lame_enc.dll yet
@@ -265,11 +354,21 @@ BOOL CEncoder::PrepareMP3(CString strFilename, int nNumchannels, int nSamplerate
 	//VBR stuff
 	if(cfg.GetValue("L.A.M.E.", "VbrMethod", 0) != 0){
 
-		//beConfig.format.LHV1.bWriteVBRHeader = TRUE;
+		//Enable VBR
 		beConfig.format.LHV1.bEnableVBR		 = TRUE;
-		beConfig.format.LHV1.nVBRQuality	 = cfg.GetValue("L.A.M.E.", "VbrQuality", 5);
-		beConfig.format.LHV1.dwVbrAbr_bps	 = cfg.GetValue("L.A.M.E.", "Abr", 14) * 1000;
 		beConfig.format.LHV1.nVbrMethod		 = (VBRMETHOD)(cfg.GetValue("L.A.M.E.", "VbrMethod", 0) - 1); 
+
+		//Is This ABR?
+		if(cfg.GetValue("L.A.M.E.", "VbrMethod", 0) == 5){
+			
+			beConfig.format.LHV1.nVBRQuality	 = 0;
+			beConfig.format.LHV1.dwVbrAbr_bps	 = cfg.GetValue("L.A.M.E.", "Abr", 14) * 1000;
+		}
+		else{
+
+			beConfig.format.LHV1.nVBRQuality	 = cfg.GetValue("L.A.M.E.", "VbrQuality", 5);
+			beConfig.format.LHV1.dwVbrAbr_bps	 = 0;
+		}
 		
 	}
 	else
@@ -284,22 +383,52 @@ BOOL CEncoder::PrepareMP3(CString strFilename, int nNumchannels, int nSamplerate
 	beConfig.format.LHV1.nPreset=( (nCRC >> 8 ) & 0x0F );
 
 
-
-	if(beInitStream(&beConfig, &dwSamples, &dwMP3Buffer, &hbeStream) != BE_ERR_SUCCESSFUL)
-	{
-
-		return FALSE;
+	int nReturn = beInitStream(&beConfig, &dwSamples, &dwMP3Buffer, &hbeStream);
+	
+	switch(nReturn){
+		
+		case BE_ERR_SUCCESSFUL:
+			break;
+		case -1:
+			AfxMessageBox(IDS_ENCODER_ERROR_SAMPLERATEBITRATEMISMATCH);
+			return FALSE;
+		break;
+		case -2:
+			AfxMessageBox(IDS_ENCODER_ERROR_INVALIDINPUTSTREAM);
+			return FALSE;
+		break;
+		default:
+			AfxMessageBox(IDS_ENCODER_ERROR_INVALIDINPUTSTREAM);
+			return FALSE;
+		break;
 	}
 
-	//alocate mp3 buffers
+	//alocate mp3 and resampling buffers
+	if((cfg.GetValue("L.A.M.E.", "MpegVer", 0) == 1) && (nSamplerate >= 32000))
+	{
+		// Add multiplcation factor for resampling
+		m_dwInBufferSize *= 2;
+	}
+
+	if (m_bDownMixToMono)
+	{
+		m_dwInBufferSize *= 2;
+	}
+
+
+	// Allocate Output Buffer size
 	pMP3Buffer = new BYTE[dwMP3Buffer];
+	
+	m_dwInBufferSize = dwSamples;
 
+	m_psInputStream = new SHORT[ m_dwInBufferSize ];
 
-	if(!pMP3Buffer)
+	if ( m_bUpMixToStereo )
 	{
-
-		return FALSE;
+		m_dwInBufferSize /= 2;
 	}
+
+	pFileOut = fopen(strFilename, "wb+");
 
 	TRACE("Leaving CEncoder::PrepareMP3()\n");
 	return TRUE;
@@ -345,6 +474,7 @@ BOOL CEncoder::DeInit()
 			fclose(pFileOut);
 			
 			delete [] pMP3Buffer;
+			delete [] m_psInputStream;
 			pFileOut = NULL;
 			
 			// Close output file
@@ -382,7 +512,9 @@ unsigned long CEncoder::GetSamplesToRead()
 	return dwSamples;
 }
 
-int CEncoder::GetEstimatedSize(int nSamplesPerSec, int nChannels, int wBitsPerSample, int nFileSize)
+
+
+int CEncoder::GetEstimatedSize(int nSamplesPerSec, int nChannels, int wBitsPerSample, __int64 nFileSize)
 {
 	
 	TRACE("Entering CEncoder::GetEstimatedSize()\n");
@@ -390,11 +522,11 @@ int CEncoder::GetEstimatedSize(int nSamplesPerSec, int nChannels, int wBitsPerSa
 
 		//Calculate estimated file size
 		//One MPEGII Layer 3 Frame with current setting is bitrate*576*samplerate bytes
-		long bytesPerFrame = beConfig.format.LHV1.dwBitrate * 576 / (beConfig.format.LHV1.dwSampleRate/1000) / 8;
+		__int64 bytesPerFrame = beConfig.format.LHV1.dwBitrate * 576 / (beConfig.format.LHV1.dwSampleRate/1000) / 8;
 		//The lenght in seconds of the wavefile is
-		long lenght = nFileSize * 8 / (nSamplesPerSec * nChannels * wBitsPerSample);
+		__int64 lenght = (nFileSize * 8) / (nSamplesPerSec * nChannels * wBitsPerSample);
 		//The size of the mp3 will be about
-		nEstimatedSize = beConfig.format.LHV1.dwSampleRate / 576 * bytesPerFrame * lenght;
+		nEstimatedSize = (int)beConfig.format.LHV1.dwSampleRate / 576 * bytesPerFrame * lenght;
 	}
 	else{
 
@@ -424,47 +556,76 @@ void CEncoder::SetAlbumInfo(MMFILE_ALBUMINFO albumInfo)
 
 }
 
-int CEncoder::FormatBps(int bps)
+int CEncoder::FormatBps(int nVersion, int bps)
 {
 
-/*
- 8 bps 0
-16 bps 1
-24 bps 2
-32 bps 3
-40 bps 4
-48 bps 5
-56 bps 6
-64 bps 7 //
-80 bps  8 
-96  bps 9
-112 bps 10
-128 bps 11
-144 bps 12
-160 bps 13 //
-192 bps 14 (default) 
-224 bps 15
-256 bps 16
-320 bps 17
-*/
-	int res = 0;
-	
-	if (bps <= 7){
-
-		res = 8 + 8 * (bps);
-	}
-	else if ((bps > 7) && (bps <= 13)){
-
-		res = 80 + 16 * (bps - 8);
-	}
-	else if ((bps > 13) && (bps <= 16)){
-
-		res = 160 + 32 * (bps - 13);
-	}
-	else{
-		res = 320;
-	}
-
-
+	int res = MPEGBitrates[nVersion][2][bps+1];
 	return res;
+}
+
+
+DWORD CEncoder::DownMixToMono(PSHORT psData, DWORD dwNumSamples)
+{
+
+	DWORD dwSample;
+	
+	for(dwSample = 0; dwSample < dwNumSamples / 2; dwSample++){
+
+		psData[dwSample] = psData[2 * dwSample] / 2 + psData[2 * dwSample + 1] / 2;
+	}
+
+	return dwNumSamples / 2;
+}
+
+DWORD CEncoder::UpMixToStereo(PSHORT psData, PSHORT psOutData, DWORD dwNumSamples)
+{
+
+	int dwSample;
+	
+	for(dwSample = dwNumSamples - 1; dwSample >= 0; dwSample--){
+
+		psOutData[2 * dwSample + 0] = psData[dwSample];
+		psOutData[2 * dwSample + 1] = psData[dwSample];
+	}
+
+	return dwNumSamples * 2;
+}
+
+DWORD CEncoder::ReSample(PSHORT psData, DWORD dwNumSamples)
+{
+
+	return dwNumSamples;
+}
+
+DWORD CEncoder::ProcessData(SHORT *pbsInSamples, DWORD dwNumSamples)
+{
+
+	//DWORD	dwSample = 0;
+	PSHORT 	psData = pbsInSamples;
+	//BOOL	bSilence = FALSE;
+	//PSHORT	pFifoBuffer = NULL;
+
+
+	// Downmix to mono?
+	if(m_bDownMixToMono){
+
+		dwNumSamples = DownMixToMono(pbsInSamples, dwNumSamples);
+
+	}
+	else if(m_bUpMixToStereo){
+
+		dwNumSamples = UpMixToStereo(pbsInSamples, m_psInputStream, dwNumSamples);
+		psData = m_psInputStream;
+	}
+
+
+	// For later Normalization support:
+	DWORD dwSample = 0;
+	for ( dwSample=0; dwSample< dwNumSamples; dwSample++ ){
+
+		m_psInputStream[dwSample] = psData[dwSample];
+	}
+
+
+	return dwNumSamples;
 }

@@ -40,6 +40,11 @@ CMultimediaFile::CMultimediaFile(CString path, CString pluginName)
 	m_strInputFile = path;
 	m_strPluginname = pluginName;
 	bAlerted = FALSE;
+
+	CString strTmp;
+	strTmp = path.Right(path.GetLength() - path.ReverseFind('\\') - 1);
+	strTmp = strTmp.Left(strTmp.GetLength() - 4);
+	m_id3Info.SetSong(strTmp);
 }
 
 CMultimediaFile::~CMultimediaFile()

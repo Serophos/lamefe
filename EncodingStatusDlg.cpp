@@ -29,6 +29,7 @@
 #include "ID3Lib/include/id3/misc_support.h"
 #include "plugin_api.h"
 #include "LameFEPlugin.h"
+#include "WinampPlugin.h"
 #include "CDRip/CDRip.h"
 #include "OutPlugin.h"
 #include "Playlist.h"
@@ -44,9 +45,201 @@
 static char THIS_FILE[] = __FILE__;
 #endif
 
-
-
 #define TIMERID    2
+
+
+
+//////////////////////////////////////////////////////////////////////////////////
+//
+// Winamp Output plugin emulation. Poor, poor C with global variables and
+// all this stuuf I hate, yuck :-(
+//
+//////////////////////////////////////////////////////////////////////////////////
+
+// file info
+int		g_samplerate;
+int		g_numchannels;
+int		g_bitspersamp;
+
+// sample buffer
+const int buffer_size = 8192;
+int		  buf_fill;
+short	  buffer_samples[8192];
+
+// mutex to lock buffer access
+HANDLE mutex;
+
+// mutex functions
+
+void mutex_create()
+{
+   mutex = ::CreateMutex(NULL, FALSE, NULL);
+}
+
+void mutex_delete()
+{
+   ::CloseHandle(mutex);
+}
+
+bool mutex_lock()
+{
+   DWORD ret = WaitForSingleObject(mutex,INFINITE);
+   return ret == WAIT_OBJECT_0;
+}
+
+bool mutex_try_lock()
+{
+   DWORD ret = WaitForSingleObject(mutex,0);
+   return ret == WAIT_OBJECT_0;
+}
+
+void mutex_unlock()
+{
+   ::ReleaseMutex(mutex);
+}
+
+
+//static members of winamp fake output "plugin"
+
+void quit(void)
+{
+	TRACE("quit()\n");
+}
+
+
+int open(int samplerate, int numchannels, int bitspersamp, int bufferlenms, int prebufferms)
+{
+
+	TRACE("open()\n");
+	TRACE("samplerate=%d numchannels=%d bitspersample=%d bufferlenms=%d prebufferms=%d", samplerate, numchannels, bitspersamp, bufferlenms, prebufferms);
+	
+	mutex_lock();
+
+	g_samplerate  = samplerate;
+	g_numchannels = numchannels;
+	g_bitspersamp = bitspersamp;
+	
+	mutex_unlock();
+	return 500;
+}
+
+
+
+// 0 on success. Len == bytes to write (<= 8192 always).buf is straight audio data.
+// 1 returns not able to write (yet). Non-blocking always.
+int write(char *buf, int len)
+{
+
+	TRACE("write %08x %d\n", buf, len);
+
+	BOOL bLoop = FALSE;
+
+	do
+	{
+
+		// lock mutex
+		mutex_lock();
+
+		if(buf_fill < 0){
+
+			break;
+		}
+
+		if(buf_fill != 0){
+
+			// do another loop
+			bLoop = TRUE;
+		}
+		else{
+
+			// copy samples to sample buffer
+			memcpy(buffer_samples,buf,len);
+			//buf_fill = len/g_numchannels/2;
+			buf_fill = len;
+		}
+
+		mutex_unlock();
+
+		if(bLoop){
+
+			Sleep(0);
+		}
+
+	} while(bLoop);
+
+	return 0;
+}
+
+
+int canwrite(void)
+{
+
+	int numbytes = 0;
+
+	mutex_lock();
+
+	if (buf_fill == 0){
+
+	    numbytes = buffer_size;
+	}
+
+	mutex_unlock();
+
+	return numbytes;
+}
+
+// called when input module stops
+int isplaying(void)
+{
+
+	mutex_lock();
+
+    buf_fill = -1;
+
+    mutex_unlock();
+
+    return 0; // 0 == not playing anymore
+}
+
+
+///////////////////////////////////////////////////
+/// DUMMY functions for input module
+///////////////////////////////////////////////////
+
+void init(void){}
+void close(void){}
+void about(HWND hWnd){}
+void config(HWND hWnd){}
+void setvolume(int volume){}
+void setpan(int pan){}
+void flush(int t){}
+int  getoutputtime(){return 0;}
+int  getwrittentime(){return 0;}
+int  pause(int pause){return 0;}
+void setinfo(int bitrate, int srate, int stereo, int synched){}
+void SAVSAinit(int maxlatency_in_ms, int srate){}
+void SAVSAdeinit(){}
+void SAaddpcmdata(void *pcmdata, int nch, int bps, int timestamp){}
+int  SAgetmode(){return 1;}
+void SAadd(void *data, int timestamp, int csa){}
+void VSAaddpcmdata (void *pcmdata, int nch, int bps, int timestamp){}
+int  VSAgetmode(int *specnch, int *wavench){return 0;}
+void VSAadd(void *data, int timestamp){}
+void vsasetinfo(int nch, int srate){}
+int  dsp_isactive(){return 0;}
+int  dsp_dosamples(short int *samples, int numsamples, int bps, int nch, int srate){return 0;}
+void eqset(int on, char data[10], int preamp){}
+
+///////////////////////////////////////////////////
+/// END DUMMY functions for input module
+///////////////////////////////////////////////////
+
+
+
+// End Winamp Output plugin emulation
+/////////////////////////////////////////////////////////////////////////////
+
+
 
 
 /////////////////////////////////////////////////////////////////////////////
@@ -522,7 +715,14 @@ BOOL CEncodingStatusDlg::AnyToEncoder()
 		TRACE("Checking for existing file\n");
 		m_in  = mFile->GetFileName();
 		m_out = mFile->GetSaveAs(m_strWd, m_strExtension);
+		
+		if(!CLameFEPlugin::FindPlugin(m_in.Right(3), m_strInputDevice, m_strWd + "\\Plugins")){
 
+			CWinampPlugin::FindPlugin(m_in.Right(3), m_strInputDevice, cfg.GetValue("LameFE", "WinampPluginPath", ""));
+		}
+
+
+		m_strInputDevice = m_strInputDevice.Right(m_strInputDevice.GetLength() - m_strInputDevice.ReverseFind('\\') - 1);
 		m_lLogFile.StartEntry(m_in, m_out, m_strInputDevice);
 		if(Utils::FileExists(m_out) && !cfg.GetValue("LameFE", "SilentMode", FALSE)){
 
@@ -546,10 +746,21 @@ BOOL CEncodingStatusDlg::AnyToEncoder()
 
 		}
 
-		if(CLameFEPlugin::FindPlugin(mFile->GetFileName().Right(3), strPlugin, m_strWd + "\\Plugins")){
+		// Look for a LameFE plugin to handle this file ...
+		if(CLameFEPlugin::FindPlugin(m_in.Right(3), strPlugin, m_strWd + "\\Plugins")){
 		
 			m_strInputDevice = strPlugin;
 			LameFEPlugin2MP3(strPlugin, mFile, i);
+			if(m_bAbortEnc){
+
+				return FALSE;
+			}
+		}
+		// ... check for a Winamp plugin afterwards if unsuccessfull
+		else if(CWinampPlugin::FindPlugin(m_in.Right(3), strPlugin, cfg.GetValue("LameFE", "WinampPluginPath", ""))){
+
+			m_strInputDevice = strPlugin;
+			WinampPlugin2Encoder(strPlugin, mFile, i);
 			if(m_bAbortEnc){
 
 				return FALSE;
@@ -573,6 +784,341 @@ BOOL CEncodingStatusDlg::AnyToEncoder()
 	return TRUE;
 }
 
+
+BOOL CEncodingStatusDlg::WinampPlugin2Encoder(CString plugin, CMultimediaFile *mFile, int nPos)
+{
+
+	//This code is for testing only
+	CWinampPlugin		wplugin(plugin);
+	In_Module*			inMod;
+	Out_Module			outMod;
+	signed __int64		numsamples;
+	char*				infilename = m_in.GetBuffer(10);
+	m_in.ReleaseBuffer();
+
+	CIni cfg;
+	cfg.SetIniFileName(m_strWd + "\\LameFE.ini");
+
+	if(!wplugin.Load(GetSafeHwnd())){
+
+		TRACE("Error loading plugin %s\n", plugin);
+		return FALSE;
+	}
+
+	inMod = wplugin.GetModule();
+	
+	// setup propper function calls
+	outMod.version			= 0x10;
+	outMod.description		= "LameFE virtual output plugin";
+	outMod.id				= 9876543;
+
+	outMod.Config			= config;
+	outMod.About			= about;
+
+	outMod.Init				= init;
+	outMod.Quit				= quit;
+	outMod.Open				= open;
+	outMod.Close			= close;
+	outMod.Write			= write;
+	outMod.CanWrite			= canwrite;
+	outMod.IsPlaying		= isplaying;
+	outMod.Pause			= pause;
+	outMod.SetPan			= setpan;
+	outMod.SetVolume		= setvolume;
+	outMod.Flush			= flush;
+	outMod.GetOutputTime	= getoutputtime;
+	outMod.GetWrittenTime	= getwrittentime;
+
+	inMod->SetInfo			= setinfo;
+	inMod->SAAddPCMData     = SAaddpcmdata;
+	inMod->SAGetMode		= SAgetmode;
+	inMod->SAAdd			= SAadd;
+	inMod->VSAAddPCMData	= VSAaddpcmdata;
+	inMod->VSAGetMode		= VSAgetmode;
+	inMod->VSAAdd			= VSAadd;
+	inMod->VSASetInfo		= vsasetinfo;
+	inMod->dsp_isactive		= dsp_isactive;
+	inMod->dsp_dosamples	= dsp_dosamples;
+	inMod->EQSet			= eqset;
+	inMod->SAVSADeInit      = SAVSAdeinit;
+	inMod->SAVSAInit		= SAVSAinit;
+
+	inMod->outMod			= &outMod;
+
+	
+	outMod.Init();
+
+	g_samplerate = -1;
+	g_numchannels = -1;
+	g_bitspersamp = -1;
+	buf_fill = -1; // disable buffer fill
+
+	// create mutex to lock buffer access
+	mutex_create();
+
+	// try to retrieve sample rate and channel numbers
+	int length_in_ms=0;
+
+	inMod->IsOurFile(infilename);
+	inMod->Play(infilename);
+
+	BOOL bLoop = TRUE;
+	
+	do{
+
+		mutex_lock();
+
+		if (g_samplerate == -1){
+
+			Sleep(10);
+		}
+		else{
+
+			bLoop = FALSE;
+		}
+		mutex_unlock();
+	}while(bLoop && !m_bAbortEnc);
+
+
+	// calculate the number of samples we have to expect
+	bLoop = TRUE;
+	length_in_ms = -1;
+	while(bLoop && !m_bAbortEnc){
+	
+		length_in_ms = inMod->GetLength();
+		
+		if(length_in_ms > 0){
+
+			bLoop = FALSE;
+		}
+		else{
+
+			Sleep(0);
+		}			
+	}
+
+	inMod->Stop();
+
+	buf_fill = 0; // enable buffer fill
+
+	numsamples = (signed __int64)((length_in_ms/1000.0)*double(g_samplerate));
+
+	// Now we can start to set up the encoder and controls :-)
+
+	TRACE("Setting up Encoder\n");
+
+
+	DWORD   dwRead     = 0;
+	DWORD   dwDone	   = 0;
+
+	CEncoder e(m_strWd);
+
+	MMFILE_ALBUMINFO tmpAI;
+	tmpAI.album   = mFile->m_id3Info.GetAlbum();
+	tmpAI.artist  = mFile->m_id3Info.GetArtist();
+	tmpAI.comment = mFile->m_id3Info.GetComment();
+	tmpAI.genre   = mFile->m_id3Info.GetGenre();
+	tmpAI.song    = mFile->m_id3Info.GetSong();
+	tmpAI.track   = mFile->m_id3Info.GetTrack();
+	tmpAI.year    = mFile->m_id3Info.GetYear();
+	e.SetAlbumInfo(tmpAI);
+
+	e.SetOutputFormat(m_strOutputDevice);
+	e.Init();
+	
+	mFile->GetWfx()->wBitsPerSample = g_bitspersamp;
+	mFile->GetWfx()->nSamplesPerSec = g_samplerate;
+	mFile->GetWfx()->nChannels		= g_numchannels;
+	
+	m_lLogFile.SetInFormat(mFile->GetWfx());
+
+	if(g_bitspersamp != 16){
+
+		TRACE("Invalid bitrate\n");
+		m_list_errors.Format(IDS_INVBITRATE, g_bitspersamp);
+		m_lLogFile.SetErrorMsg(nPos, m_list_errors);
+		m_nErrors++;
+		return FALSE;
+	}
+
+	if(!e.PrepareEncoding(mFile->GetSaveAs(m_strWd, m_strExtension), g_numchannels, g_samplerate, g_bitspersamp)){
+		
+		TRACE("Error preparing encoder\n");
+		m_list_errors.LoadString(IDS_ENC_INITERR);
+		m_lLogFile.SetErrorMsg(nPos, m_list_errors);
+		m_nErrors++;
+		return FALSE;
+	}
+	
+	//Setting up Controls
+	m_mLockControls.Lock();
+	CString strToolTip = "lameFE  | Working on file " + mFile->GetFileName();
+	if(strToolTip.GetLength() > 63){
+
+
+		strToolTip = strToolTip.Left(60);
+		strToolTip += "...";
+	}
+	TraySetToolTip(strToolTip);
+
+	if(TrayIsVisible()){
+
+		TrayUpdate();
+	}
+	m_mLockControls.Unlock();
+
+	float  in_size		= (float)numsamples * g_numchannels * g_bitspersamp;
+	float  mp3_est_size = (float)e.GetEstimatedSize(g_samplerate, g_numchannels, g_bitspersamp, in_size);
+
+	in_size		 /= (1024.0*1024.0);	//in MB
+	mp3_est_size /= (1024.0*1024.0);	//in MB
+
+	m_inputSize.Format("%2.2f", in_size);
+	m_estSize.Format("%2.2f", mp3_est_size);
+
+	//Check if there's enough free disk space
+	double nFreeDiskSpace = 0;
+	nFreeDiskSpace = Utils::GetMyFreeDiskSpace(cfg.GetValue("FileNames", "BasePath", m_strWd + "\\LameFE"));
+	
+	if((mp3_est_size / 1024 )>= nFreeDiskSpace){
+
+		m_list_errors.Format
+			(
+			"Not enoug free disk space on drive %s. (Required space=%d, Free space%d (KB)).\nAborting Encoding process",
+			cfg.GetValue("LameFE", "BasePath", m_strWd).Left(2),
+			m_estSize, nFreeDiskSpace
+			);
+
+		m_nErrors++;
+		AfxMessageBox(m_list_errors, MB_OK+MB_ICONSTOP);
+		m_lLogFile.SetErrorMsg(nPos, m_list_errors);
+		e.DeInit();
+		return FALSE;
+	}
+	
+	DWORD  dwSampleBufferSize = e.GetSamplesToRead();
+	
+	CEncoderFeeder ef(&e, dwSampleBufferSize, 256, m_bAbortEnc);
+
+	// Now we are ready to start the Winamp plugin
+    mutex_lock();
+
+    inMod->Play(infilename);
+
+    // release mutex
+    mutex_unlock();
+
+
+	bLoop = TRUE;
+
+	int		nOffset		= 0;
+	//int		samplesUsed	= 0;
+	char*	pcStream	= new char[8196+dwSampleBufferSize];
+	signed __int64		samples_converted	= 0;
+
+	while((buf_fill != -1) && !m_bAbortEnc){ // buf_fill is -1 when file is done
+
+
+		//permenantly look if there is data in the buffer
+		do{	
+			
+			// lock mutex
+			mutex_lock();
+
+			// now we have exclusive access to the buffer
+			if(buf_fill < 0){
+
+				// stop processing
+				bLoop = FALSE;
+			}
+			else if (buf_fill != 0){
+
+				bLoop = FALSE;
+
+				//copy the read bytes to the end of the encoding stream:
+				
+				memcpy(pcStream + nOffset, buffer_samples, buf_fill); //cOrigBuff, len);
+
+				SHORT*   psEncodeStream     = (SHORT*)pcStream;
+				DWORD    dwSamplesToConvert	= (buf_fill + nOffset) / sizeof(SHORT);
+
+				while (dwSamplesToConvert >= dwSampleBufferSize){
+
+					ef.AddData(psEncodeStream, dwSampleBufferSize);
+
+					dwSamplesToConvert -= dwSampleBufferSize;
+
+					psEncodeStream += dwSampleBufferSize;
+				}
+
+				// Copy the remaing bytes up front, if necessary
+				if (dwSamplesToConvert > 0){
+
+					// Calculate the offset in bytes
+					nOffset = dwSamplesToConvert * sizeof(SHORT);
+
+					// Copy up front
+					memcpy(pcStream, psEncodeStream, nOffset);
+				}
+				else{
+					nOffset=0;
+				}
+				
+				m_nBufferPerc = ef.GetBufferStatus();
+				
+				samples_converted += dwSampleBufferSize / g_numchannels / sizeof(short);
+				m_nFilePerc = (double)samples_converted / (double)numsamples * 100;
+
+
+				buf_fill = 0;
+			}
+
+			// release mutex
+			mutex_unlock();
+		}while(bLoop && !m_bAbortEnc);
+	}
+	
+	if(m_bAbortEnc){
+		
+		TRACE("Encoding was aborted, stop playback\n");
+		inMod->Stop();
+		wplugin.Unload();
+		inMod = NULL;
+	}
+
+	ef.WaitForFinished();
+	e.DeInit();
+	delete pcStream;
+	pcStream = NULL;
+
+	if(m_bAbortEnc){
+		
+		TRACE("Encoding aborted by user, so return FALSE\n");
+
+		return FALSE;
+	}
+	
+	wplugin.Unload();
+
+	inMod = NULL;
+	
+	if((cfg.GetValue("L.A.M.E.", "Id3v1", FALSE) || cfg.GetValue("L.A.M.E.", "Id3v2", TRUE)) && m_strOutputDevice == "lame_enc.dll"){
+	
+		if(!WriteID3Tag(mFile)){
+
+			TRACE("Error writing id3Tag\n");
+			m_lLogFile.SetErrorMsg(nPos, IDS_ENC_ID3FAILED);
+			m_nErrors++;
+		}
+	}
+	if(m_lLogFile.GetState(nPos)){
+
+		m_lLogFile.SetErrorMsg(nPos, IDS_ENC_SUCCESS);
+	}
+
+
+	return TRUE;
+}
 
 BOOL CEncodingStatusDlg::LameFEPlugin2MP3(CString plugin, CMultimediaFile *mFile, int nPos)
 {
@@ -623,6 +1169,8 @@ BOOL CEncodingStatusDlg::LameFEPlugin2MP3(CString plugin, CMultimediaFile *mFile
 	
 	inModule->hDllInstance = hDLL;
 	inModule->hMainWindow  = NULL;
+	inModule->GetProfileString = CLameFEPlugin::GetProfileString;
+	inModule->SetProfileString = CLameFEPlugin::SetProfileString;
 
 	inModule->Init();
 	if(inModule->Open(mFile->GetFileName()) != 0){
@@ -634,7 +1182,6 @@ BOOL CEncodingStatusDlg::LameFEPlugin2MP3(CString plugin, CMultimediaFile *mFile
 		return FALSE;
 	}
 
-	// Check for existing file
 
 	TRACE("Setting up Encoder\n");
 
@@ -674,8 +1221,7 @@ BOOL CEncodingStatusDlg::LameFEPlugin2MP3(CString plugin, CMultimediaFile *mFile
 		m_nErrors++;
 		return FALSE;
 	}
-
-	if(!e.PrepareEncoding(mFile->GetSaveAs(m_strWd, m_strExtension), mmFormat.nBitsPerSample, mmFormat.dwSampleRate, mmFormat.nBitsPerSample)){
+	if(!e.PrepareEncoding(mFile->GetSaveAs(m_strWd, m_strExtension), mmFormat.nChannels, mmFormat.dwSampleRate, mmFormat.nBitsPerSample)){
 		
 		TRACE("Error preparing encoder\n");
 		m_list_errors.LoadString(IDS_ENC_INITERR);
@@ -702,7 +1248,7 @@ BOOL CEncodingStatusDlg::LameFEPlugin2MP3(CString plugin, CMultimediaFile *mFile
 	m_mLockControls.Unlock();
 
 
-	double mp3_est_size = e.GetEstimatedSize(mmFormat.dwSampleRate, mmFormat.nBitsPerSample, mmFormat.nBitsPerSample, in_size);
+	double mp3_est_size = e.GetEstimatedSize(mmFormat.dwSampleRate, mmFormat.nChannels, mmFormat.nBitsPerSample, in_size);
 
 	in_size		 /= (1024.0*1024.0);	//in MB
 	mp3_est_size /= (1024.0*1024.0);	//in MB
@@ -731,6 +1277,7 @@ BOOL CEncodingStatusDlg::LameFEPlugin2MP3(CString plugin, CMultimediaFile *mFile
 	}
 	
 	DWORD sampleToRead = e.GetSamplesToRead();
+	
 	pWAVBuffer = new SHORT[sampleToRead];
 	
 
@@ -1705,7 +2252,4 @@ void CEncodingStatusDlg::OnLogSave()
 		}
 	}
 }
-
-
-
 

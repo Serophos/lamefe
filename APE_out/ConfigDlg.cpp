@@ -3,7 +3,7 @@
 
 #include "stdafx.h"
 #include "ConfigDlg.h"
-#include "cfgFile.H"
+//#include "cfgFile.H"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -47,8 +47,6 @@ BOOL CConfigDlg::OnInitDialog()
 
 	CDialog::OnInitDialog();
 	
-	//cfgFile cfg(m_strWd);
-	//m_cCompression.SetCurSel(cfg.GetValue("APE_out.dll_compression_level"));
 	UpdateData(FALSE);
 	return TRUE;
 }
@@ -56,8 +54,6 @@ BOOL CConfigDlg::OnInitDialog()
 void CConfigDlg::OnOK() 
 {
 
-	//cfgFile cfg(m_strWd);
-	//cfg.SetValue("APE_out.dll_compression_level", m_cCompression.GetCurSel());
 	CDialog::OnOK();
 }
 

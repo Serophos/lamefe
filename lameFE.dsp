@@ -252,6 +252,10 @@ SOURCE=.\SettingsCDRipper.cpp
 # End Source File
 # Begin Source File
 
+SOURCE=.\SettingsDecoder.cpp
+# End Source File
+# Begin Source File
+
 SOURCE=.\SettingsDlg.cpp
 # End Source File
 # Begin Source File
@@ -294,6 +298,10 @@ SOURCE=.\TrayDialog.cpp
 # Begin Source File
 
 SOURCE=.\Utils.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\WinampPlugin.cpp
 # End Source File
 # End Group
 # Begin Group "Header-Dateien"
@@ -381,6 +389,10 @@ SOURCE=.\ID3Info.h
 # End Source File
 # Begin Source File
 
+SOURCE=.\Winamp\in2.h
+# End Source File
+# Begin Source File
+
 SOURCE=.\Ini.h
 # End Source File
 # Begin Source File
@@ -453,6 +465,10 @@ SOURCE=.\MySettingsPage.h
 # End Source File
 # Begin Source File
 
+SOURCE=.\Winamp\out.h
+# End Source File
+# Begin Source File
+
 SOURCE=.\out_plugin.h
 # End Source File
 # Begin Source File
@@ -486,6 +502,10 @@ SOURCE=.\SettingsBatchMode.h
 # Begin Source File
 
 SOURCE=.\SettingsCDRipper.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\SettingsDecoder.h
 # End Source File
 # Begin Source File
 
@@ -534,6 +554,10 @@ SOURCE=.\TrayDialog.h
 # Begin Source File
 
 SOURCE=.\Utils.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\WinampPlugin.h
 # End Source File
 # End Group
 # Begin Group "Ressourcendateien"

@@ -35,6 +35,10 @@
 class CEncoder  
 {
 public:
+	DWORD ProcessData(SHORT* pbsInSamples, DWORD dwNumSamples);
+	DWORD ReSample(PSHORT psData, DWORD dwNumSamples);
+	DWORD UpMixToStereo( PSHORT psData, PSHORT psOutData,DWORD dwNumSamples);
+	DWORD DownMixToMono(PSHORT psData, DWORD dwNumSamples);
 	
 	CEncoder(CString wd);
 	virtual ~CEncoder();
@@ -46,7 +50,7 @@ public:
 
 	BOOL PrepareEncoding(CString strFilename, int nNumchannels, int nSamplerate, int nBitspersample);
 	BOOL PrepareMP3(CString strFilename, int nNumchannels, int nSamplerate, int nBitspersample);
-	int  GetEstimatedSize(int nSamplesPerSec, int nChannels, int wBitsperSample, int nFileSize);
+	int  GetEstimatedSize(int nSamplesPerSec, int nChannels, int wBitsperSample, __int64 nFileSize);
 	unsigned long GetSamplesToRead();
 
 
@@ -75,13 +79,19 @@ private:
 
 	DWORD dwWrite;
 
-//	SNDFILE*		m_pSndFile;
-//	SF_INFO			m_wfInfo;
 	COutPlugin		*outputPlugin;
 	LF_OUT*			outModule;
 
 
 protected:
+	int FormatBps(int nVersion, int bps);
+
+	// Stuff for resampling
+	SHORT*			m_psInputStream;
+	DWORD			m_dwInBufferSize;				// IN SHORTS !
+	DOUBLE			m_dResampleRatio;
+	BOOL			m_bDownMixToMono;
+	BOOL			m_bUpMixToStereo;
 
 	BEINITSTREAM		beInitStream;
 	BEENCODECHUNK		beEncodeChunk;

@@ -109,7 +109,7 @@ BOOL Utils::CheckCOMTL32Dll()
 	float fVersion = 0.0f;
 	_stscanf(strVersion, "%f", & fVersion);
 
-	bReturn = (fVersion >= 4.70);
+	bReturn = (fVersion > 5.80f);
 
 	delete[] lpVersionData; 
 	lpVersionData = NULL;

@@ -304,7 +304,7 @@ void CMyComboBox::OnSysColorChange()
 	m_clrBtnFace    = ::GetSysColor(COLOR_BTNFACE);
 }
 
-inline void CMyComboBox::EnableAutoCompletion(BOOL bEnable/*=TRUE*/)
+void CMyComboBox::EnableAutoCompletion(BOOL bEnable/*=TRUE*/)
 {
 
 	ASSERT(::IsWindow(m_hWnd)); 

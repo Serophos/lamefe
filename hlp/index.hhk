@@ -6,56 +6,9 @@
 </HEAD><BODY>
 <UL>
 	<LI> <OBJECT type="text/sitemap">
-		<param name="Name" value="Encoder Settings">
-		<param name="Name" value="lameFE Users Manual">
-		<param name="Local" value="Manual.htm#2.1">
-		</OBJECT>
-	<LI> <OBJECT type="text/sitemap">
-		<param name="Name" value="CD drive settings">
-		<param name="Local" value="Manual.htm#2.2.2">
-		</OBJECT>
-	<LI> <OBJECT type="text/sitemap">
-		<param name="Name" value="Select CD Drive">
-		<param name="Local" value="Manual.htm#2.2.1">
-		</OBJECT>
-	<LI> <OBJECT type="text/sitemap">
-		<param name="Name" value="Convert Wave Audio">
-		<param name="Local" value="Manual.htm#2.3">
-		</OBJECT>
-	<LI> <OBJECT type="text/sitemap">
-		<param name="Name" value="Id3 tags">
-		<param name="Name" value="Id3 Tag">
-		<param name="Local" value="Manual.htm">
-		<param name="Name" value="Query freeDB Servers">
-		<param name="Local" value="Manual.htm#2.4.1">
-		<param name="Name" value="Id3 tag editor">
-		<param name="Local" value="Manual.htm#2.4.2">
-		</OBJECT>
-	<LI> <OBJECT type="text/sitemap">
-		<param name="Name" value="Napster Style Filenames">
-		<param name="Local" value="Manual.htm#Napster">
-		</OBJECT>
-	<LI> <OBJECT type="text/sitemap">
-		<param name="Name" value="Output path">
-		<param name="Name" value="lameFE Users Manual">
-		<param name="Local" value="Manual.htm#2.5.1">
-		</OBJECT>
-	<LI> <OBJECT type="text/sitemap">
-		<param name="Name" value="F.A.Q.">
-		<param name="Name" value="lameFE Users Manual">
-		<param name="Local" value="Manual.htm#3">
-		</OBJECT>
-	<LI> <OBJECT type="text/sitemap">
-		<param name="Name" value="Frequently asked questions">
-		<param name="Name" value="lameFE Users Manual">
-		<param name="Local" value="Manual.htm#3">
-		</OBJECT>
-	<LI> <OBJECT type="text/sitemap">
-		<param name="Name" value="CDdb">
-		<param name="Name" value="lameFE Users Manual">
-		<param name="Local" value="Manual.htm">
-		<param name="Name" value="F.A.Q.: Can't access CDdb server">
-		<param name="Local" value="Manual.htm#cddberr">
+		<param name="Name" value="MP3">
+		<param name="Name" value="MP3 Configure LAME Encoder">
+		<param name="Local" value="Help.html#2.1.1">
 		</OBJECT>
 </UL>
 </BODY></HTML>

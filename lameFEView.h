@@ -16,6 +16,7 @@
 #include "MultimediaFile.h"
 #include "CompactDisk.h"
 #include "LameFEPlugin.h"
+#include "WinampPlugin.h"
 #include "OutPlugin.h"
 #include "ExtListCtrl.h"
 #include "AlbumInfoCtrl.h"

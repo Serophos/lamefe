@@ -33,8 +33,8 @@
 # define STR_VERSION		"LameFE Debug"
 # define STR_VERSION_DLG	STR_VERSION
 #else
-# define STR_VERSION		"LameFE 2.2b7"
-# define STR_VERSION_DLG	"LameFE 2.2 Beta 7"
+# define STR_VERSION		"LameFE 2.2rc1"
+# define STR_VERSION_DLG	"LameFE 2.2 Release Candidate 1"
 #endif
 
 //{{AFX_INSERT_LOCATION}}

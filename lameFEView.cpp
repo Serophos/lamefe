@@ -479,7 +479,10 @@ void CLameFEView::OnInitialUpdate()
 	m_bCheckCD = cfg.GetValue("CD-ROM", "CheckForNewCD", TRUE);
 
 	ResizeControls();
-	ReadCDContents();
+	if(cfg.GetValue("LameFE", "DefaultFromCD", TRUE)){
+
+		ReadCDContents();
+	}
 }
 
 void CLameFEView::OnSelchangeDevices(){
@@ -496,6 +499,12 @@ void CLameFEView::OnSelchangeDevices(BOOL bReset){
 
 			m_ctrlList.DeleteAllItems();
 			ResetFileList();
+			CIni cfg;
+			cfg.SetIniFileName(wd + "\\LameFE.ini");
+			if(cfg.GetValue("LameFE", "ShowAlbumEditoOnFile", FALSE) && !m_bTagEditorVisible){
+
+				OnId3tagsId3tageditor();
+			}
 		}
 	}
 	else{
@@ -584,7 +593,7 @@ BOOL CLameFEView::GetInputDevices()
 		c_inputDevice.SetCurSel(nSelCD);
 	}
 
-	//Check if there are any inputplugins
+	// Check if there are any LameFE input plugins
 	CFileFind finder;
 	BOOL bResult = finder.FindFile(wd + "\\Plugins\\*_in.dll");
 	while(bResult){
@@ -593,16 +602,42 @@ BOOL CLameFEView::GetInputDevices()
 		
 		TRACE("Added plugin %s.\n", finder.GetFileName());
 		CLameFEPlugin	tmp(finder.GetFilePath());
-		tmp.Load();
+		tmp.Load();  
 		tmp.Unload();
 		m_paPlugins.Add(tmp);
 	}
 
+	// Check if there are any Winamp input plugins
+	CIni cfg;
+	cfg.SetIniFileName(wd + "\\LameFE.ini");
+	
+	bResult = finder.FindFile(cfg.GetValue("LameFE", "WinampPluginPath", "") + "\\in_*.dll");
+
+	while(bResult){
+
+		bResult = finder.FindNextFile();
+		
+		TRACE("Added plugin %s.\n", finder.GetFileName());
+		CWinampPlugin	tmp(finder.GetFilePath());
+		tmp.Load(NULL);  
+		
+		if(tmp.UsesOutput()){
+
+			m_paPlugins.Add(tmp);
+		}
+		tmp.Unload();
+	}
+
+	// any plugins found?
 	if(m_paPlugins.GetSize() > 0){
 		
 		CString strDevice;
 		strDevice.LoadString(IDS_AUDIOFILEPLUGIN);
 		c_inputDevice.AddString(strDevice);
+		if(!cfg.GetValue("LameFE", "DefaultFromCD", TRUE)){
+
+			c_inputDevice.SetCurSel(nNumCDDrives);
+		}
 	}
 
 	TRACE("Leaving CLameFEView::GetInputDevices()\n");
