@@ -109,7 +109,7 @@ END
 
 IDD_CONFIG DIALOG DISCARDABLE  0, 0, 347, 95
 STYLE DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
-CAPTION "Ogg Voribis Encoder Plugin Configuration"
+CAPTION "Ogg Vorbis Encoder Plugin Configuration"
 FONT 8, "MS Sans Serif"
 BEGIN
     DEFPUSHBUTTON   "OK",IDOK,290,7,50,14

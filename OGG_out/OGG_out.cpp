@@ -270,10 +270,18 @@ unsigned int  write(short *ptr, size_t items){
 	DWORD nBytesToWrite = 0;
 	DWORD dwNumSamples  = items;
 
-	// Sanity check
 	ASSERT(ptr);
 	
-	// Convert the input samples, as long as the user did not abort the thread
+/*
+__declspec(dllexport) VB_ERR vbEncWrite
+	(
+		HVB_STREAM	hbeStream, 
+		DWORD		nSamples, 
+		PSHORT		pSamples,
+		PBYTE		pOutput,
+		PDWORD		pdwOutput
+	);
+*/
 	if ( m_EncWrite(m_hvbStream, dwNumSamples, ptr, m_pbtOutStream, &nBytesToWrite) == 1)
 	{
 		ASSERT(FALSE);
@@ -283,8 +291,8 @@ unsigned int  write(short *ptr, size_t items){
 	// Did we receive some output bytes
 	if (nBytesToWrite > 0)
 	{
-		// Guess so, write it to the output file
-		if (fwrite(m_pbtOutStream,nBytesToWrite,1,m_pFile)!=1)
+
+		if (fwrite(m_pbtOutStream, nBytesToWrite, 1, m_pFile) != 1)
 		{
 			ASSERT(FALSE);
 			return -1;
