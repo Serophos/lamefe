@@ -271,6 +271,10 @@ SOURCE=.\TimeStatus.cpp
 
 SOURCE=.\TrayDialog.cpp
 # End Source File
+# Begin Source File
+
+SOURCE=.\Utils.cpp
+# End Source File
 # End Group
 # Begin Group "Header-Dateien"
 
@@ -470,6 +474,10 @@ SOURCE=.\TimeStatus.h
 # Begin Source File
 
 SOURCE=.\TrayDialog.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\Utils.h
 # End Source File
 # End Group
 # Begin Group "Ressourcendateien"
