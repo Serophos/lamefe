@@ -182,7 +182,7 @@ void CEncoder::PassBuffer(LPVOID pnBuffer, DWORD dwRead)
 BOOL CEncoder::PrepareWave(CString outFile, int nNumchannels, int nSamplerate, int nBitspersample)
 {
 
-	TRACE("Encoder: prepareWave\n");
+	TRACE("Entering CEncoder::PrepareWave()\n");
 
 	if(!outModule){
 
@@ -200,6 +200,7 @@ BOOL CEncoder::PrepareWave(CString outFile, int nNumchannels, int nSamplerate, i
 		return FALSE;
 	}
 
+	TRACE("Leaving CEncoder::PrepareWave()\n");
 	return TRUE;
 }
 
@@ -207,7 +208,7 @@ BOOL CEncoder::PrepareWave(CString outFile, int nNumchannels, int nSamplerate, i
 BOOL CEncoder::PrepareMP3(CString strFilename, int nNumchannels, int nSamplerate, int nBitspersample)
 {
 
-	TRACE("Encoder: Prepare MP3\n");
+	TRACE("Entering CEncoder::PrepareMP3()\n");
 
 	cfgFile cfg(wd);
 
@@ -281,12 +282,16 @@ BOOL CEncoder::PrepareMP3(CString strFilename, int nNumchannels, int nSamplerate
 
 		return FALSE;
 	}
+
+	TRACE("Leaving CEncoder::PrepareMP3()\n");
 	return TRUE;
 }
 
 
 BOOL CEncoder::DeInit()
 {
+
+	TRACE("Entering CEncoder::DeInit()\n");
 
 	cfgFile cfg(wd);
 	if(strOutputDLL == "lame_enc.dll"){
@@ -345,6 +350,7 @@ BOOL CEncoder::DeInit()
 		}
 	}
 
+	TRACE("Leaving CEncoder::DeInit()\n");
 	return TRUE;
 }
 
@@ -352,12 +358,14 @@ BOOL CEncoder::DeInit()
 unsigned long CEncoder::GetSamplesToRead()
 {
 
+	TRACE("Entering CEncoder::GetSamplesToRead()\n");
 	return dwSamples;
 }
 
 int CEncoder::GetEstimatedSize(int nSamplesPerSec, int nChannels, int wBitsPerSample, int nFileSize)
 {
 	
+	TRACE("Entering CEncoder::GetEstimatedSize()\n");
 	if(strOutputDLL == "lame_enc.dll"){
 
 		//Calculate estimated file size
@@ -374,12 +382,15 @@ int CEncoder::GetEstimatedSize(int nSamplesPerSec, int nChannels, int wBitsPerSa
 	}
 	
 
+	TRACE("Leaving CEncoder::GetEstimatedSize()\n");
 	return nEstimatedSize;
 }
 
 
 void CEncoder::SetAlbumInfo(MMFILE_ALBUMINFO albumInfo)
 {
+
+	TRACE("Entering CEncoder::SetAlbumInfo()\n");
 
 	m_albumInfo.album   = albumInfo.album;
 	m_albumInfo.artist  = albumInfo.artist;
@@ -388,4 +399,7 @@ void CEncoder::SetAlbumInfo(MMFILE_ALBUMINFO albumInfo)
 	m_albumInfo.song    = albumInfo.song;
 	m_albumInfo.track   = albumInfo.track;
 	m_albumInfo.year    = albumInfo.year;
+
+	TRACE("Leaving CEncoder::SetAlbumInfo()\n");
+
 }

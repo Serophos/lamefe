@@ -56,6 +56,7 @@ CEncoderFeeder::~CEncoderFeeder()
 BOOL CEncoderFeeder::AddData(PSHORT pData, DWORD length)
 {
 
+	TRACE("Entering CEncoderFeeder:AddData()\n");
 	if(!bRunning || m_bAbortEnc){
 
 		return TRUE;
@@ -78,6 +79,7 @@ BOOL CEncoderFeeder::AddData(PSHORT pData, DWORD length)
 		m_ArrayLock.Unlock(); //unlock array
 	}
 
+	TRACE("Leaving CEncoderFeeder:AddData()\n");
 	return TRUE;
 }
 
@@ -163,7 +165,9 @@ UINT CEncoderFeeder::FeederProc(LPVOID param)
 int CEncoderFeeder::GetBufferStatus()
 {
 
-	return (int)((float)m_Buffer.BuffersAvailable() / (float)m_nBuffers *100);
+	TRACE("Entering CEncoderFeeder:GetBufferStatus()\n");
+
+	return (int)((float)m_Buffer.BuffersAvailable() / (float)m_nBuffers*100);
 }
 
 
