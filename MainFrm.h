@@ -9,6 +9,8 @@
 #pragma once
 #endif // _MSC_VER > 1000
 
+#include "BCMenu.h"
+#include "PresetBar.h"
 
 class CMainFrame : public CFrameWnd
 {
@@ -29,8 +31,11 @@ protected: // Nur aus Serialisierung erzeugen
 
 // Implementierung
 public:
-	
-	void OnViewAlbumTagEditor();
+	//void OnViewAlbumTagEditor();
+
+	HMENU NewMenu();	
+	BCMenu m_menu;
+
 #ifdef _DEBUG
 	virtual void AssertValid() const;
 	virtual void Dump(CDumpContext& dc) const;
@@ -40,10 +45,14 @@ protected:  // Eingebundene Elemente der Steuerleiste
 	CStatusBar  m_wndStatusBar;
 	CToolBar    m_wndToolBar;
 	CToolBar	m_wndPlayerBar;
+	CPresetBar  m_wndDlgBar;
 	CReBar      m_wndReBar;
 	CBitmap     m_bmToolbarHi; 
 
 // Generierte Message-Map-Funktionen
+public:
+	afx_msg void OnViewShowPresets();
+
 protected:
 	//{{AFX_MSG(CMainFrame)
 	afx_msg int OnCreate(LPCREATESTRUCT lpCreateStruct);
@@ -53,6 +62,9 @@ protected:
 	afx_msg void OnViewShowtoolbar();
 	afx_msg void OnViewShowstatusline();
 	afx_msg void OnShowPlayer();
+	afx_msg void OnMeasureItem(int nIDCtl, LPMEASUREITEMSTRUCT lpMeasureItemStruct);
+	afx_msg LRESULT OnMenuChar(UINT nChar, UINT nFlags, CMenu* pMenu);
+	afx_msg void OnInitMenuPopup(CMenu* pPopupMenu, UINT nIndex, BOOL bSysMenu);
 	//}}AFX_MSG
 	DECLARE_MESSAGE_MAP()
 };

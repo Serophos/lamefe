@@ -29,8 +29,13 @@
 #include <commctrl.h>
 #include <mmsystem.h>
 
-#define STR_VERSION		"LameFE 2.2b5"
-#define STR_VERSION_DLG "LameFE 2.2 Beta 5 \n"
+#ifdef _DEBUG
+# define STR_VERSION		"LameFE Debug"
+# define STR_VERSION_DLG	STR_VERSION
+#else
+# define STR_VERSION		"LameFE 2.2b7"
+# define STR_VERSION_DLG	"LameFE 2.2 Beta 7"
+#endif
 
 //{{AFX_INSERT_LOCATION}}
 // Microsoft Visual C++ fügt unmittelbar vor der vorhergehenden Zeile zusätzliche Deklarationen ein.

@@ -19,7 +19,6 @@
 #include "stdafx.h"
 #include "CDTrack.h"
 #include "Resource.h"
-#include "cfgFile.h"
 
 #ifdef _DEBUG
 #undef THIS_FILE
@@ -72,25 +71,6 @@ CString CCDTrack::GetTrackname()
 	}
 	return m_strTrackName;
 }
-
-
-//DEL void CCDTrack::SetErrorString(CString err)
-//DEL {
-//DEL 
-//DEL 	m_strError = err;
-//DEL }
-
-//DEL void CCDTrack::SetErrorString(UINT errID)
-//DEL {
-//DEL 
-//DEL 	m_strError.LoadString(errID);
-//DEL }
-
-//DEL CString CCDTrack::GetError()
-//DEL {
-//DEL 	
-//DEL 	return m_strError;
-//DEL }
 
 
 

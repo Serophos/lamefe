@@ -30,6 +30,9 @@ static char THIS_FILE[]=__FILE__;
 
 typedef BOOL (PASCAL *GFDPEX )(LPCSTR,PULARGE_INTEGER,PULARGE_INTEGER,PULARGE_INTEGER);
 
+//enum COMCTL32VERSION {COMCTL32_UNKNOWN, COMCTL32_400, COMCTL32_470, COMCTL32_471};
+
+
 //////////////////////////////////////////////////////////////////////
 // Konstruktion/Destruktion
 //////////////////////////////////////////////////////////////////////
@@ -225,4 +228,153 @@ BOOL Utils::CreateDirs(CString strFilename)
 	}
 
 	return FALSE;
+}
+
+CString Utils::CreateFilename(CID3Info *id3Info, CString strFormat, CString strExt, int nVolID, int nDiscID, int nTrack, int nNumAudioTracks)
+{
+
+	CString tmp;
+
+	// %1 = Artist
+	tmp = id3Info->GetArtist();
+	tmp.Remove('\\');
+	strFormat.Replace("%1", tmp);
+	tmp.MakeUpper();
+	strFormat.Replace("%U1", "tmp");
+	tmp.MakeLower();
+	strFormat.Replace("%L1", "tmp");
+
+	// %2 = Songtitle
+	tmp =  id3Info->GetSong();
+	tmp.Remove('\\');
+	strFormat.Replace("%2", tmp);
+	tmp.MakeUpper();
+	strFormat.Replace("%U2", "tmp");
+	tmp.MakeUpper();
+	
+	// %3 = Album
+	tmp =  id3Info->GetAlbum();
+	tmp.Remove('\\');
+	strFormat.Replace("%3", tmp);
+	tmp.MakeUpper();
+	strFormat.Replace("%U3", "tmp");
+	tmp.MakeUpper();
+	strFormat.Replace("%L3", "tmp");
+	
+	// %5 = Genre
+	tmp = id3Info->GetGenre();
+	tmp.Remove('\\');
+	strFormat.Replace("%5", tmp);
+	tmp.MakeUpper();
+	strFormat.Replace("%U5", "tmp");
+	tmp.MakeUpper();
+	strFormat.Replace("%L5", "tmp");
+
+
+	// %c = DiscID
+	tmp.Format("0x%X", nDiscID);
+	strFormat.Replace("%c", tmp);
+	tmp.MakeUpper();
+	strFormat.Replace("%Uc", tmp);
+	tmp.MakeUpper();
+	strFormat.Replace("%Lc", tmp);
+	// %d = VolID
+	tmp.Format("0x%X", nVolID);
+	strFormat.Replace("%d", tmp);
+	tmp.MakeUpper();
+	strFormat.Replace("%Ud", tmp);
+	tmp.MakeUpper();
+	strFormat.Replace("%Ld", tmp);
+	
+	// %4 = ID3-Year
+	tmp.Format("%d", id3Info->GetYear());
+	strFormat.Replace("%4", tmp);
+	strFormat.Replace("%U4", tmp);
+	strFormat.Replace("%L4", tmp);
+
+	// %a = track
+	tmp.Format("%02d", nTrack);
+	strFormat.Replace("%Ua", tmp);
+	strFormat.Replace("%La", tmp);
+	strFormat.Replace("%a", tmp);
+
+	// %a = numtracks
+	tmp.Format("%02d", nNumAudioTracks);
+	strFormat.Replace("%Ub", tmp);
+	strFormat.Replace("%Lb", tmp);
+	strFormat.Replace("%b", tmp);
+
+	strFormat.Replace('/', '-');
+	strFormat.Remove('*');
+	strFormat.Remove('?');
+	strFormat.Replace('\"', '\'');
+	strFormat.Replace('<', '(');
+	strFormat.Replace('>', ')');
+	strFormat.Replace('|', '-');
+	strFormat.Remove(':');
+	//strFormat.Remove('\\');
+	//strFormat.Remove('.');
+
+	CString strSaveAs;
+
+	strSaveAs = strFormat; // + strExt;
+
+	return strSaveAs;
+}
+
+CString Utils::EncryptString(CString strPlain)
+{
+
+	int		nNumCharacters	= 0;
+	int*	strArray		= NULL;
+	int		nTmp			= 0;
+	CString	strTmp			= "";
+	CString strEncrypted	= "";
+
+	nNumCharacters  = strPlain.GetLength();
+	strArray		= new int[nNumCharacters];
+
+	for(int i = 0; i < nNumCharacters; i++){
+
+		strArray[i] = strPlain.GetAt(i);
+	}
+	for(i = 0; i < nNumCharacters; i++){
+
+		nTmp = strArray[i];
+		nTmp += 20;
+		strTmp.Format("%03d", nTmp);
+		strEncrypted += strTmp;
+	}
+	delete strArray;
+
+	return strEncrypted;
+}
+
+CString Utils::DecryptString(CString strEncrypted)
+{
+
+	int		nNumCharacters	= 0;
+	int*	strArray		= NULL;
+	int		nTmp			= 0;
+	CString	strTmp			= "";
+	CString strPlain		= "";
+
+	nNumCharacters	= strEncrypted.GetLength() / 3;
+	strArray		= new int[nNumCharacters];
+
+	for(int i = 0; i < nNumCharacters; i++){
+
+		strTmp = strEncrypted.Mid(i*3, 3);
+		nTmp = atoi(strTmp);
+		strArray[i] = nTmp - 20;
+	}
+	for(i = 0; i < nNumCharacters; i++){
+
+		nTmp = strArray[i];
+		strPlain += (CString)nTmp;
+	}
+
+	delete strArray;
+
+	return strPlain;
 }

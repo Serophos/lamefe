@@ -30,6 +30,8 @@
 class CLogFile  
 {
 public:
+	void SetNotificationMessage(CString strMsg);
+	void SetNotificationMessage(UINT nID);
 	int nLog;
 	void SetOutputWnd(CExtListCtrl *listCtrl);
 	void SetInFormat(WAVEFORMATEX *wfx);
@@ -44,14 +46,12 @@ public:
 
 	BOOL SaveLogAs(LPCSTR strFilename);
 	BOOL WriteLog(LPCSTR strFilename);
-	BOOL WriteReport(LPCSTR strFilename);
 	BOOL View();
 
 	CLogFile();
 	virtual ~CLogFile();
 
 private:
-	BOOL m_bReportStyle;
 	// Session
 	CString		 m_strWd;
 	CString		 m_strLogFilename;
@@ -70,21 +70,21 @@ private:
 	// Entries
 	time_t		m_tTmpStartTime;
 	// %s = sourcefile
-	CStringArray m_staInFiles;
+	//CStringArray m_staInFiles;
 	// %o = outfile
-	CStringArray m_staOutFiles;
+	//CStringArray m_staOutFiles;
 	// %f = sourceformat
-	CStringArray m_staInFormat;
+	//CStringArray m_staInFormat;
 	// %F = outformat
-	CStringArray m_staOutFormat;
+	//CStringArray m_staOutFormat;
 	// %m = = inMod;
-	CStringArray m_staInModule;
+	//CStringArray m_staInModule;
 	// %c = compressionratio
-	CStringArray m_staCompression;
+	//CStringArray m_staCompression;
 	// %t = systemtime
-	CStringArray m_staSystemTime;
+	//CStringArray m_staSystemTime;
 	// % T = Time Used
-	CStringArray m_staTimeUsed;
+	//CStringArray m_staTimeUsed;
 	// %e = errormessages
 	CStringArray m_staErrors;
 	//

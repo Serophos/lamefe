@@ -96,11 +96,11 @@ SOURCE=.\AlbumInfoCtrl.cpp
 # End Source File
 # Begin Source File
 
-SOURCE=.\Buffer.cpp
+SOURCE=.\BCMenu.cpp
 # End Source File
 # Begin Source File
 
-SOURCE=.\CDDBPage.cpp
+SOURCE=.\Buffer.cpp
 # End Source File
 # Begin Source File
 
@@ -112,15 +112,11 @@ SOURCE=.\CDPlayerIni.cpp
 # End Source File
 # Begin Source File
 
-SOURCE=.\CDROMPage.cpp
-# End Source File
-# Begin Source File
-
 SOURCE=.\CDTrack.cpp
 # End Source File
 # Begin Source File
 
-SOURCE=.\cfgFile.cpp
+SOURCE=.\CheckNewVersion.cpp
 # End Source File
 # Begin Source File
 
@@ -140,23 +136,11 @@ SOURCE=.\EncoderFeeder.cpp
 # End Source File
 # Begin Source File
 
-SOURCE=.\EncoderSheet.cpp
-# End Source File
-# Begin Source File
-
 SOURCE=.\EncodingStatusDlg.cpp
 # End Source File
 # Begin Source File
 
-SOURCE=.\ExtButton.cpp
-# End Source File
-# Begin Source File
-
 SOURCE=.\ExtListCtrl.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\FilenamePage.cpp
 # End Source File
 # Begin Source File
 
@@ -208,19 +192,15 @@ SOURCE=.\LogFile.cpp
 # End Source File
 # Begin Source File
 
-SOURCE=.\LogginPage.cpp
-# End Source File
-# Begin Source File
-
 SOURCE=.\MainFrm.cpp
 # End Source File
 # Begin Source File
 
-SOURCE=.\MainSettingsPage.cpp
+SOURCE=.\Mfccddb.cpp
 # End Source File
 # Begin Source File
 
-SOURCE=.\Mfccddb.cpp
+SOURCE=.\MFECToolTip.cpp
 # End Source File
 # Begin Source File
 
@@ -232,11 +212,19 @@ SOURCE=.\MyComboBox.cpp
 # End Source File
 # Begin Source File
 
+SOURCE=.\MyDialogBar.cpp
+# End Source File
+# Begin Source File
+
 SOURCE=.\MyEditCtrl.cpp
 # End Source File
 # Begin Source File
 
 SOURCE=.\MyFileDialog.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\MySettingsPage.cpp
 # End Source File
 # Begin Source File
 
@@ -252,11 +240,43 @@ SOURCE=.\PlayList.cpp
 # End Source File
 # Begin Source File
 
-SOURCE=.\PluginPage.cpp
+SOURCE=.\PresetBar.cpp
 # End Source File
 # Begin Source File
 
-SOURCE=.\SettingsSheet.cpp
+SOURCE=.\SettingsBatchMode.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\SettingsCDRipper.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\SettingsDlg.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\SettingsFilenames.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\SettingsFreeDB.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\SettingsLameFE.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\SettingsLookNFeel.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\SettingsMP3.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\SettingsPlugin.cpp
 # End Source File
 # Begin Source File
 
@@ -285,15 +305,15 @@ SOURCE=.\AlbumInfoCtrl.h
 # End Source File
 # Begin Source File
 
+SOURCE=.\BCMenu.h
+# End Source File
+# Begin Source File
+
 SOURCE=.\BladeMP3EncDLL.h
 # End Source File
 # Begin Source File
 
 SOURCE=.\Buffer.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\CDDBPage.h
 # End Source File
 # Begin Source File
 
@@ -313,7 +333,7 @@ SOURCE=.\CDTrack.h
 # End Source File
 # Begin Source File
 
-SOURCE=.\cfgFile.h
+SOURCE=.\CheckNewVersion.h
 # End Source File
 # Begin Source File
 
@@ -330,10 +350,6 @@ SOURCE=.\Encoder.h
 # Begin Source File
 
 SOURCE=.\EncoderFeeder.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\EncoderSheet.h
 # End Source File
 # Begin Source File
 
@@ -397,19 +413,15 @@ SOURCE=.\LogFile.h
 # End Source File
 # Begin Source File
 
-SOURCE=.\LogginPage.h
-# End Source File
-# Begin Source File
-
 SOURCE=.\MainFrm.h
 # End Source File
 # Begin Source File
 
-SOURCE=.\MainSettingsPage.h
+SOURCE=.\Mfccddb.h
 # End Source File
 # Begin Source File
 
-SOURCE=.\Mfccddb.h
+SOURCE=.\MFECToolTip.h
 # End Source File
 # Begin Source File
 
@@ -425,11 +437,19 @@ SOURCE=.\MyComboBox.h
 # End Source File
 # Begin Source File
 
+SOURCE=.\MyDialogBar.h
+# End Source File
+# Begin Source File
+
 SOURCE=.\MyEditCtrl.h
 # End Source File
 # Begin Source File
 
 SOURCE=.\MyFileDialog.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\MySettingsPage.h
 # End Source File
 # Begin Source File
 
@@ -453,11 +473,47 @@ SOURCE=.\plugin_api.h
 # End Source File
 # Begin Source File
 
-SOURCE=.\PluginPage.h
+SOURCE=.\PresetBar.h
 # End Source File
 # Begin Source File
 
 SOURCE=.\Resource.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\SettingsBatchMode.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\SettingsCDRipper.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\SettingsDlg.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\SettingsFilenames.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\SettingsFreeDB.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\SettingsLameFE.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\SettingsLookNFeel.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\SettingsMP3.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\SettingsPlugin.h
 # End Source File
 # Begin Source File
 
@@ -485,6 +541,10 @@ SOURCE=.\Utils.h
 # PROP Default_Filter "ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe"
 # Begin Source File
 
+SOURCE=.\res\bitmap3.bmp
+# End Source File
+# Begin Source File
+
 SOURCE=.\res\bmp00001.bmp
 # End Source File
 # Begin Source File
@@ -494,6 +554,10 @@ SOURCE=.\res\bmp00002.bmp
 # Begin Source File
 
 SOURCE=.\res\bmp00003.bmp
+# End Source File
+# Begin Source File
+
+SOURCE=.\res\bmp00004.bmp
 # End Source File
 # Begin Source File
 
@@ -509,11 +573,19 @@ SOURCE=.\res\config_o.ico
 # End Source File
 # Begin Source File
 
+SOURCE=.\res\decoder.ico
+# End Source File
+# Begin Source File
+
 SOURCE=.\res\default1.bin
 # End Source File
 # Begin Source File
 
 SOURCE=.\res\eject.ico
+# End Source File
+# Begin Source File
+
+SOURCE=.\res\encoder.ico
 # End Source File
 # Begin Source File
 
@@ -554,6 +626,10 @@ SOURCE=.\res\list_bk.bmp
 # Begin Source File
 
 SOURCE=.\res\log_images.bmp
+# End Source File
+# Begin Source File
+
+SOURCE=.\res\mainframsmall.bmp
 # End Source File
 # Begin Source File
 

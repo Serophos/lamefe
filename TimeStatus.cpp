@@ -45,6 +45,7 @@ CTimeStatus::~CTimeStatus()
 
 void CTimeStatus::ReInit()
 {
+
 	m_dwStartTime=GetTickCount();
 	m_dwElapsed=0;
 	m_dwEstimated=0;
@@ -55,6 +56,7 @@ void CTimeStatus::ReInit()
 
 CString CTimeStatus::GetElapsedString()
 {
+
 	CString strTmp;
 	strTmp.Format("%02d:%02d",m_dwElapsed/60,m_dwElapsed%60);
 	return strTmp;
@@ -70,6 +72,7 @@ CString CTimeStatus::GetEstimateString()
 
 CString CTimeStatus::GetRemainingString()
 {
+
 	CString strTmp;
 	strTmp.Format("%02d:%02d",m_dwRemaining/60,m_dwRemaining%60);
 	return strTmp;

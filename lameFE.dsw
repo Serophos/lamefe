@@ -35,6 +35,9 @@ Package=<5>
 
 Package=<4>
 {{{
+    Begin Project Dependency
+    Project_Dep_Name logging
+    End Project Dependency
 }}}
 
 ###############################################################################
@@ -109,6 +112,18 @@ Package=<4>
 ###############################################################################
 
 Project: "libsndfile"=.\LibSndFile\Win32\libsndfile.dsp - Package Owner=<4>
+
+Package=<5>
+{{{
+}}}
+
+Package=<4>
+{{{
+}}}
+
+###############################################################################
+
+Project: "logging"=.\logging\logging.dsp - Package Owner=<4>
 
 Package=<5>
 {{{

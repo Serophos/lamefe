@@ -21,9 +21,10 @@
 #include "lameFE.h"
 #include "CDdbQueryDlg.h"
 #include "mfccddb.h"
-#include "cfgFile.h"
+#include "Ini.h"
 #include "ID3Info.h"
 #include "FreeDBStatusDlg.h"
+#include "Utils.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -91,32 +92,34 @@ BOOL CCDdbQueryDlg::OnInitDialog()
     if (!AfxSocketInit()){
 
 		statusDlg.ShowWindow(FALSE);
-		AfxMessageBox(IDS_CDDB_ERR_WINSOCK, MB_OK+MB_ICONEXCLAMATION);
+
+		ErrMessageBox(IDS_CDDB_ERR_WINSOCK, MB_OK+MB_ICONEXCLAMATION);
 		CDialog::OnCancel();
 		return FALSE;
 	}
 
 	CString msg;
-	cfgFile cfg(wd);
+	CIni cfg;
+	cfg.SetIniFileName(wd + "\\LameFE.ini");
 
 	discID = m_cd->GetDiscID();
 	
 
-    if(cfg.GetValue("useproxy", FALSE)){
+    if(cfg.GetValue("FreeDB", "UseProxy", FALSE)){
 
 		statusDlg.SetMessage(IDS_FDB_PROXYCONNECT);
 		cddb.SetProxyDetails(
-				    cfg.GetStringValue("proxyaddress"), 
-					cfg.GetValue("proxyport", FALSE), 
-					(cfg.GetValue("authentication", FALSE) ? cfg.GetStringValue("username") : ""),
-					(cfg.GetValue("authentication", FALSE) ? cfg.GetStringValue("passwd") : "")
+				    cfg.GetValue("FreeDB", "ProxyAddress", ""), 
+					cfg.GetValue("FreeDB", "ProxyPort", 8080), 
+					(cfg.GetValue("FreeDB", "ProxyAuthentication", FALSE) ? cfg.GetValue("FreeDB", "Username", "") : ""),
+					(cfg.GetValue("FreeDB", "ProxyAuthentication", FALSE) ? Utils::DecryptString(cfg.GetValue("FreeDB", "Password", "")) : "")
 				);
 	}
 
 
 	statusDlg.SetMessage(IDS_FDB_SERVERCONNECT);
 
-	CString serverString = GetServerString(cfg.GetValue("cddbserver", FALSE));
+	CString serverString = GetServerString(cfg.GetValue("FreeDB", "FreeDB-Server", 0));
 
 	CString sBuf;
 	int iLen = serverString.GetLength();
@@ -149,7 +152,7 @@ BOOL CCDdbQueryDlg::OnInitDialog()
 		TRACE(_T("\n"));
 #endif
 		statusDlg.ShowWindow(FALSE);
-		AfxMessageBox(IDS_ERR_NOSERVERRESPONSE, MB_OK+MB_ICONSTOP);
+		ErrMessageBox(IDS_ERR_NOSERVERRESPONSE, MB_OK+MB_ICONSTOP);
 		CDialog::OnCancel();
 		return FALSE;
 	}
@@ -160,7 +163,7 @@ BOOL CCDdbQueryDlg::OnInitDialog()
 	if (!bSuccess){
 		
 		statusDlg.ShowWindow(FALSE);
-		AfxMessageBox(IDS_ERR_GETTRACKPOSFAILED, MB_OK+MB_ICONEXCLAMATION);
+		ErrMessageBox(IDS_ERR_GETTRACKPOSFAILED, MB_OK+MB_ICONEXCLAMATION);
 		CDialog::OnCancel();
 		return FALSE;
 	}
@@ -190,7 +193,7 @@ BOOL CCDdbQueryDlg::OnInitDialog()
 #endif
 		CString out;
 		out.Format(IDS_FDB_NOENTRY, discID);
-		AfxMessageBox(out, MB_OK+MB_ICONINFORMATION );
+		ErrMessageBox(out, MB_OK+MB_ICONINFORMATION );
 		CDialog::OnCancel();
 		return FALSE;
 	}
@@ -221,7 +224,7 @@ BOOL CCDdbQueryDlg::QueryCDDB()
 
 	if (iSel < 0 || iSel > results.GetSize()){
 		
-		AfxMessageBox(IDS_FDB_QUERYSTART, MB_OK+MB_ICONINFORMATION);
+		ErrMessageBox(IDS_FDB_QUERYSTART, MB_OK+MB_ICONINFORMATION);
 		return FALSE;
 	}
 	
@@ -237,7 +240,7 @@ BOOL CCDdbQueryDlg::QueryCDDB()
 	if (!bSuccess){
 		
 		statusDlg.ShowWindow(FALSE);
-		AfxMessageBox(IDS_ERR_NOSERVERRESPONSE, MB_OK+MB_ICONEXCLAMATION);
+		ErrMessageBox(IDS_ERR_NOSERVERRESPONSE, MB_OK+MB_ICONEXCLAMATION);
 		m_Cancel.EnableWindow(TRUE);
 		return FALSE;
 	}
@@ -280,7 +283,7 @@ BOOL CCDdbQueryDlg::QueryCDDB()
 
 	if(bSuccess){
 
-		OnCancel();
+		OnOK();
 	}
 	return TRUE;
 }
@@ -319,7 +322,7 @@ CString CCDdbQueryDlg::GetServerString(int i)
 	}
 	CATCH(CFileException, e){
 
-		AfxMessageBox(IDS_CDDB_ERR_CFGREAD, MB_OK+MB_ICONEXCLAMATION);
+		ErrMessageBox(IDS_CDDB_ERR_CFGREAD, MB_OK+MB_ICONEXCLAMATION);
 		CDialog::OnCancel();
 	}
 	END_CATCH;
@@ -359,4 +362,22 @@ BOOL CCDdbQueryDlg::GetTrackPositions(CArray<CCDDBTrackPosition, CCDDBTrackPosit
 
 
 	return TRUE;
+}
+
+void CCDdbQueryDlg::ErrMessageBox(UINT nID, UINT nType)
+{
+
+	if(!m_bAutoSelect){
+
+		AfxMessageBox(nID, nType);
+	}
+}
+
+void CCDdbQueryDlg::ErrMessageBox(CString strMsg, UINT nType)
+{
+
+	if(!m_bAutoSelect){
+
+		AfxMessageBox(strMsg, nType);
+	}
 }

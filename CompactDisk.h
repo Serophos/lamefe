@@ -43,8 +43,8 @@ public:
 	CString GetTrackDurationMS(int track);
 	CString GetStartTime(int nTrack);
 	BOOL WriteCueSheet(CString strWd, CString fileExt);
-	CString GetSaveAs(int nTrack, CString wd, CString ext);
-	CString GetAlbumString(CString wdir, CString ext);
+	CString GetSaveAs(int nTrack, CString wd, CString ext, BOOL bAppendDiscID = FALSE);
+	CString GetAlbumString(CString wdir, CString ext, BOOL bAppendDiscID = FALSE);
 	BOOL ReadCDText();
 
 	CCompactDisc();

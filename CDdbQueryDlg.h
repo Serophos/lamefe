@@ -35,6 +35,8 @@ class CCDdbQueryDlg : public CDialog
 {
 // Konstruktion
 public:
+	void ErrMessageBox(CString strMsg, UINT nType);
+	void ErrMessageBox(UINT nID, UINT nType);
 	BOOL QueryCDDB();
 	CCDdbQueryDlg(CWnd* pParent = NULL, CCompactDisc *cd = NULL, int nActiveCD = 0, CString wd = "", BOOL bAutoSelect = FALSE);   // Standardkonstruktor
 

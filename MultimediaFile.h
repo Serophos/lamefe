@@ -48,7 +48,6 @@ protected:
 
 private:
 	BOOL bAlerted;
-	void InitID3Tag();
 };
 
 #endif // !defined(AFX_MULTIMEDIAFILE_H__64DAAEEE_6BEE_4458_B912_C37D830EEE48__INCLUDED_)

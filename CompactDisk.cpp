@@ -23,7 +23,8 @@
 #include "Resource.h"
 #include "CompactDisk.h"
 #include "CDRip/CDRip.h"
-#include "cfgFile.h"
+#include "Utils.h"
+#include "Ini.h"
 #include <math.h>
 
 #ifdef _DEBUG
@@ -487,65 +488,35 @@ BOOL CCompactDisc::ReadCDText()
 	return ( CDEX_OK == bErr );
 }
 
-CString CCompactDisc::GetAlbumString(CString wdir, CString ext)
+CString CCompactDisc::GetAlbumString(CString wdir, CString ext, BOOL bAppendDiscID)
 {
 
-	cfgFile cfg(wdir);
+	CIni cfg;
+	cfg.SetIniFileName(wdir + "\\LameFE.ini");
 
 	CString strPath, strSaveAs, strFormat;
 
-	strPath = cfg.GetStringValue("output");
+	strPath = cfg.GetValue("FileNames", "BasePath", wdir + "\\Output");
 
 	if(strPath.IsEmpty()){
 
 		strPath = wdir;
 	}
 
-	strFormat = (LPCSTR)cfg.GetStringValue("albumstr");
+	strFormat = (LPCSTR)cfg.GetValue("FileNames", "AlbumFilename", "%1\\%1 - %3 (Complete Album)");
 
-	CString tmp;
+	if(bAppendDiscID){
 
-	tmp = GetCDTrack(0)->m_id3Info.GetArtist();
-	tmp.Remove('\\');
-	strFormat.Replace("%1", tmp);
-	tmp =  GetCDTrack(0)->m_id3Info.GetSong();
-	tmp.Remove('\\');
-	strFormat.Replace("%2", tmp);
-	tmp =  GetCDTrack(0)->m_id3Info.GetAlbum();
-	tmp.Remove('\\');
-	strFormat.Replace("%3", tmp);
-	tmp = GetCDTrack(0)->m_id3Info.GetGenre();
-	tmp.Remove('\\');
-	strFormat.Replace("%5", tmp);
+		strFormat += " %c";
+	}
 
-	tmp.Format("0x%X", GetDiscID());
-	strFormat.Replace("%c", tmp);
-	tmp.Format("0x%X", GetVolID());
-	strFormat.Replace("%d", tmp);
-	
-	tmp.Format("%d", GetCDTrack(0)->m_id3Info.GetYear());
-	strFormat.Replace("%4", tmp);
-	tmp.Format("%02d", 1);
-	strFormat.Replace("%a", tmp);
-	tmp.Format("%02d", GetNumAudioTracks());
-	strFormat.Replace("%b", tmp);
-
-	strFormat.Replace('/', '-');
-	strFormat.Remove('*');
-	strFormat.Remove('?');
-	strFormat.Replace('\"', '\'');
-	strFormat.Replace('<', '(');
-	strFormat.Replace('>', ')');
-	strFormat.Replace('|', '-');
-	strFormat.Remove(':');
-	//strFormat.Remove('\\');
-	strFormat.Remove('.');
+	strFormat = Utils::CreateFilename(&GetCDTrack(0)->m_id3Info, strFormat, ext, GetVolID(), GetDiscID());
 
 	if(strFormat.GetLength() > _MAX_FNAME){
 
 		TRACE("Filename is too long. Saving as CD-VolID.\n");
 
-		CString tmp2;
+		CString tmp, tmp2;
 		tmp2.Format("Disc 0x%X", GetVolID());
 
 		if(!m_bAlerted){
@@ -575,64 +546,34 @@ CString CCompactDisc::GetAlbumString(CString wdir, CString ext)
 	return strSaveAs;
 }
 
-CString CCompactDisc::GetSaveAs(int nTrack, CString wd, CString ext)
+CString CCompactDisc::GetSaveAs(int nTrack, CString wd, CString ext, BOOL bAppendDiscID)
 {
 
-	cfgFile cfg(wd);
+	CIni cfg;
+	cfg.SetIniFileName(wd + "\\LameFE.ini");
+
 	nTrack--;	// nTrack is not zero-index-based so decrease nTrack
 	CString strPath, strSaveAs, strFormat;
-	strPath = cfg.GetStringValue("output");
+	strPath = cfg.GetValue("FileNames", "BasePath", wd + "\\Output");
 
 	if(strPath.IsEmpty()){
 
 		strPath = wd;
 	}
-
-	if(!(GetCDTrack(nTrack)->GetRename() && cfg.GetValue("rename"))){
+	if(!(GetCDTrack(nTrack)->GetRename() && cfg.GetValue("FileNames", "RenameFiles", TRUE))){
 		
 		strSaveAs = strPath + "\\" + GetCDTrack(nTrack)->GetTrackname() + ext;
 		return strSaveAs;
 	}
 
-	strFormat = (LPCSTR)cfg.GetStringValue("formatstr");
+	strFormat = (LPCSTR)cfg.GetValue("FileNames", "Filename", "%1\\%3\\%1 - %a - %2");
 
-	CString tmp;
+	if(bAppendDiscID){
 
-	tmp = GetCDTrack(nTrack)->m_id3Info.GetArtist();
-	tmp.Remove('\\');
-	strFormat.Replace("%1", tmp);
-	tmp =  GetCDTrack(nTrack)->m_id3Info.GetSong();
-	tmp.Remove('\\');
-	strFormat.Replace("%2", tmp);
-	tmp =  GetCDTrack(nTrack)->m_id3Info.GetAlbum();
-	tmp.Remove('\\');
-	strFormat.Replace("%3", tmp);
-	tmp = GetCDTrack(nTrack)->m_id3Info.GetGenre();
-	tmp.Remove('\\');
-	strFormat.Replace("%5", tmp);
+		strFormat += " %c";
+	}
 
-	tmp.Format("0x%X", GetDiscID());
-	strFormat.Replace("%c", tmp);
-	tmp.Format("0x%X", GetVolID());
-	strFormat.Replace("%d", tmp);
-	
-	tmp.Format("%d", GetCDTrack(nTrack)->m_id3Info.GetYear());
-	strFormat.Replace("%4", tmp);
-	tmp.Format("%02d", nTrack + 1);
-	strFormat.Replace("%a", tmp);
-	tmp.Format("%02d", GetNumAudioTracks());
-	strFormat.Replace("%b", tmp);
-
-	strFormat.Replace('/', '-');
-	strFormat.Remove('*');
-	strFormat.Remove('?');
-	strFormat.Replace('\"', '\'');
-	strFormat.Replace('<', '(');
-	strFormat.Replace('>', ')');
-	strFormat.Replace('|', '-');
-	strFormat.Remove(':');
-	//strFormat.Remove('\\');
-	strFormat.Remove('.');
+	strFormat = Utils::CreateFilename(&GetCDTrack(nTrack)->m_id3Info, strFormat, ext, GetVolID(), GetDiscID(), nTrack+1, GetNumAudioTracks());
 	
 	if(strFormat.GetLength() > _MAX_FNAME){
 
@@ -640,7 +581,7 @@ CString CCompactDisc::GetSaveAs(int nTrack, CString wd, CString ext)
 		
 		if(!GetCDTrack(nTrack)->GetAlerted()){
 
-			CString msg;
+			CString tmp, msg;
 			msg.Format(IDS_ERR_LONGFILENAME, tmp, GetCDTrack(nTrack)->GetTrackname());
 			AfxMessageBox(msg, MB_OK+MB_ICONEXCLAMATION);
 			GetCDTrack(nTrack)->SetAlerted();

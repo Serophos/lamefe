@@ -21,6 +21,7 @@
 #include "AlbumInfoCtrl.h"
 #include "MyComboBox.h"
 #include "EncodingStatusDlg.h"
+#include "PresetBar.h"
 
 typedef CArray<CPlugin, CPlugin>  CPluginArray;
 typedef CArray<CMultimediaFile*, CMultimediaFile*>	CMMFArray;
@@ -47,6 +48,7 @@ public:
 	CString		m_strInputDevice;
 	CString		m_strOutputDevice;
 	CImageList	m_cImageList;
+	CString		m_strPresetName;
 	enum { IDD = IDD_TRACKLIST };
 	// Überladungen
 	// Vom Klassenassistenten generierte Überladungen virtueller Funktionen
@@ -61,6 +63,7 @@ public:
 
 // Implementierung
 public:
+	void OnFileStartBatchSingle();
 	int m_nSelItem;
 	BOOL IsPluginMode();
 	void SetAlbumInfo();
@@ -88,12 +91,6 @@ protected:
 	afx_msg void OnId3tagsReadfreedbserver();
 	afx_msg void OnId3tagsSavetocdplayerini();
 	afx_msg void OnTimer(UINT nIDEvent);
-	afx_msg void OnSettingsPreferences();
-	afx_msg void OnSettingsPlugins();
-	afx_msg void OnSettingsLameencoder();
-	afx_msg void OnSettingsId3tagsfilenames();
-	afx_msg void OnSettingsCdreader();
-	afx_msg void OnSettingsFreedbsetup();
 	afx_msg void OnFileOpen();
 	afx_msg void OnRemoveFile();
 	afx_msg void OnFileStartencoding();
@@ -104,12 +101,15 @@ protected:
 	afx_msg void OnId3tagsSavecuesheet();
 	afx_msg void OnUpdateToolBar(CCmdUI* pCmdUI);
 	afx_msg void OnUpdateCDControls(CCmdUI* pCmdUI);
-	afx_msg void OnSettingsLogging();
 	afx_msg void OnDropFiles(HDROP hDropInfo);
 	afx_msg void OnDestroy();
 	afx_msg void OnClickFilesTracks(NMHDR* pNMHDR, LRESULT* pResult);
 	afx_msg void OnSize(UINT nType, int cx, int cy);
 	afx_msg void OnId3tagsId3tageditor();
+	afx_msg void OnCheckfornewvesion();
+	afx_msg void OnSettings();
+	afx_msg void OnHelpReportabug();
+	afx_msg void OnSelchangeOutputDevice();
 	//}}AFX_MSG
 	DECLARE_MESSAGE_MAP()
 	void OnSelchangeDevices(BOOL bReset = TRUE);
@@ -137,9 +137,8 @@ private:
 	CToolBar		*m_pToolBar;
 	CBitmap			m_listBkImage;
 	CToolTipCtrl*   m_pToolTip;
-	HINSTANCE		m_hCDRipDll;
+	CPresetBar*		m_wndPresetBar;	
 
-//	CMenu			*m_pMenu;
 };
 
 #ifndef _DEBUG  // Testversion in lameFEView.cpp

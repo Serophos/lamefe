@@ -1,5 +1,21 @@
-// MyEditCtrl.cpp: Implementierungsdatei
-//
+/*
+** Copyright (C) 2002 Thees Winkler
+**  
+** This program is free software; you can redistribute it and/or modify
+** it under the terms of the GNU General Public License as published by
+** the Free Software Foundation; either version 2 of the License, or
+** (at your option) any later version.
+** 
+** This program is distributed in the hope that it will be useful,
+** but WITHOUT ANY WARRANTY; without even the implied warranty of
+** MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+** GNU General Public License for more details.
+** 
+** You should have received a copy of the GNU General Public License
+** along with this program; if not, write to the Free Software 
+** Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+*/
+
 
 #include "stdafx.h"
 #include "lameFE.h"
@@ -17,7 +33,7 @@ static char THIS_FILE[] = __FILE__;
 /////////////////////////////////////////////////////////////////////////////
 // CMyEditCtrl
 
-CMyEditCtrl::CMyEditCtrl()
+CMyEditCtrl::CMyEditCtrl(BOOL bDrawSeperator /* = TRUE */)
 {
 
 	m_clrHilite		= GetSysColor(COLOR_BTNHIGHLIGHT);
@@ -26,7 +42,7 @@ CMyEditCtrl::CMyEditCtrl()
 	m_clrButton		= GetSysColor(COLOR_BTNFACE);
 	m_bHasFocus		= FALSE;
 	m_bDrawGripper  = FALSE;
-	m_bDrawSeperator = TRUE;
+	m_bDrawSeperator = bDrawSeperator;
 	m_bFlatStyle    = TRUE;
 }
 
@@ -52,11 +68,12 @@ END_MESSAGE_MAP()
 /////////////////////////////////////////////////////////////////////////////
 // Behandlungsroutinen für Nachrichten CMyEditCtrl 
 
-void CMyEditCtrl::OnMouseMove(UINT nFlags, CPoint point) 
+BOOL CMyEditCtrl::OnMouseMove(UINT nFlags, CPoint point) 
 {
 
 	SetTimer(1, 100, NULL);
 	CEdit::OnMouseMove(nFlags, point);
+	return FALSE;
 }
 
 void CMyEditCtrl::OnLButtonDown(UINT nFlags, CPoint point) 
@@ -73,12 +90,13 @@ void CMyEditCtrl::OnLButtonUp(UINT nFlags, CPoint point)
 	CEdit::OnLButtonUp(nFlags, point);
 }
 
-void CMyEditCtrl::OnSetFocus()
+BOOL CMyEditCtrl::OnSetFocus()
 {
 
 	m_bHasFocus = TRUE;
 	SetTimer(1, 10, NULL);
 	CEdit::OnSetFocus(0);
+	return FALSE;
 }
 
 BOOL CMyEditCtrl::OnKillFocus() 

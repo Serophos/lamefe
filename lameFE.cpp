@@ -24,7 +24,7 @@
 #include "lameFEView.h"
 #include "lameFESplash.h"
 #include "cdrip\cdrip.h"
-#include "cfgFile.h"
+#include "Ini.h"
 
 #pragma comment(linker, "/delayload:CDRip.dll")
 
@@ -55,6 +55,7 @@ CLameFEApp::CLameFEApp()
 {
 	// ZU ERLEDIGEN: Hier Code zur Konstruktion einf¸gen
 	// Alle wichtigen Initialisierungen in InitInstance platzieren
+	m_hCDRipDll = NULL;
 }
 
 /////////////////////////////////////////////////////////////////////////////
@@ -89,15 +90,36 @@ BOOL CLameFEApp::InitInstance()
 		return FALSE;
 	}
 	
-	cfgFile cfg;
+	HANDLE hEvent; 
 
-	if(cfg.GetValue("showsplashscr")){
+	hEvent = ::CreateEvent(NULL, FALSE, TRUE, AfxGetAppName()); 
+
+	if (::GetLastError() == ERROR_ALREADY_EXISTS)
+	{ 
+		
+		AfxMessageBox(IDS_APPALREADYRUNNING, MB_OK+MB_ICONINFORMATION); 
+
+		return FALSE; 
+	} 
+
+	TCHAR	szBuffer[_MAX_PATH]; 
+	VERIFY(::GetModuleFileName(AfxGetInstanceHandle(), szBuffer, _MAX_PATH));
+	
+	CString wd = szBuffer;
+	wd = wd.Left(wd.ReverseFind('\\'));
+
+	CIni cfg;
+	cfg.SetIniFileName(wd + "\\LameFE.ini");
+
+	if(cfg.GetValue("LameFE", "ShowSplash", TRUE)){
 
 		CLameFESplash * pSplashWnd = new CLameFESplash(IDB_SPLASH,2500);
 		pSplashWnd->Create();
 	}
 
-	SetRegistryKey(_T("LameFE"));
+	m_bRipperOK = InitCDRipper();
+	SetAutoPlay(!cfg.GetValue("CD-ROM", "DisableAutoPlay", TRUE));
+	//SetRegistryKey(_T("LameFE"));
 
 	LoadStdProfileSettings(0);  // Standard INI-Dateioptionen laden (einschlieﬂlich MRU)
 
@@ -120,6 +142,13 @@ BOOL CLameFEApp::InitInstance()
 	if (!ProcessShellCommand(cmdInfo))
 		return FALSE;
 
+	CMenu* pMenu = m_pMainWnd->GetMenu();
+	if (pMenu)pMenu->DestroyMenu();
+	HMENU hMenu = ((CMainFrame*) m_pMainWnd)->NewMenu();
+	pMenu = CMenu::FromHandle( hMenu );
+	m_pMainWnd->SetMenu(pMenu);
+	((CMainFrame*)m_pMainWnd)->m_hMenuDefault = hMenu;
+
 	// Das einzige Fenster ist initialisiert und kann jetzt angezeigt und aktualisiert werden.
 	m_pMainWnd->ShowWindow(SW_SHOW);
 	m_pMainWnd->UpdateWindow();
@@ -130,126 +159,15 @@ BOOL CLameFEApp::InitInstance()
 
 /////////////////////////////////////////////////////////////////////////////
 // CAboutDlg-Dialog f¸r Info ¸ber Anwendung
-
-#define SCROLLAMOUNT				-1
-#define DISPLAY_SLOW				70
-#define DISPLAY_MEDIUM				40
-#define DISPLAY_FAST				10
-#define DISPLAY_SPEED				DISPLAY_MEDIUM
-
-#define RED						RGB(255,0,0)
-#define GREEN					RGB(0,255,0)
-#define WHITE   				RGB(255,255,255)
-#define YELLOW  				RGB(255,255,0)
-#define BLACK       			RGB(0,0,0)
-
-#define BACKGROUND_COLOR        BLACK
-#define TOP_LEVEL_TITLE_COLOR	RED
-#define TOP_LEVEL_GROUP_COLOR   YELLOW
-#define GROUP_TITLE_COLOR       GREEN
-#define NORMAL_TEXT_COLOR		WHITE
-
-#define TOP_LEVEL_TITLE_HEIGHT	21		
-#define TOP_LEVEL_GROUP_HEIGHT  19     
-#define GROUP_TITLE_HEIGHT    	17     
-#define	NORMAL_TEXT_HEIGHT		15
-
-#define TOP_LEVEL_TITLE			'\n'
-#define TOP_LEVEL_GROUP         '\r'
-#define GROUP_TITLE           	'\t'
-#define NORMAL_TEXT				'\f' 
-#define DISPLAY_BITMAP			'\b'
-
-#define		ARRAYCOUNT		56
-
-char *pArrCredit[] = { "LAMEFE\b",
-						"",
-						 STR_VERSION_DLG,
-						 "",
-						 "Copyright (c) 2002 \f",
-						 "Thees Christian Winkler \f",
-						 "theesw@users.sourceforge.net \f",
-						 "",
-						 "Sourcecode distributed under the Terms of the GNU \f",
-						 "General Public License version 2 or later \f",
-						 "",
-						 "--- \f",
-						 "",
-						 "",
-						 "Project Lead \n",
-						 "",
-						 "Thees Christian Winkler \f",
-						 "",
-						 "Engineering \n",
-						 "",
-						 "lameFE \r",
-						 "Thees Ch. Winkler \f",
-						 "",
-						 "CDRip.dll \r",
-						 "Albert L. Faber \f",
-						 "",
-						 "Additional stuff \r",
-						 "Mark Findlay , P.J. Naughter \f", 
-						 "",
-						 "Website \r",
-						 "Piotr KrÍglicki \f",
-						 "",
-						 "",
-						 "Documentation \n",
-						 "",
-						 "Thees Ch. Winkler \f",
-						 "",
-						 "",
-						 "Beta Testing \n",
-						 "",
-						 "Lorenzo Prince, Jason Faber, Simone Singh \f",
-						 "William F. Pearson, Jann Peterecki \f",
-						 "",
-						 "",
-						 "Special thanks to: \n",
-						 "",
-						 "Jan Ch. Winkler for the initial idea and the programs name \f",
-						 "",
-						 "",
-						 "Provided by \n",
-						 "",
-						 "Sourceforge.net \f",
-						 "http://www.sourceforge.net \f",
-						 "http://lamefe.sourceforge.net \f",
-						 "",
-						 ""
-};
-
 class CAboutDlg : public CDialog
 {
 public:
 	CAboutDlg();
 
-	#define     DISPLAY_TIMER_ID		150		// timer id
-
-	RECT        m_ScrollRect,r;		   // rect of Static Text frame
-	int         nArrIndex,nCounter;		   // work ints
-	CString     m_szWork;			   // holds display line
-	BOOL        m_bFirstTime;
-	BOOL        m_bDrawText;
-	int         nClip;
-	int         nCurrentFontHeight;
-
-	CWnd*       m_pDisplayFrame;
-
-	CBitmap     m_bmpWork;                  // bitmap holder
-	CBitmap* 	pBmpOld;                    // other bitmap work members
-	CBitmap*    m_bmpCurrent;
-	HBITMAP 	m_hBmpOld;
-
-	CSize 		m_size;                     // drawing helpers
-	CPoint 		m_pt;
-	BITMAP 		m_bmpInfo;
-	CDC 		m_dcMem;
-	BOOL 		m_bProcessingBitmap;
 // Dialogdaten
 	//{{AFX_DATA(CAboutDlg)
 	enum { IDD = IDD_ABOUTBOX };
+	CString	m_strVersion;
 	//}}AFX_DATA
 
 	// ‹berladungen f¸r virtuelle Funktionen, die vom Anwendungs-Assistenten erzeugt wurden
@@ -260,14 +178,9 @@ public:
 
 // Implementierung
 protected:
-	CBrush m_brush;
+	//CBrush m_brush;
 	//{{AFX_MSG(CAboutDlg)
-	virtual void OnOK();
-	afx_msg void OnPaint();
 	virtual BOOL OnInitDialog();
-	afx_msg void OnTimer(UINT nIDEvent);
-	afx_msg void OnDestroy();
-	afx_msg HBRUSH OnCtlColor(CDC* pDC, CWnd* pWnd, UINT nCtlColor);
 	//}}AFX_MSG
 	DECLARE_MESSAGE_MAP()
 };
@@ -275,6 +188,7 @@ protected:
 CAboutDlg::CAboutDlg() : CDialog(CAboutDlg::IDD)
 {
 	//{{AFX_DATA_INIT(CAboutDlg)
+	m_strVersion = _T("");
 	//}}AFX_DATA_INIT
 }
 
@@ -282,328 +196,29 @@ void CAboutDlg::DoDataExchange(CDataExchange* pDX)
 {
 	CDialog::DoDataExchange(pDX);
 	//{{AFX_DATA_MAP(CAboutDlg)
+	DDX_Text(pDX, IDC_DISPLAY_STATIC, m_strVersion);
 	//}}AFX_DATA_MAP
 }
 
 BEGIN_MESSAGE_MAP(CAboutDlg, CDialog)
 	//{{AFX_MSG_MAP(CAboutDlg)
-	ON_WM_PAINT()
-	ON_WM_TIMER()
-	ON_WM_DESTROY()
-	ON_WM_CTLCOLOR()
 	//}}AFX_MSG_MAP
 END_MESSAGE_MAP()
 
-void CAboutDlg::OnOK() 
-{
-	KillTimer(DISPLAY_TIMER_ID);
-	CDialog::OnOK();
-}
-
-HBRUSH CAboutDlg::OnCtlColor(CDC* pDC, CWnd* pWnd, UINT nCtlColor) 
-{
-/*
-** No need to do this!
-**
-** HBRUSH hbr = CDialog::OnCtlColor(pDC, pWnd, nCtlColor);
-*/
-
-/*
-** Return the white brush.
-*/
-	return m_brush;
-}
 
 //************************************************************************
 //	 InitDialog
 //
 //	 	Setup the display rect and start the timer.
 //************************************************************************
-BOOL CAboutDlg::OnInitDialog() 
+BOOL CAboutDlg::OnInitDialog()
 {
+
 	CDialog::OnInitDialog();
-
-	m_brush.CreateSolidBrush(RGB(0, 0, 0)); 
-	BOOL bRet;
-    	UINT nRet;
 	
-	nCurrentFontHeight = NORMAL_TEXT_HEIGHT;
-	
-	CClientDC dc(this);
-	bRet = m_dcMem.CreateCompatibleDC(&dc);
-	
-	
-	m_bProcessingBitmap=FALSE;
-	
-	nArrIndex=0;
-	nCounter=1;
-	nClip=0;
-	m_bFirstTime=TRUE;
-	m_bDrawText=FALSE;
-	m_hBmpOld = 0;
-	
-	m_pDisplayFrame=(CWnd*)GetDlgItem(IDC_DISPLAY_STATIC);	
-
-	// If you assert here, you did not assign your static display control
-	// the IDC_ value that was used in the GetDlgItem(...). This is the
-    // control that will display the credits.
-	_ASSERTE(m_pDisplayFrame);
-				 
-	m_pDisplayFrame->GetClientRect(&m_ScrollRect);
-
-
-	nRet = SetTimer(DISPLAY_TIMER_ID,DISPLAY_SPEED,NULL);
-    _ASSERTE(nRet != 0);
-	
-	return TRUE;  // return TRUE unless you set the focus to a control
-	              // EXCEPTION: OCX Property Pages should return FALSE
-}
-
-//************************************************************************
-//	 OnTimer
-//
-//	 	On each of the display timers, scroll the window 1 unit. Each 20
-//      units, fetch the next array element and load into work string. Call
-//      Invalidate and UpdateWindow to invoke the OnPaint which will paint 
-//      the contents of the newly updated work string.
-//************************************************************************
-void CAboutDlg::OnTimer(UINT nIDEvent) 
-{
-	if (nIDEvent != DISPLAY_TIMER_ID)
-		{
-		CDialog::OnTimer(nIDEvent);
-		return;
-		}
-
-	if (!m_bProcessingBitmap)
-	if (nCounter++ % nCurrentFontHeight == 0)	 // every x timer events, show new line
-		{
-		nCounter=1;
-		m_szWork = pArrCredit[nArrIndex++];
-		
-		if (nArrIndex > ARRAYCOUNT-1)
-			nArrIndex=0;
-		nClip = 0;
-		m_bDrawText=TRUE;
-		}
-	
-	m_pDisplayFrame->ScrollWindow(0,SCROLLAMOUNT,&m_ScrollRect,&m_ScrollRect);
-	nClip = nClip + abs(SCROLLAMOUNT);	
-	
-    CRect r;
-    CWnd* pWnd = GetDlgItem(IDC_DISPLAY_STATIC);
-    ASSERT_VALID(pWnd);
-    pWnd->GetClientRect(&r);
-    pWnd->ClientToScreen(r);
-    ScreenToClient(&r);
-    InvalidateRect(r,FALSE); // FALSE does not erase background
-
-	CDialog::OnTimer(nIDEvent);
-}
-
-
-//************************************************************************
-//	 OnPaint
-//
-//	 	Send the newly updated work string to the display rect.
-//************************************************************************
-void CAboutDlg::OnPaint() 
-{
-	CPaintDC dc(this); // device context for painting
-	
-	PAINTSTRUCT ps;
-	CDC* pDc = m_pDisplayFrame->BeginPaint(&ps);
-	
-	pDc->SetBkMode(TRANSPARENT);
-
-
-	//*********************************************************************
-	//	FONT SELECTION
-    	CFont m_fntArial;
-	CFont* pOldFont;
-	BOOL bSuccess;
-	
-	BOOL bUnderline;
-	BOOL bItalic;
-
-
-	if (!m_szWork.IsEmpty())
-	switch (m_szWork[m_szWork.GetLength()-1] )
-		{
-		case NORMAL_TEXT:
-		default:
-			bItalic = FALSE;
-			bUnderline = FALSE;
-			nCurrentFontHeight = NORMAL_TEXT_HEIGHT;
-   			bSuccess = m_fntArial.CreateFont(NORMAL_TEXT_HEIGHT, 0, 0, 0, 
-   								FW_THIN, bItalic, bUnderline, 0, 
-   								ANSI_CHARSET,
-                               	OUT_DEFAULT_PRECIS,
-                               	CLIP_DEFAULT_PRECIS,
-                               	PROOF_QUALITY,
-                               	VARIABLE_PITCH | 0x04 | FF_DONTCARE,
-                               	(LPSTR)"Arial");
-			pDc->SetTextColor(NORMAL_TEXT_COLOR);
-			pOldFont  = pDc->SelectObject(&m_fntArial);
-			break;
-
-		case TOP_LEVEL_GROUP:
-			bItalic = FALSE;
-			bUnderline = FALSE;
-			nCurrentFontHeight = TOP_LEVEL_GROUP_HEIGHT;
-   			bSuccess = m_fntArial.CreateFont(TOP_LEVEL_GROUP_HEIGHT, 0, 0, 0, 
-   								FW_BOLD, bItalic, bUnderline, 0, 
-   								ANSI_CHARSET,
-                               	OUT_DEFAULT_PRECIS,
-                               	CLIP_DEFAULT_PRECIS,
-                               	PROOF_QUALITY,
-                               	VARIABLE_PITCH | 0x04 | FF_DONTCARE,
-                               	(LPSTR)"Arial");
-			pDc->SetTextColor(TOP_LEVEL_GROUP_COLOR);
-			pOldFont  = pDc->SelectObject(&m_fntArial);
-			break;
-		
-		
-		
-		case GROUP_TITLE:
-			bItalic = FALSE;
-			bUnderline = FALSE;
-			nCurrentFontHeight = GROUP_TITLE_HEIGHT;
-   			bSuccess = m_fntArial.CreateFont(GROUP_TITLE_HEIGHT, 0, 0, 0, 
-   								FW_BOLD, bItalic, bUnderline, 0, 
-   								ANSI_CHARSET,
-                               	OUT_DEFAULT_PRECIS,
-                               	CLIP_DEFAULT_PRECIS,
-                               	PROOF_QUALITY,
-                               	VARIABLE_PITCH | 0x04 | FF_DONTCARE,
-                               	(LPSTR)"Arial");
-			pDc->SetTextColor(GROUP_TITLE_COLOR);
-			pOldFont  = pDc->SelectObject(&m_fntArial);
-			break;
-		
-		
-		case TOP_LEVEL_TITLE:
-			bItalic = FALSE;
-			bUnderline = TRUE;
-			nCurrentFontHeight = TOP_LEVEL_TITLE_HEIGHT;
-			bSuccess = m_fntArial.CreateFont(TOP_LEVEL_TITLE_HEIGHT, 0, 0, 0, 
-								FW_BOLD, bItalic, bUnderline, 0, 
-								ANSI_CHARSET,
-	                           	OUT_DEFAULT_PRECIS,
-	                           	CLIP_DEFAULT_PRECIS,
-	                           	PROOF_QUALITY,
-	                           	VARIABLE_PITCH | 0x04 | FF_DONTCARE,
-	                           	(LPSTR)"Arial");
-			pDc->SetTextColor(TOP_LEVEL_TITLE_COLOR);
-			pOldFont  = pDc->SelectObject(&m_fntArial);
-			break;
-		
-		case DISPLAY_BITMAP:
-			if (!m_bProcessingBitmap)
-				{
-				CString szBitmap = m_szWork.Left(m_szWork.GetLength()-1);
-	   			if (!m_bmpWork.LoadBitmap((const char *)szBitmap))
-					{
-					CString str; 
-					str.Format("Could not find bitmap resource \"%s\". "
-                               "Be sure to assign the bitmap a QUOTED resource name", szBitmap); 
-					KillTimer(DISPLAY_TIMER_ID); 
-					MessageBox(str); 
-					return; 
-					}
-				m_bmpCurrent = &m_bmpWork;
-	   			m_bmpCurrent->GetObject(sizeof(BITMAP), &m_bmpInfo);
-			
-				m_size.cx = m_bmpInfo.bmWidth;	// width  of dest rect
-				RECT workRect;
-				m_pDisplayFrame->GetClientRect(&workRect);
-				m_pDisplayFrame->ClientToScreen(&workRect);
-				ScreenToClient(&workRect);
-				// upper left point of dest
-				m_pt.x = (workRect.right - 
-							((workRect.right-workRect.left)/2) - (m_bmpInfo.bmWidth/2));
-				m_pt.y = workRect.bottom;
-				
-				
-				pBmpOld = m_dcMem.SelectObject(m_bmpCurrent);
-				if (m_hBmpOld == 0)
-					m_hBmpOld = (HBITMAP) pBmpOld->GetSafeHandle();
-				m_bProcessingBitmap = TRUE;
-				}
-			break;
-
-		}
-	
-	
-	
-	
-	CBrush bBrush(BLACK);
-	CBrush* pOldBrush;
-	pOldBrush  = pDc->SelectObject(&bBrush);
-	// Only fill rect comprised of gap left by bottom of scrolling window
-	r=m_ScrollRect;
-	r.top = r.bottom-abs(SCROLLAMOUNT); 
-	pDc->DPtoLP(&r);
-	
-	if (m_bFirstTime)
-		{
-		m_bFirstTime=FALSE;
-		pDc->FillRect(&m_ScrollRect,&bBrush);
-		}
-	else
-		pDc->FillRect(&r,&bBrush);
-	
-	r=m_ScrollRect;
-	r.top = r.bottom-nClip;
-	
-	
-	if (!m_bProcessingBitmap)
-		{
-		int x = pDc->DrawText((const char *)m_szWork,m_szWork.GetLength()-1,&r,DT_TOP|DT_CENTER|
-					DT_NOPREFIX | DT_SINGLELINE);	
-		m_bDrawText=FALSE;
-		}
-	else
-		{
-    	dc.StretchBlt( m_pt.x, m_pt.y-nClip, m_size.cx, nClip, 
-                   		&m_dcMem, 0, 0, m_bmpInfo.bmWidth-1, nClip,
-                   		SRCCOPY );
-		if (nClip > m_bmpInfo.bmHeight)
-			{
-			m_bmpWork.DeleteObject();
-			m_bProcessingBitmap = FALSE;
-			nClip=0;
-			m_szWork.Empty();
-			nCounter=1;
-			}
-		pDc->SelectObject(pOldBrush);
-		bBrush.DeleteObject();
-		m_pDisplayFrame->EndPaint(&ps);
-		return;
-		}
-	
-	
-	pDc->SelectObject(pOldBrush);
-	bBrush.DeleteObject();
-	
-	if (!m_szWork.IsEmpty())
-		{
-		pDc->SelectObject(pOldFont);
-		m_fntArial.DeleteObject();
-		}
-
-	m_pDisplayFrame->EndPaint(&ps);
-	
-	// Do not call CDialog::OnPaint() for painting messages
-}
-
-void CAboutDlg::OnDestroy() 
-{
-	CDialog::OnDestroy();
-	
-    m_dcMem.SelectObject(CBitmap::FromHandle(m_hBmpOld));
-    m_bmpWork.DeleteObject();
-	
+	m_strVersion.Format("%s", STR_VERSION_DLG);
+	UpdateData(FALSE);
+	return TRUE;
 }
 
 // Anwendungsbefehl zum Ausf¸hren des Dialogfelds
@@ -616,4 +231,182 @@ void CLameFEApp::OnAppAbout()
 /////////////////////////////////////////////////////////////////////////////
 // CLameFEApp-Nachrichtenbehandlungsroutinen
 
+/*LONG RegQueryValueEx(
+  HKEY hKey,           // handle to key to query
+  LPTSTR lpValueName,  // address of name of value to query
+  LPDWORD lpReserved,  // reserved
+  LPDWORD lpType,      // address of buffer for value type
+  LPBYTE lpData,       // address of data buffer
+  LPDWORD lpcbData     // address of data buffer size
+);
+
+DWORD disposition;
+LONG result = ::RegCreateKeyEx(mRootArea, mRootSection, 0, NULL, 0, accessMask, NULL, &mActiveSectionKey, &disposition);
+if (result != ERROR_SUCCESS)
+{
+	mRootArea = NULL;
+	mRootSection = _T( "" );
+	mActiveSectionKey = NULL;
+	mActiveSection = _T( "" );
+	mAccess = 0;
+}
+*/
+void CLameFEApp::SetAutoPlay(BOOL bEnable)
+{
+
+/*	BOOL		bIsWindowsNT	= FALSE;
+	HINSTANCE	hKernel32		= NULL;
+	DWORD		value			= 0;
+	DWORD		len				= 0;
+	DWORD		type			= 0;
+	HKEY		hkResult;
+	DWORD		dwDisposition	= 0;
+
+	hKernel32 = LoadLibrary("kernel32.dll");
+
+	if(hKernel32 != NULL){
+
+		bIsWindowsNT = TRUE;
+	}
+	FreeLibrary(hKernel32);
+
+	if(!bEnable){
+
+		if (bIsWindowsNT)
+		{
+			len = sizeof(value);
+			// "HKEY_LOCAL_MACHINE\\SYSTEM\\CurrentControlSet\\Services\\Cdrom\\AutoRun
+			LONG lResult = ::RegCreateKeyEx(HKEY_LOCAL_MACHINE, 
+				"SYSTEM\\CurrentControlSet\\Services\\Cdrom", 
+				0, NULL, 0, 
+				KEY_ALL_ACCESS, 
+				NULL, 
+				&hkResult, 
+				&dwDisposition
+			);
+			if(lResult != ERROR_SUCCESS){
+
+				TRACE("1__BUAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
+			}
+			lResult = ::RegQueryValueEx(hkResult, 
+				  "AutoRun",
+				  NULL,
+				  &type,
+				  (unsigned char*)value,
+				  &len
+			);
+
+			if(lResult != ERROR_SUCCESS){
+
+				TRACE("2__BUAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
+			}
+
+			::RegCloseKey(hkResult);
+		}
+		else
+		{
+			// "HKEY_LOCAL_MACHINE\\SOFTWARE\\Classes\\AudioCD\\shell" 
+		}
+	}*/
+}
+
+BOOL CLameFEApp::InitCDRipper()
+{
+
+	USES_CONVERSION;
+
+	TCHAR	szBuffer[_MAX_PATH]; 
+	VERIFY(::GetModuleFileName(AfxGetInstanceHandle(), szBuffer, _MAX_PATH));
+	
+	CString wd = szBuffer;
+	wd = wd.Left(wd.ReverseFind('\\'));
+
+	CDEX_ERR cResult = CDEX_OK;
+
+	if(m_hCDRipDll){
+
+		CR_DeInit();
+
+		if(::FreeLibrary(m_hCDRipDll) == 0){
+
+			TRACE("::FreeLibrary() == 0\n");
+		}
+
+		m_hCDRipDll = NULL;
+	}
+
+	m_hCDRipDll = LoadLibrary(wd + "\\CDRip.dll");
+
+	if(!m_hCDRipDll){
+
+		cResult = CDEX_ERROR;
+	}
+
+	cResult = CR_Init(wd + "\\lameFE.ini");
+
+	if(cResult != CDEX_OK){  //Error initialisng CD-Ripper
+
+		TRACE("CR_Init failed\n");
+		switch ( cResult )
+		{
+			case CDEX_NATIVEEASPINOTSUPPORTED:
+				AfxMessageBox(IDS_SCSINOTSUPPORTED, MB_OK+MB_ICONSTOP);
+			break;
+			case CDEX_FAILEDTOLOADASPIDRIVERS:
+				AfxMessageBox(IDS_FAILEDLOADINGASPI, MB_OK+MB_ICONSTOP);
+			break;
+			case CDEX_FAILEDTOGETASPISTATUS:
+				AfxMessageBox(IDS_FAILEDGETASPISTATUS, MB_OK+MB_ICONSTOP);
+			break;
+			case CDEX_NATIVEEASPISUPPORTEDNOTSELECTED:
+				/*
+				AfxMessageBox(IDS_FAILEDASPINOTSELECTED, MB_OK+MB_ICONSTOP);
+				*/
+				if(AfxMessageBox(IDS_FAILEDGETASPISTATUS,  MB_YESNO) ==  IDYES)
+				{
+					// set native SCSI libaray option
+					CR_SetTransportLayer( TRANSPLAYER_NTSCSI );
+
+					// save settings
+					CR_SaveSettings();
+
+					cResult = CR_Init(wd + "\\lameFE.ini");				
+					if (cResult == CDEX_OK)
+					{
+						//g_bRipperPresent = TRUE;
+					}
+				}
+
+			break;
+			case CDEX_ERROR:
+				AfxMessageBox("Error loading library", MB_OK+MB_ICONSTOP);
+				break;
+			case CDEX_OK:
+				TRACE("why are we here? h‰‰‰‰\n");
+			break;
+			default:
+				ASSERT( FALSE );
+		}
+	}
+	return (cResult == CDEX_OK ? TRUE : FALSE);
+}
+
+BOOL CLameFEApp::GetRipperStatus()
+{
+
+	return m_bRipperOK;
+}
+
+int CLameFEApp::ExitInstance() 
+{
+
+	if(m_hCDRipDll != NULL){
+		
+		CR_LockCD(FALSE); //Just to be sure :)
+		CR_DeInit();
+		FreeLibrary(m_hCDRipDll);
+	}
+	
+	return CWinApp::ExitInstance();
+}
 

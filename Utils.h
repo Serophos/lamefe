@@ -23,9 +23,14 @@
 #pragma once
 #endif // _MSC_VER > 1000
 
+#include "ID3Info.h"
+
 class Utils  
 {
 public:
+	static CString DecryptString(CString strEncrypted);
+	static CString EncryptString(CString strPlain);
+	static CString CreateFilename(CID3Info *id3info, CString strFormat, CString strExt, int nVolID = 0, int nDiscID = 0, int nTrack = 1, int nNumAudioTracks = 1);
 	static BOOL CreateDirs(CString strFilename);
 	static BOOL FileExists(CString strFilename);
 	Utils();

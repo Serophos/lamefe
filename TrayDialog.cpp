@@ -18,12 +18,16 @@
 
 #include "stdafx.h"
 #include "TrayDialog.h"
+//#include <shellapi.h>
+//#include <gdiplus.h>
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
 #undef THIS_FILE
 static char THIS_FILE[] = __FILE__;
 #endif
+
+#define   ICON_ID   19436
 
 /////////////////////////////////////////////////////////////////////////////
 // CTrayDialog dialog
@@ -35,7 +39,7 @@ CTrayDialog::CTrayDialog(UINT uIDD,CWnd* pParent /*=NULL*/)
 	m_nidIconData.cbSize			= sizeof(NOTIFYICONDATA);
 	
 	m_nidIconData.hWnd				= 0;
-	m_nidIconData.uID				= 1;
+	m_nidIconData.uID				= ICON_ID;
 
 	m_nidIconData.uCallbackMessage	= WM_TRAY_ICON_NOTIFY_MESSAGE;
 
@@ -70,7 +74,7 @@ int CTrayDialog::OnCreate(LPCREATESTRUCT lpCreateStruct)
 		return -1;
 	
 	m_nidIconData.hWnd = this->m_hWnd;
-	m_nidIconData.uID = 1;
+	m_nidIconData.uID = ICON_ID;
 	
 	return 0;
 }
@@ -228,7 +232,7 @@ void CTrayDialog::OnTrayNotify(WPARAM wParam, LPARAM lParam)
     uID = (UINT) wParam; 
     uMsg = (UINT) lParam; 
  
-	if (uID != 1)
+	if (uID != ICON_ID)
 		return;
 	
 	CPoint pt;	
@@ -315,5 +319,25 @@ void CTrayDialog::OnTrayRButtonDblClk(CPoint pt)
 
 void CTrayDialog::OnTrayMouseMove(CPoint pt)
 {
+}
+
+void CTrayDialog::SetBalloonTip(UINT nMsgID)
+{
+
+/*	NOTIFYICONDATA data;
+	data.cbSize = sizeof(NOTIFYICONDATA);
+	data.hWnd = (HWND)this;
+	data.uID = ICON_ID;
+	data.uFlags = NIF_INFO;
+
+	TCHAR titlebuffer[64];
+	LoadString(GetModuleHandle(NULL), ERR_BALLOONTITLE, titlebuffer, 64);
+
+	lstrcpyn(data.szInfo, buffer, 255);
+	data.uTimeout = 10000;
+	lstrcpyn(data.szInfoTitle, titlebuffer, 63);
+	data.dwInfoFlags = NIIF_ERROR;
+
+	Shell_NotifyIcon(NIM_MODIFY, &data);*/
 }
 

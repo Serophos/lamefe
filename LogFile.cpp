@@ -19,7 +19,6 @@
 #include "stdafx.h"
 #include "stdafx.h"
 #include "LogFile.h"
-#include "cfgFile.h"
 
 #ifdef _DEBUG
 #undef THIS_FILE
@@ -43,9 +42,6 @@ CLogFile::CLogFile()
 	m_strWd				= "";
 	m_strStartTime		= "";
 	m_strElapsedTime	= "";
-
-	cfgFile cfg;
-	m_bReportStyle		= cfg.GetValue("log_useoldstyle");
 }
 
 CLogFile::~CLogFile()
@@ -115,9 +111,9 @@ void CLogFile::StartEntry(CString strInFile, CString strOutFile, CString inModul
 
 	time(&m_tTmpStartTime);
 
-	m_staInModule.Add(inModule);
+/*	m_staInModule.Add(inModule);
 	m_staInFiles.Add(strInFile);
-	m_staOutFiles.Add(strOutFile);
+	m_staOutFiles.Add(strOutFile);*/
 	m_staErrors.Add("");
 
 	struct tm* tLocalTime;
@@ -129,6 +125,7 @@ void CLogFile::StartEntry(CString strInFile, CString strOutFile, CString inModul
 	m_msgOut->InsertItem(nLog++, strTmp, 0);
 	m_msgOut->InsertItem(nLog, "Save as: " + strOutFile, 2);
 	m_msgOut->EnsureVisible(nLog++, FALSE);
+	m_msgOut->SetColumnWidth(0, LVSCW_AUTOSIZE);
 }
 
 void CLogFile::SetInFormat(WAVEFORMATEX *wfx)
@@ -139,7 +136,7 @@ void CLogFile::SetInFormat(WAVEFORMATEX *wfx)
 							wfx->wBitsPerSample,
 							wfx->nChannels
 				  );
-	m_staInFormat.Add(strTmp);
+//	m_staInFormat.Add(strTmp);
 
 	strTmp.Format("File has format %d kHz %d bit %d channels", wfx->nSamplesPerSec, wfx->wBitsPerSample, wfx->nChannels);
 	m_msgOut->InsertItem(nLog, strTmp, (wfx->wBitsPerSample == 16 ? 0 : 1));
@@ -159,7 +156,7 @@ void CLogFile::FinalizeEntry()
 	tLocalTime = localtime(&m_tTmpStartTime);
 
 	strTmp.Format("%02d:%02d:%02d", tLocalTime->tm_hour, tLocalTime->tm_min, tLocalTime->tm_sec);
-	m_staSystemTime.Add(strTmp);
+/*	m_staSystemTime.Add(strTmp);
 	strTmp.Format("%02.1f", nElapsedSecs / 60);
 	m_staTimeUsed.Add(strTmp);
 
@@ -176,7 +173,7 @@ void CLogFile::FinalizeEntry()
 	
 	strTmp.Format("%03d%%", (int)nCompressionRatio);
 	m_staCompression.Add(strTmp);
-
+*/
 	tLocalTime = localtime(&tTmpEndTime);
 	strTmp.Format("%02d:%02d:%02d File Finished.", tLocalTime->tm_hour, tLocalTime->tm_min, tLocalTime->tm_sec);
 	m_msgOut->InsertItem(nLog, strTmp, 0);
@@ -188,7 +185,8 @@ void CLogFile::FinalizeEntry()
 void CLogFile::SetErrorMsg(int nEntry, CString strMessage)
 {
 
-	m_staErrors.SetAt(m_nCurrentEntry, strMessage);
+	m_staErrors.SetAt(nEntry, strMessage);
+	m_nNumErrors++;
 	m_msgOut->InsertItem(nLog, strMessage, (strMessage == "Encoded successfully" ? 0 : 1));
 	m_msgOut->EnsureVisible(nLog++, FALSE);
 }
@@ -199,6 +197,21 @@ void CLogFile::SetErrorMsg(int nEntry, UINT nID)
 	CString strTmp;
 	strTmp.LoadString(nID);
 	SetErrorMsg(nEntry, strTmp);
+}
+
+void CLogFile::SetNotificationMessage(CString strMsg)
+{
+
+	m_msgOut->InsertItem(nLog, strMsg, 3);
+	m_msgOut->EnsureVisible(nLog++, FALSE);
+}
+
+void CLogFile::SetNotificationMessage(UINT nID)
+{
+
+	CString strTmp;
+	strTmp.LoadString(nID);
+	SetNotificationMessage(strTmp);
 }
 
 void CLogFile::SetWd(CString wd)
@@ -220,91 +233,7 @@ void CLogFile::SetOutputWnd(CExtListCtrl *listCtrl)
 	m_msgOut	= listCtrl;
 }
 
-BOOL CLogFile::WriteReport(LPCSTR strFilename)
-{
 
-	cfgFile			cfg;
-	CStdioFile		fLogFile;
-	BOOL			bResult;
-
-	CString			strSessionStart	= cfg.GetStringValue("log_sessionstart");
-	CString			strSessionEnd	= cfg.GetStringValue("log_sessionend");
-	
-	CString			strEntry, strEntries, strErrors;//		= log_sessionstart(log_logentry);
-	CString			tmp;
-
-	strEntries.Format("%d", m_nNumEntries);
-	strErrors.Format("%d", m_nNumErrors);
-	
-	strSessionStart.Replace("\\n", "\n");
-	strSessionStart.Replace("%M", m_strOutMod);
-	strSessionStart.Replace("%d", m_strDate);
-	strSessionStart.Replace("%t", m_strStartTime);
-	strSessionStart.Replace("%T", m_strElapsedTime);
-	strSessionStart.Replace("%n", strErrors);
-	strSessionStart.Replace("%N", strEntries);
-
-	strSessionEnd.Replace("\\n", "\n");
-	strSessionEnd.Replace("%M", m_strOutMod);
-	strSessionEnd.Replace("%d", m_strDate);
-	strSessionEnd.Replace("%t", m_strStartTime);
-	strSessionEnd.Replace("%T", m_strElapsedTime);
-	strSessionEnd.Replace("%n", strErrors);
-	strSessionEnd.Replace("%N", strEntries);
-
-	TRY{
-
-		bResult = fLogFile.Open(
-						strFilename, 
-					    CFile::modeCreate | CFile::modeNoTruncate | CFile::modeWrite | CFile::typeText);
-
-		if(bResult == 0){
-			
-			TRACE("Error Creating / Opening logfile\n");
-			return FALSE;
-		}
-		
-		fLogFile.SeekToEnd();
-
-		fLogFile.WriteString(strSessionStart);
-		
-		for(int i = 0; i < m_nNumEntries; i++){
-			
-			strEntry = cfg.GetStringValue("log_logentry");
-			strEntry.Replace("\\n", "\n");
-			strEntry.Replace("%M", m_strOutMod);  // outputModule
-			strEntry.Replace("%d", m_strDate);	  // date
-			strEntry.Replace("%t", m_staSystemTime.GetAt(i)); //startTime
-			strEntry.Replace("%T", m_staTimeUsed.GetAt(i));
-			strEntry.Replace("%n", strErrors);
-			strEntry.Replace("%N", strEntries);
-			strEntry.Replace("%s", m_staInFiles.GetAt(i));
-			strEntry.Replace("%o", m_staOutFiles.GetAt(i));
-			strEntry.Replace("%f", m_staInFormat.GetAt(i));
-			//strEntry.Replace("%F", m_staOutFormat.GetAt(i));
-			strEntry.Replace("%m", m_staInModule.GetAt(i));
-			strEntry.Replace("%c", m_staCompression.GetAt(i));
-			strEntry.Replace("%e", m_staErrors.GetAt(i));
-
-			tmp.Format("%d", i + 1);
-			strEntry.Replace("%#", tmp);
-
-			fLogFile.WriteString(strEntry);
-		}
-
-		fLogFile.WriteString(strSessionEnd);
-		fLogFile.Flush();
-		fLogFile.Close();
-
-	}
-	CATCH(CFileException, e){
-	
-		return FALSE;
-	}
-	END_CATCH;
-
-	return TRUE;
-}
 
 BOOL CLogFile::WriteLog(LPCSTR strFilename)
 {
@@ -348,16 +277,7 @@ BOOL CLogFile::WriteLog(LPCSTR strFilename)
 BOOL CLogFile::SaveLogAs(LPCSTR strFilename)
 {
 
-	BOOL bResult = TRUE;
-
-	if(m_bReportStyle){
-		
-		bResult = WriteReport(strFilename);
-	}
-	else{
-
-		bResult = WriteLog(strFilename);
-	}
-
-	return bResult;
+	return WriteLog(strFilename);
 }
+
+

@@ -18,7 +18,7 @@
 
 #include "stdafx.h"
 #include "stdafx.h"
-#include "cfgFile.h"
+#include "Ini.h"
 #include "Encoder.h"
 
 
@@ -210,8 +210,13 @@ BOOL CEncoder::PrepareMP3(CString strFilename, int nNumchannels, int nSamplerate
 
 	TRACE("Entering CEncoder::PrepareMP3()\n");
 
-	cfgFile cfg(wd);
+	CIni cfg;
+	CString strPreset;
 
+	cfg.SetIniFileName(wd + "\\LameFE.ini");
+	strPreset = cfg.GetValue("L.A.M.E.", "PresetName", "default");
+	cfg.SetIniFileName(wd + "\\" + strPreset + ".ini");
+	
 	pFileOut = fopen(strFilename, "wb+");
 	strFileOut = strFilename;
 
@@ -221,49 +226,62 @@ BOOL CEncoder::PrepareMP3(CString strFilename, int nNumchannels, int nSamplerate
 	memset(&beConfig,0,sizeof(beConfig));					// clear all fields
 
 	// Structure information
-	beConfig.dwConfig = BE_CONFIG_LAME;
+	beConfig.dwConfig						= BE_CONFIG_LAME;
 	beConfig.format.LHV1.dwStructVersion	= 1;
 	beConfig.format.LHV1.dwStructSize		= sizeof(beConfig);
 	
 
 	//Basic Encoder Settings
+	int	nCRC		= (BOOL)cfg.GetValue("L.A.M.E.", "Crc", FALSE);
+	int nVBR		= (nCRC>>12)&0x0F;
+	int nVbrMethod	= (nCRC>>16)&0x0F;
 
 	//Samplerate of input file
 	beConfig.format.LHV1.dwSampleRate	= nSamplerate;
 	//Downsample rate
 	beConfig.format.LHV1.dwReSampleRate	= 0;  //Encoder decides
 	//Number of channels
-	beConfig.format.LHV1.nMode			= (nNumchannels == 1 ? BE_MP3_MODE_MONO : (LONG)cfg.GetValue("channels"));		
+	beConfig.format.LHV1.nMode			= (nNumchannels == 1 ? BE_MP3_MODE_MONO : (LONG)cfg.GetValue("L.A.M.E.", "Channels", 1));		
 	//CBR bitrate / VBR min bitrate
-	beConfig.format.LHV1.dwBitrate		= (DWORD)cfg.GetValue("bitrate", TRUE);				
+	beConfig.format.LHV1.dwBitrate		= (DWORD)FormatBps(cfg.GetValue("L.A.M.E.", "Bitrate", 14));				
 	//VBR max bitrate
-	beConfig.format.LHV1.dwMaxBitrate	= (DWORD)cfg.GetValue("maxbitrate", TRUE);
+	beConfig.format.LHV1.dwMaxBitrate	= (DWORD)FormatBps(cfg.GetValue("L.A.M.E.", "MaxBitrate", 16));
 	//Quality preset
-	beConfig.format.LHV1.nPreset		= cfg.GetValue("qualitypreset");
+	beConfig.format.LHV1.nPreset		= cfg.GetValue("L.A.M.E.", "QualityPreset", 0);
 	//MPEG Version. This is for future use and isn't supported by the lame_enc.dll yet
 	beConfig.format.LHV1.dwMpegVersion	= (beConfig.format.LHV1.dwSampleRate>=32000)? MPEG1 : MPEG2;				
 	//Future use
 	beConfig.format.LHV1.dwPsyModel		= 0;					
 	beConfig.format.LHV1.dwEmphasis		= 0;	
 	//Bit stream settings
-	beConfig.format.LHV1.bCRC			= (BOOL)cfg.GetValue("crc");			
-	beConfig.format.LHV1.bOriginal		= (BOOL)cfg.GetValue("original");
-	beConfig.format.LHV1.bCopyright		= (BOOL)cfg.GetValue("copyright");	
-	beConfig.format.LHV1.bPrivate		= (BOOL)cfg.GetValue("private");
+	beConfig.format.LHV1.bCRC			= nCRC&0x01;			
+	beConfig.format.LHV1.bOriginal		= (BOOL)cfg.GetValue("L.A.M.E.", "Original", FALSE);
+	beConfig.format.LHV1.bCopyright		= (BOOL)cfg.GetValue("L.A.M.E.", "Copyright", FALSE);	
+	beConfig.format.LHV1.bPrivate		= (BOOL)cfg.GetValue("L.A.M.E.", "Private", FALSE);
 	
-	//VBR stuff
-	if(cfg.GetValue("vbrmethod") != 0){
+	// allways write the VBR header, even for CBR file
+	beConfig.format.LHV1.bWriteVBRHeader	= TRUE;
 
-		beConfig.format.LHV1.bWriteVBRHeader = TRUE;
+	//VBR stuff
+	if(cfg.GetValue("L.A.M.E.", "VbrMethod", 0) != 0){
+
+		//beConfig.format.LHV1.bWriteVBRHeader = TRUE;
 		beConfig.format.LHV1.bEnableVBR		 = TRUE;
-		beConfig.format.LHV1.nVBRQuality	 = cfg.GetValue("vbrquality");
-		beConfig.format.LHV1.dwVbrAbr_bps	 = cfg.GetValue("abr") * 1000;
-		beConfig.format.LHV1.nVbrMethod		 = (VBRMETHOD)(cfg.GetValue("vbrmethod") - 1); 
+		beConfig.format.LHV1.nVBRQuality	 = cfg.GetValue("L.A.M.E.", "VbrQuality", 5);
+		beConfig.format.LHV1.dwVbrAbr_bps	 = cfg.GetValue("L.A.M.E.", "Abr", 14) * 1000;
+		beConfig.format.LHV1.nVbrMethod		 = (VBRMETHOD)(cfg.GetValue("L.A.M.E.", "VbrMethod", 0) - 1); 
 		
+	}
+	else
+	{
+		// no ABR selected
+		beConfig.format.LHV1.dwVbrAbr_bps = 0;
+		beConfig.format.LHV1.nVBRQuality = nVBR ;
 	}
 
 	beConfig.format.LHV1.bNoRes			= TRUE;	
 	beConfig.format.LHV1.bStrictIso		= FALSE;
+	beConfig.format.LHV1.nPreset=( (nCRC >> 8 ) & 0x0F );
 
 
 
@@ -293,7 +311,9 @@ BOOL CEncoder::DeInit()
 
 	TRACE("Entering CEncoder::DeInit()\n");
 
-	cfgFile cfg(wd);
+	CIni cfg;
+	cfg.SetIniFileName(wd + "\\LameFE.ini");
+
 	if(strOutputDLL == "lame_enc.dll"){
 
 			TRACE("Deinit Encoder Mode MP3\n");
@@ -330,7 +350,7 @@ BOOL CEncoder::DeInit()
 			// Close output file
 
 			// Write the VBR Tag
-			if(cfg.GetValue("vbrmethod") != 0){
+			if(cfg.GetValue("L.A.M.E.", "VbrMethod", 0) != 0){
 
 				//Why the crash :-(
 				beWriteVBRHeader(strFileOut);
@@ -402,4 +422,49 @@ void CEncoder::SetAlbumInfo(MMFILE_ALBUMINFO albumInfo)
 
 	TRACE("Leaving CEncoder::SetAlbumInfo()\n");
 
+}
+
+int CEncoder::FormatBps(int bps)
+{
+
+/*
+ 8 bps 0
+16 bps 1
+24 bps 2
+32 bps 3
+40 bps 4
+48 bps 5
+56 bps 6
+64 bps 7 //
+80 bps  8 
+96  bps 9
+112 bps 10
+128 bps 11
+144 bps 12
+160 bps 13 //
+192 bps 14 (default) 
+224 bps 15
+256 bps 16
+320 bps 17
+*/
+	int res = 0;
+	
+	if (bps <= 7){
+
+		res = 8 + 8 * (bps);
+	}
+	else if ((bps > 7) && (bps <= 13)){
+
+		res = 80 + 16 * (bps - 8);
+	}
+	else if ((bps > 13) && (bps <= 16)){
+
+		res = 160 + 32 * (bps - 13);
+	}
+	else{
+		res = 320;
+	}
+
+
+	return res;
 }

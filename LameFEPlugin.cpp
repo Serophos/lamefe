@@ -19,7 +19,7 @@
 #include "stdafx.h"
 #include "stdafx.h"
 #include "LameFEPlugin.h"
-#include "cfgFile.h"
+#include "Ini.h"
 
 #ifdef _DEBUG
 #undef THIS_FILE
@@ -177,9 +177,10 @@ int CLameFEPlugin::GetProfileString(const char *entry, char *value, int size, in
 	strTmp = szBuffer;
 	strTmp = strTmp.Left(strTmp.ReverseFind('\\'));
 
-	cfgFile cfg(strTmp);
+	CIni cfg;
+	cfg.SetIniFileName(strTmp + "\\LameFE.ini");
 	
-	strTmp = cfg.GetStringValue(entry);
+	strTmp = cfg.GetValue("Plugins", entry, "");
 	strcpy(value, strTmp);
 	//strTmp.ReleaseBuffer();
 	return TRUE;
@@ -195,7 +196,8 @@ int CLameFEPlugin::SetProfileString(const char *entry, const char *value)
 	strTmp = szBuffer;
 	strTmp = strTmp.Left(strTmp.ReverseFind('\\'));
 
-	cfgFile cfg(strTmp);
-	cfg.SetStringValue(entry, value);
+	CIni cfg;
+	cfg.SetIniFileName(strTmp + "\\LameFE.ini");
+	cfg.SetValue("Plugins", entry, value);
 	return TRUE;
 }

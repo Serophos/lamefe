@@ -1,6 +1,8 @@
 /*
 ** Copyright (C) 2002 Thees Winkler
 **  
+** Parts of this code (c) by Albert L. Faber
+**
 ** This program is free software; you can redistribute it and/or modify
 ** it under the terms of the GNU General Public License as published by
 ** the Free Software Foundation; either version 2 of the License, or
@@ -24,15 +26,15 @@
 
 #include "CDRip/CDRip.h"
 #include "CDPlayerIni.h"
-#include "SettingsSheet.h"
-#include "cfgFile.h"
+#include "Ini.h"
 #include "CDTrack.h"
 #include "CDdbQueryDlg.h"
 #include "mfccddb.h"
 #include "CPlugin.h"
 #include "MyFileDialog.h"
-
-
+#include "SettingsDlg.h"
+#include "CheckNewVersion.h"
+#include "MainFrm.h"
 #include <direct.h>
 
 #ifdef _DEBUG
@@ -42,7 +44,7 @@ static char THIS_FILE[] = __FILE__;
 #endif
 
 static const UINT UWM_ALBUMINFO_UPDATED = ::RegisterWindowMessage(_T("UWM_RESET_VIEW--{4E7F6EC0-6ADC-11d3-BC36-006067709674}"));
-static const UINT UWM_LISTCTRL_KEYUP = ::RegisterWindowMessage(_T("UWM_LISTCTRL_KEYUP--{4E7F6EC0-6ADC-11d3-BC36-006067709674}"));
+static const UINT UWM_LISTCTRL_KEYUP	= ::RegisterWindowMessage(_T("UWM_LISTCTRL_KEYUP--{4E7F6EC0-6ADC-11d3-BC36-006067709674}"));
 
 #define TIMERID2 25011
 
@@ -61,29 +63,26 @@ BEGIN_MESSAGE_MAP(CLameFEView, CFormView)
 	ON_COMMAND(ID_ID3TAGS_READFREEDBSERVER, OnId3tagsReadfreedbserver)
 	ON_COMMAND(ID_ID3TAGS_SAVETOCDPLAYERINI, OnId3tagsSavetocdplayerini)
 	ON_WM_TIMER()
-	ON_COMMAND(ID_SETTINGS_PREFERENCES, OnSettingsPreferences)
-	ON_COMMAND(ID_SETTINGS_PLUGINS, OnSettingsPlugins)
-	ON_COMMAND(ID_SETTINGS_LAMEENCODER, OnSettingsLameencoder)
-	ON_COMMAND(ID_SETTINGS_ID3TAGSFILENAMES, OnSettingsId3tagsfilenames)
-	ON_COMMAND(ID_SETTINGS_CDREADER, OnSettingsCdreader)
-	ON_COMMAND(ID_SETTINGS_FREEDBSETUP, OnSettingsFreedbsetup)
 	ON_COMMAND(ID_FILE_OPEN, OnFileOpen)
 	ON_COMMAND(ID_REMOVE_FILE, OnRemoveFile)
 	ON_COMMAND(ID_FILE_STARTENCODING, OnFileStartencoding)
-	ON_COMMAND(ID_BATCH_ALBUM, OnFileStartBatchAlbum)
-	ON_COMMAND(ID_START_TO_SINGLE_FILE, OnFileStartAlbum)
 	ON_COMMAND(ID_APP_EXIT, OnAppExit)
+	ON_COMMAND(ID_START_TO_SINGLE_FILE, OnFileStartAlbum)
 	ON_COMMAND(ID_VIEW_RELOADCD, OnViewReloadcd)
 	ON_COMMAND(ID_VIEW_SELECTALLTRACKSFILES, OnViewSelectalltracksfiles)
 	ON_COMMAND(ID_ID3TAGS_SAVECUESHEET, OnId3tagsSavecuesheet)
 	ON_UPDATE_COMMAND_UI(ID_FILE_OPEN, OnUpdateToolBar)
 	ON_UPDATE_COMMAND_UI(ID_ID3TAGS_READFREEDBSERVER, OnUpdateCDControls)
-	ON_COMMAND(ID_SETTINGS_LOGGING, OnSettingsLogging)
 	ON_WM_DROPFILES()
 	ON_WM_DESTROY()
 	ON_NOTIFY(NM_CLICK, IDC_FILES_TRACKS, OnClickFilesTracks)
 	ON_WM_SIZE()
 	ON_COMMAND(ID_ID3TAGS_ID3TAGEDITOR, OnId3tagsId3tageditor)
+	ON_COMMAND(ID_CHECKFORNEWVESION, OnCheckfornewvesion)
+	ON_COMMAND(ID_SETTINGS, OnSettings)
+	ON_COMMAND(ID_HELP_REPORTABUG, OnHelpReportabug)
+	ON_COMMAND(ID_BATCH_ALBUM, OnFileStartBatchAlbum)
+	ON_COMMAND(ID_BATCH_SINGLETRACKS, OnFileStartBatchSingle)
 	ON_UPDATE_COMMAND_UI(ID_REMOVE_FILE, OnUpdateToolBar)
 	ON_UPDATE_COMMAND_UI(ID_ID3TAGS_READCDPLAYERINI, OnUpdateCDControls)
 	ON_UPDATE_COMMAND_UI(ID_ID3TAGS_READCDTEXT, OnUpdateCDControls)
@@ -91,7 +90,9 @@ BEGIN_MESSAGE_MAP(CLameFEView, CFormView)
 	ON_UPDATE_COMMAND_UI(ID_ID3TAGS_SAVETOCDPLAYERINI, OnUpdateCDControls)
 	ON_UPDATE_COMMAND_UI(ID_START_TO_SINGLE_FILE, OnUpdateCDControls)
 	ON_UPDATE_COMMAND_UI(ID_BATCH_ALBUM, OnUpdateCDControls)
+	ON_UPDATE_COMMAND_UI(ID_BATCH_SINGLETRACKS, OnUpdateCDControls)
 	ON_UPDATE_COMMAND_UI(ID_VIEW_RELOADCD, OnUpdateCDControls)
+	ON_CBN_SELCHANGE(IDC_OUTPUT_DEVICE, OnSelchangeOutputDevice)
 	//}}AFX_MSG_MAP
 	ON_REGISTERED_MESSAGE(UWM_ALBUMINFO_UPDATED, OnAlbumInfoUpdated)
 	ON_REGISTERED_MESSAGE(UWM_LISTCTRL_KEYUP, OnClickFilesTracks)
@@ -110,7 +111,6 @@ void CLameFEView::DoDataExchange(CDataExchange* pDX)
 	DDX_Control(pDX, IDC_OUTPUT_DEVICE, c_outputDevice);
 	DDX_Control(pDX, IDC_CONFIG_OUT, c_configureOut);
 	DDX_Control(pDX, IDC_CONFIG_IN, c_configureIn);
-
 	//}}AFX_DATA_MAP
 }
 
@@ -123,7 +123,6 @@ CLameFEView::CLameFEView()
 
 	m_pToolTip = NULL;
 	m_bTagEditorVisible = FALSE;
-	m_hCDRipDll = NULL;
 }
 
 CLameFEView::~CLameFEView()
@@ -329,8 +328,10 @@ void CLameFEView::OnId3tagsReadfreedbserver()
 	delete pIndex;
 
 	//save to cdplayer.ini if config says so
-	cfgFile cfg(wd);
-	if(cfg.GetValue("savecdplayerini") && nResult == 2){
+	CIni cfg;
+	cfg.SetIniFileName(wd + "\\LameFE.ini");
+
+	if(cfg.GetValue("LameFE", "WriteCDPlayer.ini", TRUE) && nResult == 2){
 
 		CCDPlayerIni cdini(&m_compactDisc);
 		cdini.Write();
@@ -465,14 +466,17 @@ void CLameFEView::OnInitialUpdate()
 	GetInputDevices();
 	GetOutputDevices();
 
-	cfgFile cfg(wd);
+	m_wndPresetBar = (CPresetBar*)AfxGetApp()->m_pMainWnd->GetDescendantWindow(AFX_IDW_DIALOGBAR) ;
 
-	if(cfg.GetValue("showtagedit")){
+	CIni cfg;
+	cfg.SetIniFileName(wd + "\\LameFE.ini");
+
+	if(cfg.GetValue("LameFE", "ShowAlbumEditor", FALSE)){
 		
 		OnId3tagsId3tageditor();
 	}
 
-	m_bCheckCD = cfg.GetValue("CheckForNewCD");
+	m_bCheckCD = cfg.GetValue("CD-ROM", "CheckForNewCD", TRUE);
 
 	ResizeControls();
 	ReadCDContents();
@@ -508,6 +512,7 @@ void CLameFEView::OnSelchangeDevices(BOOL bReset){
 	}
 
 }
+
 
 BOOL CLameFEView::GetOutputDevices()
 {
@@ -551,55 +556,9 @@ BOOL CLameFEView::GetInputDevices()
 
 	CDEX_ERR cResult = CDEX_OK;
 
-	nNumCDDrives = 0;
-
-	if(m_hCDRipDll){
-
-		CR_DeInit();
-
-		if(::FreeLibrary(m_hCDRipDll) == 0){
-
-			TRACE("::FreeLibrary() == 0\n");
-		}
-
-		m_hCDRipDll = NULL;
-	}
-
-	m_hCDRipDll = LoadLibrary(wd + "\\CDRip.dll");
-
-	if(!m_hCDRipDll){
-
-		cResult = CDEX_ERROR;
-	}
-
-	cResult = CR_Init(wd + "\\lameFE.ini");
-
-	if(cResult != CDEX_OK){  //Error initialisng CD-Ripper
-
-		TRACE("CR_Init failed\n");
-		switch ( cResult )
-		{
-			case CDEX_NATIVEEASPINOTSUPPORTED:
-				AfxMessageBox(IDS_SCSINOTSUPPORTED, MB_OK+MB_ICONSTOP);
-			break;
-			case CDEX_FAILEDTOLOADASPIDRIVERS:
-				AfxMessageBox(IDS_FAILEDLOADINGASPI, MB_OK+MB_ICONSTOP);
-			break;
-			case CDEX_FAILEDTOGETASPISTATUS:
-				AfxMessageBox(IDS_FAILEDGETASPISTATUS, MB_OK+MB_ICONSTOP);
-			break;
-			case CDEX_NATIVEEASPISUPPORTEDNOTSELECTED:
-				AfxMessageBox(IDS_FAILEDASPINOTSELECTED, MB_OK+MB_ICONSTOP);
-			break;
-			case CDEX_ERROR:
-				AfxMessageBox("Error loading library", MB_OK+MB_ICONSTOP);
-				break;
-			case CDEX_OK:
-				TRACE("why are we here? hהההה\n");
-			break;
-			default:
-				ASSERT( FALSE );
-		}
+	if(!((CLameFEApp*)AfxGetApp())->GetRipperStatus()){
+		
+		nNumCDDrives = 0;
 	}
 	else{  // Ripper status is OK enumerate drives and load settings...
 
@@ -699,14 +658,15 @@ void CLameFEView::ReadCDContents()
 		
 		m_compactDisc.Init();
 
-		cfgFile cfg(wd);
+		CIni cfg;
+		cfg.SetIniFileName(wd + "\\LameFE.ini");
 
-		if(cfg.GetValue("readcdtext")){
+		if(cfg.GetValue("LameFE", "ReadCDText", FALSE)){
 
 			m_compactDisc.ReadCDText();
 		}
 
-		if(cfg.GetValue("readcdplayerini")){
+		if(cfg.GetValue("LameFE", "ReadCDPlayer.ini", TRUE)){
 
 			CCDPlayerIni cdini(&m_compactDisc);
 			cdini.Read();
@@ -714,7 +674,7 @@ void CLameFEView::ReadCDContents()
 
 		RefreshTrackList();
 
-		if(cfg.GetValue("select", TRUE)){
+		if(cfg.GetValue("CD-ROM", "Select", TRUE)){
 
 			m_ctrlList.SelectAll();
 			SetAlbumInfo();
@@ -765,71 +725,29 @@ void CLameFEView::OnTimer(UINT nIDEvent)
 	CFormView::OnTimer(nIDEvent);
 }
 
-void CLameFEView::ShowSettingsDialog(int nTab)
-{
 
-	int nActiveCD = c_inputDevice.GetCurSel();
-	CSettingsSheet settings("lameFE Settings", this, nTab);
-	settings.init(wd, (nNumCDDrives > 0 ? TRUE : FALSE));
-	settings.DoModal();
-	c_inputDevice.SetCurSel(nActiveCD);
-
-	CR_SetActiveCDROM(nActiveCD);
-	CR_SaveSettings();
-	cfgFile cfg(wd);
-	m_bCheckCD = cfg.GetValue("CheckForNewCD");
-}
-
-void CLameFEView::OnSettingsPreferences() 
-{
-	ShowSettingsDialog(0);
-}
-
-void CLameFEView::OnSettingsPlugins() 
-{
-
-	ShowSettingsDialog(3);
-}
-
-void CLameFEView::OnSettingsLameencoder() 
-{
-
-	ShowSettingsDialog(4);
-}
-
-void CLameFEView::OnSettingsId3tagsfilenames() 
-{
-
-	ShowSettingsDialog(1);
-}
-
-void CLameFEView::OnSettingsCdreader() 
-{
-
-	ShowSettingsDialog(2);
-}
-
-void CLameFEView::OnSettingsLogging() 
-{
-	
-	ShowSettingsDialog(5);
-}
-
-void CLameFEView::OnSettingsFreedbsetup() 
-{
-
-	ShowSettingsDialog(6);
-}
 void CLameFEView::OnConfigureIn()
 {
 
+	BOOL bOldCDCheck = m_bCheckCD;
+	m_bCheckCD = FALSE;
+
+	CSettingsDlg dlg;
 	if(!IsPluginMode()){
 
-		OnSettingsCdreader();
+		dlg.ShowCDRipper();
 	}
 	else{
 
-		OnSettingsPlugins();
+		dlg.ShowDecoders();
+	}
+	dlg.DoModal();
+
+	m_bCheckCD = bOldCDCheck;
+
+	if(m_wndPresetBar != 0){
+
+		m_wndPresetBar->OnInitDialogBar();
 	}
 }
 
@@ -842,7 +760,19 @@ void CLameFEView::OnConfigureOut()
 	
 	if(dllName == "lame_enc.dll"){
 
-		OnSettingsLameencoder();
+
+		BOOL bOldCDCheck = m_bCheckCD;
+		m_bCheckCD = FALSE;
+
+		CSettingsDlg dlg;
+		dlg.ShowMP3();
+		dlg.DoModal();
+		m_bCheckCD = bOldCDCheck;
+
+		if(m_wndPresetBar != 0){
+
+			m_wndPresetBar->OnInitDialogBar();
+		}
 	}
 	else{
 
@@ -866,7 +796,8 @@ void CLameFEView::OnFileOpen()
 
 	TRACE("Entering CLameFEDlg::OnAddFile()\n");
 	
-	cfgFile lcfg(wd);
+	CIni cfg;
+	cfg.SetIniFileName(wd + "\\LameFE.ini");
 	
 	// Get all supported filetypes of all input plugins
 	CString tmpSzFilter, szFilter, strAllExt;
@@ -884,7 +815,7 @@ void CLameFEView::OnFileOpen()
 
 	CMyFileDialog FileOpen(TRUE, 0, 0, OFN_FILEMUSTEXIST|OFN_OVERWRITEPROMPT | OFN_ALLOWMULTISELECT  , szFilter, 0);
 	
-	FileOpen.m_ofn.lpstrInitialDir = (const char*)lcfg.GetStringValue("output");
+	FileOpen.m_ofn.lpstrInitialDir = (const char*)cfg.GetValue("FileNames", "BasePath", wd + "\\Output");
 
 	CString strFileName;
 	int maxChar = 1000;
@@ -983,20 +914,14 @@ void CLameFEView::OnDestroy()
 	m_ctrlList.DeleteAllItems();
 	ResetFileList();
 
-	if(m_hCDRipDll != NULL){
-		
-		CR_LockCD(FALSE); //Just to be sure :)
-		CR_DeInit();
-		FreeLibrary(m_hCDRipDll);
-	}
-
-	cfgFile cfg;
+	CIni cfg;
+	cfg.SetIniFileName(wd + "\\LameFE.ini");
 	RECT rc;
 	AfxGetApp()->m_pMainWnd->GetWindowRect(&rc);
-	cfg.SetValue("window.x", rc.left);
-	cfg.SetValue("window.y", rc.top);
-	cfg.SetValue("window.cx", rc.right-rc.left);
-	cfg.SetValue("window.cy", rc.bottom-rc.top);
+	cfg.SetValue("LameFE", "Window.x", rc.left);
+	cfg.SetValue("LameFE", "Window.y", rc.top);
+	cfg.SetValue("LameFE", "Window.cx", rc.right-rc.left);
+	cfg.SetValue("LameFE", "Window.cy", rc.bottom-rc.top);
 
 	CFormView::OnDestroy();
 
@@ -1044,6 +969,13 @@ void CLameFEView::OnFileStartBatchAlbum()
 	StartEncoding(BATCHALBUMMODE);
 }
 
+void CLameFEView::OnFileStartBatchSingle()
+{
+
+	OnViewSelectalltracksfiles();
+	StartEncoding(BATCHSINGLETRACKMODE);
+}
+
 void CLameFEView::OnFileStartencoding() 
 {
 
@@ -1054,7 +986,8 @@ void CLameFEView::StartEncoding(modes mEMode)
 {
 
 	int     nInputDevice    = c_inputDevice.GetCurSel();
-	cfgFile cfg(wd);
+	CIni cfg;
+	cfg.SetIniFileName(wd + "\\LameFE.ini");
 
 	if((!m_compactDisc.GetNumTracks() && nInputDevice  < nNumCDDrives) ||
 		(!m_mmFiles.GetSize() && nInputDevice  >= nNumCDDrives)){
@@ -1136,7 +1069,7 @@ void CLameFEView::StartEncoding(modes mEMode)
 		esdlg.SetFiles(&m_mmFiles);
 	}
 	
-	if(cfg.GetValue("hideduringenc")){
+	if(cfg.GetValue("LameFE", "HideMainWnd", TRUE)){
 
 		GetTopLevelParent()->ShowWindow(SW_MINIMIZE);
 		GetTopLevelParent()->ShowWindow(SW_HIDE);
@@ -1146,7 +1079,7 @@ void CLameFEView::StartEncoding(modes mEMode)
 	int nResult = esdlg.DoModal();
 	
 	GetTopLevelParent()->ShowWindow(SW_SHOWNORMAL);
-	m_bCheckCD = cfg.GetValue("CheckForNewCD");
+	m_bCheckCD = cfg.GetValue("CD-ROM", "CheckForNewCD", TRUE);
 	
 	if(nResult == IDCANCEL){
 
@@ -1154,14 +1087,12 @@ void CLameFEView::StartEncoding(modes mEMode)
 		return;
 	}
 
-	//cfgFile cfg(wd);
-	if(cfg.GetValue("quit")){
+	if(cfg.GetValue("LameFE", "ExitLameFE", FALSE)){
 
-		//AfxGetApp()->ExitInstance();
 		OnAppExit();
 	}
 
-	if(cfg.GetValue("shutdown")){
+	if(cfg.GetValue("LameFE", "Shutdown", FALSE)){
 
 		if(!ShutDown()){
 
@@ -1391,3 +1322,63 @@ BOOL CLameFEView::IsPluginMode()
 	return c_inputDevice.GetCurSel() >= nNumCDDrives;
 }
 
+
+void CLameFEView::OnCheckfornewvesion() 
+{
+
+	CCheckNewVersion dlg;
+	dlg.DoModal();
+}
+
+void CLameFEView::OnSettings() 
+{
+
+	BOOL bOldCDCheck = m_bCheckCD;
+	m_bCheckCD = FALSE;
+
+	CSettingsDlg dlg;
+	dlg.DoModal();
+	
+	m_bCheckCD = bOldCDCheck;
+
+	if(m_wndPresetBar != 0){
+
+		m_wndPresetBar->OnInitDialogBar();
+	}
+}
+
+
+void CLameFEView::OnHelpReportabug() 
+{
+
+	CString strFilename = "http://lamefe.sourceforge.net/forums/index.php?s=2c25698491afcec57c2829f2b18d13aa&act=SF&f=3";
+	//strFilename += m_strInstallerName;
+
+	ShellExecute(GetSafeHwnd(), 
+				"open", 
+				strFilename,
+				NULL,
+				NULL,
+				SW_SHOW);
+}
+
+void CLameFEView::OnSelchangeOutputDevice() 
+{
+
+	CString dllName, strOutputDevice;
+	int nOutputDevice = c_outputDevice.GetCurSel();
+	c_outputDevice.GetLBText(nOutputDevice, strOutputDevice);
+	CMainFrame* wndFrame = (CMainFrame*)AfxGetApp()->m_pMainWnd;
+
+	if(strOutputDevice == "MPEG I/II Layer 3 (lame_enc.dll)"){
+
+		m_wndPresetBar->Enable(TRUE);
+		wndFrame->ShowControlBar(m_wndPresetBar, TRUE ,FALSE);
+	}
+	else{
+
+		m_wndPresetBar->Enable(FALSE);
+		wndFrame->ShowControlBar(m_wndPresetBar, FALSE ,FALSE);
+		m_pStatus->SetPaneText(1, strOutputDevice);
+	}
+}

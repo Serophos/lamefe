@@ -1,10 +1,24 @@
-// AlbumInfoCtrl.cpp: Implementierungsdatei
-//
+/*
+** Copyright (C) 2002 Thees Winkler
+**  
+** This program is free software; you can redistribute it and/or modify
+** it under the terms of the GNU General Public License as published by
+** the Free Software Foundation; either version 2 of the License, or
+** (at your option) any later version.
+** 
+** This program is distributed in the hope that it will be useful,
+** but WITHOUT ANY WARRANTY; without even the implied warranty of
+** MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+** GNU General Public License for more details.
+** 
+** You should have received a copy of the GNU General Public License
+** along with this program; if not, write to the Free Software 
+** Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+*/
 
 #include "stdafx.h"
 #include "lameFE.h"
 #include "AlbumInfoCtrl.h"
-//#include "LameFEView.h"
 #ifdef _DEBUG
 #define new DEBUG_NEW
 #undef THIS_FILE
@@ -87,20 +101,20 @@ void CAlbumInfoCtrl::DoDataExchange(CDataExchange* pDX)
 
 BEGIN_MESSAGE_MAP(CAlbumInfoCtrl, CDialog)
 	//{{AFX_MSG_MAP(CAlbumInfoCtrl)
-	ON_EN_KILLFOCUS(IDC_ALBUMNAME, OnChangeAlbumname)
-	ON_EN_KILLFOCUS(IDC_SONGTITLE, OnChangeAlbumname)
-	ON_EN_KILLFOCUS(IDC_SONGINTERPRET, OnChangeAlbumname)
-	ON_EN_KILLFOCUS(IDC_TRACKNUMBER, OnChangeAlbumname)
-	ON_EN_KILLFOCUS(IDC_YEAR, OnChangeAlbumname)
-	ON_EN_KILLFOCUS(IDC_COMMENT, OnChangeAlbumname)
-	ON_CBN_KILLFOCUS(IDC_GENRE, OnChangeAlbumname)
-	ON_EN_KILLFOCUS(IDC_ALBUMNAME, OnChangeAlbumname)
-	ON_EN_CHANGE(IDC_SONGTITLE, OnChangeAlbumInfo)
+	ON_EN_KILLFOCUS(IDC_ALBUMNAME,		OnChangeAlbumname)
+	ON_EN_KILLFOCUS(IDC_SONGTITLE,		OnChangeAlbumname)
+	ON_EN_KILLFOCUS(IDC_SONGINTERPRET,	OnChangeAlbumname)
+	ON_EN_KILLFOCUS(IDC_TRACKNUMBER,	OnChangeAlbumname)
+	ON_EN_KILLFOCUS(IDC_YEAR,			OnChangeAlbumname)
+	ON_EN_KILLFOCUS(IDC_COMMENT,		OnChangeAlbumname)
+	ON_CBN_KILLFOCUS(IDC_GENRE,			OnChangeAlbumname)
+	ON_CBN_EDITCHANGE(IDC_GENRE,	OnChangeAlbumInfo)
+	ON_EN_CHANGE(IDC_ALBUMNAME,		OnChangeAlbumInfo)
+	ON_EN_CHANGE(IDC_SONGTITLE,		OnChangeAlbumInfo)
 	ON_EN_CHANGE(IDC_SONGINTERPRET, OnChangeAlbumInfo)
-	ON_EN_CHANGE(IDC_TRACKNUMBER, OnChangeAlbumInfo)
-	ON_EN_CHANGE(IDC_YEAR, OnChangeAlbumInfo)
-	ON_EN_CHANGE(IDC_COMMENT, OnChangeAlbumInfo)
-	ON_CBN_EDITCHANGE(IDC_GENRE, OnChangeAlbumInfo)
+	ON_EN_CHANGE(IDC_TRACKNUMBER,	OnChangeAlbumInfo)
+	ON_EN_CHANGE(IDC_YEAR,			OnChangeAlbumInfo)
+	ON_EN_CHANGE(IDC_COMMENT,		OnChangeAlbumInfo)
 	//}}AFX_MSG_MAP
 END_MESSAGE_MAP()
 
@@ -130,6 +144,7 @@ void CAlbumInfoCtrl::OnChangeAlbumname()
 
 		// Window is not visible so of course has no focus
 		// or no data was modified dont send message either
+		TRACE("Albumdata not changed\n");
 		return;
 	}
 	TRACE("Sending message\n");

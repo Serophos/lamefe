@@ -1,5 +1,20 @@
-// MyComboBox.cpp: Implementierungsdatei
-//
+/*
+** Copyright (C) 2002 Thees Winkler
+**  
+** This program is free software; you can redistribute it and/or modify
+** it under the terms of the GNU General Public License as published by
+** the Free Software Foundation; either version 2 of the License, or
+** (at your option) any later version.
+** 
+** This program is distributed in the hope that it will be useful,
+** but WITHOUT ANY WARRANTY; without even the implied warranty of
+** MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+** GNU General Public License for more details.
+** 
+** You should have received a copy of the GNU General Public License
+** along with this program; if not, write to the Free Software 
+** Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+*/
 
 #include "stdafx.h"
 #include "lameFE.h"
@@ -50,12 +65,14 @@ END_MESSAGE_MAP()
 /////////////////////////////////////////////////////////////////////////////
 // Behandlungsroutinen für Nachrichten CMyComboBox 
 
-void CMyComboBox::OnMouseMove(UINT nFlags, CPoint point) 
+BOOL CMyComboBox::OnMouseMove(UINT nFlags, CPoint point) 
 {
 
 	SetTimer(1,10,NULL);
 	OnTimer(1);
 	CComboBox::OnMouseMove(nFlags, point);
+
+	return FALSE;
 }
 
 void CMyComboBox::OnLButtonDown(UINT nFlags, CPoint point) 
@@ -207,18 +224,20 @@ void CMyComboBox::DrawCombo(STATE eState, COLORREF clrTopLeft, COLORREF clrBotto
 	ReleaseDC(pDC);
 }
 
-void CMyComboBox::OnSetFocus()
+BOOL CMyComboBox::OnSetFocus()
 {
 
 	m_bHasFocus = TRUE;
 	DrawCombo( raised, m_clrBtnShadow, m_clrBtnHilite );
+	return FALSE;
 }
 
-void CMyComboBox::OnKillFocus() 
+BOOL CMyComboBox::OnKillFocus() 
 {
 
 	m_bHasFocus = FALSE;
 	DrawCombo(normal, m_clrBtnFace, m_clrBtnFace);
+	return FALSE;
 }
 
 BOOL CMyComboBox::PreTranslateMessage(MSG* pMsg) 

@@ -37,12 +37,13 @@
 #define  ANY_TO_ENCODER  2
 
 typedef CArray<CMultimediaFile*, CMultimediaFile*>	CMMFArray;
-extern enum modes {NORMALMODE = 0, ALBUMMODE, BATCHALBUMMODE};
+extern enum modes {NORMALMODE = 0, ALBUMMODE, BATCHALBUMMODE, BATCHSINGLETRACKMODE};
 
 class CEncodingStatusDlg : public CTrayDialog
 {
 // Konstruktion
 public:
+	BOOL m_bBatchAppendDiscID;
 	BOOL RipBatchMode();
 
 	CEncodingStatusDlg(CWnd* pParent = NULL, CString wd = "");   // Standardkonstruktor

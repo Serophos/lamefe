@@ -38,6 +38,9 @@
 class CLameFEApp : public CWinApp
 {
 public:
+	void SetAutoPlay(BOOL bEnable);
+	BOOL GetRipperStatus();
+	BOOL InitCDRipper();
 	CLameFEApp();
 
 // Überladungen
@@ -45,6 +48,7 @@ public:
 	//{{AFX_VIRTUAL(CLameFEApp)
 	public:
 	virtual BOOL InitInstance();
+	virtual int ExitInstance();
 	//}}AFX_VIRTUAL
 
 // Implementierung
@@ -56,9 +60,9 @@ public:
 	DECLARE_MESSAGE_MAP()
 
 protected:
-
-//	HINSTANCE	m_hCDRipDll;
-
+	BOOL m_bAutoPlayState;
+	BOOL		m_bRipperOK;
+	HINSTANCE	m_hCDRipDll;
 };
 
 

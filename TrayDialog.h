@@ -56,6 +56,7 @@ public:
 	void TraySetIcon(HICON hIcon);
 	void TraySetIcon(UINT nResourceID);
 	void TraySetIcon(LPCTSTR lpszResourceName);
+	void SetBalloonTip(UINT nMsgID);
 
 	BOOL TrayIsVisible();
 	CTrayDialog(UINT uIDD,CWnd* pParent = NULL);   // standard constructor
