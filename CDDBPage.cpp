@@ -106,21 +106,42 @@ BOOL CCDDBPage::OnInitDialog()
 
 	cfgFile cfg(wd);
 
-	m_passwd = cfg.GetStringValue(PASSWORD);
-	m_proxyAddress = cfg.GetStringValue(PROXYADDR);
-	m_proxyPort = cfg.GetValue(PROXYPORT, FALSE);
-	c_remoteServer.SetCurSel(cfg.GetValue(CDDBSERVER, FALSE));
-	OnSelendokRemoteServer();
-	c_useProxy.SetCheck(cfg.GetValue(PROXY, FALSE));
-	m_userName = cfg.GetStringValue(USERNAME);
-	m_eMail = cfg.GetStringValue(EMAIL);
-	m_Authentication = cfg.GetValue(AUTH, FALSE);
-	m_timeOut = cfg.GetValue(TIMEOUT, FALSE);
-	UpdateData(FALSE);
+	c_remoteServer.SetCurSel(cfg.GetValue("cddbserver"));
+	m_eMail = cfg.GetStringValue("email");
+	m_timeOut = cfg.GetValue("timeout");
+	
+	//Proxy
+	c_useProxy.SetCheck(cfg.GetValue("useproxy"));
+	m_userName = cfg.GetStringValue("username");
+	m_proxyAddress = cfg.GetStringValue("proxyaddress");
+	m_proxyPort = cfg.GetValue("proxyport");
+	m_Authentication = cfg.GetValue("authentication");
+	m_passwd = cfg.GetStringValue("passwd");
 
+	UpdateData(FALSE);
+	OnSelendokRemoteServer();
 	OnUseProxy();
 
-	return true;
+	return TRUE;
+}
+
+void CCDDBPage::SaveSettings()
+{
+
+	UpdateData(TRUE);
+
+	cfgFile cfg(wd);
+
+	cfg.SetValue("cddbserver", c_remoteServer.GetCurSel());
+	cfg.SetValue("timeout", m_timeOut);
+	cfg.SetStringValue("email", m_eMail);
+	//Proxy stuff
+	cfg.SetValue("useproxy", c_useProxy.GetCheck());
+	cfg.SetValue("proxyport", m_proxyPort);
+	cfg.SetStringValue("passwd", m_passwd);
+	cfg.SetValue("authentication", c_authentication.GetCheck());
+	cfg.SetStringValue("username", m_userName);
+	cfg.SetStringValue("proxyaddress", m_proxyAddress);
 }
 
 void CCDDBPage::OnUseProxy() 
@@ -161,8 +182,8 @@ void CCDDBPage::OnSelendokRemoteServer()
 	//Port
 	iPosE = serverString.Find(',', iPosB);
 	sBuf = serverString.Mid(iPosB, iPosE - iPosB);
-	m_remotePort = atoi(sBuf.GetBuffer(10));
-	sBuf.ReleaseBuffer();
+	m_remotePort = atoi(sBuf);
+	//sBuf.ReleaseBuffer();
 	iPosB = iPosE + 2;
 
 	//Path
@@ -182,29 +203,9 @@ void CCDDBPage::OnOK()
 {
 	
 	SaveSettings();
+	CPropertyPage::OnOK();
 }
 
-void CCDDBPage::SaveSettings()
-{
-
-	UpdateData(TRUE);
-
-	cfgFile cfg(wd);
-
-	cfg.SetValue(PROXYADDR, (LPVOID)m_proxyAddress.GetBuffer(10));
-	m_address.ReleaseBuffer();
-	cfg.SetValue(EMAIL, (LPVOID)m_eMail.GetBuffer(10));
-	m_eMail.ReleaseBuffer();
-	cfg.SetValue(PASSWORD,(LPVOID) m_passwd.GetBuffer(10));
-	m_passwd.ReleaseBuffer();
-	cfg.SetValue(PROXYPORT, (LPVOID)m_proxyPort);
-	cfg.SetValue(CDDBSERVER, (LPVOID)c_remoteServer.GetCurSel());
-	cfg.SetValue(PROXY, (LPVOID)c_useProxy.GetCheck());
-	cfg.SetValue(USERNAME, (LPVOID)m_userName.GetBuffer(10));
-	m_userName.ReleaseBuffer();
-	cfg.SetValue(AUTH, (LPVOID)c_authentication.GetCheck());
-	cfg.SetValue(TIMEOUT, (LPVOID)m_timeOut);
-}
 
 void CCDDBPage::OnUpdate() 
 {

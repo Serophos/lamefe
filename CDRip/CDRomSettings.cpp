@@ -139,8 +139,8 @@ BOOL CToc::IsAudioTrack(int p_track)
 
 DWORD CToc::GetSize(int nTrack)
 {
-	DWORD dwSectors = GetStartSector(nTrack+1)-GetStartSector(nTrack);
-	return dwSectors*CB_CDDASECTOR;
+	DWORD dwSectors = GetStartSector( nTrack + 1 ) - GetStartSector( nTrack );
+	return dwSectors * CB_CDDASECTORSIZE;
 }
 
 
@@ -148,19 +148,20 @@ DWORD CToc::GetSize(int nTrack)
 
 CDSETTINGSPARAMS::CDSETTINGSPARAMS()
 {
-	strcpy(lpszCDROMID,"DONTKNOW");
-	nOffsetStart=0;
-	nOffsetEnd=0;	
-	nSpeed=32;
-	nSpinUpTime=0;
-	bJitterCorrection=1;
-	bSwapLefRightChannel=0;
-	nNumOverlapSectors=7;
-	nNumReadSectors=26;	
-	nNumCompareSectors=1;	
-	nMultiReadCount=0;
-	bMultiReadFirstOnly=FALSE;
-	bLockDuringRead= TRUE;
+	strcpy( lpszCDROMID, "DONTKNOW" );
+	nOffsetStart = 0;
+	nOffsetEnd = 0;	
+	nSpeed = 0;
+	nSpinUpTime = 0;
+	bJitterCorrection = 1;
+	bSwapLefRightChannel = 0;
+	nNumOverlapSectors = 7;
+	nNumReadSectors = 26;	
+	nNumCompareSectors = 1;	
+	nMultiReadCount = 0;
+	bMultiReadFirstOnly = FALSE;
+	bLockDuringRead = TRUE;
+	bUseCDText = TRUE;
 
 	btTargetID=0;
 	btAdapterID=0;
@@ -202,15 +203,16 @@ CDRomSettings::~CDRomSettings()
 }
 
 
-void CDRomSettings::AddCDRom(LPSTR lpszName,BYTE btAdapterID,BYTE btTargetID,BYTE btLunID)
+void CDRomSettings::AddCDRom( LPSTR lpszName, BYTE btAdapterID, BYTE btTargetID, BYTE btLunID )
 {
 	int nDeviceOffset=0;
 
+
 	// Loop through Array and see if there are any cd rom with the same name
-	for (int i=0;i<m_CDParams.size();i++)
+	for ( int i=0; i < m_CDParams.size() ; i++ )
 	{
 		// Check if name to add is equal to current indexed CDROM setting
-		if (strstr(m_CDParams[i].lpszCDROMID,lpszName) !=NULL)
+		if ( strstr(m_CDParams[i].lpszCDROMID,lpszName ) !=NULL )
 		{
 			// Increase number
 			nDeviceOffset++;
@@ -218,26 +220,31 @@ void CDRomSettings::AddCDRom(LPSTR lpszName,BYTE btAdapterID,BYTE btTargetID,BYT
 	}
 
 	// There appears to be CDROMs with the same name
-	if (nDeviceOffset>0)
+	if ( nDeviceOffset > 0 )
 	{
+		char lpszDevNum[4];
 		// Add (nDeviceOffset) to strName
-		sprintf(lpszName,"(%d)",nDeviceOffset);
+		sprintf( lpszDevNum, "(%d)", nDeviceOffset );
+		lpszName = strcat( lpszName, lpszDevNum );
 	}
 	
 	// Create new CDROM setting
 	CDSETTINGSPARAMS newSettings;
 
 	// Set device name
-	strcpy(newSettings.lpszCDROMID,lpszName);
-	newSettings.btTargetID=btTargetID;
-	newSettings.btAdapterID=btAdapterID;
-	newSettings.btLunID=btLunID;
+	strcpy( newSettings.lpszCDROMID,lpszName );
+	newSettings.btTargetID = btTargetID;
+	newSettings.btAdapterID = btAdapterID;
+	newSettings.btLunID = btLunID;
 
 	// Add to array of CDROM settings
-	m_CDParams.push_back(newSettings);
+	m_CDParams.push_back( newSettings );
+
+	// Get default CD-ROM parameter values ( if available )
+	LoadCDSettingsEntry( m_CDParams.back(), "CDROM_DEFAULTS" );
 
 	// Also add a new Table of contents
-	m_Toc.push_back(CToc());
+	m_Toc.push_back( CToc() );
 
 }
 
@@ -275,6 +282,7 @@ void CDRomSettings::SaveSettings()
 		pIni->SetValue(lpszKey, "bMultiReadFirstOnly"	,m_CDParams[i].bMultiReadFirstOnly );
 		pIni->SetValue(lpszKey, "nMultiReadCount"		,m_CDParams[i].nMultiReadCount );
 		pIni->SetValue(lpszKey, "bLockDuringRead"		,m_CDParams[i].bLockDuringRead );
+		pIni->SetValue(lpszKey, "bUseCDText"		,m_CDParams[i].bUseCDText );
 
 		// Write Drive Settings
 		pIni->SetValue(lpszKey, "DriveType"				,m_CDParams[i].DriveTable.DriveType );
@@ -297,8 +305,43 @@ void CDRomSettings::SaveSettings()
 
 }
 
+void CDRomSettings::LoadCDSettingsEntry( CDSETTINGSPARAMS& cdSettings, const char* lpszKey )
+{
+	CIni	myIni;
 
-void CDRomSettings::LoadSettings()
+	myIni.SetIniFileName( m_lpszIniFname );
+
+	cdSettings.nOffsetStart			= myIni.GetValue(lpszKey,"nOffsetStart"			,cdSettings.nOffsetStart );
+	cdSettings.nOffsetEnd			= myIni.GetValue(lpszKey,"nOffsetEnd"			,cdSettings.nOffsetEnd );
+	cdSettings.nSpeed				= myIni.GetValue(lpszKey,"nSpeed"				,cdSettings.nSpeed );
+	cdSettings.nSpinUpTime			= myIni.GetValue(lpszKey,"nSpinUpTime"			,cdSettings.nSpinUpTime );
+	cdSettings.bJitterCorrection	= myIni.GetValue(lpszKey,"bJitterCorrection"	,cdSettings.bJitterCorrection );
+	cdSettings.bSwapLefRightChannel	= myIni.GetValue(lpszKey,"bSwapLefRightChannel" ,cdSettings.bSwapLefRightChannel );
+	cdSettings.nNumOverlapSectors	= myIni.GetValue(lpszKey,"nNumOverlapSectors"	,cdSettings.nNumOverlapSectors );
+	cdSettings.nNumReadSectors		= myIni.GetValue(lpszKey,"nNumReadSectors"		,cdSettings.nNumReadSectors );
+	cdSettings.nNumCompareSectors	= myIni.GetValue(lpszKey,"nNumCompareSectors"	,cdSettings.nNumCompareSectors );
+	cdSettings.nAspiTimeOut			= myIni.GetValue(lpszKey,"nAspiTimeOut"			,cdSettings.nAspiTimeOut );
+	cdSettings.nAspiRetries			= myIni.GetValue(lpszKey,"nAspiRetries"			,cdSettings.nAspiRetries );
+	cdSettings.bEnableMultiRead		= myIni.GetValue(lpszKey,"bEnableMultiRead"		,cdSettings.bEnableMultiRead );
+	cdSettings.bMultiReadFirstOnly	= myIni.GetValue(lpszKey,"bMultiReadFirstOnly"	,cdSettings.bMultiReadFirstOnly );
+	cdSettings.nMultiReadCount		= myIni.GetValue(lpszKey,"nMultiReadCount"		,cdSettings.nMultiReadCount );
+	cdSettings.bLockDuringRead		= myIni.GetValue(lpszKey,"bLockDuringRead"		,cdSettings.bLockDuringRead );
+	cdSettings.bUseCDText			= myIni.GetValue(lpszKey,"bUseCDText"			,cdSettings.bUseCDText );
+
+	// Custom Drive Settings
+	cdSettings.DriveTable.DriveType		= DRIVETYPE(myIni.GetValue(lpszKey,"DriveType",cdSettings.DriveTable.DriveType ));
+	cdSettings.DriveTable.ReadMethod	= READMETHOD(myIni.GetValue(lpszKey,"ReadMethod",cdSettings.DriveTable.ReadMethod ));
+	cdSettings.DriveTable.SetSpeed		= SETSPEED(myIni.GetValue(lpszKey,"SetSpeed",cdSettings.DriveTable.SetSpeed ));
+	cdSettings.DriveTable.EnableMode	= ENABLEMODE(myIni.GetValue(lpszKey,"EnableMode",cdSettings.DriveTable.EnableMode ));
+	cdSettings.DriveTable.nDensity		= myIni.GetValue(lpszKey,"nDensity",cdSettings.DriveTable.nDensity );
+	cdSettings.DriveTable.Endian		= ENDIAN(myIni.GetValue(lpszKey,"Endian",cdSettings.DriveTable.Endian ));
+	cdSettings.DriveTable.bAtapi		= myIni.GetValue(lpszKey,"bAtapi",cdSettings.DriveTable.bAtapi );
+	cdSettings.bAspiPosting				= myIni.GetValue(lpszKey,"bAspiPosting"		,cdSettings.bAspiPosting );
+	cdSettings.nRippingMode				= myIni.GetValue(lpszKey,"nRippingMode"		,cdSettings.nRippingMode );
+	cdSettings.nParanoiaMode			= myIni.GetValue(lpszKey,"nParanoiaMode"	,cdSettings.nParanoiaMode );
+}
+
+void CDRomSettings::LoadSettings( BOOL bUpdateDriveSettings )
 {
 	CIni	myIni;
 	CIni*	pIni = NULL;
@@ -316,47 +359,29 @@ void CDRomSettings::LoadSettings()
 
 		// Replace spaces with underscores
 		for (int j=0;j<strlen(lpszKey);j++)
+		{
 			if (lpszKey[j]==' ')
+			{
 				lpszKey[j]='_';
+			}
+		}
 
-		m_CDParams[i].nOffsetStart			= pIni->GetValue(lpszKey,"nOffsetStart"			,m_CDParams[i].nOffsetStart );
-		m_CDParams[i].nOffsetEnd			= pIni->GetValue(lpszKey,"nOffsetEnd"			,m_CDParams[i].nOffsetEnd );
-		m_CDParams[i].nSpeed				= pIni->GetValue(lpszKey,"nSpeed"				,m_CDParams[i].nSpeed );
-		m_CDParams[i].nSpinUpTime			= pIni->GetValue(lpszKey,"nSpinUpTime"			,m_CDParams[i].nSpinUpTime );
-		m_CDParams[i].bJitterCorrection		= pIni->GetValue(lpszKey,"bJitterCorrection"	,m_CDParams[i].bJitterCorrection );
-		m_CDParams[i].bSwapLefRightChannel	= pIni->GetValue(lpszKey,"bSwapLefRightChannel" ,m_CDParams[i].bSwapLefRightChannel );
-		m_CDParams[i].nNumOverlapSectors	= pIni->GetValue(lpszKey,"nNumOverlapSectors"	,m_CDParams[i].nNumOverlapSectors );
-		m_CDParams[i].nNumReadSectors		= pIni->GetValue(lpszKey,"nNumReadSectors"		,m_CDParams[i].nNumReadSectors );
-		m_CDParams[i].nNumCompareSectors	= pIni->GetValue(lpszKey,"nNumCompareSectors"	,m_CDParams[i].nNumCompareSectors );
-		m_CDParams[i].nAspiTimeOut			= pIni->GetValue(lpszKey,"nAspiTimeOut"			,m_CDParams[i].nAspiTimeOut );
-		m_CDParams[i].nAspiRetries			= pIni->GetValue(lpszKey,"nAspiRetries"			,m_CDParams[i].nAspiRetries );
-		m_CDParams[i].bEnableMultiRead		= pIni->GetValue(lpszKey,"bEnableMultiRead"		,m_CDParams[i].bEnableMultiRead );
-		m_CDParams[i].bMultiReadFirstOnly	= pIni->GetValue(lpszKey,"bMultiReadFirstOnly"	,m_CDParams[i].bMultiReadFirstOnly );
-		m_CDParams[i].nMultiReadCount		= pIni->GetValue(lpszKey,"nMultiReadCount"		,m_CDParams[i].nMultiReadCount );
-		m_CDParams[i].bLockDuringRead		= pIni->GetValue(lpszKey,"bLockDuringRead"		,m_CDParams[i].bLockDuringRead );
+		LoadCDSettingsEntry( m_CDParams[i], lpszKey );
 
-		// Custom Drive Settings
-		m_CDParams[i].DriveTable.DriveType	=DRIVETYPE(pIni->GetValue(lpszKey,"DriveType",m_CDParams[i].DriveTable.DriveType ));
-		m_CDParams[i].DriveTable.ReadMethod	=READMETHOD(pIni->GetValue(lpszKey,"ReadMethod",m_CDParams[i].DriveTable.ReadMethod ));
-		m_CDParams[i].DriveTable.SetSpeed	=SETSPEED(pIni->GetValue(lpszKey,"SetSpeed",m_CDParams[i].DriveTable.SetSpeed ));
-		m_CDParams[i].DriveTable.EnableMode	=ENABLEMODE(pIni->GetValue(lpszKey,"EnableMode",m_CDParams[i].DriveTable.EnableMode ));
-		m_CDParams[i].DriveTable.nDensity	=pIni->GetValue(lpszKey,"nDensity",m_CDParams[i].DriveTable.nDensity );
-		m_CDParams[i].DriveTable.Endian		=ENDIAN(pIni->GetValue(lpszKey,"Endian",m_CDParams[i].DriveTable.Endian ));
-		m_CDParams[i].DriveTable.bAtapi		=pIni->GetValue(lpszKey,"bAtapi",m_CDParams[i].DriveTable.bAtapi );
-		m_CDParams[i].bAspiPosting			=pIni->GetValue(lpszKey,"bAspiPosting"		,m_CDParams[i].bAspiPosting );
-		m_CDParams[i].nRippingMode			=pIni->GetValue(lpszKey,"nRippingMode"		,m_CDParams[i].nRippingMode );
-		m_CDParams[i].nParanoiaMode			=pIni->GetValue(lpszKey,"nParanoiaMode"		,m_CDParams[i].nParanoiaMode );
 	}
 	// Load active CD-ROM setting
-	m_nActive=pIni->GetValue("CD-ROM","nActive",m_nActive );
+	m_nActive = pIni->GetValue("CD-ROM","nActive",m_nActive );
 
 	// Make sure selection if valid
 	m_nActive=min(max(0,m_nActive),m_CDParams.size()-1);
 	m_nTransportLayer = pIni->GetValue( "CD-ROM", "nTransportLayer", 0 );
 
 
-	// Get default values when not a CUSTOM drive type
-	UpdateDriveSettings();
+	if ( bUpdateDriveSettings )
+	{
+		// Get default values when not a CUSTOM drive type
+		UpdateDriveSettings();
+	}
 }
 
 
@@ -428,7 +453,7 @@ void CDRomSettings::UpdateDriveSettings()
 		case CUSTOMDRIVE:
 		break;
 		default:
-			MessageBox(NULL,"Internal lameFE error, Device Type Not Supported","CDRip.DLL Error",MB_OK);
+			ASSERT( FALSE );
 	}
 }
 

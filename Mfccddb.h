@@ -35,7 +35,7 @@ to maintain a single distribution point for the source code.
 
 //Automatically pull in the library winmm.lib since we
 //need MCI to retrieve the cdaudio track details
-#pragma comment(lib, "winmm.lib")
+//#pragma comment(lib, "winmm.lib")
 
 
 //Class which encapsulates a CDDB site
@@ -193,10 +193,6 @@ public:
   ~CCDDB();
 
 //Local Methods
-  void    GetCDROMDrives(CStringArray& drives);
-  BOOL    ComputeDiscID(DWORD& dwDiscID, LPCTSTR pszDrive = NULL);
-  DWORD   ComputeDiscID(const CArray<CCDDBTrackPosition, CCDDBTrackPosition&>& tracks);
-  BOOL    GetTrackPositions(CArray<CCDDBTrackPosition, CCDDBTrackPosition&>& tracks, LPCTSTR pszDrive = NULL);
 
 //Remote CDDB access methods
   void    SetCDDBProtocolVersion(int nProtocolVersion);

@@ -47,16 +47,33 @@ res\lameFE.rc2
 
 
 
-
 /////////////////////////////////////////////////////////////////////////////
 
-Der Klassen-Assistent erstellt eine Dialogklasse:
+Für das Hauptfenster:
 
-lameFEDlg.h, lameFEDlg.cpp - das Dialogfeld
-    	Diese Dateien enthalten die Klasse CLameFEDlg. Diese Klasse legt das
-    	Verhalten des Haupt-Dialogfelds der Anwendung fest. Die Vorlage des Dialog-
-	felds befindet sich in lameFE.rc, die mit Microsoft Visual C++
-	bearbeitet werden kann.
+MainFrm.h, MainFrm.cpp
+    	Diese Dateien enthalten die Frame-Klasse CMainFrame, die von
+    	CFrameWnd abgeleitet wurde und alle SDI-Frame-Merkmale steuert.
+
+res\Toolbar.bmp
+    Diese Bitmap-Datei wird zum Erstellen unterteilter Bilder für die Symbolleiste verwendet.
+    Die erste Symbol- und Statusleiste wird in der Klasse CMainFrame erstellt.
+    Bearbeiten Sie diese Bitmap der Symbolleiste mit dem Ressourcen-Editor, und
+    aktualisieren Sie IDR_MAINFRAME TOOLBAR in lameFE.rc, um Schaltflächen für die
+    Symbolleiste hinzuzufügen.
+/////////////////////////////////////////////////////////////////////////////
+
+Der Klassen-Assistent erstellt einen Dokumenttyp und eine Ansicht(View):
+
+lameFEDoc.h, lameFEDoc.cpp - das Dokument
+    	Diese Dateien enthalten die Klasse CLameFEDoc. Bearbeiten Sie diese Dateien,
+  	um Ihre speziellen Dokumentdaten hinzuzufügen und das Speichern und Laden von 
+	Dateien zu implementieren (mit Hilfe von CLameFEDoc::Serialize).
+
+lameFEView.h, lameFEView.cpp - die Ansicht des Dokuments
+    	Diese Dateien enthalten die Klasse CLameFEView.
+    	CLameFEView-Objekte werden verwendet, um CLameFEDoc-Objekte anzuzeigen.
+
 
 
 /////////////////////////////////////////////////////////////////////////////

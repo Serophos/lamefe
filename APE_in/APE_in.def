@@ -1,0 +1,8 @@
+; APE_in.def : Deklariert die Modul-Parameter für die DLL.
+
+LIBRARY      "APE_in"
+DESCRIPTION  'APE_in Windows Dynamic Link Library'
+
+EXPORTS
+
+	GetLFINModule   @ 1

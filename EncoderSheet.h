@@ -24,6 +24,7 @@
 #endif // _MSC_VER > 1000
 // EncoderSheet.h : Header-Datei
 //
+#include "BladeMP3EncDLL.h"
 
 /////////////////////////////////////////////////////////////////////////////
 // Dialogfeld CEncoderSheet 
@@ -40,28 +41,37 @@ public:
 	void init(CString wd);
 	CEncoderSheet();
 	~CEncoderSheet();
+	CToolTipCtrl* m_pToolTip;
 
 // Dialogfelddaten
 	//{{AFX_DATA(CEncoderSheet)
 	enum { IDD = IDD_ENCODER_PAGE };
-	CEdit	c_Format;
+	CEdit	c_abr;
+	CComboBox	c_maxBitrate;
+	CComboBox	m_qualityPreset;
+	CComboBox	c_vbrQuality;
+	CComboBox	c_vbrMethod;
 	CComboBox	c_MPEG;
-	CButton	c_rename;
 	CButton	c_private;
 	CButton	c_original;
-	CButton	c_writeId3v2;
+	CButton	c_writeId3v1;
+	CButton c_writeId3v2;
+	CButton c_convertTo16Bit;
 	CButton	c_copyright;
 	CButton	c_checkSum;
 	CComboBox	c_channels;
 	CComboBox	c_bitsPerSample;
 	CString	m_encoderVersion;
-	CString	m_FormatString;
+	CButton c_tlen;
+	int		m_abr;
 	//}}AFX_DATA
 
 
 // Überschreibungen
 	// Der Klassen-Assistent generiert virtuelle Funktionsüberschreibungen
 	//{{AFX_VIRTUAL(CEncoderSheet)
+	public:
+	virtual BOOL PreTranslateMessage(MSG* pMsg);
 	protected:
 	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV-Unterstützung
 	//}}AFX_VIRTUAL
@@ -70,13 +80,16 @@ public:
 protected:
 	// Generierte Nachrichtenzuordnungsfunktionen
 	//{{AFX_MSG(CEncoderSheet)
-	afx_msg void OnRename();
+	afx_msg void OnSelchangeVbrMethod();
+	afx_msg void OnSelchangeQuality();
 	//}}AFX_MSG
 	DECLARE_MESSAGE_MAP()
 
 private:
 	void saveSettings();
 	CString wd;
+	BEVERSION beVersion;
+
 };
 
 //{{AFX_INSERT_LOCATION}}

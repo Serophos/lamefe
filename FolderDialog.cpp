@@ -163,3 +163,9 @@ void CFolderDialog::OnSelChanged(ITEMIDLIST* pIdl)
 	m_strFinalFolderName = m_szPath;
 	SetStatusText(ShortName(m_strFinalFolderName));
 }
+
+void CFolderDialog::OnOK()
+{
+
+
+}

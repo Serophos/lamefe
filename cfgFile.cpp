@@ -34,7 +34,19 @@ static char THIS_FILE[]=__FILE__;
 
 cfgFile::cfgFile(CString dir)
 {
-	wd = dir;
+
+	if(dir = ""){
+
+		TCHAR	szBuffer[_MAX_PATH]; 
+		VERIFY(::GetModuleFileName(AfxGetInstanceHandle(), szBuffer, _MAX_PATH));
+		
+		wd = szBuffer;
+		wd = wd.Left(wd.ReverseFind('\\'));
+	}
+	else{
+
+		wd = dir;
+	}
 	CFileException e;
 	CStdioFile file;
 	CString tmp;
@@ -45,12 +57,7 @@ cfgFile::cfgFile(CString dir)
 			if (( tmp == "[setup]" ) || (tmp.Left(1) == "#") || (tmp.GetLength() == 0)){
 				//do nothing ignore
 			}
-			/*else if((tmp.Left(6) == "output") || (tmp.Left(6) == "player") || (tmp.Left(4) == "beep") ||
-	 			(tmp.Left(6) == "dialog") || (tmp.Left(4) == "play") || (tmp.Left(3) == "m3u")){
-				cfg.Add(tmp);
-			}*/
 			else{
-			//	Presets.Add(tmp);
 				cfg.Add(tmp);
 			}
 		}
@@ -65,118 +72,15 @@ cfgFile::cfgFile(CString dir)
 cfgFile::~cfgFile()
 {
 
-//	delete val;
 }
 
-BOOL cfgFile::SetValue(int item, LPVOID value)
+BOOL cfgFile::SetValue(CString item, int value)
 {
+
 	CString result;
 
-	switch(item){
-	
-	case BITRATE:
-		result.Format("bitrate=%d", (int)value);
-		break;
-	case NUMCHNLS:
-		result.Format("channels=%d", (int)value);
-		break;
-	case COPYRIGHT:
-		result.Format("copyright=%d", (int)value);
-		break;
-	case ORIGINAL:
-		result.Format("original=%d", (int)value);
-		break;
-	case PRIVATE:
-		result.Format("private=%d", (int)value);
-		break;
-	case CRC:
-		result.Format("crc=%d", (int)value);
-		break;
-	case ID3V2:
-		result.Format("id3v2=%d", (int)value);
-		break;
-	case RENAME:
-		result.Format("rename=%d", (int)value);
-		break;
-	case FORMATSTR:
-		result.Format("formatstr=%s", (const char*)value);
-		break;
+	result.Format("%s=%d", item, value);
 
-	case OUTPUT:
-		result.Format("output=%s", (const char*)value);
-		break;
-	case PLAYER:
-		result.Format("extplayer=%s", (const char*)value);
-		break;
-	case BEEP:
-		result.Format("beep=%d", (int)value);
-		break;
-	case PLAY:
-		result.Format("play=%d", (int)value);
-		break;
-	case M3U:
-		result.Format("m3u=%d", (int)value);
-		break;
-	case QUIT:
-		result.Format("quit=%d", (int)value);
-		break;
-	case DIALOG:
-		result.Format("dialog=%d", (int)value);
-		break;
-	case SHUTDOWN:
-		result.Format("shutdown=%d", (int)value);
-		break;
-	case PLUGINDIR:
-		result.Format("plugindir=%s", (char)value);
-		break;
-	case SILENT:
-		result.Format("silent=%d", (int)value);
-		break;
-
-	case CDDBSERVER:
-		result.Format("cddbserver=%d", (int)value);
-		break;
-	case PROXY:
-		result.Format("useproxy=%d", (int)value);
-		break;
-	case PROXYADDR:
-		result.Format("proxyaddress=%s", (const char*)value);
-		break;
-	case PROXYPORT:
-		result.Format("proxyport=%d", (int)value);
-		break;
-	case USERNAME:
-		result.Format("username=%s", (const char*)value);
-		break;
-	case PASSWORD:
-		result.Format("passwd=%s", (const char*)value);
-		break;
-	case EMAIL:
-		result.Format("email=%s", (const char*)value);
-		break;
-	case AUTH:
-		result.Format("authentication=%d", (int)value);
-		break;
-	case TIMEOUT:
-		result.Format("timeout=%d", (int)value);
-		break;
-	case EJECT:
-		result.Format("eject=%d", (int)value);
-		break;
-	case LOCK:
-		result.Format("lock=%d", (int)value);
-		break;
-	case SWAPCHNLS:
-		result.Format("swapchannels=%d", (int)value);
-		break;
-	case SELECT:
-		result.Format("selectall=%d", (int)value);
-			break;
-	default:
-		OutputDebugString("FATAL CFGFILE ERROR: ITEM NOT DEFINED\n");
-
-	}
-	
 	CString prefix = result.Left(result.Find("="));
 	BOOL    found  = FALSE;
 	for(int i = 0; i < cfg.GetSize(); i++){
@@ -196,128 +100,59 @@ BOOL cfgFile::SetValue(int item, LPVOID value)
 	return writeToDisk();
 }
 
-int cfgFile::GetValue(int item, BOOL formated)
+BOOL cfgFile::SetStringValue(CString item, CString value)
+{
+
+	CString result;
+	result.Format("%s=%s", item, value);
+
+	CString prefix = result.Left(result.Find("="));
+	BOOL    found  = FALSE;
+
+	for(int i = 0; i < cfg.GetSize(); i++){
+		
+		if(cfg[i].Left(cfg[i].Find("=")) == prefix){
+
+			cfg.SetAt(i, result);
+			found = TRUE;
+			break;
+		}
+	}
+	if(!found){
+
+		cfg.Add(result);
+	}	
+
+	return writeToDisk();
+}
+
+int cfgFile::GetValue(LPCTSTR item, BOOL formated)
 {
 	std::string result;
+	
+	if((item == "bitrate") || (item ==  "maxbitrate")){
 
-	switch(item){
+		result = (formated ? FormatBps(findItem(item)) : findItem(item));
+	}
+	else{
 
-	case BITRATE:
-		result = (formated ? FormatBps(findItem("bitrate")) : findItem("bitrate"));
-		break;
-	case NUMCHNLS:
-		result = findItem("channels");
-		break;
-	case COPYRIGHT:
-		result = findItem("copyright");
-		break;
-	case ORIGINAL:
-		result = findItem("original");
-		break;
-	case PRIVATE:
-		result = findItem("private");
-		break;
-	case CRC:
-		result = findItem("crc");
-		break;
-	case ID3V2:
-		result = findItem("id3v2");
-		break;
-	case RENAME:
-		result = findItem("rename");
-		break;
-
-	case BEEP:
-		result = findItem("beep");
-		break;
-	case PLAY:
-		result = findItem("play");
-		break;
-	case M3U:
-		result = findItem("m3u");
-		break;
-	case QUIT:
-		result = findItem("quit");
-		break;
-	case DIALOG:
-		result = findItem("dialog");
-		break;
-	case SHUTDOWN:
-		result = findItem("shutdown");
-		break;
-	case SILENT:
-		result = findItem("silent");
-		break;
-
-	case CDDBSERVER:
-		result = findItem("cddbserver");
-		break;
-	case PROXY:
-		result = findItem("useproxy");
-		break;
-	case PROXYPORT:
-		result = findItem("proxyport");
-		break;
-	case AUTH:
-		result = findItem("authentication");
-		break;
-	case TIMEOUT:
-		result = findItem("timeout");
-		break;
-	case EJECT:
-		result = findItem("eject");
-		break;
-	case LOCK:
-		result = findItem("lock");
-		break;
-	case SWAPCHNLS:
-		result = findItem("swapchannels");
-		break;
-	case SELECT:
-		result = findItem("selectall");
-		break;
-	default:
-		OutputDebugString("\nFATAL CFGFILE ERROR: ITEM NOT DEFINED\n");
+		result = findItem(item);
 	}
 
 	return atoi(result.c_str());
 }
 
-CString cfgFile::GetStringValue(int item)
+CString cfgFile::GetStringValue(CString item)
 {
 
 	CString result;
 
-	switch(item){
+	result = findItem(item).c_str();
+	
+	if(result == "-1"){
 
-	case PROXYADDR:
-		result = findItem("proxyaddress").c_str();
-		break;
-	case USERNAME:
-		result = findItem("username").c_str();
-		break;
-	case PASSWORD:
-		result = findItem("passwd").c_str();
-		break;
-	case EMAIL:
-		result = findItem("email").c_str();
-		break;
-	case OUTPUT:
-		result = findItem("output").c_str();
-		break;
-	case PLAYER:
-		result = findItem("extplayer").c_str();
-		break;
-	case FORMATSTR:
-		result = findItem("formatstr").c_str();
-		break;
-	case PLUGINDIR:
-		result = findItem("plugindir").c_str();
-		break;
-	default: 
-		OutputDebugString("FATAL CFGFILE ERROR: ITEM NOT DEFINED");
+		result.Empty();
 	}
-
 	return result;
 }
 
@@ -387,8 +222,16 @@ std::string cfgFile::findItem(CString itemPrefix)
 		}
 	}
 	
+	std::string val;
 
-	std::string val = cResult.GetBuffer(10);
+	if(cResult.IsEmpty()){
+
+		val="-1";
+	}
+	else{
+
+		val = cResult.GetBuffer(10);
+	}
 	cResult.ReleaseBuffer();
 
 	return val;
@@ -397,7 +240,7 @@ std::string cfgFile::findItem(CString itemPrefix)
 BOOL cfgFile::writeToDisk()
 {
 
-	BOOL bResult = true;
+	BOOL bResult = TRUE;
 
 	CStdioFile file;
 	CFileException e;
@@ -421,10 +264,11 @@ BOOL cfgFile::writeToDisk()
 
 	CATCH(CFileException, e){
 
-		bResult = false; //We failed
+		bResult = FALSE; //We failed
 	}
 	END_CATCH;
 
 	return bResult;
 }
+
 

@@ -1,6 +1,7 @@
 /*
 ** Copyright (C) 2002 Thees Winkler
-**  
+** Based on code from CDEx (c) 2002 by Albert L. Faber http://cdexos.sourceforge.net
+**
 ** This program is free software; you can redistribute it and/or modify
 ** it under the terms of the GNU General Public License as published by
 ** the Free Software Foundation; either version 2 of the License, or
@@ -23,14 +24,14 @@
 #pragma once
 #endif // _MSC_VER > 1000
 
-class Buffer  
+class CBuffer  
 {
 public:
-	void deInit();
-	Buffer();
-	virtual ~Buffer();
+	CBuffer();
+	virtual ~CBuffer();
 
-	bool Init( int nBufferSize, int nBuffers );
+	BOOL Init( int nBufferSize, int nBuffers );
+	void DeInit();
 	INT	 Write( PSHORT pData, int nSize );
 	INT	 Read( PSHORT pData );
 	INT	 BuffersAvailable();

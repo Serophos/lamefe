@@ -19,59 +19,61 @@ h3{text-decoration: bold; color: black; font-family: Arial, Helvetica, sans-seri
 </head>
 <body bgcolor="#FFFFCC">
 <div class="Section1">
-<p><img width="468" height="60" src="Manual-Dateien/image001.jpg"></p>
+<p align=justify><img width="468" height="60" src="Manual-Dateien/image001.jpg"></p>
 
-<p>&nbsp;</p>
+<p align=justify>&nbsp;</p>
 
-<p><b><u>Table of contents:</u></b></p>
+<p align=justify><b><u>Table of contents:</u></b></p>
 
-<p>&nbsp;</p>
+<p align=justify>&nbsp;</p>
 
-<p><b><a href="#1">1. Introduction</a></b></p>
+<p align=justify><b><a href="#1">1. Introduction</a></b></p>
 
-<p><b><a href="#1.1">1.1 What is lameFE?</a></b></p>
+<p align=justify><b><a href="#1.1">1.1 What is lameFE?</a></b></p>
 
-<p><b><a href="#1.2">1.2 System</a></b></p>
+<p align=justify><b><a href="#1.2">1.2 System Requirements</a></b></p>
 
-<p><b><a href="#1.3">1.3Installation</a></b></p>
+<p align=justify><b><a href="#1.3">1.3Installation</a></b></p>
 
-<p><b>&nbsp;</b></p>
+<p align=justify><b>&nbsp;</b></p>
 
-<p><b><a href="#2">2. Using lameFE</a></b></p>
+<p align=justify><b><a href="#2">2. Using lameFE</a></b></p>
 
-<p><b><a href="#2.1">2.1 Encoder Settings</a></b></p>
+<p align=justify><b><a href="#2.1">2.1 Encoder Settings</a></b></p>
 
-<p><b><a href="#2.2">2.2 Ripping Audio CDs</a></b></p>
+<p align=justify><b><a href="#2.2">2.2 Ripping Audio CDs</a></b></p>
 
-<p><b><a href="#2.2.1">2.2.1 Select CD Drive</a></b></p>
+<p align=justify><b><a href="#2.2.1">2.2.1 Select CD Drive</a></b></p>
 
-<p><b><a href="#2.2.2">2.2.2 CD Drive / Reader Settings</a></b></p>
+<p align=justify><b><a href="#2.2.2">2.2.2 CD Drive / Reader Settings</a></b></p>
 
-<p><b><a href="#2.3">2.3 Converting Multimedia files to MP3</a></b></p>
+<p align=justify><b><a href="#2.3">2.3 Converting Multimedia files to MP3</a></b></p>
 
-<p><b><a href="#2.3.1">2.3.1 Add files to list</a></b></p>
+<p align=justify><b><a href="#2.3.1">2.3.1 Add files to list</a></b></p>
 
-<p><b><a href="#2.3.2">2.3.2 Remove files from list</a></b></p>
+<p align=justify><b><a href="#2.3.2">2.3.2 Remove files from list</a></b></p>
 
-<p><b><a href="#2.4">2.4 Id3 Tags</a></b></p>
+<p align=justify><b><a href="#2.3.3">2.3.3 Plugins</a></b></p>
 
-<p><b><a href="#2.4.1">2.4.1 Query freeDB server</a></b></p>
+<p align=justify><b><a href="#2.4">2.4 Id3 Tags</a></b></p>
 
-<p><b><a href="#2.4.2">2.4.2 Manual Editing of Id3 Tags</a></b></p>
+<p align=justify><b><a href="#2.4.1">2.4.1 Query freeDB server</a></b></p>
 
-<p><b><a href="#2.5">2.5 Customizing lameFE</a></b></p>
+<p align=justify><b><a href="#2.4.2">2.4.2 Manual Editing of Id3 Tags</a></b></p>
 
-<p><b><a href="#2.5.1">2.5.1 Basic lameFE settings</a></b></p>
+<p align=justify><b><a href="#2.5">2.5 Customizing lameFE</a></b></p>
 
-<p><b><a href="#2.5.2">2.5.2 User defined filename format</a></b></p>
+<p align=justify><b><a href="#2.5.1">2.5.1 Basic lameFE settings</a></b></p>
 
-<p><b>&nbsp;</b></p>
+<p align=justify><b><a href="#2.5.2">2.5.2 User defined filename format</a></b></p>
 
-<p><b><a href="#3">3. Frequently Asked Questions</a></b></p>
+<p align=justify><b>&nbsp;</b></p>
 
-<p><b><a href="#4">4. Reporting Bugs / Participate in Development</a></b></p>
+<p align=justify><b><a href="#3">3. Frequently Asked Questions</a></b></p>
 
-<p><b><a href="#5">5. Warranty / License / Legal Notice</a></b></p>
+<p align=justify><b><a href="#4">4. Reporting Bugs / Participate in Development</a></b></p>
+
+<p align=justify><b><a href="#5">5. Warranty / License / Legal Notice</a></b></p>
 
 <b><br>
 </b> 
@@ -79,35 +81,37 @@ h3{text-decoration: bold; color: black; font-family: Arial, Helvetica, sans-seri
 <h1><a name="1">1. Introduction</a></h1>
 
 <h2><a name="1.1">1.1 What Is lameFE</a></h2>
-
-<p>lameFE is basically a <b>f</b>ront-<b>e</b>nd for <b>lame</b>. It provides a simple user interface for the lame encoder and extends the abilities of lame for support for more multimedia formats.
-lameFE is able to convert Wave Audio and CD Digital Audio to MP3 and will become extendable with plug-ins to offer a wider support for multimedia files.</p>
-
-<p>Here is a short list of the lameFE features:</p>
-
+<p align=justify>
+LameFE is a powerfull frontend for the lame encoder. You can encode CD digital 
+audio and nearly any audio file format to mp3. LameFE has a straight forward GUI
+and supports all features of the lame encoding engine (lame_enc.dll). On the
+input side, lameFE understands CDRip.dll the powerfull CD Ripping library from
+CDEx, and own input plugins (currently plugins for wave/aiif/au and Monkey
+Lossless Audio Format are available).<br>
+On the output side lameFE is also  extendable through plugins now. Plugins for 
+Wave Audio, Monkeys Lossles Audio Format and Ogg/Vorbis are available.
+</p>
+<p align=justify>
+Here is a short list of the lameFE features: 
+</p>
 <ul>
-<li>Rip Audio CDs to Wave Audio or MP3 (MPEG I / II Layer 3)</li>
-
-<li>Convert Wave Audio to MP3 (MPEG I / II Layer 3)</li>
-
-<li>Query freeDB server to access file / and album information of CDs</li>
-
-<li>Write id3 version 2 frames</li>
-
+<li>Supported Audio Formats: CD Digital Audio, Wave Audio, APE</li> 
+<li>Supported Encoders: LAME, Ogg/Vorbis, Monkeys Audio, WAVE</li>
+<li>Query freeDB server to access file / and album information of CDs</li> 
+<li>CDText and CDPlayer.ini support</li> 
+<li>Write id3 version 2 frames</li> 
 <li>Id3 tag editor</li>
-
 <li>User defined filename format</li>
-
-<li>Playback of Audio CDs</li>
-
 <li>Play converted files / create play lists</li>
+<li>more...</li> 
 </ul>
+ 
 
-<p>&nbsp;</p>
+<p align=justify>&nbsp;</p>
 
 <h2><a name="1.2">1.2 System Requirements</a></h2>
 
-<p>Minimum System requirements:</p>
+<p align=justify>Minimum System requirements:</p>
 
 <ul>
 <li>Windows 98/ME or Windows NT 4.51 / 2000 / XP</li>
@@ -119,222 +123,324 @@ lameFE is able to convert Wave Audio and CD Digital Audio to MP3 and will become
 <li>Internet connection to access freeDB server</li>
 </ul>
 
-<p>&nbsp;</p>
+<p align=justify>&nbsp;</p>
 
-<p>* The MP3 compression consumes a lot of computation time, actually, the lame encoder that's used by lameFE is relatively fast compared to other MP3 encoders (with comparable sound quality, listen
+
+<p align=justify>* The MP3 compression consumes a lot of computation time, actually, the lame encoder that's used by lameFE is relatively fast compared to other MP3 encoders (with comparable sound quality, listen
 the output of the Xing 'fast' encoder, and you know what I mean). With a Pentium 166-MMX, with 32 Mb of SD-RAM, a one minute song, takes about 2 minutes to rip and encode.</p>
 
-<p>&nbsp;</p>
+<p align=justify>&nbsp;</p>
 
 <h2><a name="1.3">1.3 Installation</a></h2>
 
-<p>There are no special installation requirements. To install lameFE, start the installer and follow the instructions. Before installing remove any previous version of lameFE from your system.</p>
+<p align=justify>There are no special installation requirements. To install lameFE, start the installer and follow the instructions. Before installing remove any previous version of lameFE from your system.</p>
 
-<p>On some system you will need to install a ASPI driver. lameFE needs it to access the CD-ROM drivers. On Windows XP lameFE should work with the native ASPI driver of Windows XP. Before installing
+<p align=justify>On some systems you will need to install a ASPI driver. lameFE needs it to access the CD-ROM drivers. On Windows XP lameFE should work with the native ASPI driver of Windows XP. Before installing
 an ASPI driver check whether there is a file winaspi.sys in your %windir%\system32 directory (whereas %windir% stands for your windows directory). Upgrading ASPI drivers may prevent CD-Burning
 programs to work properly.</p>
 
-<p>You can download an ASPI driver at <a href="http://www.adaptec.com/worldwide/support/supportdetail.html?prodkey=ASPI-4.70">
-http://www.adaptec.com/worldwide/support/supportdetail.html?prodkey=ASPI-4.70</a></p>
+<p align=justify>You can download an ASPI driver at 
+<a href="http://lamefe.nauta-clarus-media.de/download/fa_117.zip">
+http://lamefe.nauta-clarus-media.de/download/fa_117.zip</a></p>
 
-<p>or</p>
+<p align=justify>or</p>
 
-<p><a href="http://www.nauta-clarus-media.de/software/download/nt_wnaspi32.zip">http://www.nauta-clarus-media.de/software/download/nt_wnaspi32.zip</a> (NT/2000/XP only)</p>
+<p align=justify><a href="http://lamefe.nauta-clarus-media.de/download/nt_wnaspi32.zip">http://lamefe.nauta-clarus-media.de/download/nt_wnaspi32.zip</a> (NT/2000/XP only)</p>
 
 <br>
  
 
 <h1><a name="2">2 Using lameFE</a></h1>
-
+<p align=justify>
+Main Program Window<br>
+<img src="Manual-Dateien/main_small.JPG" width="244" height="172" border="0" alt="lameFE Main Window">
+The Main Program Window is the central control interface of LameFE. It contain 
+a toolbar with frequently used program functions two dropdown listfields where 
+you can chose the input  source (a CD drive in example) and the output format 
+(MP3 or OGG/Vorbis in example) and a list view that displays either the contents
+of the CD Drive(s) or the file(s) you want to convert / process.</p>
+<p align=justify>
+The LameFE Toolbar<br>    
+<img src="Manual-Dateien/Add_File.JPG" width="33" height="32" border="0" alt="Add File"><br>
+Add Files to List: This button allows you to add files you want to convert to the
+ job list. This button is disabled if the source is an audio CD</p>
+<p align=justify>
+<img src="Manual-Dateien/Remove_File.JPG" width="33" height="32" border="0" alt="Remove file"><br>
+Remove File from List: This button removes the selected file(s) from the job list. This button is disalbled if the source is an audio CD
+</p><p align=justify>
+<img src="Manual-Dateien/freeDB_toolbar.jpg" width="39" height="37" border="0" alt="Query FreeDB"><br>
+Query FreeDB Server: If the source is an Audio CD this will look up album specific data  (such as track names, artist, genre and so on) in the FreeDB Server and apply it to the ID3 Tag of each file / track. For more information on ID3 Tags read the ID3 Tag section in this help file
+</p><p align=justify>
+<img src="Manual-Dateien/ID3.jpg" width="41" height="38" border="0" alt="Edit ID3 Tag"><br>
+Open ID3 Tag Editor: This button will open the ID3 Tag Editor where you can manually edit/create ID3Tags for each file. For more information on ID3 Tags read the ID3 Tag section in this help file
+</p><p align=justify>
+<img src="Manual-Dateien/Start.jpg" width="41" height="38" border="0" alt="Start Encoding">
+Start Encoding: This button will apply all file(s) and ID3 Tags and start the encoding / conversion process emidiatly.
+</p>
 <h2><a name="2.1">2.1 Encoder Settings</a></h2>
 
-<p>The Main part of lameFE is the lame Encoder. It &ldquo;converts&rdquo; the CD-Digital Audio / Wave files into Mp3 files. You can make several changes on the quality and speed the lame encoder
-converts the files. In the Main Programs dialog choose Encoder Settings from the Preferences menu or click on the Encoder settings button.</p>
+<p align=justify>The Main part of lameFE is the lame Encoder. It &ldquo;converts&rdquo; the CD-Digital Audio
+/ Wave files into Mp3 files. You can make several changes on the quality and speed the lame encoder
+converts the files. In the Main Programs dialog chose L.A.M.E. Settings from the "Settings" menu or 
+click on the settings button on the right side of the encoder dropdown listfield.</p>
 
-<p>&nbsp;</p>
+<p align=justify>&nbsp;</p>
 
-<p><img border="0" width="548" height="104" src="Manual-Dateien/image002.jpg"></p>
+<p align=justify><img border="0" width="578" height="198" src="Manual-Dateien/image002.jpg"></p>
 
 <p align="center">&nbsp;</p>
 
-<p>For most users the default settings for the encoder should work fine but some people prefer higher bitrates. Higher bitrates will increase both quality and size of the file.</p>
+<p align=justify>For most users the default settings for the encoder should work fine but some people prefer higher higher or
+lower quality settings:</p>
 
-<p>You may also select the number of channels the MP3 File will have: Stereo / Mono / Joint Stereo (lower quality, smaller size), and Dual channel are offered by the lame encoder.</p>
+<p align=justify>Bitrate. The bitrate of an MPEG I/II Layer 3 Audio file specifies how detailed the audio data is stored. It is comparable
+to the resulution of a picture. The higher your resulution and dpi, the better the picture looks - same with the bitrate.<br>
+You can use a constant bitrate (CBR) or a variable bitrate (VBR).</p>
+  <TABLE CELLPADDING=3 BORDER="1" width="512" height="225">
+    <CAPTION><STRONG>Table 1.1:</STRONG> Bitrate versus sound quality</CAPTION>
+    <TR VALIGN="TOP"> 
+      <TD ALIGN="RIGHT" nowrap width="115">Bitrate</TD>
+      <TD ALIGN="RIGHT" nowrap width="67">Bandwidth</TD>
+      <TD ALIGN="LEFT" nowrap width="246">Quality comparable to or better than</TD>
+    </TR>
+    <TR VALIGN="TOP"> 
+      <TD ALIGN="RIGHT" nowrap width="115">16 kbps</TD>
+      <TD ALIGN="RIGHT" nowrap width="67">4.5 kHz</TD>
+      <TD ALIGN="LEFT" nowrap width="246">shortwave radio</TD>
+    </TR>
+    <TR VALIGN="TOP"> 
+      <TD ALIGN="RIGHT" nowrap width="115">32 kbps</TD>
+      <TD ALIGN="RIGHT" nowrap width="67">7.5 kHz</TD>
+      <TD ALIGN="LEFT" nowrap width="246">AM radio</TD>
+    </TR>
+    <TR VALIGN="TOP"> 
+      <TD ALIGN="RIGHT" nowrap width="115">96 kbps</TD>
+      <TD ALIGN="RIGHT" nowrap width="67">11 kHz</TD>
+      <TD ALIGN="LEFT" nowrap width="246">FM radio</TD>
+    </TR>
+    <tr valign="TOP"> 
+      <td align="RIGHT" nowrap width="115">128 kbps</td>
+      <td align="RIGHT" nowrap width="67">16 kHz</td>
+      <td align="LEFT" nowrap width="246">near CD</td>
+    </tr>
+    <tr valign="TOP"> 
+      <td align="RIGHT" nowrap width="115">160-180 kbps <br>
+        (variable bitrate)</td>
+      <td align="RIGHT" nowrap width="67">20 kHz</td>
+      <td align="LEFT" nowrap width="246">perceptual transparency</td>
+    </tr>
+    <TR VALIGN="TOP"> 
+      <TD ALIGN="RIGHT" nowrap width="115">256 kbps</TD>
+      <TD ALIGN="RIGHT" nowrap width="67">22 kHz</TD>
+      <TD ALIGN="LEFT" nowrap width="246">studio</TD>
+    </TR>
+  </TABLE>
 
-<p>Copyright / Private / Original will mark the file as copyrighted protected / private use only or original record.</p>
+<p align=justify>If you want to use predefined lame quality presets chose one from the dropdown list,
+but note that other values than "Normal (default)" will override some of the other settings
+you specified in this dialog</p>
 
-<p>Checksum will write a crc checksum to the file.</p>
+<p align=justify>You may also select the number of channels the MP3 File will have: Stereo / Mono / Joint Stereo (lower quality, smaller size), and Dual channel are offered by the lame encoder.</p>
 
-<p>&nbsp;</p>
+<p align=justify>Copyright / Private / Original will mark the file as copyrighted protected / private use only or original record.</p>
 
-<h2><a name="2.2">2.2 Ripping Audio CDs</a></h2>
+<p align=justify>Checksum will write a crc checksum to the file.</p>
 
-<p><img border="0" width="605" height="391" src="Manual-Dateien/image004.jpg"><br>
+<p align=justify>&nbsp;</p>
+
+<h2><a name="2.2">2.2 Ripping Audio CDs</a> / 
+<a name="2.2.1">2.2.1 Select CD drive</a></h2>
+<p align=justify><img src="Manual-Dateien/main.JPG" width="432" height="304" border="0" alt="The Programs Main Window"><br>
 The lameFE main programs dialog.</p>
 
-<p>&nbsp;</p>
+<p align=justify>&nbsp;</p>
 
-<p>You can rip CD Digital Audio Tracks to Wave or MP3 files. By default lameFE is in the CD to MP3 mode. To select the output format either click to &ldquo;CD -&gt; MP3&rdquo; or<br>
-&ldquo;CD -&gt; WAV&rdquo;.</p>
-
-<p>To rip an Audio CD, insert it to your CD drive select the tracks you want to extract from the CD and click on &ldquo;Start encoding&rdquo; to start the ripping process. Before that you may want to
-query a freeDB server to gain the album / tack information for CD. See section 2.4.1 of this document for details.</p>
-
-<h3><a name="2.2.1">2.2.1 Select CD drive</a></h3>
-
-<p>On systems with two or more CD / DVD drives you have to select the CD Drive lameFE reads from. By default the first CD drive is selected (LUN:0). To change the CD-Drive you want to use select
-&ldquo;CD-Reader settings&rdquo; from the &ldquo;Preferences&rdquo; Menu in the programs main dialog and select the CD-Drive from the drop down list &ldquo;CD ROM&rdquo; and click on OK.</p>
-
-<p><img border="0" width="572" height="198" src="Manual-Dateien/image005.jpg"></p>
+<p align=justify>
+Extracting Digital Audio Tracks from an Audio CDs is really simple with lameFE. 
+Load the Audio CD in one of your CD drives and select the drive in the LameFE’s 
+“Convert from” dropdown list. The tracks on CD will show up in the tracklist. 
+Select the tracks you want to extract from the list.</p>
+<p align=justify>
+<img src="Manual-Dateien/convert_from.jpg" width="348" height="30" border="0" alt="Convert from"><br>
+Select the CD drive your Audio CD is loaded in as the input source.</p>
+<p align=justify>
+In the next step you have to select the output format from the second dropdown 
+list in the mainwindow. This will be MPEG I/II Layer 3 (MP3) in most ocasions, 
+but you can also extract audio CDs to OGG/Vorbis, Monkey’s Lossless Audio Format 
+or Wave Audio. You can configure the encoder you have selected by clicking on 
+the small settings button on the right side of the dropdown list.</p>
+<p align=justify>
+In the next step you might want to adjust album the information of the CD to 
+your needs (The album information will be stored as an ID3 Tag for MP3 files in 
+example, it is also used for the output filename). Do that by selecting one of 
+the commands from the ID3 Tag Menu. For CD you normally do a freeDB query to 
+access the Album Information for the CD from a server in the internet. This is 
+the easiest and comfortablest way to access the information. Some CDs and CD 
+drives support CD Text, where the information is stored directly on the CD. 
+If your CD has the CD Text logo you can read out this information by selecting 
+“Read CD Text” from the “ID3 Tags” menu. For more information on ID3 Tags read 
+the ID3 Tag section of this help file.</p>
+<p align=justify>
+<img src="Manual-Dateien/Start.jpg" width="41" height="38" border="0" alt="Start"><br>
+After that you are ready to start the extraction of the Audio tracks. Click on 
+the “Start Encoding” button in the toolbar and the encoding process will start 
+emmidiatly.</p>
 
 <h3><a name="2.2.2">2.2.2 CD Drive / Reader settings</a></h3>
+<p align=justify><img border="0" width="572" height="198" src="Manual-Dateien/image005.jpg"></p>
+<p align=justify>To change the settings for a CD drive select &ldquo;CD-Reader&rdquo; from the &ldquo;Setting&rdquo; Menu in the programs main dialog. You will see the dialog above.</p>
 
-<p>To change the settings for a CD drive select &ldquo;CD-Reader settings&rdquo; from the &ldquo;Preferences&rdquo; Menu in the programs main dialog. You will see the dialog above.</p>
-
-<p>&ldquo;CD ROM Type&rdquo; and &ldquo;Ripping Method&rdquo; should only be changed by expert users or when there are problems with the &ldquo;Generic&rdquo; and &ldquo;Standard&rdquo; selection
-(when you rip an Audio CD and there is only silence adjust these settings to the one that match your drive).</p>
-
-<p>&ldquo;Lock CD Drive during extraction&rdquo; will lock when lameFE accesses it. It can&rsquo;t be opened in that time. This is saver and will prevent errors when the drive is opened during
+<p align=justify>&ldquo;CD ROM Type&rdquo; and &ldquo;Ripping Method&rdquo; should only be changed by expert users or when there are problems with the &ldquo;Generic&rdquo; and &ldquo;Standard&rdquo; selection
+(when you rip an Audio CD and there is only silence adjust these settings to the one that match your drive).
+In Paranoia mode lameFE will verify the ripped Audio Data bit per bit with the original data on CD.</p>
+<p align=justify>&ldquo;Lock CD Drive during extraction&rdquo; will lock when lameFE accesses it. It can&rsquo;t be opened in that time. This is saver and will prevent errors when the drive is opened during
 extraction.</p>
 
-<p>&ldquo;Eject CD when done&rdquo; &ndash; Well I think there is no explanation needed</p>
+<p align=justify>&ldquo;Eject CD when done&rdquo; &ndash; Well I think there is no explanation needed</p>
 
-<p>&ldquo;Swap channels&rdquo; &ndash; Well I think there is no explanation needed</p>
+<p align=justify>&ldquo;Swap channels&rdquo; &ndash; Well I think there is no explanation needed</p>
 
-<p>&ldquo;Use native NT SCSI Library&rdquo; will force lameFE to use the SCSI Library of NT instead of the Adaptec ASPI driver or any other installed ASPI driver. Use this setting only if an ASPI
+<p align=justify>&ldquo;Use native NT SCSI Library&rdquo; will force lameFE to use the SCSI Library of NT instead of the Adaptec ASPI driver or any other installed ASPI driver. Use this setting only if an ASPI
 driver doesn&rsquo;t work for you. You will need to restart lameFE to take this setting into effect.</p>
 
-<p>&ldquo;CD Speed&rdquo; is the maximum speed your CD Drive is capable for digital reading of audio CDs. Note this is not the maximum CD drive speed. Look in your users manual of the CD ROM drive
+<p align=justify>&ldquo;CD Speed&rdquo; is the maximum speed your CD Drive is capable for digital reading of audio CDs. Note this is not the maximum CD drive speed. Look in your users manual of the CD ROM drive
 for the correct value. 32 is default value and will work for most CD drives, even when they can read digital audio only at lower speeds.</p>
 
-<p>&ldquo;Spin up time&ldquo; specifies the time, your CD drive needs to spin up to the maximum speed.</p>
+<p align=justify>&ldquo;Spin up time&ldquo; specifies the time, your CD drive needs to spin up to the maximum speed.</p>
 
 <h2><a name="2.3">2.3 Converting multimedia files to MP3</a></h2>
+<p align=justify>
+Converting multimedia audio files with lameFE is most likeley as easy as extracting Audio CDs. Just select “Audiofile (plugin)” from the “Convert from” dropdown list in the mainwindow and add the file(s) you want to convert by klicking the “Add file(s)” button in the toolbar. Then follow the steps as desribed in the CD Ripping section of this helpfile.
+</p><p align=justify>
+FreeDB Query, CDPlayer.ini support and Read CD Text won’t work for Audio files of course. To adjust and create ID3 Tags select “ID3 Tag Editor” from the “ID3 Tags” menu.
+</p><p align=justify>
+By default LameFE supports rading of Wave Audio (wav, riff, aiff, au) Monkey Lossless Audio Format (APE). Take a look at the LameFE’s download page. May be there is a plugin for other audio formats released there. If you are a developer and are interested in developing a plugin for a fileformat you are inerested in get the Plugin API Documentation from the Download page and contact me.
+</p>
 
-<p>Click on WAV to MP3 to switch to convert Wave Audio files to MP3. Add the files you want to convert and click on &ldquo;Start Encoding&rdquo;.</p>
-
-<h3><a name="2.3.1">2.3.1 Add files to list</a></h3>
-
-<p>To add files to the list choose &ldquo;Add file&rdquo; from the &rdquo;File&rdquo; menu (or press STRG+O).</p>
-
-<h3><a name="2.3.2">2.3.2 Remove files from list</a></h3>
-
-<p>To remove a file from the list, select it (multiple selections are allowed) and choose &ldquo;Remove file&rdquo; from the &ldquo;File&rdquo; menu (or press STRG+R).</p>
+<h3><a name="2.3.3">2.3.3 Plugins</a></h3>
+<p align=justify>
+LameFE supports input and output plugins since version 2.1. You can get information 
+of the installed plugins if you select “Plugins” from the “Settings menu”. 
+Here you can see which plugins are installed and configure them.</p>
+<p align=justify>
+You can also configure the plugins directly from the LameFE’s main program window.
+Click on the  buttons that are on the right side of each dropdown list and configuration 
+dialog of the selected plugin will open.</p>
+<p align=justify>
+By default LameFE supports rading of Wave Audio (wav, riff, aiff, au) Monkey 
+Lossless Audio Format (APE). Take a look at the LameFE’s download page. May be 
+there is a plugin for other audio formats released there. If you are a developer 
+and are interested in developing a plugin for a fileformat you are inerested in 
+get the Plugin API Documentation from the Download page and contact me.</p>
 
 <h2><a name="2.4">2.4 Id3 Tags</a></h2>
-
-<p>lameFE offers support for id3v2.x tags to store album and song specific data in the mp3 file.</p>
-
-<p>There are two ways of manipulating these tags (one works only for CDs):</p>
-
+<p>
+Many multimedia file formats like MPEG I/II Layer 3 or Monkeys Lossless Audio Format 
+support to store Album specific data such as Artis, Songname, Albumname, Genre and 
+so on in the file. LameFE supports ID3v2 Tags for MP3 files and passes Album 
+information to output plugins too. Some output plugins support writng these Album 
+Information to the file (APE_out or OGG_out i.e.). </p>
 <h3><a name="2.4.1">2.4.1 Query freeDB Servers</a></h3>
-
-<p>FreeDB is a service that offers CD Album information on servers in the internet. For nearly every Audio CD the album name, artist and songs on this CD are available from this service (For further
+<p align=justify>FreeDB is a service that offers CD Album information on servers in the internet. For nearly every Audio CD the album name, artist and songs on this CD are available from this service (For further
 information visit <a href="http://www.freedb.org/">http://www.freedb.org</a>)</p>
-
-<p>To query the album information for your CD, just click on the freeDB button or choose &ldquo;Read remote CDdb&rdquo; from the &ldquo;CDDB&mp;mp;id3Tag&rdquo; menu. Sometimes there are double ore
-more entries for one CD in the server. In this case chose the entry that you like best and click on &rdquo;Continue&rdquo;.</p>
-
-<p><img border="0" width="396" height="302" src="Manual-Dateien/image006.jpg"></p>
-
-<p>&nbsp;</p>
-
-<p>The information gathered from freeDB will be automatically written to the id3 tags of each file. You can edit these manually by clicking &ldquo;Edit id3 Tags&rdquo;.</p>
-
+<p align=justify>To query the album information for your CD, just click on the freeDB button or choose &ldquo;Read remote CDdb&rdquo; from the &ldquo;CDDB&mp;mp;id3Tag&rdquo; menu. Sometimes there are double ore
+more entries for one CD in the server. In this case choose the entry that you like best and click on &rdquo;Continue&rdquo;.</p>
+<p align=justify><img src="Manual-Dateien/freedb.jpg" width="557" height="274" border="0" alt="freedb"></p>
+<p align=justify>&nbsp;</p>
+<p align=justify>The information gathered from freeDB will be automatically written to the id3 tags of each file. You can edit these manually by clicking &ldquo;Edit id3 Tags&rdquo;.</p>
 <h3><a name="2.4.2">2.4.2 Manual Editing of Id3 Ttags</a></h3>
-
-<p>If you are encoding Wave files or you want to manually edit id3 tags received from freeDB servers, you may do so by using the id3 tag editor of lameFE. Choose &ldquo;Edit id3-Tags&rdquo; from the
+<p align=justify>If you are encoding Wave files or you want to manually edit id3 tags received from freeDB servers, you may do so by using the id3 tag editor of lameFE. Choose &ldquo;Edit id3-Tags&rdquo; from the
 &ldquo;CDDB&mp;mp;id3-Tag&rdquo; menu or click on &ldquo;Edit id3 Tags&rdquo; button.</p>
-
-<p><img border="0" width="605" height="377" src="Manual-Dateien/image007.jpg"></p>
-
-<p>For each file / track you can adjust the id3 tag information. When finished click on done. To write only the tags you need to the file uncheck the Checkbox of the value. If you want lameFE to use
+<p align=justify><img border="0" width="605" height="377" src="Manual-Dateien/image007.jpg"></p>
+<p align=justify>For each file / track you can adjust the id3 tag information. When finished click on done. To write only the tags you need to the file uncheck the Checkbox of the value. If you want lameFE to use
 a value for all files activate the &ldquo;all files&rdquo; check box for that value.</p>
 
-<p>lameFE allows you to store each file in an user defined file format (i.e. like the &ldquo;Napster&rdquo; style as artist &ndash; song.mp3 (See section 2.5.2 of this document for details). To
+<p align=justify>lameFE allows you to store each file in an user defined file format (i.e. like the &ldquo;Napster&rdquo; style as artist &ndash; song.mp3 (See section 2.5.2 of this document for details). To
 deactivate this behavior for on file uncheck Use format string for this file. The filename will be same as the original filename but with the correct ending (mp3).</p>
 
 <h2><a name="2.5">2.5 Customizing lameFE</a></h2>
 
-<p>lameFE is highly customizable. Most default behavior can be changed.</p>
+<p align=justify>lameFE is highly customizable. Most default behavior can be changed.</p>
 
 <h3><a name="2.5.1">2.5.1 Basic lameFE settings</a></h3>
 
-<p>To adjust the program settings to your needs select &ldquo;lameFE settings&rdquo; from the &ldquo;Preferences&rdquo; menu or hit F5.</p>
+<p align=justify>To adjust the program settings to your needs select &ldquo;lameFE settings&rdquo; from the &ldquo;Preferences&rdquo; menu or hit F5.</p>
 
-<p>Set Base Output path: To tell lameFE where to store the converted / ripped files click on &ldquo;Output path&rdquo; and select the directory you want lameFE to store the files in. The default is
+<p align=justify>Set Base Output path: To tell lameFE where to store the converted / ripped files click on &ldquo;Output path&rdquo; and select the directory you want lameFE to store the files in. The default is
 C:\Program Files\lameFE\Output (assuming you have installed lameFE to C:\Program Files\lameFE).</p>
 
-<p><img border="0" width="604" height="337" src="Manual-Dateien/image008.jpg"></p>
+<p align=justify><img src="Manual-Dateien/settings.jpg" width="658" height="447" border="0" alt="Settings"></p>
 
-<p>With &ldquo;External Player&rdquo; you can select the Audio Player you want lameFE to use to playback files when finished.</p>
+<p align=justify>With &ldquo;External Player&rdquo; you can select the Audio Player you want lameFE to use to playback files when finished.</p>
 
-<p>If you want lameFE to overwrite existing files during the conversion, check &ldquo;Always overwrite existing files&rdquo;. The default behavior is to asked for each file.</p>
+<p align=justify>If you want lameFE to overwrite existing files during the conversion, check &ldquo;Always overwrite existing files&rdquo;. The default behavior is to asked for each file.</p>
 
-<p>All other settings in this dialog need no explanation.</p>
+<p align=justify>All other settings in this dialog need no explanation.</p>
 
 <h3><a name="2.5.2">2.5.2 User defined filename format</a></h3>
 
-<p><img border="0" width="548" height="93" src="Manual-Dateien/image009.jpg"></p>
+<p align=justify><img border="0" width="548" height="93" src="Manual-Dateien/image009.jpg"></p>
 
-<p>&nbsp;</p>
+<p align=justify>&nbsp;</p>
 
-<p>To store files i.e. Napster style ore store each file in the directory structure as &ldquo;Artist\Album&rdquo;, select &ldquo;tagWriter Settings&rdquo; from the &ldquo;Preferences&rdquo; menu,
-check &ldquo;Rename files to format:&rdquo; and define the format string.</p>
+<p align=justify>To store files i.e. Napster style ore store each file in the directory structure as &ldquo;Artist\Album&rdquo;, select &ldquo;tagWriter Settings&rdquo; from the &ldquo;Preferences&rdquo; menu,
+check &ldquo;Rename files to format:&rdquo; and define the format string (as known from the Winamp.</p>
 
-<p>%a\%m\%a -%t for example will store each file in the directory Artist\Album in the format Artist &ndash; Song.mp3 in your base output path. Non existing directories will be created. You may also
+<p align=justify>%a\%m\%a -%t for example will store each file in the directory Artist\Album in the format Artist &ndash; Song.mp3 in your base output path. Non existing directories will be created. You may also
 add any other characters (that are allowed for filenames) to the format string. A complex example is %a\%m\%a - %t Track %n</p>
 
-<p>%t = Song title</p>
+<p align=justify>%1 = Song title</p>
 
-<p>%a = Artist</p>
+<p align=justify>%2 = Artist</p>
 
-<p>%m = Album / CD title</p>
+<p align=justify>%3 = Album / CD title</p>
 
-<p>%n = Track number on the CD</p>
+<p align=justify>%4 = year</p>
 
-<p>%y = year</p>
+<p align=justify>%5 = genre</p>
 
-<p>The default is %a\%m\%a -%t.mp3</p>
+<p align=justify>%a = Track number on the CD</p>
+
+<p align=justify>The default is %a\%m\%a -%t.mp3</p>
 
 <br>
  
 
 <h1><a name="3">3. Frequently Asked Questions</a></h1>
 
-<p>&nbsp;</p>
+<p align=justify>&nbsp;</p>
 
-<p><b>Q:</b> With the mp3's I rip and then view file info in Winamp it says Header found at: xxx bytes and not zero, why?<br>
+<p align=justify><b>Q:</b> With the mp3's I rip and then view file info in Winamp it says Header found at: xxx bytes and not zero, why?<br>
 <b>A</b>: Winamp reports the location of the first MPEG header in the MPEG stream data. If you have enabled the ID3V2 tags, it will place the ID3V2 header before the MPEG stream, the first MPEG
 header will be shifted with the size of the ID3V2 header.</p>
 
-<a name="napster"><p><b>Q:</b> When I extract MP3 files from a CD, I would like lameFE to create 'Napster Style' file names ([artist]-[title].mp3) instead storing tracks as track_1.mp3, how can I do that?<br>
+<a name="napster"><p align=justify><b>Q:</b> When I extract MP3 files from a CD, I would like lameFE to create 'Napster Style' file names ([artist]-[title].mp3) instead storing tracks as track_1.mp3, how can I do that?<br>
 <b>A</b>: Select Preferences/tagWriter Settings and activate "Rename to format" and specify a format string.</p>
 </a>
 
-<a name="cddberr"><p><b>Q:</b> At home, I can access the CDDB database, but when I use lameFE at my work place it does not work.<br></a>
+<a name="cddberr"><p align=justify><b>Q:</b> At home, I can access the CDDB database, but when I use lameFE at my work place it does not work.<br></a>
 <b>A</b>: At your work you are almost certainly behind a firewall, therefore you have to select the Use Proxy option in the CDDB options dialog box (Preferences/CDDB Setup). In addition you have to
 fill in the proxy address in the edit field next to the Use Proxy selection box (which should be enabled when you've selected the Use Proxy option, and maybe have to change the Proxy Port). A tip:
 take a look at the proxy settings of your Web browser (e.g. Internet Explorer or Netscape) to determine the proxy address and proxy port.</p>
 
-<p><b>Q:</b> When I try to access the CDDB database, I get an Invalid E-mail Address message<br>
+<p align=justify><b>Q:</b> When I try to access the CDDB database, I get an Invalid E-mail Address message<br>
 <b>A</b>: You have to fill in the E-mail Address field in the CDDB options dialog box (Preferences/CDDB Setup).</p>
 
-<p><b>Q:</b> When I try to start lameFE, it complains that it can&rsquo;t find the CDRip.dll, tagWriter.dll file(s) or Lame_enc.dll.<br>
+<p align=justify><b>Q:</b> When I try to start lameFE, it complains that it can&rsquo;t find the CDRip.dll, tagWriter.dll file(s) or Lame_enc.dll.<br>
 <b>A</b>: Make sure that you unzip all the files (using for example WinZip) in the lameFE installation directory Furthermore, make sure if you have created a desktop short-cut that the START-IN field
 points to the directory where the lameFE.exe and its DLLs reside (this is the folder in which you have extracted the files that were in the ZIP)</p>
 
-<p><b>Q:</b> Will lameFE work with Windows 2000<br>
+<p align=justify><b>Q:</b> Will lameFE work with Windows 2000<br>
 <b>A</b>: Many people have problems running lameFE with the Windows 2000 operation system. However, you have to make sure that you have installed the proper ASPI drivers that are supported under
 Win2K. You might try to install the aspi package offered in the download section. Some people have successfully used it in conjunction with lameFE.</p>
 
-<p><b>Q:</b> Where can I obtain the proper ASPI drivers<br>
+<p align=justify><b>Q:</b> Where can I obtain the proper ASPI drivers<br>
 <b>A</b>: If you have Software or Hardware from Adaptec, you can obtain the drivers from the Adaptec site. If you have not any of that, you can use a utility (both for Windows NT and Window 98) named
 ASPI_ME, although it is officially banned by Adaptec, it is still available from some WEB sites (take a look at this site, and search for aspi_me). However, there is a time lock in this utility, so
 you need to set back your system clock to somewhere in 1998 when starting ASPI_ME. Afterwards, you can set back your system clock to the current data. Furthermore, you can look at one of the
 following resources:</p>
 
-<p><b>Q:</b> When I extract file there is no music at all, just dead silence, what's wrong?<br>
+<p align=justify><b>Q:</b> When I extract file there is no music at all, just dead silence, what's wrong?<br>
 <b>A</b>: This problem might be a couple of things:<br>
 1.Make sure that you have installed the proper ASPI drivers. This link http://w3.westnet.gr/mp3/rippers/aspi.htm has information how to install the proper ASPI drivers (version Adaptec's ASPI version
 4.54 or 4.57 should work)<br>
@@ -342,38 +448,38 @@ following resources:</p>
 3) Go to Preferences/CD-Reader Settings and try out some other settings for CD-ROM type and Ripping method. See your CD-ROM drive handbook for more information. "Generic" and "Standard" should work
 with every CD drive. I'll include an auto detection method in one of the next versions.</p>
 
-<p><b>Q:</b> When I convert/rip MP3 file, it takes a very long time, is there something wrong?<br>
+<p align=justify><b>Q:</b> When I convert/rip MP3 file, it takes a very long time, is there something wrong?<br>
 <b>A</b>: The MP3 compression consumes a lot of computation time, actually, the lame encoder that's used by lameFE is relatively fast compared to other MP3 encoders (with comparable sound quality,
 listen the output of the Xing 'fast' encoder and you know what I mean). The ripping process can be slow when you have Pentium 166-MMX, with 32 Mb of SD-RAM, a one minute song, takes about 2 minutes
 to rip and encode.<br>
 With certain CD-ROM drives you might get better performance when you set the CD-SPEED to 32, but this might increase the change of jitter errors.</p>
 
-<p>&nbsp;</p>
+<p align=justify>&nbsp;</p>
 
 <h1><a name="4">4. Reporting Bugs / Participate in Development</a></h1>
 
-<p>Bugs, undefined behavior etc. and suggestions can be forwarded to the author (Thees Winkler). If you have a question, make sure that you have READ the HELP file first. If you can't find the answer
+<p align=justify>Bugs, undefined behavior etc. and suggestions can be forwarded to the author (Thees Winkler). If you have a question, make sure that you have READ the HELP file first. If you can't find the answer
 to your question, please consult the FAQ page at the lameFE home page. If you still have problems, you can send me an e-mail at <a href="mailto:theesw@users.sourceforge.net">
 theesw@users.sourceforge.net</a></p>
 
-<p>If you want to participate in the lameFE development feel free to contact me.</p>
+<p align=justify>If you want to participate in the lameFE development feel free to contact me.</p>
 
-<p>&nbsp;</p>
+<p align=justify>&nbsp;</p>
 
 <h1><a name="5">5. Warranty / License / Legal Notice</a></h1>
 
-<p>Copyright (C) 2002 Thees Winkler</p>
+<p align=justify>Copyright (C) 2002 Thees Winkler</p>
 
-<p>This program is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation; either version 2 of the
+<p align=justify>This program is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation; either version 2 of the
 License, or (at your option) any later version.</p>
 
-<p>This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.&nbsp; See the
+<p align=justify>This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.&nbsp; See the
 GNU General Public License for more details.</p>
 
-<p>You should have received a copy of the GNU General Public License along with this program; if not, write to the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307,
+<p align=justify>You should have received a copy of the GNU General Public License along with this program; if not, write to the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307,
 USA.</p>
 
-<p>&nbsp;</p>
+<p align=justify>&nbsp;</p>
 </div>
 </body>
 </html>

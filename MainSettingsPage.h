@@ -34,6 +34,8 @@ class CMainSettingsPage : public CPropertyPage
 
 // Konstruktion
 public:
+	
+	void OnHighColorIcons();
 	void OnOK();
 	virtual BOOL OnInitDialog();
 	void init(CString wdir);
@@ -43,6 +45,12 @@ public:
 // Dialogfelddaten
 	//{{AFX_DATA(CMainSettingsPage)
 	enum { IDD = IDD_LAMEFE_PAGE };
+	CButton	c_enqueueFiles;
+	CButton	c_cdTextRead;
+	CButton	c_writeCDPlayerIni;
+	CButton	c_readCDPlayerIni;
+	CStatic	c_playerPath;
+	CStatic	c_outputPath;
 	CButton	c_silent;
 	CButton	c_shutdownOnFinished;
 	CButton	c_playFiles;
@@ -50,14 +58,22 @@ public:
 	CButton	c_finishedDialog;
 	CButton	c_quitOnFinished;
 	CButton	c_beep;
+	CButton c_getfocus;
+	CButton c_playSound;
+	CButton c_saveWinPos;
+	CButton c_highColBar;
 	CString	m_outputPath;
 	CString	m_playerPath;
+	CButton c_showSplash;
+	CButton c_showAlbumEditor;
 	//}}AFX_DATA
 
 
 // Überschreibungen
 	// Der Klassen-Assistent generiert virtuelle Funktionsüberschreibungen
 	//{{AFX_VIRTUAL(CMainSettingsPage)
+	public:
+	virtual BOOL PreTranslateMessage(MSG* pMsg);
 	protected:
 	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV-Unterstützung
 	//}}AFX_VIRTUAL
@@ -68,12 +84,14 @@ protected:
 	//{{AFX_MSG(CMainSettingsPage)
 	afx_msg void OnOutput();
 	afx_msg void OnPlayer();
-	afx_msg void OnPlugins();
+	afx_msg void OnPlayFiles();
 	//}}AFX_MSG
 	DECLARE_MESSAGE_MAP()
 
 private:
 	CString wd;
+	CToolTipCtrl* m_pToolTip;
+
 };
 
 //{{AFX_INSERT_LOCATION}}

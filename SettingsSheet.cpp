@@ -38,15 +38,17 @@ IMPLEMENT_DYNAMIC(CSettingsSheet, CPropertySheet)
 }*/
 
 CSettingsSheet::CSettingsSheet(LPCTSTR pszCaption, CWnd* pParentWnd, UINT iSelectPage)
-	:CPropertySheet("lameFE Stettings", pParentWnd, iSelectPage)
+	:CPropertySheet("lameFE Settings", pParentWnd, iSelectPage)
 {
 
 	m_psh.dwFlags |= PSH_NOAPPLYNOW;	// Construct pages
 	
 	AddPage(&m_MainPage);
+	AddPage(&m_FilenamePage);
 	AddPage(&m_CDROMPage);
 	AddPage(&m_PluginPage);
 	AddPage(&m_EncoderPage);
+	AddPage(&m_LoggingPage);
 	AddPage(&m_cddbPage);
 
 	SetActivePage(iSelectPage);
@@ -68,14 +70,16 @@ END_MESSAGE_MAP()
 // Behandlungsroutinen für Nachrichten CSettingsSheet 
 
 
-void CSettingsSheet::init(CString wdir)
+void CSettingsSheet::init(CString wdir, BOOL bRipperPresent)
 {
 
-	wd = wdir;
-	m_EncoderPage.init(wd);
-	m_cddbPage.init(wd);
-	m_CDROMPage.init(wd);
-	m_MainPage.init(wd);
+	m_FilenamePage.Init(wdir);
+	m_EncoderPage.init(wdir);
+	m_cddbPage.init(wdir);
+	m_CDROMPage.init(wdir, bRipperPresent);
+	m_MainPage.init(wdir);
+	m_PluginPage.Init(wdir);
+	m_LoggingPage.Init(wdir);
 
 }
 

@@ -23,31 +23,30 @@
 #pragma once
 #endif // _MSC_VER > 1000
 
-class ID3Info  
+class CID3Info  
 {
 public:
 
-	ID3Info();
-	//ID3Info(CString song, CString artist, CString album, CString comment, CString genre, int track, int year);
-	virtual ~ID3Info();
+	CID3Info();
+	virtual ~CID3Info();
 
-	CString getSong();
-	CString getArtist();
-	CString getAlbum();
-	CString getComment();
-	CString getGenre();
-	int     getTrack();
-	int     getYear();
+	CString GetSong();
+	CString GetArtist();
+	CString GetAlbum();
+	CString GetComment();
+	CString GetGenre();
+	int     GetTrack();
+	int     GetYear();
 
-	void	setSong(CString songname);
-	void	setArtist(CString artist);
-	void	setAlbum(CString album);
-	void	setComment(CString comment);
-	void	setGenre(CString genre);
-	void    setTrack(int track);
-	void    setYear(int year);
+	void	SetSong(CString songname);
+	void	SetArtist(CString artist);
+	void	SetAlbum(CString album);
+	void	SetComment(CString comment);
+	void	SetGenre(CString genre);
+	void    SetTrack(int track);
+	void    SetYear(int year);
 
-protected:
+private:
 	CString m_song;
 	CString m_artist;
 	CString m_album;

@@ -30,16 +30,15 @@ static char THIS_FILE[]=__FILE__;
 // Konstruktion/Destruktion
 //////////////////////////////////////////////////////////////////////
 
-EncoderFeeder::EncoderFeeder(Encoder *syncEncoder, int nBufferSize, int nBuffers, BOOL &bAbortEnc)
+CEncoderFeeder::CEncoderFeeder(CEncoder *syncEncoder, int nBufferSize, int nBuffers, BOOL &bAbortEnc)
 	: m_bAbortEnc(bAbortEnc)
 {
 	m_pEncoder      = syncEncoder;  //Encoder
-	m_bLastBlock	= false;		//last Block ist true when ripping is done and buffer can be read out safely
+	m_bLastBlock	= FALSE;		//last Block ist true when ripping is done and buffer can be read out safely
 	bRunning		= FALSE;		//thread running?
 	m_pThread		= NULL;			//handle to the encoding thread
 	m_nBuffers		= nBuffers;		//How many buffers can be stored in the buffer
 	m_nBufferSize	= nBufferSize;	//size of each buffer
-//	m_bAbortEnc     = bAbortEnc;
 
 	m_Buffer.Init(nBufferSize, nBuffers);   //init the buffer
 
@@ -49,24 +48,25 @@ EncoderFeeder::EncoderFeeder(Encoder *syncEncoder, int nBufferSize, int nBuffers
 
 }
 
-EncoderFeeder::~EncoderFeeder()
+CEncoderFeeder::~CEncoderFeeder()
 {
 
 }
 
-bool EncoderFeeder::addData(PSHORT pData, DWORD length)
+BOOL CEncoderFeeder::AddData(PSHORT pData, DWORD length)
 {
 
 	if(!bRunning || m_bAbortEnc){
 
-		return true;
+		return TRUE;
 	}
 
 	if(m_Buffer.BuffersAvailable()){
 
 		// we wait until half the buffers are availble are reached.
-		while((m_Buffer.BuffersAvailable() < m_nBuffers/2) && !m_bAbortEnc &&bRunning){
+		while((m_Buffer.BuffersAvailable() < m_nBuffers / 2) && !m_bAbortEnc &&bRunning){
 
+			TRACE("Not enough Buffers available\n");
 			Sleep(50);
 		}
 	}
@@ -78,11 +78,12 @@ bool EncoderFeeder::addData(PSHORT pData, DWORD length)
 		m_ArrayLock.Unlock(); //unlock array
 	}
 
-	return true;
+	return TRUE;
 }
 
-void EncoderFeeder::encProc(void)
+void CEncoderFeeder::EncProc(void)
 {
+	TRACE("Entering EncderFeeder:encProc. Thread Started\n");
 	// indicate thread is active
 	bRunning			= TRUE;
 	SHORT*		pData	= NULL;  //data to encode
@@ -104,7 +105,7 @@ void EncoderFeeder::encProc(void)
 
 			if (nSize)
 			{
-				m_pEncoder->passBuffer(pData, nSize);
+				m_pEncoder->PassBuffer(pData, nSize);
 			}
 		}
 		else
@@ -121,45 +122,48 @@ void EncoderFeeder::encProc(void)
 
 	delete [] pData;
 
-
 	// indicate thread has been finished
+	TRACE0("## Leaving EncoderFeeder::encProc()\n");
+
 	bRunning = FALSE;
 }
 
 
-void EncoderFeeder::waitForFinished()
+void CEncoderFeeder::WaitForFinished()
 {
+	TRACE("Entering CEncoderFeeder::WaitForFinished\n");
 	int nSize = -1;
 
+	DWORD dwStillAlive = 0;
 
-	DWORD dwStillAlive=0;
+	m_bLastBlock = TRUE;
 
-	m_bLastBlock = true;
-
-	dwStillAlive=WaitForSingleObject(m_pThread->m_hThread,100000);
+	dwStillAlive = WaitForSingleObject(m_pThread->m_hThread, 100000);
 	
-	if (dwStillAlive==WAIT_TIMEOUT)
-	{
 
-		// Kill Thread
+	if (dwStillAlive == WAIT_TIMEOUT)	{
+		
+		TRACE0("Waited long enough. Kill thread!\n");
 		::TerminateThread( m_pThread->m_hThread, 0 );
 	}
 
+	TRACE("## Leaving CEncoderFeeder::WaitForFinished()\n");
+
 }
 
-UINT EncoderFeeder::FeederProc(LPVOID param)
+UINT CEncoderFeeder::FeederProc(LPVOID param)
 {
-	((EncoderFeeder*)param)->encProc();
+
+	((CEncoderFeeder*)param)->EncProc();
+
+	TRACE("## CEncoderFeeder terminated ##\n");
 	return 0;
 }
 
-int EncoderFeeder::GetBufferStatus(){
+int CEncoderFeeder::GetBufferStatus()
+{
 
 	return (int)((float)m_Buffer.BuffersAvailable() / (float)m_nBuffers *100);
 }
 
-void EncoderFeeder::deInit()
-{
-	
-	m_Buffer.deInit();
-}
+

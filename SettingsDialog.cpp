@@ -61,5 +61,5 @@ BOOL CSettingsDialog::OnInitDialog()
 
 	c_SettingsTabs.A
 
-	return true;
+	return TRUE;
 }

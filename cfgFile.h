@@ -25,68 +25,22 @@
 
 #include <string>
 
-#define BITRATE		0
-#define NUMCHNLS	2
-#define COPYRIGHT	3
-#define ORIGINAL	4
-#define PRIVATE		5
-#define CRC			6
-#define ID3V2		7
-#define FORMATSTR   9
-
-#define OUTPUT		10
-#define PLAYER		11
-#define BEEP		12
-#define DIALOG		13
-#define PLAY		14
-#define	M3U			15
-#define QUIT		16
-#define SHUTDOWN    17
-#define PLUGINDIR   18
-#define SILENT      19
-
-#define CDDBSERVER  20
-#define PROXY		21
-#define PROXYADDR	22
-#define PROXYPORT	23
-#define USERNAME	24
-#define PASSWORD	25
-#define EMAIL       26
-#define AUTH		27
-#define TIMEOUT		28
-
-#define EJECT       30
-#define SWAPCHNL	31
-#define LOCK		32
-#define SWAPCHNLS	33
-#define RENAME		34
-#define SELECT		35
-
 #define		MODE_STEREO		0
 #define		MODE_JSTEREO		1
 #define		MODE_DUALCHANNEL	2
 #define		MODE_MONO		3
 
-struct preset{
-	CString name;
-	int bitrate;
-	int samples;
-	int mode;
-	int smode;
-	BOOL copy;
-	BOOL original;
-};		
 
 class cfgFile  
 {
 public:
-
-	BOOL    SetValue(int item, LPVOID value);
+	BOOL	SetStringValue(CString item, CString value);
+	BOOL    SetValue(CString item, int value);
 	
-	int     GetValue(int item, BOOL formated = FALSE);
-	CString GetStringValue(int item);
+	int     GetValue(LPCTSTR item, BOOL formated = FALSE);
+	CString GetStringValue(CString item);
 
-	cfgFile(CString dir);
+	cfgFile(CString dir = "");
 	virtual ~cfgFile();
 	
 	CStringArray cfg;

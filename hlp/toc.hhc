@@ -20,7 +20,7 @@
 			</OBJECT>
 		<LI> <OBJECT type="text/sitemap">
 			<param name="Name" value="1.3 Installation">
-			<param name="Local" value="Manual.htm#1.3">
+			<param name="Local" value="Manual.htm">
 			</OBJECT>
 	</UL>
 	<LI> <OBJECT type="text/sitemap">
@@ -60,6 +60,10 @@
 			<LI> <OBJECT type="text/sitemap">
 				<param name="Name" value="2.3.2 Remove files from list">
 				<param name="Local" value="Manual.htm#2.3.2">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="2.3.3 Plugins">
+				<param name="Local" value="Manual.htm#2.3.3">
 				</OBJECT>
 		</UL>
 		<LI> <OBJECT type="text/sitemap">

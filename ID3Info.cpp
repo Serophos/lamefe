@@ -17,8 +17,8 @@
 */
 
 #include "stdafx.h"
-#include "stdafx.h"
 #include "ID3Info.h"
+#include "Resource.h"
 
 #ifdef _DEBUG
 #undef THIS_FILE
@@ -30,120 +30,107 @@ static char THIS_FILE[]=__FILE__;
 // Konstruktion/Destruktion
 //////////////////////////////////////////////////////////////////////
 
-ID3Info::ID3Info()
+CID3Info::CID3Info()
 {
 	
-	m_album = "Unspecified Album";
-	m_artist = "Unspecified Artist";
+	m_album.LoadString(IDS_DEFAULT_ALBUM);
+	m_artist.LoadString(IDS_DEFAULT_ARTIST);
 	m_song.Empty();
-	m_genre.Empty();
+	m_genre = "Other";
 	m_comment.Empty();
 	m_track = 0;
 	m_year = 0;
 }
 
 
-/*ID3Info::ID3Info(CString song, CString artist, CString album, CString comment, CString genre, int track, int year)
-{
-
-	m_album	   = album;
-	m_artist   = artist;
-	m_song     = song;
-	m_genre    = genre;
-	m_comment  = comment;
-	m_track    = track;
-	m_year     = year;
-}*/
-
-
-ID3Info::~ID3Info()
+CID3Info::~CID3Info()
 {
 
 }
 
-CString ID3Info::getSong()
+CString CID3Info::GetSong()
 {
 
 	return m_song;
 }
 
-CString ID3Info::getArtist()
+CString CID3Info::GetArtist()
 {
 
 	return m_artist;
 }
 
-CString ID3Info::getAlbum()
+CString CID3Info::GetAlbum()
 {
 
 	return m_album;
 }
 
-CString ID3Info::getComment()
+CString CID3Info::GetComment()
 {
 
 	return m_comment;
 }
 
-CString ID3Info::getGenre()
+CString CID3Info::GetGenre()
 {
 
 	return m_genre;
 }
 
-int ID3Info::getTrack()
+int CID3Info::GetTrack()
 {
 
 	return m_track;
 }
 
-int ID3Info::getYear()
+int CID3Info::GetYear()
 {
 
 	return m_year;
 }
 
-void ID3Info::setSong(CString songname)
+void CID3Info::SetSong(CString songname)
 {
 
 	m_song = songname;
 }
 
-void ID3Info::setArtist(CString artist)
+void CID3Info::SetArtist(CString artist)
 {
 
 	m_artist = artist;
 }
 
-void ID3Info::setAlbum(CString album)
+void CID3Info::SetAlbum(CString album)
 {
 
 	m_album = album;
 }
 
 
-void ID3Info::setComment(CString comment)
+void CID3Info::SetComment(CString comment)
 {
 
 	m_comment = comment;
 }
 
 
-void ID3Info::setGenre(CString genre)
+void CID3Info::SetGenre(CString genre)
 {
 
 	m_genre = genre;
 }
 
 
-void ID3Info::setTrack(int track)
+void CID3Info::SetTrack(int track)
 {
 
 	m_track = track;
 }
 
 
-void ID3Info::setYear(int year)
+void CID3Info::SetYear(int year)
 {
 
 	m_year = year;

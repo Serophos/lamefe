@@ -1,0 +1,8 @@
+; APE_out.def : Deklariert die Modul-Parameter für die DLL.
+
+LIBRARY      "APE_out"
+DESCRIPTION  'APE_out Windows Dynamic Link Library'
+
+EXPORTS
+	
+	GetLFOutModule	@1

@@ -26,30 +26,29 @@
 #include "Encoder.h"
 #include "Buffer.h"
 
-class EncoderFeeder  
+class CEncoderFeeder  
 {
 public:
-	void deInit();
-	int GetBufferStatus();
-	EncoderFeeder(Encoder *syncEncoder,int nBufferSize, int nBuffers, BOOL &bAbortEnc);
-	virtual ~EncoderFeeder();
-	bool addData(PSHORT pData, DWORD lenght);
-	bool init(int nBufferSize, int nBuffers);
-	void waitForFinished();
+	CEncoderFeeder(CEncoder *syncEncoder, int nBufferSize, int nBuffers, BOOL &bAbortEnc);
+	virtual ~CEncoderFeeder();
+
+	int  GetBufferStatus();
+	BOOL AddData(PSHORT pData, DWORD lenght);
+	BOOL Init(int nBufferSize, int nBuffers);
+	void WaitForFinished();
 	static UINT FeederProc(LPVOID param);
 
 private:
 
 	BOOL &m_bAbortEnc;
-	void encProc( );
+	void EncProc();
 
-	Buffer		m_Buffer;
+	CBuffer		m_Buffer;
 	CMutex		m_ArrayLock;
-	bool		m_bLastBlock;
-	bool		bRunning;
-	Encoder*	m_pEncoder;
+	BOOL		m_bLastBlock;
+	BOOL		bRunning;
+	CEncoder*	m_pEncoder;
 	CWinThread*	m_pThread;
-//	CEvent      m_eThreadFinished;
 	int			m_nBufferSize;
 	int			m_nBuffers;
 

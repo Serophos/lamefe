@@ -12,22 +12,12 @@
 
 /////////////////////////////////////////////////////////////////////////////
 
-/////////////////////////////////////////////////////////////////////////////
-//
-// String Table
-//
-
-#ifdef _ENGLISH
-
 STRINGTABLE DISCARDABLE 
 BEGIN
-    IDS_ABOUTBOX            "&About lameFE..."
-END
-
-STRINGTABLE DISCARDABLE 
-BEGIN
+    //IDS_MAIN_LIST_TITLE2    "Files to convert"
+    IDS_MAIN_DATATRACK      "Data Track"
+	IDS_MAIN_AUDIOTRACK		"Audio Track %02d"
     ID_EXIT                 "Exit lameFE"
-    IDS_MAIN_ADDFILECD      "To choose tracks you (don't) want to extract, just (de-)select them in the list-box.\nRead documentation for more details.\nIf you want to encode WAVE Audio files switch to \\""Wave to MP3 Mode\\"" first."
     IDS_NOFILESSELECTED     "No file(s) selected."
     IDS_EMPTYLIST           "No file(s) in list."
     IDS_MAIN_NOAUDIOCD      "No Audiotracks selected, or no Audio CD in drive. "
@@ -35,7 +25,24 @@ BEGIN
     IDS_DATATRACK           "Track %d is a Data Track and will be ignored"
     IDS_DRIVENOTREADY       "Drive error or drive not ready (%d)."
     IDS_ERRTOC              "Error reading Table of Content of CD (Errornumber: %d)"
-    IDS_MAIN_LIST_TITLE     "CD in Drive [%s]"
+	IDS_CDPINI_NOENTRY      "No entry for this CD found in the cdplayer.ini"
+	IDS_CDPINI_ERRORWRITE	"Error writing data to cdplayer.ini"
+END
+
+STRINGTABLE DISCARDABLE 
+BEGIN
+	IDS_CDPINI_DOUBLEENTRY	"There is already an entry for this CD in the CDPlayer.ini"
+	IDS_CDPINI_WRITE_OK		"Successfully saved data to CDPlayer.ini"
+	IDS_CDTEXT_ERROR		"Could not read CDText information from CD."
+	IDS_ID3SETT_INV_FSTR	"The format String contains invalid characters (/, *, ?, <, >, |, :, . are not allowd)\nRemove them automaticly?\n"
+	IDS_PLUGIN_NOSEL		"No plugin selected"
+	IDS_PLUGIN_DEINST		"This will remove %s from your LameFE installation. Are you sure?"
+	IDS_PLUGIN_DEINSTFAILED "Could not remove %s"
+	IDS_ERR_LONGFILENAME	"The filename\n%s\nis too long. It will be saved as\n%s"
+	IDS_TOOL_CONFIGUREIN	"Configure Input Device"
+	IDS_TOOL_CONFIGUREOUT	"Configure Output Device"
+	IDS_TOOL_INPUTDEVICE	"Select Input Source / Device"
+	IDS_TOOL_OUTPUTDEVICE	"Select Target Encoder"
 END
 
 STRINGTABLE DISCARDABLE 
@@ -48,7 +55,7 @@ BEGIN
     IDS_ENC_FILEEXISTS      "File %s already exists. Overwrite?"
     IDS_ENC_DENIEDOVWR      "File already exists. User denied overwriting. File skipped."
     IDS_ENC_ERRDIRCREATE    "Error creating directory "
-    IDS_ENC_TOOLTIP         "lameFE 2.0 | Working on file / track"
+    IDS_ENC_TOOLTIP         "lameFE 2.0 | Working on file / track "
     IDS_ENC_INITERR         "Fatal: Encoder-engine initialisation failed."
     IDS_ENC_SUCCESS         "Encoded successfully"
     IDS_ENC_PREPARING       "Preparing..."
@@ -56,6 +63,7 @@ BEGIN
     IDS_ENC_RIPPERROR       "Error ripping audiotrack"
     IDS_ENC_NUMERRORS       "%d error(s)"
     IDS_ENC_VIEW_LOG_ERR    "There have been errors during encoding. View logfile?"
+	IDS_ENC_DISCARD_LOG		"Do you want to save, print or discard the log messages?"
 END
 
 STRINGTABLE DISCARDABLE 
@@ -66,113 +74,123 @@ BEGIN
     IDS_ENC_EXTRACT_TRACK   "Extracting Audio Track %d"
     IDS_ENC_JITTER_ERR      "Jitter error (Sectors %d <-> %d)"
     IDS_ENC_FINISHED        "Finished."
-    IDS_ENC_CLOSE_BTN       "&Close"
+    IDS_ENC_CLOSE_BTN       "&Discard"
     IDS_ENC_WRITE_M3U       "Writing Playlist"
     IDS_ENC_SAVED_M3U       "Saved playlist to "
     IDS_ENC_FAILED_M3U      "Could not create "
     IDS_ENC_WAVE_ENC        "Encoding..."
     IDS_ENC_WAVE_FILES      "Encoding files..."
-    IDS_CDDB_ERR_CFGWRITE   "Error writing cddb.cfg"
-    IDS_CDDB_ERR_CFGREAD    "Error reading cddb.cfg"
-    IDS_CDDB_ERR_WINSOCK    "Error initializinh Winsock!"
-    IDS_CDDB_ERR            "Could not connect to server.\n[Error: %d, Response:%s]"
-END
+	IDS_ENC_NO_PLUGIN       "No plugin found to handle this file."
+	IDS_ENC_PLUG_LOADFAILED "Failed loading library %s"
+	IDS_ENC_PLUG_APIERROR   "Could not load API from Plugin. Internal error or this is no plugin that is supported by lameFE\n(%s)"
+    END
 
 STRINGTABLE DISCARDABLE 
 BEGIN
-    IDS_MAIN_LIST_TITLE2    "Files to convert"
-    IDS_MAIN_DATATRACK      "Data Track"
-    IDS_CDDBONWAVERR        "CDdb(tm) stands for Compact Disc Data Base. For that reason this feature works not in Wave to Mp3 Mode :-P"
-    IDS_ID3_ALBUMMODE       "Apply album information of for all files?"
+	IDS_CDDB_ERR_CFGWRITE	"Error writing cddb.cfg"
+    IDS_CDDB_ERR_CFGREAD    "Error reading cddb.cfg. Go to freeDB Settings and set up servers first!"
+    IDS_CDDB_ERR_WINSOCK    "Error initializing Winsock!"
+    IDS_CDDB_ERR            "Could not connect to server.\n[Error: %d, Response:%s]"
+//   IDS_ID3_ALBUMMODE       "Apply album information of for all files?"
     IDS_NOSELECTION         "No file selected."
-    IDS_ID3_ARTISTMODE      "Apply artist information for all files?"
+/*    IDS_ID3_ARTISTMODE      "Apply artist information for all files?"
     IDS_ID3_COMMENTMODE     "Apply comment information for all files?"
     IDS_ID3_GENREMODE       "Apply genre information for all files?"
-    IDS_ID3_YEARMODE        "Apply year information for all files?"
+    IDS_ID3_YEARMODE        "Apply year information for all files?"*/
     IDS_FILEOPENERR         "Error opening file %s"
     IDS_INVBITRATE          "Invalid bitrate. Only 16bit files are currently supported. This has %d bits per sample"
     IDS_RESTARTLAME         "You have to Restart lameFE before this setting takes into effect"
+	IDS_DEFAULT_ARTIST		"Unknown Artist"
+	IDS_DEFAULT_ALBUM		"Unknown Album"
 END
 
-#endif //_ENGLISH
-/////////////////////////////////////////////////////////////////////////////
-
-
-#ifdef _GERMAN
-STRINGTABLE DISCARDABLE 
+STRINGTABLE DISCARDABLE		  //"Tooltips may be this long -----------------------------------------------------"
 BEGIN
-    IDS_ABOUTBOX            "&Über lameFE..."
+	IDS_TOOL_ALWAYSTAGEDIT		"Always show Album Tag Editor in the main window."
+    IDS_TOOL_PLAYSOUND		    "Play notification sound when finished encoding (will use windows default sound)."
+	IDS_TOOL_SAVEWINPOS			"Save position of the LameFE main window for next session."
+	IDS_TOOL_HIGHCOLOR			"Use highcolor toolbar. Deactivate this for older graphic devices."
+	IDS_TOOL_GETFOCUS			"Bring the status window up to front and get the keyboard focus when finished."
+	IDS_TOOL_BEEP				"Beep systemspeaker when finished encoding."
+	IDS_TOOL_NOTIFICATION		"Show notification dialog and logfile when finished encoding."
+	IDS_TOOL_M3U				"Write the converted files to a M3U playlist (i.e. for Winamp)."
+	IDS_TOOL_PLAYFILES			"Play encoded files when finished encoding. An external player is required."
+	IDS_TOOL_QUIT				"Exit lameFE when finished encoding."
+	IDS_TOOL_SHUTDOWN			"Shutdown Windows and turn off the PC (needs Admin preveleges on NT systems)."
+	IDS_TOOL_SILENT				"Always overwrite existing file. Otherwise lameFE will ask."
+	IDS_TOOL_OUTPUTPATH			"This is the base output path where lameFE will store the encoded/ripped files."
+	IDS_TOOL_EXTPLAYER			"The external player lameFE will use to play files after encoding process."
+	IDS_TOOL_PLUGINPATH			"Path of the Winamp plugin directory (i.e. in_mod.dll.)"
+	IDS_TOOL_READCDPINI			"Automaticly read album information from CDPlayer.ini when new CD is loaded."
+	IDS_TOOL_WRITECDPINI		"Automaticly save album information to CDPlayer.ini after freeDB/CDdb query."
+	IDS_TOOL_CDTEXTREAD			"Read CDText information when new CD is loaded (CD drive must support CD Text)."
 END
 
-STRINGTABLE DISCARDABLE 
+STRINGTABLE DISCARDABLE		  //"Tooltips may be this long -----------------------------------------------------"
 BEGIN
-    ID_EXIT                 "lameFE beenden."
-    IDS_MAIN_ADDFILECD      "Markieren Sie die Stücke, die Sie extrahieren möchten.\nWenn Sie Wave Dateien encodieren wollen, müssen Sie erst in den ""Wave nach MP3"" Modus wechseln.\nFür weitere Informationen lesen die Hilfe / F.A.Q."
-    IDS_NOFILESSELECTED     "Keine Datei(en) markiert"
-    IDS_EMPTYLIST           "Keine Datei(en) in der Liste"
-    IDS_MAIN_NOAUDIOCD      "Keine Audiotracks ausgewählt oder keine Audio CD im Laufwerk. "
-    IDS_NOTRACKSSELECTED    "Bitte markieren Sie die Stücke, die Sie extrahieren möchten."
-    IDS_DATATRACK           "Track %d ist ein Datentrack und wird ignoriert."
-    IDS_DRIVENOTREADY       "Laufwerk nicht bereit (%d)."
-    IDS_ERRTOC              "Fehler beim Lesen des Inhaltsverzeichnisses der CD (TOC). (Fehlercode: %d)"
-    IDS_MAIN_LIST_TITLE     "CD im Laufwerk [%s]"
+	IDS_TOOL_DEFAULTDRIVE		"Select the default CD drive."
+	IDS_TOOL_CDROMTYPE			"Select CD drive type. Some manufacturers use own protocols to access CDs."
+	IDS_TOOL_EJECTCD			"Eject the CD when finished ripping process"
+	IDS_TOOL_LOCKDRIVE			"This will lock the CD Drive during the ripping process."
+	IDS_TOOL_RMETHOD			"Paranoya mode will verify the data bit per bit. Standard is OK for most users."
+	IDS_TOOL_SELECT				"Select all tracks in the tracklist by default"
+	IDS_TOOL_SWAPCHNL			"Swap left and right channel"
+	IDS_TOOL_SPINUP				"Time your CD drive needs to spin up."
+	IDS_TOOL_NTSCSI				"Use the native Windows NT SCSI library instead of ASPI driver."
+	IDS_TOOL_CDSPEED			"Maximum speed you CD drive can read CDDA. (NOT the max. speed of your CD drive)."
+	IDS_TOOL_IDENTCOMB			"Any combination of IDENTIFIERS and characters is allowed here."
+	IDS_TOOL_SHOWSPLASH			"Show splashscreen at program startup or not?"
 END
 
-STRINGTABLE DISCARDABLE 
+STRINGTABLE DISCARDABLE		  //"Tooltips may be this long -----------------------------------------------------"
 BEGIN
-    IDS_ENC_ID3FAILED       "Während der Initialisierung von tagWriter.dll ist ein Fehler aufgetreten. Id3Tag konnte nicht geschrieben werden."
-    IDS_ENC_WRITEID3        "Schreibe id3 Tag."
-    IDS_ENC_ID3INTERR       "Konnte id3 Tag nicht schreiben: Interner Fehler."
-    IDS_ENC_LOGENTRY        "Original Datei: %s\nAusgabe Datei: %s\nFormat: %d kHz, %d bit %d Kanäle\nStatus: %s\n\n"
-    IDS_ENC_LOGFAILED       "Konnte nicht in lameFE.log schreiben"
-    IDS_ENC_FILEEXISTS      "Die Datei %s existiert bereits. Überschreiben?"
-    IDS_ENC_DENIEDOVWR      "Datei existiert bereits. Benutzer hat Überschreiben verboten. Übersprungen."
-    IDS_ENC_ERRDIRCREATE    "Fehler beim Erstellen des Verzeichnisses "
-    IDS_ENC_TOOLTIP         "lameFE 2.0 | Arbeite an Datei / Stück"
-    IDS_ENC_INITERR         "Initialisierungsfehler beim Starten des Encoders. Vorgang abgebrochen."
-    IDS_ENC_SUCCESS         "Erfolgreich abgeschlossen."
-    IDS_ENC_PREPARING       "Bereite vor..."
-    IDS_ENC_RIPPING         "Lese Audio CD."
-    IDS_ENC_RIPPERROR       "Fehler beim Lesen des Audiotracks."
-    IDS_ENC_NUMERRORS       "%d Fehler."
-    IDS_ENC_VIEW_LOG_ERR    "Währen des Vorgangs sind Fehler aufgetreten. Logdatei ansehen?"
+	IDS_TOOL_CP					"Set Copyright bit to the mp3 bitstream."
+	IDS_TOOL_CRC				"Write CRC checksum to mp3."
+	IDS_TOOL_ORIG				"Set the Original bit to the mp3 bitstream. Use this for your own recorings."
+	IDS_TOOL_PRIVATE			"Set the Private bit to the mp3 bitstream."
+	IDS_TOOL_CHANNELS			"How many channels for the output file?"
+	IDS_TOOL_MINBITRATE			"The bitrate for the mp3 file. Higher bitrate: better sound and bigger file."
+	IDS_TOOL_MAXBITRATE			"Maximum VBR bitrate. Ignored in CBR mode."
+	IDS_TOOL_ABR				"Encoder will maintain an average bitrate, using higher bitrates if needed."
+	IDS_TOOL_VBRMETHOD			"Use a constant bitrate (CBR) or a variable bitrate (VBR) for the mp3?"
+	IDS_TOOL_VBRQUALITY			"9 (lowest quality/biggest distortion) - 0 (highest quality/lowest distortion). "
+	IDS_TOOL_MPEGVER			"Encode to MPEG I or MPEG II ? (Note: lame doesn't support this, yet. Future use)."
+	IDS_TOOL_FORMATSTR			"Setup the filename of the encoded files. You may add subdirectories here."
+	IDS_TOOL_WRITEID3			"Write the id3 tag to the mp3. LameFE will only write id3v2 tags."
+	IDS_TOOL_QUALPRESET			"Use a quality preset. Other values than normal may override settings made here."
 END
 
-STRINGTABLE DISCARDABLE 
+
+STRINGTABLE DISCARDABLE		  //"Tooltips may be this long -----------------------------------------------------"
 BEGIN
-    IDS_ENC_VIEW_LOG        "Vorgang erfolgreich abgeschlossen. Logdatei ansehen?"
-    IDS_ENC_FILE_XOFY       "Datei %d von %d"
-    IDS_ENC_TRACK_XOFY      "Stück %d von %d"
-    IDS_ENC_EXTRACT_TRACK   "Lese Audiotrack %d"
-    IDS_ENC_JITTER_ERR      "Jitter Fehler (Sektoren %d <-> %d)"
-    IDS_ENC_FINISHED        "Abgeschlossen."
-    IDS_ENC_CLOSE_BTN       "&Schließen"
-    IDS_ENC_WRITE_M3U       "Schreibe Wiedergabeliste"
-    IDS_ENC_SAVED_M3U       "Wiedergabeliste gespeichert als "
-    IDS_ENC_FAILED_M3U      "Fehler beim Erstellen der Wiedergabeliste: "
-    IDS_ENC_WAVE_ENC        "Encodiere..."
-    IDS_ENC_WAVE_FILES      "Encodiere Datei(en)..."
-    IDS_CDDB_ERR_CFGWRITE   "Fehler beim Schreiben von cddb.cfg"
-    IDS_CDDB_ERR_CFGREAD    "Fehler beim Lesen von cddb.cfg"
-    IDS_CDDB_ERR_WINSOCK    "Winsock konnte nicht initialisiert werden!"
-    IDS_CDDB_ERR            "Die Verbindung zum freeDB Server konnte nicht aufgebaut werden bzw. wurde getrennt.\n[Fehlernummer: %d, Letzte Antwort:%s]"
+	IDS_FDB_PROXYCONNECT		"Connecting to proxy..."
+	IDS_FDB_SERVERCONNECT		"Connecting to freedb server..."
+	IDS_ERR_NOSERVERRESPONSE	"The freeDB server isn't responding. Check your internet connection and Network configuration.\n May be you have to setup a HTTP Proxy in the settings dialog.\nTry to use another freeDB server if your settings are correct."
+	IDS_ERR_GETTRACKPOSFAILED	"Failed to read track positions [unknown reason]"
+	IDS_FDB_GETENTRIES			"Getting entries..."
+	IDS_FDB_NOENTRY				"FreeDB server does not contain the specifed album with DISCID:%X in its database"
+	IDS_FDB_SELECTENTRY			"Please select an entry from the listbox!"
+	IDS_FDB_QUERYSTART			"Starting freedb query..."
+	IDS_FDB_TRACKUPDATE			"Updating track information..."
+	IDS_ID3_CHOOSE_FILE			"Please choose file/track from the list first"
+	IDS_CUESHEETSAVED			"Cuesheet successfully saved as\n%s"
+	IDS_CUESHEETFAILED			"Could not write cuesheet file. File access error."
 END
 
-STRINGTABLE DISCARDABLE 
+STRINGTABLE DISCARDABLE		  //"Tooltips may be this long -----------------------------------------------------"
 BEGIN
-    IDS_MAIN_LIST_TITLE2    "Dateien"
-    IDS_MAIN_DATATRACK      "Daten Track"
-    IDS_CDDBONWAVERR        "CDdb(tm) steht für Compact Disc Databank. Aus diesem Grund steht dieses Feature nur im CD Modus zur Verfügung.:-P"
-    IDS_ID3_ALBUMMODE       "Album Information für alle Dateien übernehmen?"
-    IDS_NOSELECTION         "Keine Datei(en) ausgewählt."
-    IDS_ID3_ARTISTMODE      "Artist Information für alle Dateien übernehmen?"
-    IDS_ID3_COMMENTMODE     "Kommentar Information für alle Dateien übernehmen?"
-    IDS_ID3_GENREMODE       "Genre Information für alle Dateien übernehmen?"
-    IDS_ID3_YEARMODE        "Jahres Information für alle Dateien übernehmen?"
-    IDS_FILEOPENERR         "Fehler beim Öffnen der Datei %s"
-    IDS_INVBITRATE          "Ungültige Bitrate. Zur Zeit werden nur 16bit Wave Dateien unterstüzt. Diese Datei hat %d bits pro Sample"
-    IDS_RESTARTLAME         "Sie müssen lameFE neu starten um diese Einstellung zu übernehmen."
+	IDS_TOOL_REPORTSTYLE		"Create an report style logfile. Not all events are logged. Creates an overview."
+	IDS_TOOL_NEWLOGSTYLE		"Log all events with time and status- / errormessage."
+	IDS_TOOL_STARTSESSION		"This text will be placed at the beginning of each session in the logfile."
+	IDS_TOOL_LOGENTRY			"This is the text for the logentry of each file."
+	IDS_TOOL_ENDSESSION			"This text will be place at the end of each session in the logfile."
+	IDS_SCSINOTSUPPORTED		"Native NT SCSI Library support is not supported by this operating system.\nYou have to install ASPI drivers in order to use LameFE. Read the LameFE FAQ in the help file for more details."
+	IDS_FAILEDLOADINGASPI		"Error: Failed to load the Windows ASPI drivers.\nYou have to install ASPI drivers in order to use LameFE. Read the LameFE FAQ in the help file for more details."
+	IDS_FAILEDGETASPISTATUS		"Error: Failed to get ASPI driver status.\nPlease check the ASPI driver installation. Read the LameFE FAQ in the help file for more details."
+	IDS_FAILEDASPINOTSELECTED	"Failed to load the ASPI drivers!\nTry the Native NT SCSI library option in the CD-Drive configuration settings dialog box. See the LameFE help file for more details."
+	IDS_AUDIOFILEPLUGIN			"Audiofile (Plugin)"
+	IDS_ERR_SHUTDOWN			"Could not shutdown computer. Permission denied or internal error."
+	IDS_CDMODENODROP			"Switch to Audiofile mode first before dropping files into the window."
+	IDS_UNSUPPORTEDFILE			"Unsupported filetype : %s"
+	IDS_LOGSAVEDSUCCESS			"Logfile saved successfully as %s"
 END
-#endif    // _GERMAN
-/////////////////////////////////////////////////////////////////////////////
-

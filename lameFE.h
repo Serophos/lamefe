@@ -16,8 +16,8 @@
 ** Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 */
 
-#if !defined(AFX_LAMEFE_H__0916E063_C299_47A0_B6E9_0E0CE63FBBD5__INCLUDED_)
-#define AFX_LAMEFE_H__0916E063_C299_47A0_B6E9_0E0CE63FBBD5__INCLUDED_
+#if !defined(AFX_LAMEFE_H__A9775CCF_04FC_49DF_B99E_789F218E6C37__INCLUDED_)
+#define AFX_LAMEFE_H__A9775CCF_04FC_49DF_B99E_789F218E6C37__INCLUDED_
 
 #if _MSC_VER > 1000
 #pragma once
@@ -27,7 +27,7 @@
 	#error include 'stdafx.h' before including this file for PCH
 #endif
 
-#include "resource.h"		// Hauptsymbole
+#include "resource.h"       // Hauptsymbole
 
 /////////////////////////////////////////////////////////////////////////////
 // CLameFEApp:
@@ -47,8 +47,8 @@ public:
 	//}}AFX_VIRTUAL
 
 // Implementierung
-
 	//{{AFX_MSG(CLameFEApp)
+	afx_msg void OnAppAbout();
 		// HINWEIS - An dieser Stelle werden Member-Funktionen vom Klassen-Assistenten eingefügt und entfernt.
 		//    Innerhalb dieser generierten Quelltextabschnitte NICHTS VERÄNDERN!
 	//}}AFX_MSG
@@ -61,4 +61,4 @@ public:
 //{{AFX_INSERT_LOCATION}}
 // Microsoft Visual C++ fügt unmittelbar vor der vorhergehenden Zeile zusätzliche Deklarationen ein.
 
-#endif // !defined(AFX_LAMEFE_H__0916E063_C299_47A0_B6E9_0E0CE63FBBD5__INCLUDED_)
+#endif // !defined(AFX_LAMEFE_H__A9775CCF_04FC_49DF_B99E_789F218E6C37__INCLUDED_)
