@@ -33,11 +33,7 @@
 #include "OutPlugin.h"
 #include "Playlist.h"
 #include "cfgFile.h"
-
-#include <stdio.h>
-#include <direct.h>
-#include <math.h>
-
+#include "Utils.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -45,7 +41,6 @@
 static char THIS_FILE[] = __FILE__;
 #endif
 
-typedef BOOL (PASCAL *GFDPEX )(LPCSTR,PULARGE_INTEGER,PULARGE_INTEGER,PULARGE_INTEGER);
 
 
 #define TIMERID    2
@@ -146,7 +141,6 @@ BOOL CEncodingStatusDlg::OnInitDialog()
 	TraySetMinimizeToTray(TRUE);
 	TrayShow();
 
-	//this->ShowWindow(SW_RESTORE);
 	SetFocus();
 	SetForegroundWindow();
 
@@ -227,10 +221,6 @@ void CEncodingStatusDlg::OnCancel()
 void CEncodingStatusDlg::OnStRestore() 
 {
 	TRACE("OnStRestore()\n");
-	//if(m_bMinimizeToTray)
-	//	if(TrayHide())
-	//		this->ShowWindow(SW_SHOW);
-	//TrayShow();
 	ShowWindow(SW_SHOW);
 	SetFocus();
 	SetForegroundWindow( );
@@ -258,8 +248,8 @@ void CEncodingStatusDlg::SetCDROM(CCompactDisc *cd)
 	m_cd	= cd;
 }
 
-//encoding Functions
 
+//encoding Functions
 
 BOOL CEncodingStatusDlg::WriteID3Tag(CMultimediaFile *mFile)
 {
@@ -280,8 +270,6 @@ BOOL CEncodingStatusDlg::WriteID3Tag(CMultimediaFile *mFile)
 BOOL CEncodingStatusDlg::WriteID3Tag(MMFILE_ALBUMINFO tmpAI)
 {
 
-	////m_fileMsg.LoadString(IDS_ENC_WRITEID3);
-
 	PostMessage(WM_TIMER,0,0);
 
 	cfgFile cfg(m_strWd);
@@ -299,7 +287,8 @@ BOOL CEncodingStatusDlg::WriteID3Tag(MMFILE_ALBUMINFO tmpAI)
 		if(tmpAI.song != "" && tmpAI.song != 0){
 
 			buffer = id3Tag.Find(ID3FID_TITLE);
-			if(buffer){// Remove if already exists
+			if(buffer){
+				// Remove if already exists
 				id3Tag.RemoveFrame(buffer);
 			}
 			id3Frame.SetID(ID3FID_TITLE);
@@ -504,7 +493,7 @@ BOOL CEncodingStatusDlg::AnyToMP3()
 		m_out = mFile->GetSaveAs(m_strWd, m_strExtension);
 
 		m_lLogFile.StartEntry(m_in, m_out, m_strInputDevice);
-		if(FileExists(m_out) && !cfg.GetValue("silent")){
+		if(Utils::FileExists(m_out) && !cfg.GetValue("silent")){
 
 			CString out;
 			out.Format(IDS_ENC_FILEEXISTS, m_out);
@@ -517,7 +506,7 @@ BOOL CEncodingStatusDlg::AnyToMP3()
 		}
 		
 		TRACE("Creating non existing directories\n");
-		if(!CreateDirs(m_out)){
+		if(!Utils::CreateDirs(m_out)){
 				
 			AfxMessageBox(IDS_ENC_ERRDIRCREATE, MB_ICONSTOP+MB_OK);
 			m_lLogFile.SetErrorMsg(i, IDS_ENC_ERRDIRCREATE);
@@ -573,7 +562,6 @@ BOOL CEncodingStatusDlg::LameFEPlugin2MP3(CString plugin, CMultimediaFile *mFile
 
 		TRACE("Failed Loading Library\n");
 		m_list_errors.Format(IDS_ENC_PLUG_LOADFAILED, plugin);
-		//mFile->SetErrorString(m_list_errors);
 		m_lLogFile.SetErrorMsg(nPos, m_list_errors);
 		m_nErrors++;
 		return FALSE;
@@ -584,7 +572,6 @@ BOOL CEncodingStatusDlg::LameFEPlugin2MP3(CString plugin, CMultimediaFile *mFile
 
 		TRACE("Failed getting proc address\n");
 		m_list_errors.Format(IDS_ENC_PLUG_APIERROR, plugin);
-		//mFile->SetErrorString(m_list_errors);
 		m_lLogFile.SetErrorMsg(nPos, m_list_errors);
 		m_nErrors++;
 
@@ -596,7 +583,6 @@ BOOL CEncodingStatusDlg::LameFEPlugin2MP3(CString plugin, CMultimediaFile *mFile
 
 		TRACE("Failed getting module\n");
 		m_list_errors.Format(IDS_ENC_PLUG_APIERROR, plugin);
-		//mFile->SetErrorString(m_list_errors);
 		m_lLogFile.SetErrorMsg(nPos, m_list_errors);
 		m_nErrors++;
 
@@ -611,7 +597,6 @@ BOOL CEncodingStatusDlg::LameFEPlugin2MP3(CString plugin, CMultimediaFile *mFile
 
 		TRACE("Failed opening file\n");
 		m_list_errors.Format(IDS_FILEOPENERR, mFile->GetFileName());
-//		mFile->SetErrorString(m_list_errors);
 		m_lLogFile.SetErrorMsg(nPos, m_list_errors);
 		m_nErrors++;
 		return FALSE;
@@ -623,7 +608,6 @@ BOOL CEncodingStatusDlg::LameFEPlugin2MP3(CString plugin, CMultimediaFile *mFile
 
 	PSHORT	pWAVBuffer = NULL;
 	DWORD   dwRead     = 0;
-//	DWORD   dwFileSize;
 	DWORD   dwDone	   = 0;
 
 	CEncoder e(m_strWd);
@@ -696,7 +680,7 @@ BOOL CEncodingStatusDlg::LameFEPlugin2MP3(CString plugin, CMultimediaFile *mFile
 
 	//Check if there's enough free disk space
 	double nFreeDiskSpace = 0;
-	nFreeDiskSpace = CEncodingStatusDlg::GetMyFreeDiskSpace(cfg.GetStringValue("output"));
+	nFreeDiskSpace = Utils::GetMyFreeDiskSpace(cfg.GetStringValue("output"));
 	
 	if((mp3_est_size / 1024 )>= nFreeDiskSpace){
 
@@ -709,7 +693,6 @@ BOOL CEncodingStatusDlg::LameFEPlugin2MP3(CString plugin, CMultimediaFile *mFile
 
 		m_nErrors++;
 		AfxMessageBox(m_list_errors, MB_OK+MB_ICONSTOP);
-//		mFile->SetErrorString(m_list_errors);
 		m_lLogFile.SetErrorMsg(nPos, m_list_errors);
 		e.DeInit();
 		return FALSE;
@@ -745,7 +728,6 @@ BOOL CEncodingStatusDlg::LameFEPlugin2MP3(CString plugin, CMultimediaFile *mFile
 		return FALSE;
 	}
 	
-//	inModule->Quit();
 	
 	if((cfg.GetValue("id3v1") || cfg.GetValue("id3v2")) && m_strOutputDevice == "lame_enc.dll"){
 	
@@ -770,7 +752,6 @@ BOOL CEncodingStatusDlg::RipToSingleFile(){
 	cfgFile cfg(m_strWd);
 
 	//setup controls
-	////m_listMsg.LoadString(IDS_ENC_PREPARING);
 	m_fileStatus.SetRange(0, 100);
 	m_fileStatus.SetPos(0);
 	m_listStatus.SetRange(0,100);
@@ -778,7 +759,6 @@ BOOL CEncodingStatusDlg::RipToSingleFile(){
 	m_nErrors = 0;
 	PostMessage(WM_TIMER,0,0);
 	
-	//int      currentTrack = 0;
 	LONG     nBufferSize  = 0;
 	BOOL     bAbort       = FALSE;
 	int*	 pSel		  = NULL;
@@ -804,28 +784,24 @@ BOOL CEncodingStatusDlg::RipToSingleFile(){
 	// Check for existing file
 	TRACE("Checking for existing file\n");
 
-	if(FileExists(m_out) && !cfg.GetValue("silent")){
+	if(Utils::FileExists(m_out) && !cfg.GetValue("silent")){
 
 		CString out;
 		out.Format(IDS_ENC_FILEEXISTS, m_out);
 		if(IDNO == AfxMessageBox(out, MB_YESNO+MB_ICONQUESTION)){
 
-			//cdTrack->SetErrorString(IDS_ENC_DENIEDOVWR);
 			m_lLogFile.SetErrorMsg(0, IDS_ENC_DENIEDOVWR);
-			//currentTrack++;
 			m_nErrors++;
 			return FALSE;
 		}
 	}
 	
 	TRACE("Creating non existing directories\n");
-	if(!CreateDirs(m_out)){
+	if(!Utils::CreateDirs(m_out)){
 			
 		AfxMessageBox(IDS_ENC_ERRDIRCREATE, MB_ICONSTOP+MB_OK);
-		//cdTrack->SetErrorString(IDS_ENC_ERRDIRCREATE);
 		m_lLogFile.SetErrorMsg(0, IDS_ENC_ERRDIRCREATE);
 		m_nErrors++;
-		//currentTrack++;
 		return FALSE;
 
 	}
@@ -871,7 +847,7 @@ BOOL CEncodingStatusDlg::RipToSingleFile(){
 	//Check if there's enough free disk space
 	double nFreeDiskSpace = 0;
 
-	nFreeDiskSpace = CEncodingStatusDlg::GetMyFreeDiskSpace(cfg.GetStringValue("output")) / (1024.0*1024.0);
+	nFreeDiskSpace = Utils::GetMyFreeDiskSpace(cfg.GetStringValue("output")) / (1024.0*1024.0);
 
 	PostMessage(WM_TIMER,0,0);
 
@@ -917,13 +893,11 @@ BOOL CEncodingStatusDlg::RipToSingleFile(){
 				jErr.Format(IDS_ENC_JITTER_ERR, dwStartSector, dwEndSector);
 				m_lLogFile.SetErrorMsg(0, jErr);
 				m_nErrors++;
-				//m_fileMsg = jErr;
 				PostMessage(WM_TIMER,0,0);
 			}
 
 			if (CDEX_ERROR == ripErr){
 				
-				//currentTrack++;
 				m_nErrors++;
 			
 				m_list_errors.Format(IDS_ENC_NUMERRORS, m_nErrors);
@@ -1031,7 +1005,6 @@ BOOL CEncodingStatusDlg::RipToAny()
 	}
 
 	//setup controls
-	//m_listMsg.LoadString(IDS_ENC_PREPARING);
 	m_fileStatus.SetRange(0, 100);
 	m_fileStatus.SetPos(0);
 	m_listStatus.SetRange(0,100);
@@ -1067,13 +1040,12 @@ BOOL CEncodingStatusDlg::RipToAny()
 		// Check for existing file
 		TRACE("Checking for existing file\n");
 		m_lLogFile.StartEntry(cdTrack->GetTrackname(), m_out, m_strOutputDevice);
-		if(FileExists(m_out) && !cfg.GetValue("silent")){
+		if(Utils::FileExists(m_out) && !cfg.GetValue("silent")){
 
 			CString out;
 			out.Format(IDS_ENC_FILEEXISTS, m_out);
 			if(IDNO == AfxMessageBox(out, MB_YESNO+MB_ICONQUESTION)){
 
-				//cdTrack->SetErrorString(IDS_ENC_DENIEDOVWR);
 				m_lLogFile.SetErrorMsg(currentTrack, IDS_ENC_DENIEDOVWR);
 				currentTrack++;
 				m_nErrors++;
@@ -1082,10 +1054,9 @@ BOOL CEncodingStatusDlg::RipToAny()
 		}
 		
 		TRACE("Creating non existing directories\n");
-		if(!CreateDirs(m_out)){
+		if(!Utils::CreateDirs(m_out)){
 				
 			AfxMessageBox(IDS_ENC_ERRDIRCREATE, MB_ICONSTOP+MB_OK);
-			//cdTrack->SetErrorString(IDS_ENC_ERRDIRCREATE);
 			m_lLogFile.SetErrorMsg(currentTrack, IDS_ENC_ERRDIRCREATE);
 			m_nErrors++;
 			currentTrack++;
@@ -1109,7 +1080,7 @@ BOOL CEncodingStatusDlg::RipToAny()
 		
 		e.SetOutputFormat(m_strOutputDevice);
 		e.Init();
-		e.PrepareEncoding(m_cd->GetSaveAs(cdTrack->m_btTrack, m_strWd, m_strExtension), 2, 44100, 16);
+		e.PrepareEncoding(m_out, 2, 44100, 16);
 		unsigned long dwSampleBufferSize = e.GetSamplesToRead();
 		
 		WAVEFORMATEX wfx;
@@ -1135,7 +1106,7 @@ BOOL CEncodingStatusDlg::RipToAny()
 		
 		//Check if there's enough free disk space
 		double nFreeDiskSpace = 0;
-		nFreeDiskSpace = CEncodingStatusDlg::GetMyFreeDiskSpace(cfg.GetStringValue("output")) / (1024.0*1024.0);
+		nFreeDiskSpace = Utils::GetMyFreeDiskSpace(cfg.GetStringValue("output")) / (1024.0*1024.0);
 		PostMessage(WM_TIMER,0,0);
 		if((mp3_est_size)>= nFreeDiskSpace){
 
@@ -1143,10 +1114,8 @@ BOOL CEncodingStatusDlg::RipToAny()
 			m_list_errors.Format("Not enoug free disk space on drive %s).\nAborting Encoding process",
 				cfg.GetStringValue("output").Left(2));
 			m_nErrors++;
-			//cdTrack->SetErrorString(m_list_errors);
 			m_lLogFile.SetErrorMsg(currentTrack, m_list_errors);
 			AfxMessageBox(m_list_errors, MB_OK+MB_ICONSTOP);
-			//e.deInit();
 			m_mLockControls.Unlock();
 			return FALSE;
 		}
@@ -1190,10 +1159,8 @@ BOOL CEncodingStatusDlg::RipToAny()
 					CR_GetLastJitterErrorPosition(dwStartSector,dwEndSector);
 					CString jErr;
 					jErr.Format(IDS_ENC_JITTER_ERR, dwStartSector, dwEndSector);
-					//cdTrack->SetErrorString(jErr);
 					m_lLogFile.SetErrorMsg(currentTrack, jErr);
 					m_nErrors++;
-					//m_fileMsg = jErr;
 					PostMessage(WM_TIMER,0,0);
 				}
 
@@ -1201,7 +1168,6 @@ BOOL CEncodingStatusDlg::RipToAny()
 					
 					currentTrack++;
 					m_nErrors++;
-					//cdTrack->SetErrorString("Error ripping audiotrack");
 					m_lLogFile.SetErrorMsg(currentTrack, "Error ripping audiotrack");
 					
 					m_list_errors.Format(IDS_ENC_NUMERRORS, m_nErrors);
@@ -1274,7 +1240,6 @@ BOOL CEncodingStatusDlg::RipToAny()
 
 			if(m_lLogFile.GetState(currentTrack)){
 
-				//cdTrack->SetErrorString(IDS_ENC_SUCCESS);
 				m_lLogFile.SetErrorMsg(currentTrack, IDS_ENC_SUCCESS);
 			}
 
@@ -1379,7 +1344,6 @@ void CEncodingStatusDlg::FinishedJobs()
 
 		if(lcfg.GetValue("playsound")){
 
-			//PlaySound("IDR_FINISHED", AfxGetInstanceHandle(), SND_RESOURCE);
 			MessageBeep( MB_ICONSTOP );
 		}
 		
@@ -1480,151 +1444,151 @@ void CEncodingStatusDlg::FinishedJobs()
 }
 
 
-BOOL CEncodingStatusDlg::FileExists(CString filename)
-{
+//DEL BOOL CEncodingStatusDlg::FileExists(CString filename)
+//DEL {
+//DEL 
+//DEL 	TRY{
+//DEL 		
+//DEL 		CFileStatus rStatus;
+//DEL 		if(CFile::GetStatus( filename, rStatus )){
+//DEL 
+//DEL 			return TRUE;
+//DEL 		}
+//DEL 		else{
+//DEL 
+//DEL 			return FALSE;
+//DEL 		}
+//DEL 	}
+//DEL 	CATCH(CFileException, e){
+//DEL 
+//DEL 		return FALSE;
+//DEL 	}
+//DEL 	END_CATCH;
+//DEL 
+//DEL 	return FALSE;
+//DEL }
 
-	TRY{
-		
-		CFileStatus rStatus;
-		if(CFile::GetStatus( filename, rStatus )){
+//DEL BOOL CEncodingStatusDlg::CreateSubDirs(CString basePath, CString artist, CString album)
+//DEL {
+//DEL 
+//DEL 	if(_chdir(basePath) != 0){
+//DEL 
+//DEL 		return FALSE;
+//DEL 	}
+//DEL 
+//DEL 	if(_chdir(artist) != 0){
+//DEL 
+//DEL 		
+//DEL 		if(mkdir(artist) != 0){
+//DEL 
+//DEL 			return FALSE;
+//DEL 		}
+//DEL 	}
+//DEL 
+//DEL 	if(_chdir(basePath + "\\" + artist) != 0){
+//DEL 
+//DEL 		return FALSE;
+//DEL 	}
+//DEL 
+//DEL 	if(_chdir(album) != 0){
+//DEL 
+//DEL 		
+//DEL 		if(mkdir(album) != 0){
+//DEL 
+//DEL 			return FALSE;
+//DEL 		}
+//DEL 	}
+//DEL 
+//DEL 	return TRUE;
+//DEL }
 
-			return TRUE;
-		}
-		else{
-
-			return FALSE;
-		}
-	}
-	CATCH(CFileException, e){
-
-		return FALSE;
-	}
-	END_CATCH;
-
-	return FALSE;
-}
-
-BOOL CEncodingStatusDlg::CreateSubDirs(CString basePath, CString artist, CString album)
-{
-
-	if(_chdir(basePath) != 0){
-
-		return FALSE;
-	}
-
-	if(_chdir(artist) != 0){
-
-		
-		if(mkdir(artist) != 0){
-
-			return FALSE;
-		}
-	}
-
-	if(_chdir(basePath + "\\" + artist) != 0){
-
-		return FALSE;
-	}
-
-	if(_chdir(album) != 0){
-
-		
-		if(mkdir(album) != 0){
-
-			return FALSE;
-		}
-	}
-
-	return TRUE;
-}
-
-BOOL CEncodingStatusDlg::CreateDirs(CString filename)
-{
-
-	int nStart = 3;
-	int nEnd = 0;
-	
-	CString validated = filename.Left(2);
-	_chdir(validated);
-	
-	while(TRUE){
-
-		nEnd = filename.Find('\\', nStart);
-		if(nEnd == -1){
-
-			return TRUE;
-		}
-
-		if(_chdir(validated + "\\" + filename.Mid(nStart, nEnd - nStart)) != 0){
-
-			_chdir(validated);
-			if(_mkdir(filename.Mid(nStart, nEnd - nStart)) != 0){
-
-				return FALSE;
-			}
-			
-		}
-		validated += "\\" + filename.Mid(nStart, nEnd - nStart);
-		nStart = nEnd + 1;		
-	}
-
-	return FALSE;
-}
+//DEL BOOL CEncodingStatusDlg::CreateDirs(CString filename)
+//DEL {
+//DEL 
+//DEL 	int nStart = 3;
+//DEL 	int nEnd = 0;
+//DEL 	
+//DEL 	CString validated = filename.Left(2);
+//DEL 	_chdir(validated);
+//DEL 	
+//DEL 	while(TRUE){
+//DEL 
+//DEL 		nEnd = filename.Find('\\', nStart);
+//DEL 		if(nEnd == -1){
+//DEL 
+//DEL 			return TRUE;
+//DEL 		}
+//DEL 
+//DEL 		if(_chdir(validated + "\\" + filename.Mid(nStart, nEnd - nStart)) != 0){
+//DEL 
+//DEL 			_chdir(validated);
+//DEL 			if(_mkdir(filename.Mid(nStart, nEnd - nStart)) != 0){
+//DEL 
+//DEL 				return FALSE;
+//DEL 			}
+//DEL 			
+//DEL 		}
+//DEL 		validated += "\\" + filename.Mid(nStart, nEnd - nStart);
+//DEL 		nStart = nEnd + 1;		
+//DEL 	}
+//DEL 
+//DEL 	return FALSE;
+//DEL }
 
 
-DOUBLE CEncodingStatusDlg::GetMyFreeDiskSpace(CString& strPath)
-{
-
-	CString strRootDir;
-	GFDPEX		GetDiskFreeSpaceOSR2=NULL;
-
-	// Check input parameter
-	if (strPath.IsEmpty())
-	{
-		ASSERT(FALSE);
-		return 0;
-	}
-
-	// Copy driverletter, colon and back slash
-	strRootDir=strPath.Left(3);
-
-	DOUBLE dFreeDiskSpace=0.0;
-
-	// Is this NT or OSR2, then call extented free disk space routine
-	if (GetDiskFreeSpaceOSR2!=NULL)
-	{
-		ULARGE_INTEGER	FreeBytes; 
-		ULARGE_INTEGER	TotalNumberOfBytes;
-		ULARGE_INTEGER	TotalNumberOfFreeBytes;
-
-		// Make call to kernel 32 dll
-		BOOL bReturn=GetDiskFreeSpaceOSR2(strRootDir,&FreeBytes,&TotalNumberOfBytes,&TotalNumberOfFreeBytes);
-
-		// If result is OK, then calculate result
-		if (bReturn)
-		{
-			dFreeDiskSpace=(DOUBLE)FreeBytes.LowPart;
-			dFreeDiskSpace+=((DOUBLE)FreeBytes.HighPart)*ULONG_MAX;
-		}
-	}
-	else
-	{
-		// Standard Windows 95
- 		DWORD dwSectorsPerCluster; 
-		DWORD dwBytesPerSector; 
-		DWORD dwNumberOfFreeClusters; 
-		DWORD dwTotalNumberOfClusters;
-
-		// Try the good old GetDiskFreeSpace
-		GetDiskFreeSpace(strRootDir,&dwSectorsPerCluster,&dwBytesPerSector,&dwNumberOfFreeClusters,&dwTotalNumberOfClusters);
- 
-		// Calculate free disk space
-		dFreeDiskSpace=(DOUBLE)dwNumberOfFreeClusters*(DOUBLE)dwBytesPerSector*(DOUBLE)dwSectorsPerCluster;
-
-	// Get the free disc space as you already do.
-	}
-	return dFreeDiskSpace;
-}
+//DEL DOUBLE CEncodingStatusDlg::GetMyFreeDiskSpace(CString& strPath)
+//DEL {
+//DEL 
+//DEL 	CString strRootDir;
+//DEL 	GFDPEX		GetDiskFreeSpaceOSR2=NULL;
+//DEL 
+//DEL 	// Check input parameter
+//DEL 	if (strPath.IsEmpty())
+//DEL 	{
+//DEL 		ASSERT(FALSE);
+//DEL 		return 0;
+//DEL 	}
+//DEL 
+//DEL 	// Copy driverletter, colon and back slash
+//DEL 	strRootDir=strPath.Left(3);
+//DEL 
+//DEL 	DOUBLE dFreeDiskSpace=0.0;
+//DEL 
+//DEL 	// Is this NT or OSR2, then call extented free disk space routine
+//DEL 	if (GetDiskFreeSpaceOSR2!=NULL)
+//DEL 	{
+//DEL 		ULARGE_INTEGER	FreeBytes; 
+//DEL 		ULARGE_INTEGER	TotalNumberOfBytes;
+//DEL 		ULARGE_INTEGER	TotalNumberOfFreeBytes;
+//DEL 
+//DEL 		// Make call to kernel 32 dll
+//DEL 		BOOL bReturn=GetDiskFreeSpaceOSR2(strRootDir,&FreeBytes,&TotalNumberOfBytes,&TotalNumberOfFreeBytes);
+//DEL 
+//DEL 		// If result is OK, then calculate result
+//DEL 		if (bReturn)
+//DEL 		{
+//DEL 			dFreeDiskSpace=(DOUBLE)FreeBytes.LowPart;
+//DEL 			dFreeDiskSpace+=((DOUBLE)FreeBytes.HighPart)*ULONG_MAX;
+//DEL 		}
+//DEL 	}
+//DEL 	else
+//DEL 	{
+//DEL 		// Standard Windows 95
+//DEL  		DWORD dwSectorsPerCluster; 
+//DEL 		DWORD dwBytesPerSector; 
+//DEL 		DWORD dwNumberOfFreeClusters; 
+//DEL 		DWORD dwTotalNumberOfClusters;
+//DEL 
+//DEL 		// Try the good old GetDiskFreeSpace
+//DEL 		GetDiskFreeSpace(strRootDir,&dwSectorsPerCluster,&dwBytesPerSector,&dwNumberOfFreeClusters,&dwTotalNumberOfClusters);
+//DEL  
+//DEL 		// Calculate free disk space
+//DEL 		dFreeDiskSpace=(DOUBLE)dwNumberOfFreeClusters*(DOUBLE)dwBytesPerSector*(DOUBLE)dwSectorsPerCluster;
+//DEL 
+//DEL 	// Get the free disc space as you already do.
+//DEL 	}
+//DEL 	return dFreeDiskSpace;
+//DEL }
 
 void CEncodingStatusDlg::OnLogSave()
 {

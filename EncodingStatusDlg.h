@@ -25,13 +25,7 @@
 #pragma once
 #endif // _MSC_VER > 1000
 
-#include <stdio.h>
-#include <io.h>
-#include <fcntl.h>
-#include <sys/stat.h>
-
 #include "TrayDialog.h"
-#include "BladeMP3EncDLL.h"
 #include "TimeStatus.h"
 #include "CompactDisk.h"	// Hinzugefügt von der Klassenansicht
 #include "mmfile.h"
@@ -62,7 +56,6 @@ public:
 	int		GetAlbumMode(){ return m_bAlbumMode; }
 	CImageList	m_cImageList;
 	
-	static DOUBLE GetMyFreeDiskSpace(CString& strPath);
 
 	void	 OnLogPrint();
 	void	 OnLogSave();
@@ -103,9 +96,6 @@ public:
 private:
 	// Encoding and file related member functions
 	// Before encoding stuff
-	BOOL	CreateDirs(CString filename);
-	BOOL	CreateSubDirs(CString basePath, CString artist, CString album);
-	BOOL	FileExists(CString filename);
 
 	// Private Encoding stuff
 	BOOL	LameFEPlugin2MP3(CString plugin, CMultimediaFile *mFile, int nPos);
