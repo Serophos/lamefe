@@ -1,30 +1,69 @@
-EINFÜHRUNG:
+WICHTIGE HINWEISE ZU DIESEM RELEASE:
+==============================================================
+· Achtung seit LameFE 2.2 Beta 6 hat sich das Format der Konfi-
+  gurationsdatei geändert. Bitte verwenden Sie NICHT Ihre alte
+  Version der Konfigurationsdatei (LameFE.ini) weiter.
+· Wenn Sie das Preset-Verzeichnis von LameFE ändern, kopieren
+  Sie bitte erst die Presets in das neue Verzeichnis, bevor
+  Sie LameFE neustarten.
+· Wenn Sie die Highcolor Icons unter Windows 98/ME benutzen
+  möchten, müssen Sie die neueste Version der Common Controls
+  Bibliothek installiert haben. Bitte führen Sie Windows Update
+  aus um diese zu installieren oder laden Sie das Update von
+  www.microsoft.de runter.
+· Auf einigen Systemen benötigen Sie einen ASPI Treiber um
+  LameFE benutzen zu können. Sollten Probleme beim verwenden
+  von LameFE auftreten (Ausnahmefehler in CDRip.dll etc.) 
+  sollten Sie als ersten Lösungsansatz neue ASPI Treiber
+  installieren. Sie können diese entweder beim Hersteller 
+  Ihres CD-Laufwerkes oder von lamefe.sourceforge.net runter-
+  laden.
+· ACHTUNG. Diese Version von LameFE ist eine Beta-Version.
+  Auch wenn die meisten Programmfunktionen fehlerfrei funktio-
+  nieren, können doch unterwartete Fehlfunktionen auftreten,
+  die auch die Systemstabilität beeinflussen können. Sie be-
+  nutzen dieses Programm auf eigene Gefahr (siehe auch GPL)!
+
+
+NEU IN VERSIOn 2.2 RC 1:
 ===============================================================
-lameFE ist ein Programm mit dem man Audio CDs digital auslesen
-und als WAVE oder MP3 Dateien auf der Festplatte abspeichern
-kann.
+· Unterstützung für Winamp Plugins
+· Update auf Lame 3.93.1
+· Lame Quality Presets umbenannt, damit diese mit den Name, 
+  die in LAME.EXE verwendet werden übereinstimmen
+· Standard Decoder kann festgelegt werden
+· Preset Verzeicnhis einstellen
+· Bugfix: Windows 9x/2000 COMCTL32.DLL load error
+· Bugfix: Fehlerhafte Einstellungen für LAME
+· Bugfix: VBR/ABR Enkoder Initialisierung schlägt fehl
+· Bugfix: Encoder Absturz bei Mono Dateien
+· CDRip.dll Update um mehrere Bugfixes einzuschließen
+· Andere kleinere Änderungen und Bugfixes
 
 
 SYSTEM VORAUSSETZUNGEN:
 ===============================================================
 
-1)	Microsoft Windows 95/98/ME & Windows NT (4.5) 2000 / XP
+1)	Microsoft Windows 98/ME & Windows NT (4.5) 2000 / XP
 2)	Adaptec ASPI für Win32 Manager
 3)	CD Laufwerk mit Digital Audio Extracting Unterstützung
 4)	Intel Pentium oder kompatibler Prozessor
-5)    Internet Verbindung um freeDB (CDdb) Server zu kontaktieren.
-
+5)      Internet Verbindung um freeDB (CDdb) Server zu kontaktieren.
 
 
 BEKANNTE PROBLEME:
 ===============================================================
  -/-
 
+
 FEHLER, KOMMENTARE / VORSCHLÄGE:
 ===============================================================
 Bitte melden Sie Fehler, unerwünschtes Programmverhalten oder
-Anregungen an thees@uni.de
-
+Anregungen an theesw@users.sourceforge.net
+Ich helfe auch gerne bei Problemen mit der Programmbedienung.
+Bitte fügen Sie bei Problemen immer die GENAUE Fehlermeldung
+am besten mit Screenshot an und beschreiben Sie GENAU die Arbeits-
+schritte die zum Fehler geführt haben. 
 
 
 Garantie & Lizenz:
@@ -35,16 +74,3 @@ Lesen Sie die Hilfe oder die Datei "license.txt" Datei
 für den genauen Litzentext. 
 
 
-Nach der Installation sollten im Installationsordner folgende
-Dateien vorhanden sein
-===============================================================
-
-tagWriter.dll (Bibliothek zum schreiben von ID3 Tags)
-lame_enc.dll (MPEG-I Layer 3 Encoder)
-CDRip.dll (Bibliothek mit den CD-Ripper Routinen)
-lameFE.exe (lameFE ausführbare Datei)
-lameFE.cnt (lameFE Hilfe Inhaltsverzeichnis)
-lameFE.hlp (lameFE Hilfe Datei)
-Liesmich.txt (Diese Datei)
-lameFE.ini (lameFE Konfigurationsdatei)
-cddb.cfg (Liste der verfügbaren freeDB Server)

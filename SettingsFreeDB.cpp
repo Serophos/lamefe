@@ -22,7 +22,7 @@
 #include "SettingsFreeDB.h"
 
 #include "lameFE.h"
-#include "Ini.h"
+#include "Settings.h"
 #include "Utils.h"
 #include "mfccddb.h"
 
@@ -32,7 +32,7 @@
 static char THIS_FILE[] = __FILE__;
 #endif
 
-extern CString		g_strIniFile;
+extern CSettings g_sSettings;
 
 /////////////////////////////////////////////////////////////////////////////
 // Dialogfeld CSettingsFreeDB 
@@ -62,6 +62,10 @@ void CSettingsFreeDB::DoDataExchange(CDataExchange* pDX)
 {
 	CMySettingsPage::DoDataExchange(pDX);
 	//{{AFX_DATA_MAP(CSettingsFreeDB)
+	DDX_Control(pDX, IDC_REMOTE_PORT, c_port);
+	DDX_Control(pDX, IDC_ADDRESS, c_address);
+	DDX_Control(pDX, IDC_PATH, c_path);
+	DDX_Control(pDX, IDC_LOCATION, c_location);
 	DDX_Control(pDX, IDC_EMAIL, m_cEMail);
 	DDX_Control(pDX, IDC_TIMEOUT, m_cTimeOut);
 	DDX_Control(pDX, IDC_AUTHENTICATION, c_authentication);
@@ -104,23 +108,35 @@ void CSettingsFreeDB::Init(CString strWd)
 
 	CMySettingsPage::Init(strWd);
 	ReadServerList();
-	CIni cfg;
-	cfg.SetIniFileName(g_strIniFile);
 
-	c_remoteServer.SetCurSel(cfg.GetValue("FreeDB", "FreeDB-Server", 0));
-	c_useProxy.SetCheck(cfg.GetValue("FreeDB", "UseProxy", FALSE));
+	c_remoteServer.SetCurSel(g_sSettings.GetFreeDBServer());
+	c_useProxy.SetCheck(g_sSettings.GetUseProxy());
 
-	m_eMail			 = cfg.GetValue("FreeDB", "E-Mail", "mail@not.set");
-	m_timeOut		 = cfg.GetValue("FreeDB", "TimeOut", 15);
-	m_userName		 = cfg.GetValue("FreeDB", "Username", "");
-	m_proxyPort		 = cfg.GetValue("FreeDB", "ProxyPort", 8080);
-	m_proxyAddress	 = cfg.GetValue("FreeDB", "ProxyAddress", "");
-	m_passwd		 = Utils::DecryptString(cfg.GetValue("FreeDB", "Password", ""));
-	m_Authentication = cfg.GetValue("FreeDB", "ProxyAuthentication", FALSE);
+	m_eMail			 = g_sSettings.GetEmail();
+	m_timeOut		 = g_sSettings.GetTimeOut();
+	m_userName		 = g_sSettings.GetUsername();
+	m_proxyPort		 = g_sSettings.GetProxyPort();
+	m_proxyAddress	 = g_sSettings.GetProxyAdress();
+	m_passwd		 = Utils::DecryptString(g_sSettings.GetPassowrd());
+	m_Authentication = g_sSettings.GetProxyAuthentication();
 
 	UpdateData(FALSE);
 	OnSelendokRemoteServer();
 	OnUseProxy();
+
+	if(m_pToolTip != NULL){
+
+		m_pToolTip->AddTool(&c_authentication, IDS_TOOL_FDBAUTH);
+		m_pToolTip->AddTool(&c_password, IDS_TOOL_FDBPASS);
+		m_pToolTip->AddTool(&c_proxyAddress, IDS_TOOL_FDBPROXYADD);
+		m_pToolTip->AddTool(&c_proxyPort, IDS_TOOL_FDBPROXYPORT);
+		m_pToolTip->AddTool(&c_remoteServer, IDS_TOOL_FDBSERVER);
+		m_pToolTip->AddTool(&c_useProxy, IDS_TOOL_FDBUSEPROXY);
+		m_pToolTip->AddTool(&c_userName, IDS_TOOL_FDBUSER);
+		m_pToolTip->AddTool(&m_cEMail, IDS_TOOL_FDBMAIL);
+		m_pToolTip->AddTool(&m_cTimeOut, IDS_TOOL_FDBTIMEOUT);
+		m_pToolTip->Activate(TRUE);
+	}
 }
 
 BOOL CSettingsFreeDB::Save()
@@ -131,19 +147,17 @@ BOOL CSettingsFreeDB::Save()
 		return FALSE;
 	}
 
-	CIni cfg;
-	cfg.SetIniFileName(g_strIniFile);
-
 	//cfg.SetIniFileName(
-	cfg.SetValue("FreeDB", "FreeDB-Server", c_remoteServer.GetCurSel());
-	cfg.SetValue("FreeDB", "UseProxy", c_useProxy.GetCheck());
-	cfg.SetValue("FreeDB", "E-Mail", m_eMail);
-	cfg.SetValue("FreeDB", "TimeOut", m_timeOut);
-	cfg.SetValue("FreeDB", "Username", m_userName);
-	cfg.SetValue("FreeDB", "ProxyPort", m_proxyPort);
-	cfg.SetValue("FreeDB", "ProxyAddress", m_proxyAddress);
-	cfg.SetValue("FreeDB", "Password", Utils::EncryptString(m_passwd));
-	cfg.SetValue("FreeDB", "ProxyAuthentication", m_Authentication);
+	g_sSettings.SetFreeDBServer(c_remoteServer.GetCurSel());
+	g_sSettings.SetUseProxy(c_useProxy.GetCheck());
+	g_sSettings.SetEmail(m_eMail);
+	g_sSettings.SetTimeOut(m_timeOut);
+	g_sSettings.SetUsername(m_userName);
+	g_sSettings.SetProxyPort(m_proxyPort);
+	g_sSettings.SetProxyAdress(m_proxyAddress);
+	g_sSettings.SetPassowrd(Utils::EncryptString(m_passwd));
+	g_sSettings.SetProxyAuthentication(m_Authentication);
+	g_sSettings.Save();
 
 	return TRUE;
 }

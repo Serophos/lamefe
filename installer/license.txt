@@ -1,4 +1,4 @@
-lameFE 2.0
+lameFE 2.2
 Copyright (c) 2002 Thees Winkler.
 
       GNU GENERAL PUBLIC LICENSE         Version 2, June 1991

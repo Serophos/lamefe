@@ -20,7 +20,7 @@
 #include "stdafx.h"
 #include "lamefe.h"
 #include "SettingsBatchMode.h"
-#include "Ini.h"
+#include "Settings.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -28,7 +28,7 @@
 static char THIS_FILE[] = __FILE__;
 #endif
 
-extern CString		g_strIniFile;
+extern CSettings g_sSettings;
 
 /////////////////////////////////////////////////////////////////////////////
 // Dialogfeld CSettingsBatchMode 
@@ -76,15 +76,23 @@ void CSettingsBatchMode::Init(CString strWd)
 
 	CMySettingsPage::Init(strWd);
 
-	CIni cfg;
-	cfg.SetIniFileName(g_strIniFile);
+	c_batchAllDrives.SetCheck(g_sSettings.GetBatchUseAllDrives());
+	c_appendDiscID.SetCheck(g_sSettings.GetBatchAppendDiscID());
+	c_batchBeep.SetCheck(g_sSettings.GetBatchBeepOnFinished());
+	c_batchFreeDB.SetCheck(g_sSettings.GetBatchFreeDB());
+	c_batchTimeOut.SetCheck(g_sSettings.GetBatchTimesOut());
+	m_nTimeOut = g_sSettings.GetBatchTimesOutAfterMin();
 
-	c_batchAllDrives.SetCheck(cfg.GetValue("CD-ROM", "BatchUseAllDrives", FALSE));
-	c_appendDiscID.SetCheck(cfg.GetValue("CD-ROM", "BatchAppendDiscID", TRUE));
-	c_batchBeep.SetCheck(cfg.GetValue("CD-ROM", "BatchBeepOnFinishCD", TRUE));
-	c_batchFreeDB.SetCheck(cfg.GetValue("CD-ROM", "BatchFreeDB", TRUE));
-	c_batchTimeOut.SetCheck(cfg.GetValue("CD-ROM", "BatchTimesOut", TRUE));
-	m_nTimeOut = cfg.GetValue("CD-ROM", "BatchTimesOutAfterMin", 30);
+	if(m_pToolTip != NULL){
+
+		m_pToolTip->AddTool(&c_batchAllDrives, IDS_TOOL_BATCHALLCDS);
+		m_pToolTip->AddTool(&c_batchBeep, IDS_TOOL_BATCHBEEP);
+		m_pToolTip->AddTool(&c_batchFreeDB, IDS_TOOL_BATCHFREEDB);
+		m_pToolTip->AddTool(&c_batchTimeOut, IDS_TOOL_BATCHTIMESOUT);
+		m_pToolTip->AddTool(&c_nBatchTimeOut, IDS_TOOL_BATCHTIME);
+		m_pToolTip->AddTool(&c_appendDiscID, IDS_TOOL_BATCHAPPENDDISCID);
+		m_pToolTip->Activate(TRUE);
+	}
 	UpdateData(FALSE);
 }
 
@@ -96,15 +104,13 @@ BOOL CSettingsBatchMode::Save()
 		return FALSE;
 	}
 
-	CIni cfg;
-	cfg.SetIniFileName(g_strIniFile);
-
-	cfg.SetValue("CD-ROM", "BatchUseAllDrives", c_batchAllDrives.GetCheck());
-	cfg.SetValue("CD-ROM", "BatchBeepOnFinishCD", c_batchBeep.GetCheck());
-	cfg.SetValue("CD-ROM", "BatchAppendDiscID", c_appendDiscID.GetCheck());
-	cfg.SetValue("CD-ROM", "BatchFreeDB", c_batchFreeDB.GetCheck());
-	cfg.SetValue("CD-ROM", "BatchTimesOut", c_batchTimeOut.GetCheck());
-	cfg.SetValue("CD-ROM", "BatchTimesOutAfterMin", m_nTimeOut);
+	g_sSettings.SetBatchUseAllDrives(c_batchAllDrives.GetCheck());
+	g_sSettings.SetBatchBeepOnFinished(c_batchBeep.GetCheck());
+	g_sSettings.SetBatchAppendDiscID(c_appendDiscID.GetCheck());
+	g_sSettings.SetBatchFreeDB(c_batchFreeDB.GetCheck());
+	g_sSettings.SetBatchTimesOut(c_batchTimeOut.GetCheck());
+	g_sSettings.SetBatchTimesOutAfterMin(m_nTimeOut);
+	g_sSettings.Save();
 
 	return TRUE;
 }

@@ -28,6 +28,7 @@
 class Utils  
 {
 public:
+	static BOOL IsWindowsNT();
 	static BOOL CopyTxtFile(CString strSource, CString strDest);
 	static CString DecryptString(CString strEncrypted);
 	static CString EncryptString(CString strPlain);
@@ -40,5 +41,8 @@ public:
 	static DOUBLE GetMyFreeDiskSpace(CString strPath);
 	static BOOL CheckCOMTL32Dll();
 };
+
+INT QueryModuleDebugLevel( const CString& strModule );
+
 
 #endif // !defined(AFX_UTILS_H__0BE13371_986C_416B_AB6F_8BEB0F086CC5__INCLUDED_)

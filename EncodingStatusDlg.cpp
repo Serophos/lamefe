@@ -1,5 +1,5 @@
 /*
-** Copyright (C) 2002 Thees Winkler
+** Copyright (C) 2002-2003 Thees Winkler
 **  
 ** Parts of this codes are based on code from CDEx (c) 1999-2002 by Albert L. Faber 
 **
@@ -33,7 +33,7 @@
 #include "CDRip/CDRip.h"
 #include "OutPlugin.h"
 #include "Playlist.h"
-#include "Ini.h"
+#include "Settings.h"
 #include "Utils.h"
 
 #include "CDPlayerIni.h"
@@ -47,13 +47,14 @@ static char THIS_FILE[] = __FILE__;
 
 #define TIMERID    2
 
-extern CString		g_strIniFile;
+extern CSettings g_sSettings;
 
 
 //////////////////////////////////////////////////////////////////////////////////
 //
 // Winamp Output plugin emulation. Poor, poor C with global variables and
 // all this stuuf I hate, yuck :-(
+// 2003-04-27: Grrr, I think I should clean a bit up
 //
 //////////////////////////////////////////////////////////////////////////////////
 
@@ -323,41 +324,11 @@ BOOL CEncodingStatusDlg::OnInitDialog()
 
 	CTrayDialog::OnInitDialog();
 	
-	CIni cfg;
-	cfg.SetIniFileName(g_strIniFile);
 	
 	SetTimer(TIMERID, 1000, NULL);
 	
-	m_pThread = NULL;
-	
-	m_eThreadFinished.ResetEvent();
-	
-	// Fire of thread
-	int nThreadPriority = THREAD_PRIORITY_NORMAL;
-
-	switch(cfg.GetValue("L.A.M.E.", "ThreadPriority", 3)){
-
-	case 0:
-		nThreadPriority = THREAD_PRIORITY_LOWEST;
-		break;
-	case 1:
-		nThreadPriority = THREAD_PRIORITY_BELOW_NORMAL;
-		break;
-	case 2:
-		nThreadPriority = THREAD_PRIORITY_NORMAL;
-		break;
-	case 3:
-		nThreadPriority = THREAD_PRIORITY_ABOVE_NORMAL;
-		break;
-	case 4:
-		nThreadPriority = THREAD_PRIORITY_HIGHEST;
-		break;
-	}
-
-	m_pThread = AfxBeginThread(EncoderFunc, (void*)this, nThreadPriority);
-	
 	TraySetIcon(IDR_MAINFRAME);
-	TraySetToolTip("lameFE");
+	TraySetToolTip("LameFE");
 	TraySetMenu(IDR_SYSTRAY_MENU);
 	TraySetMinimizeToTray(TRUE);
 	TrayShow();
@@ -386,6 +357,40 @@ BOOL CEncodingStatusDlg::OnInitDialog()
 	
 	m_saveBtn.EnableWindow(FALSE);
 	
+
+	m_pThread = NULL;
+	
+	m_eThreadFinished.ResetEvent();
+	
+	// Fire of thread
+	int nThreadPriority = THREAD_PRIORITY_NORMAL;
+
+	// Only set thread priority if we are on Windows NT and using lame
+	// to be on the save side
+	if(Utils::IsWindowsNT() && (m_strOutputDevice == "lame_enc.dll")){
+
+		switch(g_sSettings.GetThreadPriority()){
+
+		case 0:
+			nThreadPriority = THREAD_PRIORITY_LOWEST;
+			break;
+		case 1:
+			nThreadPriority = THREAD_PRIORITY_BELOW_NORMAL;
+			break;
+		case 2:
+			nThreadPriority = THREAD_PRIORITY_NORMAL;
+			break;
+		case 3:
+			nThreadPriority = THREAD_PRIORITY_ABOVE_NORMAL;
+			break;
+		case 4:
+			nThreadPriority = THREAD_PRIORITY_HIGHEST;
+			break;
+		}
+	}
+
+	m_pThread = AfxBeginThread(EncoderFunc, (void*)this, nThreadPriority);
+
 	return TRUE;
 }
 
@@ -447,7 +452,7 @@ void CEncodingStatusDlg::OnStRestore()
 	TRACE("OnStRestore()\n");
 	ShowWindow(SW_SHOW);
 	SetFocus();
-	SetForegroundWindow( );
+	SetForegroundWindow();
 }
 
 void CEncodingStatusDlg::OnStExit() 
@@ -495,12 +500,6 @@ BOOL CEncodingStatusDlg::WriteID3Tag(MMFILE_ALBUMINFO tmpAI)
 
 	PostMessage(WM_TIMER,0,0);
 
-	CIni cfg;
-	CString strPreset;
-
-	cfg.SetIniFileName(g_strIniFile);
-	strPreset = cfg.GetValue("L.A.M.E.", "PresetName", "default");
-	cfg.SetIniFileName(cfg.GetValue("LameFE", "PresetPath", m_strWd) + "\\" + strPreset + ".ini");
 
 
 	ID3_Tag			id3Tag;
@@ -510,8 +509,8 @@ BOOL CEncodingStatusDlg::WriteID3Tag(MMFILE_ALBUMINFO tmpAI)
 	BOOL			bV1     = FALSE;
 	BOOL			bV2		= FALSE;
 
-	bV1	= cfg.GetValue("L.A.M.E.", "Id3v1", 0);
-	bV2 = cfg.GetValue("L.A.M.E.", "Id3v2", 1);
+	bV1	= g_sSettings.GetId3v1();
+	bV2 = g_sSettings.GetId3v2();
 	
 	if(bV1 && bV2){
 
@@ -613,7 +612,7 @@ void CEncodingStatusDlg::SetJob(int nJob, CString strOutputDevice /* = "lame_enc
 	}
 	else{
 
-		COutPlugin tmp(m_strWd + "\\Plugins\\" + m_strOutputDevice, g_strIniFile);
+		COutPlugin tmp(m_strWd + "\\Plugins\\" + m_strOutputDevice, g_sSettings.GetIniFilename());
 		tmp.Load();
 		m_strExtension = tmp.GetExtension();
 		tmp.Unload();
@@ -664,8 +663,6 @@ BOOL CEncodingStatusDlg::AnyToEncoder()
 {
 
 	CString	  strPlugin = "";
-	CIni cfg;
-	cfg.SetIniFileName(g_strIniFile);
 
 	//setup controls
 	m_fileStatus.SetRange(0, 100);
@@ -692,13 +689,13 @@ BOOL CEncodingStatusDlg::AnyToEncoder()
 		
 		if(!CLameFEPlugin::FindPlugin(m_in.Right(3), m_strInputDevice, m_strWd + "\\Plugins")){
 
-			CWinampPlugin::FindPlugin(m_in.Right(3), m_strInputDevice, cfg.GetValue("LameFE", "WinampPluginPath", ""));
+			CWinampPlugin::FindPlugin(m_in.Right(3), m_strInputDevice, g_sSettings.GetWinampPluginPath());
 		}
 
 
 		m_strInputDevice = m_strInputDevice.Right(m_strInputDevice.GetLength() - m_strInputDevice.ReverseFind('\\') - 1);
 		m_lLogFile.StartEntry(m_in, m_out, m_strInputDevice);
-		if(Utils::FileExists(m_out) && !cfg.GetValue("LameFE", "SilentMode", FALSE)){
+		if(Utils::FileExists(m_out) && !g_sSettings.GetSilentMode()){
 
 			CString out;
 			out.Format(IDS_ENC_FILEEXISTS, m_out);
@@ -731,7 +728,7 @@ BOOL CEncodingStatusDlg::AnyToEncoder()
 			}
 		}
 		// ... check for a Winamp plugin afterwards if unsuccessfull
-		else if(CWinampPlugin::FindPlugin(m_in.Right(3), strPlugin, cfg.GetValue("LameFE", "WinampPluginPath", ""))){
+		else if(CWinampPlugin::FindPlugin(m_in.Right(3), strPlugin, g_sSettings.GetWinampPluginPath())){
 
 			m_strInputDevice = strPlugin;
 			WinampPlugin2Encoder(strPlugin, mFile, i);
@@ -762,7 +759,6 @@ BOOL CEncodingStatusDlg::AnyToEncoder()
 BOOL CEncodingStatusDlg::WinampPlugin2Encoder(CString plugin, CMultimediaFile *mFile, int nPos)
 {
 
-	//This code is for testing only
 	CWinampPlugin		wplugin(plugin);
 	In_Module*			inMod;
 	Out_Module			outMod;
@@ -770,8 +766,6 @@ BOOL CEncodingStatusDlg::WinampPlugin2Encoder(CString plugin, CMultimediaFile *m
 	char*				infilename = m_in.GetBuffer(10);
 	m_in.ReleaseBuffer();
 
-	CIni cfg;
-	cfg.SetIniFileName(g_strIniFile);
 
 	if(!wplugin.Load(GetSafeHwnd())){
 
@@ -871,6 +865,7 @@ BOOL CEncodingStatusDlg::WinampPlugin2Encoder(CString plugin, CMultimediaFile *m
 		}			
 	}
 
+	inMod->SetOutputTime(0);
 	inMod->Stop();
 
 	buf_fill = 0; // enable buffer fill
@@ -952,14 +947,14 @@ BOOL CEncodingStatusDlg::WinampPlugin2Encoder(CString plugin, CMultimediaFile *m
 
 	//Check if there's enough free disk space
 	double nFreeDiskSpace = 0;
-	nFreeDiskSpace = Utils::GetMyFreeDiskSpace(cfg.GetValue("FileNames", "BasePath", m_strWd + "\\LameFE"));
+	nFreeDiskSpace = Utils::GetMyFreeDiskSpace(g_sSettings.GetBasePath());
 	
 	if((mp3_est_size / 1024 )>= nFreeDiskSpace){
 
 		m_list_errors.Format
 			(
 			"Not enoug free disk space on drive %s. (Required space=%d, Free space%d (KB)).\nAborting Encoding process",
-			cfg.GetValue("LameFE", "BasePath", m_strWd).Left(2),
+			g_sSettings.GetBasePath().Left(2),
 			m_estSize, nFreeDiskSpace
 			);
 
@@ -977,18 +972,20 @@ BOOL CEncodingStatusDlg::WinampPlugin2Encoder(CString plugin, CMultimediaFile *m
 	// Now we are ready to start the Winamp plugin
     mutex_lock();
 
-    inMod->Play(infilename);
-
-    // release mutex
-    mutex_unlock();
-
-
-	bLoop = TRUE;
-
 	int		nOffset		= 0;
 	//int		samplesUsed	= 0;
 	char*	pcStream	= new char[8196+dwSampleBufferSize];
 	signed __int64		samples_converted	= 0;
+
+
+   	inMod->IsOurFile(infilename);
+	inMod->Play(infilename);
+	Sleep(20);
+    // release mutex
+    mutex_unlock();
+    Sleep(20);
+
+	bLoop = TRUE;
 
 	while((buf_fill != -1) && !m_bAbortEnc){ // buf_fill is -1 when file is done
 
@@ -1076,7 +1073,7 @@ BOOL CEncodingStatusDlg::WinampPlugin2Encoder(CString plugin, CMultimediaFile *m
 
 	inMod = NULL;
 	
-	if((cfg.GetValue("L.A.M.E.", "Id3v1", FALSE) || cfg.GetValue("L.A.M.E.", "Id3v2", TRUE)) && m_strOutputDevice == "lame_enc.dll"){
+	if((g_sSettings.GetId3v1() || g_sSettings.GetId3v2()) && m_strOutputDevice == "lame_enc.dll"){
 	
 		if(!WriteID3Tag(mFile)){
 
@@ -1106,8 +1103,6 @@ BOOL CEncodingStatusDlg::LameFEPlugin2MP3(CString plugin, CMultimediaFile *mFile
 	CFile::GetStatus( mFile->GetFileName(), rStatus );
 	float in_size = rStatus.m_size;
 	float in_sizeKB = rStatus.m_size;
-	CIni cfg;
-	cfg.SetIniFileName(g_strIniFile);
 
 	hDLL = LoadLibrary(plugin);
 	if(!hDLL){
@@ -1232,14 +1227,14 @@ BOOL CEncodingStatusDlg::LameFEPlugin2MP3(CString plugin, CMultimediaFile *mFile
 
 	//Check if there's enough free disk space
 	double nFreeDiskSpace = 0;
-	nFreeDiskSpace = Utils::GetMyFreeDiskSpace(cfg.GetValue("FileNames", "BasePath", m_strWd + "\\LameFE"));
+	nFreeDiskSpace = Utils::GetMyFreeDiskSpace(g_sSettings.GetBasePath());
 	
 	if((mp3_est_size / 1024 )>= nFreeDiskSpace){
 
 		m_list_errors.Format
 			(
 			"Not enoug free disk space on drive %s. (Required space=%d, Free space%d (KB)).\nAborting Encoding process",
-			cfg.GetValue("LameFE", "BasePath", m_strWd).Left(2),
+			g_sSettings.GetBasePath().Left(2),
 			m_estSize, nFreeDiskSpace
 			);
 
@@ -1278,7 +1273,7 @@ BOOL CEncodingStatusDlg::LameFEPlugin2MP3(CString plugin, CMultimediaFile *mFile
 	}
 	
 	
-	if((cfg.GetValue("L.A.M.E.", "Id3v1", FALSE) || cfg.GetValue("L.A.M.E.", "Id3v2", TRUE)) && m_strOutputDevice == "lame_enc.dll"){
+	if((g_sSettings.GetId3v1() || g_sSettings.GetId3v2()) && m_strOutputDevice == "lame_enc.dll"){
 	
 		if(!WriteID3Tag(mFile)){
 
@@ -1300,10 +1295,8 @@ BOOL CEncodingStatusDlg::RipBatchMode()
 
 	TRACE("Entering CEncodingStatusDlg::RipBatchMode()\n");
 
-	CIni cfg;
-	cfg.SetIniFileName(g_strIniFile);
 
-	BOOL bTimesOut	 =  cfg.GetValue("CD-ROM", "BatchTimesOut", TRUE);
+	BOOL bTimesOut	 =  g_sSettings.GetBatchTimesOut();
 	BOOL bTimedOut	 =  FALSE;
 	long nTimeOutSec =  0;
 	int nNumCDDrives =  CR_GetNumCDROM();
@@ -1315,7 +1308,7 @@ BOOL CEncodingStatusDlg::RipBatchMode()
 
 	while(!bTimedOut && !m_bAbortEnc){
 		
-		nTimeOutSec =  cfg.GetValue("CD-ROM", "BatchTimesOutAfterMin", 30) * 60;
+		nTimeOutSec =  g_sSettings.GetBatchTimesOutAfterMin() * 60;
 
 		//OK is this an audio cd?
 		if(m_cd->GetNumAudioTracks() != 0){
@@ -1328,7 +1321,7 @@ BOOL CEncodingStatusDlg::RipBatchMode()
 
 				RipToSingleFile();
 			}
-			if(cfg.GetValue("LameFE", "M3U", FALSE)  && !m_bAbortEnc){
+			if(g_sSettings.GetM3U()  && !m_bAbortEnc){
 
 				CPlayList playlist(m_cd);
 				playlist.WriteToDisc(m_strWd, m_strExtension, FALSE, (m_mEMode == BATCHSINGLETRACKMODE));
@@ -1365,13 +1358,13 @@ BOOL CEncodingStatusDlg::RipBatchMode()
 		m_cd->Eject();
 		m_bBatchAppendDiscID = FALSE;
 		
-		if(cfg.GetValue("CD-ROM", "BatchBeep", TRUE)){
+		if(g_sSettings.GetBatchBeepOnFinished()){
 
 			Beep(1000,800);
 		}
 
 
-		if(cfg.GetValue("CD-ROM", "BatchUseAllDrives", FALSE)){
+		if(g_sSettings.GetBatchUseAllDrives()){
 
 			//switch to next drive 
 			//CR_SaveSettings();
@@ -1383,7 +1376,9 @@ BOOL CEncodingStatusDlg::RipBatchMode()
 			CR_LoadSettings();
 		}
 
-		while((CR_IsUnitReady() != 0x001) && !bTimedOut && !m_bAbortEnc){
+		CDMEDIASTATUS cdMediaStatus = CDMEDIA_NOT_PRESENT;
+		CR_IsMediaLoaded(cdMediaStatus);
+		while((cdMediaStatus != CDMEDIA_PRESENT) && !bTimedOut && !m_bAbortEnc){
 
 			Sleep(5000);
 			if(bTimesOut){
@@ -1397,6 +1392,7 @@ BOOL CEncodingStatusDlg::RipBatchMode()
 					return FALSE;
 				}
 			}			
+			CR_IsMediaLoaded(cdMediaStatus);
 		}
 		
 		if(m_bAbortEnc){
@@ -1425,7 +1421,7 @@ BOOL CEncodingStatusDlg::RipBatchMode()
 			bSuccess = m_cd->ReadCDText();
 		}
 
-		if(!bSuccess && cfg.GetValue("CD-ROM", "BatchFreeDB", TRUE)){
+		if(!bSuccess && g_sSettings.GetBatchFreeDB()){
 			
 			CCDdbQueryDlg cddbDlg(this, m_cd, CR_GetActiveCDROM(), m_strWd, TRUE);
 			
@@ -1439,11 +1435,20 @@ BOOL CEncodingStatusDlg::RipBatchMode()
 				
 				// Enough tries, no album info is available, so append disc id
 				TRACE("No Albuminformation available!\n");
-				if(cfg.GetValue("CD-ROM", "BatchAppendDiscID", TRUE)){
+				if(g_sSettings.GetBatchAppendDiscID()){
 
 					m_bBatchAppendDiscID = TRUE;
 				}
 			}
+			if(nResult == IDOK){
+
+				bSuccess = TRUE;
+			}
+		}
+		
+		if(bSuccess){
+
+			m_bBatchAppendDiscID = FALSE;
 		}
 
 		// Select All Tracks for ripping
@@ -1475,8 +1480,6 @@ BOOL CEncodingStatusDlg::RipBatchMode()
 BOOL CEncodingStatusDlg::RipToSingleFile(){
 
 	TRACE("RipToSingleFile: Outputdevice is %s", m_strOutputDevice);
-	CIni cfg;
-	cfg.SetIniFileName(g_strIniFile);
 
 	//setup controls
 	m_fileStatus.SetRange(0, 100);
@@ -1491,7 +1494,7 @@ BOOL CEncodingStatusDlg::RipToSingleFile(){
 	int*	 pSel		  = NULL;
 	int	 	 numTracks    = m_cd->GetNumSelTracks();
 
-	int nNumBuffers = cfg.GetValue("CD-ROM", "nNumReadBuffers", 1);
+	int nNumBuffers = g_sSettings.GetNumReadBuffers();
 	switch(nNumBuffers){
 
 	case 0:
@@ -1530,7 +1533,7 @@ BOOL CEncodingStatusDlg::RipToSingleFile(){
 	// Check for existing file
 	TRACE("Checking for existing file\n");
 
-	if(Utils::FileExists(m_out) && !cfg.GetValue("lameFE", "SilentMode", FALSE)){
+	if(Utils::FileExists(m_out) && !g_sSettings.GetSilentMode()){
 
 		CString out;
 		out.Format(IDS_ENC_FILEEXISTS, m_out);
@@ -1593,14 +1596,14 @@ BOOL CEncodingStatusDlg::RipToSingleFile(){
 	//Check if there's enough free disk space
 	double nFreeDiskSpace = 0;
 
-	nFreeDiskSpace = Utils::GetMyFreeDiskSpace(cfg.GetValue("FileNames", "BasePath", m_strWd)) / (1024.0*1024.0);
+	nFreeDiskSpace = Utils::GetMyFreeDiskSpace(g_sSettings.GetBasePath()) / (1024.0*1024.0);
 
 	PostMessage(WM_TIMER,0,0);
 
 	if((mp3_est_size)>= nFreeDiskSpace){
 
 		m_mLockControls.Lock();
-		m_list_errors.Format("Not enoug free disk space on drive %s).\nAborting Encoding process", cfg.GetValue("LameFE", "BasePath", m_strWd).Left(2));
+		m_list_errors.Format("Not enoug free disk space on drive %s).\nAborting Encoding process", g_sSettings.GetBasePath());
 		m_lLogFile.SetErrorMsg(0, m_list_errors);
 		AfxMessageBox(m_list_errors, MB_OK+MB_ICONSTOP);
 		m_nErrors++;
@@ -1706,7 +1709,7 @@ BOOL CEncodingStatusDlg::RipToSingleFile(){
 			return FALSE;
 		}
 
-		if((cfg.GetValue("L.A.M.E.", "Id3v1", FALSE) || cfg.GetValue("L.A.M.E.", "Id3v2", TRUE)) && m_strOutputDevice == "lame_enc.dll"){
+		if((g_sSettings.GetId3v1() || g_sSettings.GetId3v2()) && m_strOutputDevice == "lame_enc.dll"){
 	
 			if(!WriteID3Tag(tmpAI)){
 
@@ -1715,7 +1718,7 @@ BOOL CEncodingStatusDlg::RipToSingleFile(){
 			}
 
 		}
-		if(cfg.GetValue("CD-ROM", "WriteCue", TRUE)){
+		if(g_sSettings.GetWriteCue()){
 
 			m_cd->WriteCueSheet(m_strWd, m_strExtension);
 		}
@@ -1726,12 +1729,12 @@ BOOL CEncodingStatusDlg::RipToSingleFile(){
 
 	delete pSel;
 
-	if(cfg.GetValue("CD-ROM", "Lock", TRUE) == TRUE){
+	if(g_sSettings.GetLock() == TRUE){
 		
 		CR_LockCD(FALSE);
 	}
 	
-	if(cfg.GetValue("CD-ROM", "Eject", FALSE) && (m_mEMode != BATCHALBUMMODE)){
+	if(g_sSettings.GetEject() && (m_mEMode != BATCHALBUMMODE)){
 
 		CR_EjectCD(TRUE);
 	}
@@ -1744,10 +1747,8 @@ BOOL CEncodingStatusDlg::RipToAny()
 	
 	TRACE("RipToAny: Mode is %d (0 = Output Wave 1 = Output MP3) Output = %s\n", m_nJob, m_strOutputDevice);
 
-	CIni cfg;
-	cfg.SetIniFileName(g_strIniFile);
 	
-	if(cfg.GetValue("CD-ROM", "Lock", TRUE)){
+	if(g_sSettings.GetLock()){
 
 		CR_LockCD(TRUE);
 	}
@@ -1767,7 +1768,7 @@ BOOL CEncodingStatusDlg::RipToAny()
 	int*	 pSel		  = NULL;
 	int	 	 numTracks    = m_cd->GetNumSelTracks();
 
-	int nNumBuffers = cfg.GetValue("CD-ROM", "nNumReadBuffers", 1);
+	int nNumBuffers = g_sSettings.GetNumReadBuffers();
 	switch(nNumBuffers){
 
 	case 0:
@@ -1807,7 +1808,7 @@ BOOL CEncodingStatusDlg::RipToAny()
 		// Check for existing file
 		TRACE("Checking for existing file\n");
 		m_lLogFile.StartEntry(cdTrack->GetTrackname(), m_out, m_strOutputDevice);
-		if(Utils::FileExists(m_out) && !cfg.GetValue("LameFE", "SilentMode", FALSE)){
+		if(Utils::FileExists(m_out) && !g_sSettings.GetSilentMode()){
 
 			CString out;
 			out.Format(IDS_ENC_FILEEXISTS, m_out);
@@ -1873,13 +1874,13 @@ BOOL CEncodingStatusDlg::RipToAny()
 		
 		//Check if there's enough free disk space
 		double nFreeDiskSpace = 0;
-		nFreeDiskSpace = Utils::GetMyFreeDiskSpace(cfg.GetValue("FileNames", "BasePath", m_strWd)) / (1024.0*1024.0);
+		nFreeDiskSpace = Utils::GetMyFreeDiskSpace(g_sSettings.GetBasePath()) / (1024.0*1024.0);
 		PostMessage(WM_TIMER,0,0);
 		if((mp3_est_size)>= nFreeDiskSpace){
 
 			m_mLockControls.Lock();
 			m_list_errors.Format("Not enoug free disk space on drive %s).\nAborting Encoding process",
-				cfg.GetValue("LameFE", "BasePath", m_strWd).Left(2));
+				g_sSettings.GetBasePath().Left(2));
 			m_nErrors++;
 			m_lLogFile.SetErrorMsg(currentTrack, m_list_errors);
 			AfxMessageBox(m_list_errors, MB_OK+MB_ICONSTOP);
@@ -1996,7 +1997,7 @@ BOOL CEncodingStatusDlg::RipToAny()
 				return FALSE;
 			}
 
-			if((cfg.GetValue("L.A.M.E.", "Id3v1", FALSE) || cfg.GetValue("L.A.M.E.", "Id3v2", TRUE)) && m_strOutputDevice == "lame_enc.dll"){
+			if((g_sSettings.GetId3v1() || g_sSettings.GetId3v2()) && m_strOutputDevice == "lame_enc.dll"){
 		
 				if(!WriteID3Tag(tmpAI)){
 
@@ -2024,12 +2025,12 @@ BOOL CEncodingStatusDlg::RipToAny()
 	delete pSel;
 	m_lLogFile.FinalizeSession();
 
-	if(cfg.GetValue("CD-ROM", "Lock", TRUE)){
+	if(g_sSettings.GetLock()){
 		
 		CR_LockCD(FALSE);
 	}
 	
-	if(cfg.GetValue("CD-ROM", "Eject", FALSE)){
+	if(g_sSettings.GetEject()){
 
 		CR_EjectCD(TRUE);
 	}
@@ -2064,11 +2065,9 @@ void CEncodingStatusDlg::FinishedJobs()
 	
 	KillTimer(TIMERID);
 
-	CIni cfg;
-	cfg.SetIniFileName(g_strIniFile);
 	CString tmp;
 
-	if(cfg.GetValue("LameFE", "ExitLameFE", FALSE) || cfg.GetValue("LameFE", "Shutdown", FALSE)){
+	if(g_sSettings.GetExitLameFE() || g_sSettings.GetShutdown()){
 		
 		CTrayDialog::EndDialog (IDOK);
 		return;
@@ -2112,23 +2111,23 @@ void CEncodingStatusDlg::FinishedJobs()
 
 		//check what to be done after encoding
 
-		if (cfg.GetValue("LameFE", "Beep", TRUE)){  //"beep"
+		if (g_sSettings.GetBeep()){  //"beep"
 
 			
 			Beep(1000,800);
 		}
 
-		if(cfg.GetValue("LameFE", "PlaySound", FALSE)){
+		if(g_sSettings.GetPlaySound()){
 
 			MessageBeep(MB_ICONSTOP);
 		}
 		
-		if (cfg.GetValue("LameFE", "GetFocus", TRUE)){
+		if (g_sSettings.GetFocus()){
 
 			OnStRestore();
 		}
 
-		if((cfg.GetValue("LameFE", "Dialog", FALSE)) == TRUE){ //show finished "dialog"
+		if(g_sSettings.GetDialog() == TRUE){ //show finished "dialog"
 			
 
 			int nResult = AfxMessageBox(IDS_ENC_VIEW_LOG, MB_YESNO + MB_ICONQUESTION);
@@ -2139,7 +2138,7 @@ void CEncodingStatusDlg::FinishedJobs()
 			}
 		}				
 		
-		if ((cfg.GetValue("LameFE", "M3U", FALSE)) == TRUE){  //create "m3u"-""play""list with encoded files
+		if (g_sSettings.GetM3U() == TRUE){  //create "m3u"-""play""list with encoded files
 
 			PostMessage(WM_TIMER,0,0);
 
@@ -2165,7 +2164,7 @@ void CEncodingStatusDlg::FinishedJobs()
 			PostMessage(WM_TIMER,0,0);
 		}		
 
-		if ((cfg.GetValue("LameFE", "PlayBack", FALSE)) == TRUE){ //play encoded files
+		if (g_sSettings.GetPlayBack() == TRUE){ //play encoded files
 
 
 
@@ -2189,12 +2188,11 @@ void CEncodingStatusDlg::FinishedJobs()
 
 			}
 
-			//delete playlist;
-			tmp = cfg.GetValue("LameFE", "ExternalPlayer", "[System default]");
+			tmp = g_sSettings.GetExternalPlayer();
 
 			if(tmp != "[System default]"){  // use specified player
 
-				if(cfg.GetValue("LameFE", "Enqueue", FALSE)){
+				if(g_sSettings.GetEnqueue()){
 
 					tmp += " /ADD ";
 				}

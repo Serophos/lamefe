@@ -1,6 +1,20 @@
-// lameFEView.h : Schnittstelle der Klasse CLameFEView
-//
-/////////////////////////////////////////////////////////////////////////////
+/*
+** Copyright (C) 2002-2003 Thees Winkler
+**  
+** This program is free software; you can redistribute it and/or modify
+** it under the terms of the GNU General Public License as published by
+** the Free Software Foundation; either version 2 of the License, or
+** (at your option) any later version.
+** 
+** This program is distributed in the hope that it will be useful,
+** but WITHOUT ANY WARRANTY; without even the implied warranty of
+** MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+** GNU General Public License for more details.
+** 
+** You should have received a copy of the GNU General Public License
+** along with this program; if not, write to the Free Software 
+** Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+*/
 
 #if !defined(AFX_LAMEFEVIEW_H__BC39AFAD_87BC_42DD_8658_4B3170582855__INCLUDED_)
 #define AFX_LAMEFEVIEW_H__BC39AFAD_87BC_42DD_8658_4B3170582855__INCLUDED_
@@ -60,6 +74,8 @@ public:
 	virtual void OnInitialUpdate();
 	virtual void DoDataExchange(CDataExchange* pDX);	// DDX/DDV-Unterstützung
 	virtual BOOL PreTranslateMessage(MSG* pMsg);
+	protected:
+	virtual void OnUpdate(CView* pSender, LPARAM lHint, CObject* pHint);
 	//}}AFX_VIRTUAL
 
 // Implementierung
@@ -93,6 +109,7 @@ protected:
 
 // Generierte Message-Map-Funktionen
 protected:
+	BOOL AddDirectory(CString strPath, CString strExt);
 	afx_msg void OnAlbumInfoUpdated(WPARAM wParam,LPARAM lParam);
 	afx_msg void OnPresetSelChanged(WPARAM nSelection,LPARAM lParam);
 	//{{AFX_MSG(CLameFEView)
@@ -125,6 +142,7 @@ protected:
 	afx_msg void OnSelchangeOutputDevice();
 	afx_msg void OnSavepreset();
 	afx_msg void OnDeletepreset();
+	afx_msg void OnDateiVerzeichnishinzufgen();
 	//}}AFX_MSG
 	DECLARE_MESSAGE_MAP()
 

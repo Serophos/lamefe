@@ -20,7 +20,7 @@
 #include "stdafx.h"
 #include "lamefe.h"
 #include "SettingsDlg.h"
-#include "Ini.h"
+#include "Settings.h"
 
 #include "SettingsLookNFeel.h"
 #include "SettingsLameFE.h"
@@ -32,7 +32,7 @@
 static char THIS_FILE[] = __FILE__;
 #endif
 
-extern CString		g_strIniFile;
+extern CSettings g_sSettings;
 /////////////////////////////////////////////////////////////////////////////
 // Dialogfeld CSettingsDlg 
 
@@ -311,9 +311,7 @@ void CSettingsDlg::CheckForDecoders(HTREEITEM hDecoder)
 	CFileFind finder;
 	CString   strPlugin;
 	
-	CIni cfg;
-	cfg.SetIniFileName(g_strIniFile);
-	m_strPluginPath = cfg.GetValue("LameFE", "WinampPluginPath", "");
+	m_strPluginPath = g_sSettings.GetWinampPluginPath();
 
 	BOOL bResult = finder.FindFile(m_strWd + "\\Plugins\\*_in.dll");
 

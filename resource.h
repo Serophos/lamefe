@@ -224,6 +224,7 @@
 #define IDC_PRESETNAME                  1128
 #define IDC_PRESETCOMMENT               1129
 #define IDC_ENCODER_VERSION             1130
+#define IDC_REMEMBER_LAST               1130
 #define IDC_BITSPERSAMPLE               1132
 #define IDC_CHANNELS                    1133
 #define IDC_BITSPERSAMPLE_MAX           1134
@@ -344,6 +345,7 @@
 #define ID_SAVEPRESET                   32817
 #define ID_DELETEPRESET                 32818
 #define ID_PRESETDROPDOWN               32819
+#define ID_DATEI_VERZEICHNISHINZUFGEN   32820
 #define ID_ADD_FILE                     40001
 #define ID_EXIT                         40003
 #define ID_TAGEDIT                      40004
@@ -569,15 +571,33 @@
 #define IDS_ERRPRESETCREATE             61206
 #define IDS_PRESET_INVALIDNAME          61207
 #define IDS_PRESET_NAMENOTALLOWED       61208
+#define IDS_TOOL_DEFAULTCD              61209
+#define IDS_TOOL_DEFAULTFILE            61210
+#define IDS_TOOL_LASTDECODER            61211
+#define IDS_TOOL_LASTENCODER            61212
+#define IDS_TOOL_SHOWID3FILE            61213
+#define IDS_TOOL_CHECKNEWCD             61214
+#define IDS_TOOL_BATCHAPPENDDISCID      61215
+#define IDS_TOOL_MP3OUTSAMPLE           61216
+#define IDS_TOOL_ID3V1                  61217
+#define IDS_TOOL_FDBAUTH                61218
+#define IDS_TOOL_FDBPASS                61219
+#define IDS_TOOL_FDBPROXYADD            61220
+#define IDS_TOOL_FDBPROXYPORT           61221
+#define IDS_TOOL_FDBSERVER              61222
+#define IDS_TOOL_FDBUSEPROXY            61223
+#define IDS_TOOL_FDBUSER                61224
+#define IDS_TOOL_FDBMAIL                61225
+#define IDS_TOOL_FDBTIMEOUT             61226
 
 // Next default values for new objects
 // 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_3D_CONTROLS                     1
-#define _APS_NEXT_RESOURCE_VALUE        192
-#define _APS_NEXT_COMMAND_VALUE         32820
-#define _APS_NEXT_CONTROL_VALUE         1130
+#define _APS_NEXT_RESOURCE_VALUE        195
+#define _APS_NEXT_COMMAND_VALUE         32821
+#define _APS_NEXT_CONTROL_VALUE         1131
 #define _APS_NEXT_SYMED_VALUE           101
 #endif
 #endif

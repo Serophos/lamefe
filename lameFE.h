@@ -1,5 +1,5 @@
 /*
-** Copyright (C) 2002 Thees Winkler
+** Copyright (C) 2002-2003 Thees Winkler
 **  
 ** This program is free software; you can redistribute it and/or modify
 ** it under the terms of the GNU General Public License as published by
@@ -38,7 +38,6 @@
 class CLameFEApp : public CWinApp
 {
 public:
-	void SetAutoPlay(BOOL bEnable);
 	BOOL GetRipperStatus();
 	BOOL InitCDRipper();
 	CLameFEApp();
@@ -60,7 +59,9 @@ public:
 	DECLARE_MESSAGE_MAP()
 
 protected:
-	BOOL m_bAutoPlayState;
+	BOOL CheckVersion(CString strDll, CString& strVersion);
+	BOOL		m_bAutoPlayState;
+	CMutex		m_mtInitializing;
 	BOOL		m_bRipperOK;
 	HINSTANCE	m_hCDRipDll;
 };

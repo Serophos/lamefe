@@ -43,17 +43,18 @@ RSC=rc.exe
 # PROP Ignore_Export_Lib 0
 # PROP Target_Dir ""
 # ADD BASE CPP /nologo /MD /W3 /GX /O2 /D "WIN32" /D "NDEBUG" /D "_WINDOWS" /D "_AFXDLL" /Yu"stdafx.h" /FD /c
-# ADD CPP /nologo /MD /W3 /GX /O2 /I "LibSndFile\src" /D "WIN32" /D "NDEBUG" /D "_WINDOWS" /D "_AFXDLL" /D "_MBCS" /FR /Yu"stdafx.h" /FD /c
+# ADD CPP /nologo /MD /W3 /GX /O2 /Ob2 /I "ID3Lib\include" /D "WIN32" /D "NDEBUG" /D "_WINDOWS" /D "_AFXDLL" /D "_MBCS" /Yu"stdafx.h" /FD /O /O /O /c
 # ADD BASE MTL /nologo /D "NDEBUG" /mktyplib203 /win32
 # ADD MTL /nologo /D "NDEBUG" /mktyplib203 /win32
 # ADD BASE RSC /l 0x407 /d "NDEBUG" /d "_AFXDLL"
-# ADD RSC /l 0x407 /d "NDEBUG" /d "_AFXDLL" /d "_ENGLISH"
+# ADD RSC /l 0x407 /d "NDEBUG" /d "_AFXDLL"
 BSC32=bscmake.exe
 # ADD BASE BSC32 /nologo
 # ADD BSC32 /nologo
 LINK32=link.exe
 # ADD BASE LINK32 /nologo /subsystem:windows /machine:I386
-# ADD LINK32 comctl32.lib winmm.lib htmlhelp.lib id3lib.lib zlib.lib delayimp.lib /nologo /subsystem:windows /machine:I386 /nodefaultlib:"libcmt.lib" /libpath:"ID3Lib\libprj\Release" /libpath:"ID3Lib/zlib"
+# ADD LINK32 htmlhelp.lib delayimp.lib wsock32.lib winmm.lib /nologo /subsystem:windows /map /machine:I386 /nodefaultlib:"LIBCMT.lib" /libpath:"ID3Lib\include"
+# SUBTRACT LINK32 /incremental:yes /debug
 
 !ELSEIF  "$(CFG)" == "lameFE - Win32 Debug"
 
@@ -69,7 +70,7 @@ LINK32=link.exe
 # PROP Ignore_Export_Lib 0
 # PROP Target_Dir ""
 # ADD BASE CPP /nologo /MDd /W3 /Gm /GX /ZI /Od /D "WIN32" /D "_DEBUG" /D "_WINDOWS" /D "_AFXDLL" /Yu"stdafx.h" /FD /GZ /c
-# ADD CPP /nologo /MDd /W3 /Gm /Gi /GX /ZI /Od /I "LibSndFile\src" /D "WIN32" /D "_DEBUG" /D "_WINDOWS" /D "_AFXDLL" /D "_MBCS" /D "_ATL_NO_COM" /FAcs /FR /Yu"stdafx.h" /FD /GZ /c
+# ADD CPP /nologo /MTd /W3 /Gm /Gi /GX /ZI /Od /I "ID3Lib\include" /D "WIN32" /D "_DEBUG" /D "_WINDOWS" /D "_MBCS" /D "_ATL_NO_COM" /FAcs /FR /Yu"stdafx.h" /FD /GZ /c
 # ADD BASE MTL /nologo /D "_DEBUG" /mktyplib203 /win32
 # ADD MTL /nologo /D "_DEBUG" /mktyplib203 /win32
 # ADD BASE RSC /l 0x407 /d "_DEBUG" /d "_AFXDLL"
@@ -79,7 +80,7 @@ BSC32=bscmake.exe
 # ADD BSC32 /nologo
 LINK32=link.exe
 # ADD BASE LINK32 /nologo /subsystem:windows /debug /machine:I386 /pdbtype:sept
-# ADD LINK32 kernel32.lib user32.lib gdi32.lib shell32.lib comdlg32.lib comctl32.lib winmm.lib htmlhelp.lib id3libD.lib zlibD.lib delayimp.lib /nologo /subsystem:windows /pdb:none /map /debug /machine:I386 /nodefaultlib:"LIBCMTD.lib" /libpath:"ID3Lib\libprj\Debug" /libpath:"ID3Lib/zlib"
+# ADD LINK32 kernel32.lib user32.lib gdi32.lib shell32.lib comdlg32.lib comctl32.lib winmm.lib htmlhelp.lib id3libD.lib zlibD.lib delayimp.lib /nologo /subsystem:windows /pdb:none /map /debug /machine:I386 /libpath:"ID3Lib\libprj\Debug" /libpath:"ID3Lib/zlib"
 
 !ENDIF 
 
@@ -241,6 +242,10 @@ SOURCE=.\PlayList.cpp
 # Begin Source File
 
 SOURCE=.\PresetSaveDlg.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\Settings.cpp
 # End Source File
 # Begin Source File
 
@@ -494,6 +499,10 @@ SOURCE=.\PresetSaveDlg.h
 # Begin Source File
 
 SOURCE=.\Resource.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\Settings.h
 # End Source File
 # Begin Source File
 

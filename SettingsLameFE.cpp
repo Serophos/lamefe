@@ -5,7 +5,7 @@
 #include "lamefe.h"
 #include "SettingsLameFE.h"
 #include "PathDialog.h"
-#include "Ini.h"
+#include "Settings.h"
 #include "Utils.h"
 
 #ifdef _DEBUG
@@ -16,7 +16,7 @@ static char THIS_FILE[] = __FILE__;
 
 /////////////////////////////////////////////////////////////////////////////
 // Dialogfeld CSettingsLameFE 
-extern CString		g_strIniFile;
+extern CSettings g_sSettings;
 
 
 CSettingsLameFE::CSettingsLameFE(CWnd* pParent /*=NULL*/)
@@ -65,19 +65,17 @@ void CSettingsLameFE::Init(CString strWd)
 
 	CMySettingsPage::Init(strWd);
 
-	CIni cfg;
-	cfg.SetIniFileName(g_strIniFile);
-	c_beep.SetCheck(cfg.GetValue("LameFE", "Beep", TRUE));
-	c_finishedDialog.SetCheck(cfg.GetValue("LameFE", "Dialog", FALSE));
-	c_m3u.SetCheck(cfg.GetValue("LameFE", "M3U", FALSE));
-	c_playFiles.SetCheck(cfg.GetValue("LameFE", "PlayBack", FALSE));
-	c_enqueueFiles.SetCheck(cfg.GetValue("LameFE", "Enqueue", FALSE));
-	c_quitOnFinished.SetCheck(cfg.GetValue("LameFE", "ExitLameFE", FALSE));
-	c_shutdownOnFinished.SetCheck(cfg.GetValue("LameFE", "Shutdown", FALSE));
-	m_playerPath = cfg.GetValue("LameFE", "ExternalPlayer", "[System Default]");
-	c_getfocus.SetCheck(cfg.GetValue("LameFE", "GetFocus",TRUE));
-	c_playSound.SetCheck(cfg.GetValue("LameFE", "PlaySound", FALSE));
-	m_presetPath = cfg.GetValue("LameFE", "PresetPath", m_strWd);
+	c_beep.SetCheck(g_sSettings.GetBeep());
+	c_finishedDialog.SetCheck(g_sSettings.GetDialog());
+	c_m3u.SetCheck(g_sSettings.GetM3U());
+	c_playFiles.SetCheck(g_sSettings.GetPlayBack());
+	c_enqueueFiles.SetCheck(g_sSettings.GetEnqueue());
+	c_quitOnFinished.SetCheck(g_sSettings.GetExitLameFE());
+	c_shutdownOnFinished.SetCheck(g_sSettings.GetShutdown());
+	m_playerPath = g_sSettings.GetExternalPlayer();
+	c_getfocus.SetCheck(g_sSettings.GetFocus());
+	c_playSound.SetCheck(g_sSettings.GetPlaySound());
+	m_presetPath = g_sSettings.GetPresetPath();
 
 	UpdateData(FALSE);
 	
@@ -86,6 +84,7 @@ void CSettingsLameFE::Init(CString strWd)
 	if(m_pToolTip != NULL){
 
 		m_pToolTip->AddTool(&c_beep, IDS_TOOL_BEEP);
+		m_pToolTip->AddTool(&c_playSound, IDS_TOOL_PLAYSOUND);
 		m_pToolTip->AddTool(&c_finishedDialog, IDS_TOOL_NOTIFICATION);
 		m_pToolTip->AddTool(&c_m3u, IDS_TOOL_M3U);
 		m_pToolTip->AddTool(&c_playFiles, IDS_TOOL_PLAYFILES);
@@ -102,20 +101,18 @@ void CSettingsLameFE::Init(CString strWd)
 BOOL CSettingsLameFE::Save()
 {
 
-	CIni cfg;
-	cfg.SetIniFileName(g_strIniFile);
-
-	cfg.SetValue("LameFE", "Beep", c_beep.GetCheck());
-	cfg.SetValue("LameFE", "Dialog", c_finishedDialog.GetCheck());
-	cfg.SetValue("LameFE", "M3U", c_m3u.GetCheck());
-	cfg.SetValue("LameFE", "PlayBack", c_playFiles.GetCheck());
-	cfg.SetValue("LameFE", "ExitLameFE", c_quitOnFinished.GetCheck());
-	cfg.SetValue("LameFE", "Shutdown", c_shutdownOnFinished.GetCheck());
-	cfg.SetValue("LameFE", "ExternalPlayer", m_playerPath);
-	cfg.SetValue("LameFE", "Enqueue", c_enqueueFiles.GetCheck());
-	cfg.SetValue("LameFE", "GetFocus", c_getfocus.GetCheck());
-	cfg.SetValue("LameFE", "PlaySound", c_playSound.GetCheck());
-	cfg.SetValue("LameFE", "PresetPath", m_presetPath);
+	g_sSettings.SetBeep(c_beep.GetCheck());
+	g_sSettings.SetDialog(c_finishedDialog.GetCheck());
+	g_sSettings.SetM3U(c_m3u.GetCheck());
+	g_sSettings.SetPlayBack(c_playFiles.GetCheck());
+	g_sSettings.SetExitLameFE(c_quitOnFinished.GetCheck());
+	g_sSettings.SetShutdown(c_shutdownOnFinished.GetCheck());
+	g_sSettings.SetExternalPlayer(m_playerPath);
+	g_sSettings.SetEnqueue(c_enqueueFiles.GetCheck());
+	g_sSettings.SetFocus(c_getfocus.GetCheck());
+	g_sSettings.SetPlaySound(c_playSound.GetCheck());
+	g_sSettings.SetPresetPath(m_presetPath);
+	g_sSettings.Save();
 
 	return TRUE;
 }
@@ -161,3 +158,4 @@ void CSettingsLameFE::OnPresetpath()
 		UpdateData(FALSE);
 	}
 }
+

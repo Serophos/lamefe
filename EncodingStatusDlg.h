@@ -1,5 +1,5 @@
 /*
-** Copyright (C) 2002 Thees Winkler
+** Copyright (C) 2002-2003 Thees Winkler
 **  
 ** Parts of this codes are based on code from CDEx (c) 1999-2002 by Albert L. Faber 
 **

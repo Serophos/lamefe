@@ -1,5 +1,5 @@
 /*
-** Copyright (C) 2002 Thees Winkler
+** Copyright (C) 2002-2003 Thees Winkler
 **  
 ** This program is free software; you can redistribute it and/or modify
 ** it under the terms of the GNU General Public License as published by
@@ -50,7 +50,7 @@ public:
 
 	BOOL PrepareEncoding(CString strFilename, int nNumchannels, int nSamplerate, int nBitspersample);
 	BOOL PrepareMP3(CString strFilename, int nNumchannels, int nSamplerate, int nBitspersample);
-	int  GetEstimatedSize(int nSamplesPerSec, int nChannels, int wBitsperSample, __int64 nFileSize);
+	__int64  GetEstimatedSize(int nSamplesPerSec, int nChannels, int wBitsperSample, __int64 nFileSize);
 	unsigned long GetSamplesToRead();
 
 
@@ -59,7 +59,7 @@ public:
 
 private:
 	MMFILE_ALBUMINFO m_albumInfo;
-	long nEstimatedSize;
+	__int64 nEstimatedSize;
 	CString strOutputDLL;
 	CString wd;
 

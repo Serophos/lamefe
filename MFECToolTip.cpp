@@ -265,7 +265,8 @@ void CMFECToolTip::DisplayInfo( ToolTipInfo* pToolTip )
 
 	for( register UINT i = 0; i < pToolTip->nInfoSize; i++)
 	{
-CString strOut( pToolTip->nControlInfo[ i ] );
+		
+		CString strOut( pToolTip->nControlInfo[ i ] );
 //		pDC->TextOut(nX, nY, pToolTip->nControlInfo[i]);
 		pDC->TabbedTextOut( nX, 
 							nY,
@@ -401,5 +402,6 @@ BOOL CMFECToolTip::RemoveControlInfo( UINT controlID )
 
 	return TRUE;
 }
+
 
 

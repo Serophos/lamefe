@@ -21,7 +21,7 @@
 #include "lamefe.h"
 #include "SettingsCDRipper.h"
 #include "CDRip/CDRip.h"
-#include "Ini.h"
+#include "Settings.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -29,7 +29,7 @@
 static char THIS_FILE[] = __FILE__;
 #endif
 
-extern CString		g_strIniFile;
+extern CSettings g_sSettings;
 
 /////////////////////////////////////////////////////////////////////////////
 // Dialogfeld CSettingsCDRipper 
@@ -109,6 +109,7 @@ void CSettingsCDRipper::Init(CString strWd)
 		m_pToolTip->AddTool(&c_nativeSCSI, IDS_TOOL_NTSCSI);
 		m_pToolTip->AddTool(&c_cdSpeed, IDS_TOOL_CDSPEED);
 		m_pToolTip->AddTool(&c_cue, IDS_TOOL_WRITECUE);
+		m_pToolTip->AddTool(&c_checkNewCD, IDS_TOOL_CHECKNEWCD);
 		m_pToolTip->Activate(TRUE);
 	}
 	
@@ -182,16 +183,13 @@ BOOL CSettingsCDRipper::Save()
 	CR_SaveSettings();
 
 
-	CIni cfg;
-	cfg.SetIniFileName(g_strIniFile);
-
-	cfg.SetValue("CD-ROM", "Lock", c_lockDrive.GetCheck());
-	cfg.SetValue("CD-ROM", "Eject", c_ejectWhenFinished.GetCheck());
-	cfg.SetValue("CD-ROM", "Select", c_select.GetCheck());
-	cfg.SetValue("CD-ROM", "WriteCue", c_cue.GetCheck());
-	cfg.SetValue("CD-ROM", "CheckForNewCD", c_checkNewCD.GetCheck());
-	cfg.SetValue("CD-ROM", "nNumReadBuffers", m_numBuffers);
-
+	g_sSettings.SetLock(c_lockDrive.GetCheck());
+	g_sSettings.SetEject(c_ejectWhenFinished.GetCheck());
+	g_sSettings.SetSelect(c_select.GetCheck());
+	g_sSettings.SetWriteCue(c_cue.GetCheck());
+	g_sSettings.SetCheckForNewCD(c_checkNewCD.GetCheck());
+	g_sSettings.SetNumReadBuffers(m_numBuffers);
+	g_sSettings.Save();
 	return TRUE;
 }
 
@@ -245,15 +243,12 @@ void CSettingsCDRipper::InitControls()
 		m_nativeSCSI = CR_GetTransportLayer();
 	}
 	
-	CIni cfg;
-	cfg.SetIniFileName(g_strIniFile);
-
-	c_ejectWhenFinished.SetCheck(cfg.GetValue("CD-ROM", "Eject", FALSE));
-	c_lockDrive.SetCheck(cfg.GetValue("CD-ROM", "Lock", TRUE));
-	c_select.SetCheck(cfg.GetValue("CD-ROM", "Select", TRUE));
-	c_cue.SetCheck(cfg.GetValue("CD-ROM", "WriteCue", TRUE));
-	c_checkNewCD.SetCheck(cfg.GetValue("CD-ROM", "CheckForNewCD", TRUE));
-	m_numBuffers = cfg.GetValue("CD-ROM", "nNumReadBuffers", 1);
+	c_ejectWhenFinished.SetCheck(g_sSettings.GetEject());
+	c_lockDrive.SetCheck(g_sSettings.GetLock());
+	c_select.SetCheck(g_sSettings.GetSelect());
+	c_cue.SetCheck(g_sSettings.GetWriteCue());
+	c_checkNewCD.SetCheck(g_sSettings.GetCheckForNewCD());
+	m_numBuffers = g_sSettings.GetNumReadBuffers();
 	
 	UpdateData(FALSE);
 }

@@ -30,6 +30,7 @@ static char THIS_FILE[]=__FILE__;
 
 typedef BOOL (PASCAL *GFDPEX )(LPCSTR,PULARGE_INTEGER,PULARGE_INTEGER,PULARGE_INTEGER);
 
+//extern CSettings g_sSettings;
 //enum COMCTL32VERSION {COMCTL32_UNKNOWN, COMCTL32_400, COMCTL32_470, COMCTL32_471};
 
 
@@ -121,9 +122,36 @@ BOOL Utils::CheckCOMTL32Dll()
 DOUBLE Utils::GetMyFreeDiskSpace(CString strPath)
 {
 
-	CString strRootDir;
-	GFDPEX		GetDiskFreeSpaceOSR2=NULL;
+	CString       strRootDir;
+	GFDPEX		  GetDiskFreeSpaceOSR2 = NULL;
+	HINSTANCE     hDLLKernel           = NULL;
+	OSVERSIONINFO osVersionInfo;
 
+	// Set structure size filed of osVersionInfo
+	osVersionInfo.dwOSVersionInfoSize = sizeof(OSVERSIONINFO);
+
+	// Get the actual Version
+	GetVersionEx(&osVersionInfo);
+
+	// Check if is OSR2
+	if (osVersionInfo.dwPlatformId == VER_PLATFORM_WIN32_WINDOWS &&
+			( osVersionInfo.dwBuildNumber & 0xFFFF) > 1000)
+	{
+
+		hDLLKernel = LoadLibrary("kernel32.dll");
+		if (hDLLKernel != NULL)
+		{
+
+			GetDiskFreeSpaceOSR2 = (GFDPEX)GetProcAddress(hDLLKernel, "GetDiskFreeSpaceEx");
+
+			if (GetDiskFreeSpaceOSR2 == NULL)
+			{
+
+				FreeLibrary(hDLLKernel);
+			}
+		}
+	}
+	
 	// Check input parameter
 	if (strPath.IsEmpty())
 	{
@@ -137,7 +165,7 @@ DOUBLE Utils::GetMyFreeDiskSpace(CString strPath)
 	DOUBLE dFreeDiskSpace=0.0;
 
 	// Is this NT or OSR2, then call extented free disk space routine
-	if (GetDiskFreeSpaceOSR2!=NULL)
+	if (GetDiskFreeSpaceOSR2 != NULL)
 	{
 		ULARGE_INTEGER	FreeBytes; 
 		ULARGE_INTEGER	TotalNumberOfBytes;
@@ -169,6 +197,12 @@ DOUBLE Utils::GetMyFreeDiskSpace(CString strPath)
 
 	// Get the free disc space as you already do.
 	}
+
+	if(hDLLKernel != NULL){
+
+		FreeLibrary(hDLLKernel);
+	}
+
 	return dFreeDiskSpace;
 }
 
@@ -412,4 +446,42 @@ BOOL Utils::CopyTxtFile(CString strSource, CString strDest)
 	END_CATCH
 
 	return bReturn;
+}
+
+BOOL Utils::IsWindowsNT()
+{
+
+	OSVERSIONINFO osVersionInfo;
+
+	// Set structure size filed of osVersionInfo
+	osVersionInfo.dwOSVersionInfoSize = sizeof(OSVERSIONINFO);
+
+	// Get the actual Version
+	GetVersionEx(&osVersionInfo);
+
+	return (osVersionInfo.dwPlatformId == VER_PLATFORM_WIN32_NT);
+}
+
+
+INT QueryModuleDebugLevel( const CString& strModule )
+{
+	int nReturn = 0;
+
+	CString strWd;
+	TCHAR	szBuffer[_MAX_PATH]; 
+	VERIFY(::GetModuleFileName(AfxGetInstanceHandle(), szBuffer, _MAX_PATH));
+	
+	strWd = szBuffer;
+	strWd = strWd.Left(strWd.ReverseFind('\\'));
+	
+
+	// Get the debug level for the specified module
+	// from the CDex.ini file in the Debug section
+	nReturn = ::GetPrivateProfileInt("Debug",
+										strModule,
+										0,
+										strWd  + "\\LameFE.ini");
+
+	return nReturn;
+
 }

@@ -589,7 +589,7 @@ CString CCDDB::GetErrorMessage() const
   if (m_dwLastError)
   {
     TCHAR sMessage[129];
-    mciGetErrorString(m_dwLastError, sMessage, 128);
+    //mciGetErrorString(m_dwLastError, sMessage, 128);
     sError = sMessage;
   }
   else

@@ -20,7 +20,7 @@
 #include "stdafx.h"
 #include "PresetBar.h"
 #include "resource.h"
-#include "Ini.h"
+#include "Settings.h"
 
 #ifdef _DEBUG
 #undef THIS_FILE
@@ -32,7 +32,7 @@ static char THIS_FILE[]=__FILE__;
 // Konstruktion/Destruktion
 //////////////////////////////////////////////////////////////////////
 
-extern CString		g_strIniFile;
+extern CSettings g_sSettings;
 
 CPresetBar::CPresetBar()
 {

@@ -37,7 +37,6 @@ public:
 	BOOL WriteToDisc(CString wd, CString strExtension, BOOL bInternal, BOOL bAlbumMode);
 private:
 	CString GetFilename(CString wdir);
-	CString GetValue(CString val);
 	BOOL m_bAlerted;
 	CCompactDisc *m_cd;
 	CMMFArray *m_mmf;

@@ -72,6 +72,8 @@ void CCheckNewVersion::OnOK()
 	CWaitCursor			wc;
 	CInternetSession	is;
 	CString				strTmp;
+	
+	m_strChangeLog.Empty();
 
 	try{
 

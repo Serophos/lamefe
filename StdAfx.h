@@ -13,10 +13,6 @@
 #define VC_EXTRALEAN		// Selten verwendete Teile der Windows-Header nicht einbinden
 #define OEMRESOURCE
 
-// Using ComCtl32 Version 6 in an Application That Uses Extensions, 
-// Plug-ins, or a DLL That Is Brought into a Process
-// #define ISOLATION_AWARE_ENABLED  
-
 
 #include <afxwin.h>         // MFC-Kern- und -Standardkomponenten
 #include <afxext.h>         // MFC-Erweiterungen
@@ -29,17 +25,18 @@
 #include <ATLCONV.H>
 #include <afxtempl.h>
 #include <afxmt.h>
-#include <htmlhelp.h>
-#include <afxsock.h>        // MFC socket support
 #include <commctrl.h>
 #include <mmsystem.h>
+#include <afxsock.h>        // MFC socket support
+#include <htmlhelp.h>		// HTML Help support
+
 
 #ifdef _DEBUG
 # define STR_VERSION		"LameFE Debug"
 # define STR_VERSION_DLG	STR_VERSION
 #else
-# define STR_VERSION		"LameFE 2.2rc2"
-# define STR_VERSION_DLG	"LameFE 2.2 Release Candidate 2"
+# define STR_VERSION		"LameFE 2.2.1"
+# define STR_VERSION_DLG	"LameFE 2.2.1"
 #endif
 
 //{{AFX_INSERT_LOCATION}}

@@ -1,5 +1,5 @@
 /*
-** Copyright (C) 2002 Thees Winkler
+** Copyright (C) 2002-2003 Thees Winkler
 **  
 ** Parts of this codes are based on code from CDEx (c) 1999-2002 by Albert L. Faber 
 ** These code segments are marked with an enclosing // (c) A.L. Faber //
@@ -24,7 +24,7 @@
 #include "CompactDisk.h"
 #include "CDRip/CDRip.h"
 #include "Utils.h"
-#include "Ini.h"
+#include "Settings.h"
 #include <math.h>
 
 #ifdef _DEBUG
@@ -35,7 +35,8 @@ static char THIS_FILE[]=__FILE__;
 
 #pragma pack(push,1)
 
-extern CString		g_strIniFile;
+
+extern CSettings g_sSettings;
 
 enum CDTEXT_PACK_TYPE
 {
@@ -493,19 +494,17 @@ BOOL CCompactDisc::ReadCDText()
 CString CCompactDisc::GetAlbumString(CString wdir, CString ext, BOOL bAppendDiscID)
 {
 
-	CIni cfg;
-	cfg.SetIniFileName(g_strIniFile);
 
 	CString strPath, strSaveAs, strFormat;
 
-	strPath = cfg.GetValue("FileNames", "BasePath", wdir + "\\Output");
+	strPath = g_sSettings.GetBasePath();
 
 	if(strPath.IsEmpty()){
 
 		strPath = wdir;
 	}
 
-	strFormat = (LPCSTR)cfg.GetValue("FileNames", "AlbumFilename", "%1\\%1 - %3 (Complete Album)");
+	strFormat = g_sSettings.GetAlbumFilename();
 
 	if(bAppendDiscID){
 
@@ -551,24 +550,22 @@ CString CCompactDisc::GetAlbumString(CString wdir, CString ext, BOOL bAppendDisc
 CString CCompactDisc::GetSaveAs(int nTrack, CString wd, CString ext, BOOL bAppendDiscID)
 {
 
-	CIni cfg;
-	cfg.SetIniFileName(g_strIniFile);
 
 	nTrack--;	// nTrack is not zero-index-based so decrease nTrack
 	CString strPath, strSaveAs, strFormat;
-	strPath = cfg.GetValue("FileNames", "BasePath", wd + "\\Output");
+	strPath = g_sSettings.GetBasePath();
 
 	if(strPath.IsEmpty()){
 
 		strPath = wd;
 	}
-	if(!(GetCDTrack(nTrack)->GetRename() && cfg.GetValue("FileNames", "RenameFiles", TRUE))){
+	if(!GetCDTrack(nTrack)->GetRename() && !g_sSettings.GetRenameFiles()){
 		
 		strSaveAs = strPath + "\\" + GetCDTrack(nTrack)->GetTrackname() + ext;
 		return strSaveAs;
 	}
 
-	strFormat = (LPCSTR)cfg.GetValue("FileNames", "Filename", "%1\\%3\\%1 - %a - %2");
+	strFormat = g_sSettings.GetFilename();
 
 	if(bAppendDiscID){
 

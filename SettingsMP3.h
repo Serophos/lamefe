@@ -88,8 +88,8 @@ protected:
 	virtual void FillOutSampleRateCtrl();
 	virtual int  GetMinBitrate();
 	virtual int  GetMaxBitrate();
-	virtual void SetMinBitrate(int nBitrate);
-	virtual void SetMaxBitrate(int nBitrate);
+	virtual void SetMinBitrate(unsigned int nBitrate);
+	virtual void SetMaxBitrate(unsigned int nBitrate);
 	CMFECToolTip	m_mToolTip;
 	BEVERSION beVersion;
 

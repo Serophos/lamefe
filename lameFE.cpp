@@ -1,5 +1,5 @@
 /*
-** Copyright (C) 2002 Thees Winkler
+** Copyright (C) 2002-2003 Thees Winkler
 **  
 ** This program is free software; you can redistribute it and/or modify
 ** it under the terms of the GNU General Public License as published by
@@ -24,7 +24,7 @@
 #include "lameFEView.h"
 #include "lameFESplash.h"
 #include "cdrip\cdrip.h"
-#include "Ini.h"
+#include "Settings.h"
 #include "Utils.h"
 
 #pragma comment(linker, "/delayload:CDRip.dll")
@@ -35,9 +35,8 @@
 static char THIS_FILE[] = __FILE__;
 #endif
 
+CSettings g_sSettings;
 
-CString		g_strIniFile	= "";
-CString		g_strWorkingDir = "";
 
 /////////////////////////////////////////////////////////////////////////////
 // CLameFEApp
@@ -73,54 +72,9 @@ CLameFEApp theApp;
 
 BOOL CLameFEApp::InitInstance()
 {
-	AfxEnableControlContainer();
 
-	// Standardinitialisierung
-	// Wenn Sie diese Funktionen nicht nutzen und die Grˆﬂe Ihrer fertigen 
-	//  ausf¸hrbaren Datei reduzieren wollen, sollten Sie die nachfolgenden
-	//  spezifischen Initialisierungsroutinen, die Sie nicht benˆtigen, entfernen.
-
-#ifdef _AFXDLL
-	Enable3dControls();			// Diese Funktion bei Verwendung von MFC in gemeinsam genutzten DLLs aufrufen
-#else
-	Enable3dControlsStatic();	// Diese Funktion bei statischen MFC-Anbindungen aufrufen
-#endif
-
-	AfxEnableControlContainer();
+//	m_mtInitializing.Lock();
 	
-	TCHAR	szBuffer[_MAX_PATH]; 
-	VERIFY(::GetModuleFileName(AfxGetInstanceHandle(), szBuffer, _MAX_PATH));
-	
-	g_strWorkingDir = szBuffer;
-	g_strWorkingDir = g_strWorkingDir.Left(g_strWorkingDir.ReverseFind('\\'));
-	
-	g_strIniFile = g_strWorkingDir + "\\LameFE.ini";
-
-	CIni cfg;
-	cfg.SetIniFileName(g_strIniFile);
-
-	if(!Utils::CheckCOMTL32Dll()){  // Version of Common Controls library is too old
-
-		cfg.SetValue("LameFE", "UseHighColBar", FALSE);
-		TRACE("Deactivated highcoloricons as Common Controls library is too old\n");
-	}
-
-	InitCommonControls();
-
-	if(cfg.GetValue("LameFE", "ShowSplash", TRUE)){
-
-		CLameFESplash * pSplashWnd = new CLameFESplash(IDB_SPLASH,2500);
-		pSplashWnd->Create();
-	}
-
-
-	if (!AfxOleInit())
-	{
-		AfxMessageBox("Unable to initialize OLE.\nTerminating application!");
-		return FALSE;
-	}
-	
-
 	HANDLE hEvent; 
 
 	hEvent = ::CreateEvent(NULL, FALSE, TRUE, AfxGetAppName()); 
@@ -133,16 +87,41 @@ BOOL CLameFEApp::InitInstance()
 		return FALSE; 
 	} 
 
+	g_sSettings.Init();
+	g_sSettings.Load();
 
 	m_bRipperOK = InitCDRipper();
+
+	if(g_sSettings.GetShowSplash()){
+
+		CLameFESplash * pSplashWnd = new CLameFESplash(IDB_SPLASH,2500);
+		pSplashWnd->Create();
+	}
+
+	AfxEnableControlContainer();
+
+
+#ifdef _AFXDLL
+	Enable3dControls();			// Diese Funktion bei Verwendung von MFC in gemeinsam genutzten DLLs aufrufen
+#else
+	Enable3dControlsStatic();	// Diese Funktion bei statischen MFC-Anbindungen aufrufen
+#endif
+
+	AfxEnableControlContainer();
 	
+	InitCommonControls();
+
+	if(!Utils::CheckCOMTL32Dll()){  // Version of Common Controls library is too old
+
+		//cfg.SetValue("LameFE", "UseHighColBar", FALSE);
+		g_sSettings.SetUseHighColBar(FALSE);
+		TRACE("Deactivated highcoloricons as Common Controls library is too old\n");
+	}
+
+
 	//SetAutoPlay(!cfg.GetValue("CD-ROM", "DisableAutoPlay", TRUE));
-
-
-	LoadStdProfileSettings(0);  // Standard INI-Dateioptionen laden (einschlieﬂlich MRU)
-
-	// Dokumentvorlagen der Anwendung registrieren. Dokumentvorlagen
-	//  dienen als Verbindung zwischen Dokumenten, Rahmenfenstern und Ansichten.
+	free((void*)m_pszProfileName);
+	m_pszProfileName = _tcsdup(g_sSettings.GetIniFilename());
 
 	CSingleDocTemplate* pDocTemplate;
 	pDocTemplate = new CSingleDocTemplate(
@@ -152,7 +131,6 @@ BOOL CLameFEApp::InitInstance()
 		RUNTIME_CLASS(CLameFEView));
 	AddDocTemplate(pDocTemplate);
 
-	// Befehlszeile parsen, um zu pr¸fen auf Standard-Umgebungsbefehle DDE, Datei offen
 	CCommandLineInfo cmdInfo;
 	ParseCommandLine(cmdInfo);
 
@@ -160,20 +138,159 @@ BOOL CLameFEApp::InitInstance()
 	if (!ProcessShellCommand(cmdInfo))
 		return FALSE;
 
-	CMenu* pMenu = m_pMainWnd->GetMenu();
+/*	CMenu* pMenu = m_pMainWnd->GetMenu();
 	if (pMenu)pMenu->DestroyMenu();
 	HMENU hMenu = ((CMainFrame*) m_pMainWnd)->NewMenu();
 	pMenu = CMenu::FromHandle( hMenu );
 	m_pMainWnd->SetMenu(pMenu);
 	((CMainFrame*)m_pMainWnd)->m_hMenuDefault = hMenu;
-
+*/
 	// Das einzige Fenster ist initialisiert und kann jetzt angezeigt und aktualisiert werden.
 	m_pMainWnd->ShowWindow(SW_SHOW);
 	m_pMainWnd->UpdateWindow();
 
+
 	return TRUE;
 }
 
+BOOL CLameFEApp::InitCDRipper()
+{
+
+	USES_CONVERSION;
+
+	// Windows 98 is shipped with a fucked up ASPI driver
+	// so check and warn if it is so
+	if(!Utils::IsWindowsNT()){
+
+		CString strVersionWNASPI32, strVersionWINASPI, strVersionAPIX, strVersionASPIENUM;
+
+		if(CheckVersion("WNASPI32.DLL", strVersionWNASPI32) &&
+			CheckVersion("WINASPI.DLL", strVersionWINASPI) &&
+			CheckVersion("IOSUBSYS\\APIX.VXD", strVersionAPIX) &&
+			CheckVersion("ASPIENUM.VXD", strVersionASPIENUM)){
+
+			if((strVersionWNASPI32 != strVersionWINASPI) || (strVersionWNASPI32 != strVersionAPIX) ||
+				(strVersionWNASPI32 != strVersionASPIENUM)){
+
+				if(AfxMessageBox(IDS_FAILEDLOADINGASPI, MB_YESNO+MB_ICONSTOP) == IDNO){
+
+					return FALSE;
+				}
+				else{
+
+					WinExec(g_sSettings.GetWorkingDir() + "\\LASPI.exe", SW_SHOW);
+					exit(EXIT_FAILURE);
+				}
+
+			}
+		}
+		else{
+			
+				if(AfxMessageBox(IDS_FAILEDLOADINGASPI, MB_YESNO+MB_ICONSTOP) == IDNO){
+
+					return FALSE;
+				}
+				else{
+
+					WinExec(g_sSettings.GetWorkingDir() + "\\LASPI.exe", SW_SHOW);
+					exit(EXIT_FAILURE);
+				}
+		}
+	}
+
+	
+	CDEX_ERR cResult = CDEX_OK;
+
+	if(m_hCDRipDll){
+
+		CR_DeInit();
+
+		if(::FreeLibrary(m_hCDRipDll) == 0){
+
+			TRACE("::FreeLibrary() == 0\n");
+		}
+
+		m_hCDRipDll = NULL;
+	}
+
+	m_hCDRipDll = LoadLibrary(g_sSettings.GetWorkingDir() + "\\CDRip.dll");
+
+	if(!m_hCDRipDll){
+
+		cResult = CDEX_ERROR;
+	}
+
+	cResult = CR_Init(g_sSettings.GetIniFilename());
+
+	if(cResult != CDEX_OK){  //Error initialisng CD-Ripper
+
+		TRACE("CR_Init failed\n");
+		switch ( cResult )
+		{
+			case CDEX_NATIVEEASPINOTSUPPORTED:
+				AfxMessageBox(IDS_SCSINOTSUPPORTED, MB_OK+MB_ICONSTOP);
+			break;
+			case CDEX_FAILEDTOLOADASPIDRIVERS:
+				//AfxMessageBox(IDS_FAILEDLOADINGASPI, MB_OK+MB_ICONSTOP);
+				if(AfxMessageBox(IDS_FAILEDLOADINGASPI, MB_YESNO+MB_ICONSTOP) == IDYES){
+
+					WinExec(g_sSettings.GetWorkingDir(), SW_SHOW);
+					exit(EXIT_FAILURE);
+				}
+
+			break;
+			case CDEX_FAILEDTOGETASPISTATUS:
+				AfxMessageBox(IDS_FAILEDGETASPISTATUS, MB_OK+MB_ICONSTOP);
+			break;
+			case CDEX_NATIVEEASPISUPPORTEDNOTSELECTED:
+
+				if(AfxMessageBox(IDS_FAILEDGETASPISTATUS,  MB_YESNO) ==  IDYES)
+				{
+					// set native SCSI libaray option
+					CR_SetTransportLayer(TRANSPLAYER_NTSCSI);
+
+					// save settings
+					CR_SaveSettings();
+
+					cResult = CR_Init(g_sSettings.GetIniFilename() + "\\LASPI.exe");				
+				}
+
+			break;
+			case CDEX_NOCDROMDEVICES:
+
+				if (((const int)CR_GetTransportLayer()!= TRANSPLAYER_NTSCSI) && Utils::IsWindowsNT())
+				{
+
+					if(AfxMessageBox( IDS_FAILEDGETASPISTATUS, MB_YESNO) == IDYES)
+					{
+						// set native SCSI libaray option
+						CR_SetTransportLayer( TRANSPLAYER_NTSCSI );
+
+						// save settings
+						CR_SaveSettings();
+
+						cResult = CR_Init(g_sSettings.GetIniFilename());				
+					}
+				}
+			break;
+
+			case CDEX_OK:
+				TRACE("why are we here? h‰‰‰‰\n");
+			break;
+			default:
+				ASSERT( FALSE );
+		}
+	}
+
+
+	return (cResult == CDEX_OK ? TRUE : FALSE);
+}
+
+BOOL CLameFEApp::GetRipperStatus()
+{
+
+	return m_bRipperOK;
+}
 
 /////////////////////////////////////////////////////////////////////////////
 // CAboutDlg-Dialog f¸r Info ¸ber Anwendung
@@ -224,11 +341,6 @@ BEGIN_MESSAGE_MAP(CAboutDlg, CDialog)
 END_MESSAGE_MAP()
 
 
-//************************************************************************
-//	 InitDialog
-//
-//	 	Setup the display rect and start the timer.
-//************************************************************************
 BOOL CAboutDlg::OnInitDialog()
 {
 
@@ -249,165 +361,8 @@ void CLameFEApp::OnAppAbout()
 /////////////////////////////////////////////////////////////////////////////
 // CLameFEApp-Nachrichtenbehandlungsroutinen
 
-/*LONG RegQueryValueEx(
-  HKEY hKey,           // handle to key to query
-  LPTSTR lpValueName,  // address of name of value to query
-  LPDWORD lpReserved,  // reserved
-  LPDWORD lpType,      // address of buffer for value type
-  LPBYTE lpData,       // address of data buffer
-  LPDWORD lpcbData     // address of data buffer size
-);
 
-DWORD disposition;
-LONG result = ::RegCreateKeyEx(mRootArea, mRootSection, 0, NULL, 0, accessMask, NULL, &mActiveSectionKey, &disposition);
-if (result != ERROR_SUCCESS)
-{
-	mRootArea = NULL;
-	mRootSection = _T( "" );
-	mActiveSectionKey = NULL;
-	mActiveSection = _T( "" );
-	mAccess = 0;
-}
-*/
-void CLameFEApp::SetAutoPlay(BOOL bEnable)
-{
 
-/*	BOOL		bIsWindowsNT	= FALSE;
-	HINSTANCE	hKernel32		= NULL;
-	DWORD		value			= 0;
-	DWORD		len				= 0;
-	DWORD		type			= 0;
-	HKEY		hkResult;
-	DWORD		dg_strWorkingDirisposition	= 0;
-
-	hKernel32 = LoadLibrary("kernel32.dll");
-
-	if(hKernel32 != NULL){
-
-		bIsWindowsNT = TRUE;
-	}
-	FreeLibrary(hKernel32);
-
-	if(!bEnable){
-
-		if (bIsWindowsNT)
-		{
-			len = sizeof(value);
-			// "HKEY_LOCAL_MACHINE\\SYSTEM\\CurrentControlSet\\Services\\Cdrom\\AutoRun
-			LONG lResult = ::RegCreateKeyEx(HKEY_LOCAL_MACHINE, 
-				"SYSTEM\\CurrentControlSet\\Services\\Cdrom", 
-				0, NULL, 0, 
-				KEY_ALL_ACCESS, 
-				NULL, 
-				&hkResult, 
-				&dg_strWorkingDirisposition
-			);
-			if(lResult != ERROR_SUCCESS){
-
-				TRACE("1__BUAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
-			}
-			lResult = ::RegQueryValueEx(hkResult, 
-				  "AutoRun",
-				  NULL,
-				  &type,
-				  (unsigned char*)value,
-				  &len
-			);
-
-			if(lResult != ERROR_SUCCESS){
-
-				TRACE("2__BUAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
-			}
-
-			::RegCloseKey(hkResult);
-		}
-		else
-		{
-			// "HKEY_LOCAL_MACHINE\\SOFTWARE\\Classes\\AudioCD\\shell" 
-		}
-	}*/
-}
-
-BOOL CLameFEApp::InitCDRipper()
-{
-
-	USES_CONVERSION;
-
-	CDEX_ERR cResult = CDEX_OK;
-
-	if(m_hCDRipDll){
-
-		CR_DeInit();
-
-		if(::FreeLibrary(m_hCDRipDll) == 0){
-
-			TRACE("::FreeLibrary() == 0\n");
-		}
-
-		m_hCDRipDll = NULL;
-	}
-
-	m_hCDRipDll = LoadLibrary(g_strWorkingDir + "\\CDRip.dll");
-
-	if(!m_hCDRipDll){
-
-		cResult = CDEX_ERROR;
-	}
-
-	cResult = CR_Init(g_strIniFile);
-
-	if(cResult != CDEX_OK){  //Error initialisng CD-Ripper
-
-		TRACE("CR_Init failed\n");
-		switch ( cResult )
-		{
-			case CDEX_NATIVEEASPINOTSUPPORTED:
-				AfxMessageBox(IDS_SCSINOTSUPPORTED, MB_OK+MB_ICONSTOP);
-			break;
-			case CDEX_FAILEDTOLOADASPIDRIVERS:
-				AfxMessageBox(IDS_FAILEDLOADINGASPI, MB_OK+MB_ICONSTOP);
-			break;
-			case CDEX_FAILEDTOGETASPISTATUS:
-				AfxMessageBox(IDS_FAILEDGETASPISTATUS, MB_OK+MB_ICONSTOP);
-			break;
-			case CDEX_NATIVEEASPISUPPORTEDNOTSELECTED:
-				/*
-				AfxMessageBox(IDS_FAILEDASPINOTSELECTED, MB_OK+MB_ICONSTOP);
-				*/
-				if(AfxMessageBox(IDS_FAILEDGETASPISTATUS,  MB_YESNO) ==  IDYES)
-				{
-					// set native SCSI libaray option
-					CR_SetTransportLayer( TRANSPLAYER_NTSCSI );
-
-					// save settings
-					CR_SaveSettings();
-
-					cResult = CR_Init(g_strIniFile);				
-					if (cResult == CDEX_OK)
-					{
-						//g_bRipperPresent = TRUE;
-					}
-				}
-
-			break;
-			case CDEX_ERROR:
-				AfxMessageBox("Error loading library", MB_OK+MB_ICONSTOP);
-				break;
-			case CDEX_OK:
-				TRACE("why are we here? h‰‰‰‰\n");
-			break;
-			default:
-				ASSERT( FALSE );
-		}
-	}
-	return (cResult == CDEX_OK ? TRUE : FALSE);
-}
-
-BOOL CLameFEApp::GetRipperStatus()
-{
-
-	return m_bRipperOK;
-}
 
 int CLameFEApp::ExitInstance() 
 {
@@ -422,3 +377,86 @@ int CLameFEApp::ExitInstance()
 	return CWinApp::ExitInstance();
 }
 
+
+BOOL CLameFEApp::CheckVersion(CString strDll, CString &strVersion)
+{
+
+	BOOL bReturn = FALSE;
+    LPBYTE  lpVersionData; 
+    DWORD   dwLangCharset; 
+	
+	strDll.Insert(0, "\\");
+
+ 	TCHAR lpszModuleName[MAX_PATH + 1] = { '\0',};
+	
+
+	GetSystemDirectory(lpszModuleName,	MAX_PATH);
+	
+	strcat(lpszModuleName, strDll);
+
+	// Get File size
+	CFileStatus rStatus;
+
+	if(!CFile::GetStatus(lpszModuleName, rStatus)){
+
+		return FALSE;
+	}
+
+	DWORD dwHandle;     
+    DWORD dwDataSize = ::GetFileVersionInfoSize(lpszModuleName, &dwHandle); 
+    if ( dwDataSize == 0 ){
+
+        return FALSE;
+	}
+
+    lpVersionData = new BYTE[dwDataSize]; 
+    if(!::GetFileVersionInfo((LPTSTR)lpszModuleName, dwHandle, dwDataSize, (void**)lpVersionData)){
+
+		delete[] lpVersionData; 
+		lpVersionData = NULL;
+		dwLangCharset = 0;
+
+        return FALSE;
+    }
+
+    UINT nQuerySize;
+    DWORD* pTransTable;
+    if (!::VerQueryValue(lpVersionData, "\\VarFileInfo\\Translation",
+                         (void **)&pTransTable, &nQuerySize)){
+
+		delete[] lpVersionData; 
+		lpVersionData = NULL;
+		dwLangCharset = 0;
+
+        return FALSE;
+    }
+
+    // Swap the words to have lang-charset in the correct format
+    dwLangCharset = MAKELONG(HIWORD(pTransTable[0]), LOWORD(pTransTable[0]));
+
+    // Query version information value
+    LPVOID lpData;
+    CString  strBlockName;
+
+    strBlockName.Format(_T("\\StringFileInfo\\%08lx\\%s"), dwLangCharset, "FileVersion");
+
+    if(::VerQueryValue((void **)lpVersionData, strBlockName.GetBuffer(0), &lpData, &nQuerySize)){
+
+        strVersion = (LPCTSTR)lpData;
+	}
+
+    strBlockName.ReleaseBuffer();
+
+	//fVersion = 0.0f;
+	//_stscanf(strVersion, "%f", & fVersion);
+	
+
+
+	bReturn = TRUE;
+
+	delete[] lpVersionData; 
+	lpVersionData = NULL;
+	dwLangCharset = 0;
+
+	return bReturn;
+}

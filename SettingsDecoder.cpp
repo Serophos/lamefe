@@ -5,7 +5,7 @@
 #include "lamefe.h"
 #include "SettingsDecoder.h"
 #include "PathDialog.h"
-#include "Ini.h"
+#include "Settings.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -13,7 +13,7 @@
 static char THIS_FILE[] = __FILE__;
 #endif
 
-extern CString		g_strIniFile;
+extern CSettings g_sSettings;
 
 /////////////////////////////////////////////////////////////////////////////
 // Dialogfeld CSettingsDecoder 
@@ -34,6 +34,7 @@ void CSettingsDecoder::DoDataExchange(CDataExchange* pDX)
 	//{{AFX_DATA_MAP(CSettingsDecoder)
 	DDX_Control(pDX, IDC_DEFAULT_FILE, m_cFile);
 	DDX_Control(pDX, IDC_DEFAULT_CD, m_cCD);
+	DDX_Control(pDX, IDC_REMEMBER_LAST, m_cLastDec);
 	DDX_Text(pDX, IDC_PATH_WINAMP, m_strPath);
 	//}}AFX_DATA_MAP
 }
@@ -44,6 +45,7 @@ BEGIN_MESSAGE_MAP(CSettingsDecoder, CMySettingsPage)
 	ON_BN_CLICKED(IDC_DEFAULT_CD, OnCD)
 	ON_BN_CLICKED(IDC_DEFAULT_FILE, OnFile)
 	ON_BN_CLICKED(IDC_WINAMP_PATH, OnWinampPath)
+	ON_BN_CLICKED(IDC_REMEMBER_LAST, OnRememberLast)
 	//}}AFX_MSG_MAP
 END_MESSAGE_MAP()
 
@@ -56,11 +58,19 @@ void CSettingsDecoder::Init(CString strWd)
 
 	CMySettingsPage::Init(strWd);
 
-	CIni cfg;
-	cfg.SetIniFileName(g_strIniFile);
-	m_cCD.SetCheck(cfg.GetValue("LameFE", "DefaultFromCD", TRUE));
-	m_cFile.SetCheck(!cfg.GetValue("LameFE", "DefaultFromCD", TRUE));
-	m_strPath = cfg.GetValue("LameFE", "WinampPluginPath", m_strWd + "\\Plugins");
+	if(m_pToolTip != NULL){
+
+		m_pToolTip->AddTool(&m_cCD, IDS_TOOL_DEFAULTCD);
+		m_pToolTip->AddTool(&m_cFile, IDS_TOOL_DEFAULTFILE);
+		m_pToolTip->AddTool(&m_cLastDec, IDS_TOOL_LASTDECODER);
+		m_pToolTip->Activate(TRUE);
+	}
+	
+	m_cCD.SetCheck(g_sSettings.GetDefaultFromCD());
+	m_cFile.SetCheck(!g_sSettings.GetDefaultFromCD() && !g_sSettings.GetRememberLastDecoder());
+	m_cLastDec.SetCheck(g_sSettings.GetRememberLastDecoder());
+	m_strPath = g_sSettings.GetWinampPluginPath();
+
 	UpdateData(FALSE);
 }
 
@@ -68,10 +78,10 @@ BOOL CSettingsDecoder::Save()
 {
 
 	UpdateData(TRUE);
-	CIni cfg;
-	cfg.SetIniFileName(g_strIniFile);
-	cfg.SetValue("LameFE", "DefaultFromCD", m_cCD.GetCheck());
-	cfg.SetValue("LameFE", "WinampPluginPath", m_strPath);
+	g_sSettings.SetDefaultFromCD(m_cCD.GetCheck());
+	g_sSettings.SetRememberLastDecoder(m_cLastDec.GetCheck());
+	g_sSettings.SetWinampPluginPath(m_strPath);
+	g_sSettings.Save();
 	return TRUE;
 }
 
@@ -79,12 +89,21 @@ void CSettingsDecoder::OnFile()
 {
 
 	m_cCD.SetCheck(!m_cFile.GetCheck());
+	m_cLastDec.SetCheck(FALSE);
 }
 
 void CSettingsDecoder::OnCD()
 {
 
 	m_cFile.SetCheck(!m_cCD.GetCheck());
+	m_cLastDec.SetCheck(FALSE);
+}
+
+void CSettingsDecoder::OnRememberLast() 
+{
+
+	m_cFile.SetCheck(FALSE);
+	m_cCD.SetCheck(FALSE);
 }
 
 void CSettingsDecoder::OnWinampPath() 
@@ -106,3 +125,4 @@ void CSettingsDecoder::OnWinampPath()
 	}
 	
 }
+

@@ -19,7 +19,7 @@
 #include "stdafx.h"
 #include "stdafx.h"
 #include "PlayList.h"
-#include "Ini.h"
+#include "Settings.h"
 #include "resource.h"
 #include "Utils.h"
 
@@ -29,7 +29,7 @@ static char THIS_FILE[]=__FILE__;
 #define new DEBUG_NEW
 #endif
 
-extern CString		g_strIniFile;
+extern CSettings g_sSettings;
 
 //////////////////////////////////////////////////////////////////////
 // Konstruktion/Destruktion
@@ -97,7 +97,7 @@ BOOL CPlayList::WriteToDisc(CString wd, CString strExtension, BOOL bInternal, BO
  
  				for(int i = 0; i < iCnt; i++){
  			
- 					m3u.WriteString(m_cd->GetSaveAs(m_cd->GetCDTrack(pIndex[0])->m_btTrack, wd, strExtension) + "\n");
+ 					m3u.WriteString(m_cd->GetSaveAs(m_cd->GetCDTrack(pIndex[i])->m_btTrack, wd, strExtension) + "\n");
  				}
  			}
  		}
@@ -128,92 +128,90 @@ BOOL CPlayList::WriteToDisc(CString wd, CString strExtension, BOOL bInternal, BO
  	return TRUE;
 }
 
-CString CPlayList::GetValue(CString val)
- {
- 
- 	CString  tmp = "";
- 	CID3Info *id3 = NULL;
- 
- 	if(m_cd)
- 		id3 = &m_cd->GetCDTrack(0)->m_id3Info;
- 	else
- 		id3 = &m_mmf->GetAt(0)->m_id3Info;
- 
- 	if(val == "%1"){
- 
- 		tmp = id3->GetArtist();
- 	}
- 	if(val == "%2"){
- 
- 		tmp = id3->GetSong();
- 	}
- 	if(val == "%3"){
- 
- 		tmp = id3->GetAlbum();
- 	}
- 	if(val == "%4"){
- 
- 		tmp.Format("%d", id3->GetYear());
- 	}
- 	if(val == "%5"){
- 
- 		tmp = id3->GetGenre();
- 	}
- 	if(val == "%a"){
- 
- 		tmp.Format("%02d", 1);
- 	}
- 	if(val == "%b"){
- 
- 		tmp.Format("%02d", 1);
- 	}
- 	if(val == "%c"){
- 
- 		if(m_cd)
- 			tmp.Format("0x%X", m_cd->GetDiscID());
- 		else
- 			tmp.Format("0x%X", 0);
- 
- 	}
- 	if(val == "%d"){
- 
- 		if(m_cd)
- 			tmp.Format("0x%X", m_cd->GetVolID());
- 		else
- 			tmp.Format("0x%X", 0);
- 	}
- 
- 	tmp.Replace('/', '-');
- 	tmp.Remove('*');
- 	tmp.Remove('?');
- 	tmp.Replace('\"', '\'');
- 	tmp.Replace('<', '(');
- 	tmp.Replace('>', ')');
- 	tmp.Replace('|', '-');
- 	tmp.Remove(':');
- 	tmp.Remove('\\');
- 
- 	return tmp;
- }
+//DEL CString CPlayList::GetValue(CString val)
+//DEL  {
+//DEL  
+//DEL  	CString  tmp = "";
+//DEL  	CID3Info *id3 = NULL;
+//DEL  
+//DEL  	if(m_cd)
+//DEL  		id3 = &m_cd->GetCDTrack(0)->m_id3Info;
+//DEL  	else
+//DEL  		id3 = &m_mmf->GetAt(0)->m_id3Info;
+//DEL  
+//DEL  	if(val == "%1"){
+//DEL  
+//DEL  		tmp = id3->GetArtist();
+//DEL  	}
+//DEL  	if(val == "%2"){
+//DEL  
+//DEL  		tmp = id3->GetSong();
+//DEL  	}
+//DEL  	if(val == "%3"){
+//DEL  
+//DEL  		tmp = id3->GetAlbum();
+//DEL  	}
+//DEL  	if(val == "%4"){
+//DEL  
+//DEL  		tmp.Format("%d", id3->GetYear());
+//DEL  	}
+//DEL  	if(val == "%5"){
+//DEL  
+//DEL  		tmp = id3->GetGenre();
+//DEL  	}
+//DEL  	if(val == "%a"){
+//DEL  
+//DEL  		tmp.Format("%02d", 1);
+//DEL  	}
+//DEL  	if(val == "%b"){
+//DEL  
+//DEL  		tmp.Format("%02d", 1);
+//DEL  	}
+//DEL  	if(val == "%c"){
+//DEL  
+//DEL  		if(m_cd)
+//DEL  			tmp.Format("0x%X", m_cd->GetDiscID());
+//DEL  		else
+//DEL  			tmp.Format("0x%X", 0);
+//DEL  
+//DEL  	}
+//DEL  	if(val == "%d"){
+//DEL  
+//DEL  		if(m_cd)
+//DEL  			tmp.Format("0x%X", m_cd->GetVolID());
+//DEL  		else
+//DEL  			tmp.Format("0x%X", 0);
+//DEL  	}
+//DEL  
+//DEL  	tmp.Replace('/', '-');
+//DEL  	tmp.Remove('*');
+//DEL  	tmp.Remove('?');
+//DEL  	tmp.Replace('\"', '\'');
+//DEL  	tmp.Replace('<', '(');
+//DEL  	tmp.Replace('>', ')');
+//DEL  	tmp.Replace('|', '-');
+//DEL  	tmp.Remove(':');
+//DEL  	tmp.Remove('\\');
+//DEL  
+//DEL  	return tmp;
+//DEL  }
 
  CString CPlayList::GetFilename(CString wdir)
  {
  
- 	CIni cfg;
- 	cfg.SetIniFileName(wdir + "\\LameFE.ini");
- 
+
  
  	CString strPath, strSaveAs, strFormat;
  	CString ext = ".m3u";
  
- 	strPath = cfg.GetValue("FileNames", "BasePath", wdir + "Output");
+ 	strPath = g_sSettings.GetBasePath();
  
  	if(strPath.IsEmpty()){
  
  		strPath = wdir;
  	}
  
- 	strFormat = cfg.GetValue("FileNames", "Playlistname", "%1\\%1 - \\%2 (Playlist)");
+ 	strFormat = g_sSettings.GetPlaylistFilename();
  
  	CString tmp;
 	

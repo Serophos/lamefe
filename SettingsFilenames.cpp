@@ -20,7 +20,7 @@
 #include "stdafx.h"
 #include "lamefe.h"
 #include "SettingsFilenames.h"
-#include "Ini.h"
+#include "Settings.h"
 #include "PathDialog.h"
 
 #ifdef _DEBUG
@@ -31,8 +31,8 @@ static char THIS_FILE[] = __FILE__;
 
 /////////////////////////////////////////////////////////////////////////////
 // Dialogfeld CSettingsFilenames 
-extern CString		g_strIniFile;
 
+extern CSettings g_sSettings;
 
 CSettingsFilenames::CSettingsFilenames(CWnd* pParent /*=NULL*/)
 	: CMySettingsPage(CSettingsFilenames::IDD, pParent)
@@ -209,14 +209,12 @@ void CSettingsFilenames::Init(CString strWd)
 	
 	CMySettingsPage::Init(strWd);
 
-	CIni cfg;
-	cfg.SetIniFileName(g_strIniFile);
 
-	m_strFilename	= cfg.GetValue("FileNames", "Filename", "%1\\%3\\%1 - %a - %2");
-	m_strAlbumMode	= cfg.GetValue("FileNames", "AlbumFilename", "%1\\%1 - %3 (Complete Album)");
-	m_strPlaylist	= cfg.GetValue("FileNames", "Playlistname", "%1\\%1 - %3 (Playlist)");
-	m_strOutputPath = cfg.GetValue("FileNames", "BasePath", m_strWd + "\\Output");
-	m_bRename		= cfg.GetValue("FileNames", "RenameFiles", TRUE);
+	m_strFilename	= g_sSettings.GetFilename();
+	m_strAlbumMode	= g_sSettings.GetAlbumFilename();
+	m_strPlaylist	= g_sSettings.GetPlaylistFilename();
+	m_strOutputPath = g_sSettings.GetBasePath();
+	m_bRename		= g_sSettings.GetRenameFiles();
 	
 	CreatePreview(m_strAlbumMode, m_strAlbumPrev);
 	CreatePreview(m_strFilename, m_strFilenamePrev);
@@ -244,9 +242,7 @@ BOOL CSettingsFilenames::Save()
 
 	UpdateData(TRUE);
 
-	CIni cfg;
-	cfg.SetIniFileName(g_strIniFile);
-	
+
 	if((!m_strFilename.GetLength() && m_bRename)){
 
 		AfxMessageBox("Filename Format String is empty!", MB_ICONSTOP+MB_OK);
@@ -270,11 +266,12 @@ BOOL CSettingsFilenames::Save()
 	CreatePreview(m_strFilename, m_strFilenamePrev);
 	CreatePreview(m_strAlbumMode, m_strAlbumPrev);
 
-	cfg.SetValue("FileNames", "BasePath", m_strOutputPath);
-	cfg.SetValue("FileNames", "Filename", m_strFilename);
-	cfg.SetValue("FileNames", "AlbumFilename", m_strAlbumMode);
-	cfg.SetValue("FileNames", "Playlistname", m_strPlaylist);
-	cfg.SetValue("FileNames", "RenameFiles", m_bRename);
+	g_sSettings.SetBasePath(m_strOutputPath);
+	g_sSettings.SetFilename(m_strFilename);
+	g_sSettings.SetAlbumFilename(m_strAlbumMode);
+	g_sSettings.SetPlaylistFilename(m_strPlaylist);
+	g_sSettings.SetRenameFiles(m_bRename);
+	g_sSettings.Save();
 
 	return TRUE;
 }

@@ -24,6 +24,7 @@ public:
 	enum { IDD = IDD_SETTINGS_DECODER };
 	CButton	 m_cFile;
 	CButton  m_cCD;
+	CButton  m_cLastDec;
 	CString	m_strPath;
 	//}}AFX_DATA
 
@@ -43,6 +44,7 @@ protected:
 	afx_msg void OnCD();
 	afx_msg void OnFile();
 	afx_msg void OnWinampPath();
+	afx_msg void OnRememberLast();
 	//}}AFX_MSG
 	DECLARE_MESSAGE_MAP()
 };

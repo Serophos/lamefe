@@ -102,7 +102,7 @@ LF_IN lameFEInModule = {
 	configure,
 	about,
 	NULL,
-	NULL,
+	NULL
 };
 
 

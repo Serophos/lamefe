@@ -20,7 +20,7 @@
 #include "stdafx.h"
 #include "lamefe.h"
 #include "SettingsLookNFeel.h"
-#include "Ini.h"
+#include "Settings.h"
 #include "Utils.h"
 
 #ifdef _DEBUG
@@ -30,7 +30,7 @@ static char THIS_FILE[] = __FILE__;
 #endif
 
 
-extern CString		g_strIniFile;
+extern CSettings g_sSettings;
 
 /////////////////////////////////////////////////////////////////////////////
 // Dialogfeld CSettingsLookNFeel 
@@ -79,29 +79,30 @@ void CSettingsLookNFeel::Init(CString strWd)
 
 	CMySettingsPage::Init(strWd);
 
-	CIni cfg;
-	cfg.SetIniFileName(g_strIniFile);
-	c_silent.SetCheck(cfg.GetValue("LameFE", "SilentMode", FALSE));
-	c_readCDPlayerIni.SetCheck(cfg.GetValue("LameFE", "ReadCDPlayer.ini", TRUE));
-	c_writeCDPlayerIni.SetCheck(cfg.GetValue("LameFE", "WriteCDPlayer.ini", TRUE));
-	c_cdTextRead.SetCheck(cfg.GetValue("LameFE", "ReadCDText",FALSE));
-	c_saveWinPos.SetCheck(cfg.GetValue("LameFE", "SaveWinPos", TRUE));
-	c_highColBar.SetCheck(cfg.GetValue("LameFE", "UseHighColBar", TRUE));
-	c_showSplash.SetCheck(cfg.GetValue("LameFE", "ShowSplash", TRUE));
-	c_showAlbumEditor.SetCheck(cfg.GetValue("LameFE", "ShowAlbumEditor", FALSE));
-	c_teditOnFile.SetCheck(cfg.GetValue("LameFE", "ShowAlbumEditoOnFile", FALSE));
-	c_hideMainWnd.SetCheck(cfg.GetValue("LameFE", "HideMainWnd", TRUE));
-	c_rememberEncoder.SetCheck(cfg.GetValue("LameFE", "RememberEncoder", TRUE));
+	c_silent.SetCheck(g_sSettings.GetSilentMode());
+	c_readCDPlayerIni.SetCheck(g_sSettings.GetReadCDPlayerIni());
+	c_writeCDPlayerIni.SetCheck(g_sSettings.GetWriteCDPlayerIni());
+	c_cdTextRead.SetCheck(g_sSettings.GetReadCDTex());
+	c_saveWinPos.SetCheck(g_sSettings.GetSaveWinPos());
+	c_highColBar.SetCheck(g_sSettings.GetUseHighColBar());
+	c_showSplash.SetCheck(g_sSettings.GetShowSplash());
+	c_showAlbumEditor.SetCheck(g_sSettings.GetShowAlbumEditor());
+	c_teditOnFile.SetCheck(g_sSettings.GetShowAlbumEditorOnFile());
+	c_hideMainWnd.SetCheck(g_sSettings.GetHideMainWnd());
+	c_rememberEncoder.SetCheck(g_sSettings.GetRememberEncoder());
 	if(m_pToolTip != NULL){
 
 		m_pToolTip->AddTool(&c_readCDPlayerIni, IDS_TOOL_READCDPINI);
 		m_pToolTip->AddTool(&c_writeCDPlayerIni, IDS_TOOL_WRITECDPINI);
+		m_pToolTip->AddTool(&c_silent, IDS_TOOL_SILENT);
 		m_pToolTip->AddTool(&c_cdTextRead, IDS_TOOL_CDTEXTREAD);
 		m_pToolTip->AddTool(&c_saveWinPos, IDS_TOOL_SAVEWINPOS);
 		m_pToolTip->AddTool(&c_highColBar, IDS_TOOL_HIGHCOLOR);
 		m_pToolTip->AddTool(&c_showSplash, IDS_TOOL_SHOWSPLASH);
 		m_pToolTip->AddTool(&c_showAlbumEditor, IDS_TOOL_ALWAYSTAGEDIT);
 		m_pToolTip->AddTool(&c_hideMainWnd, IDS_TOOL_HIDEMAINWND);
+		m_pToolTip->AddTool(&c_rememberEncoder, IDS_TOOL_LASTENCODER);
+		m_pToolTip->AddTool(&c_teditOnFile, IDS_TOOL_SHOWID3FILE);
 		m_pToolTip->Activate(TRUE);
 	}
 	UpdateData(FALSE);
@@ -110,19 +111,19 @@ void CSettingsLookNFeel::Init(CString strWd)
 BOOL CSettingsLookNFeel::Save()
 {
 
-	CIni cfg;
-	cfg.SetIniFileName(g_strIniFile);
-	cfg.SetValue("LameFE", "SilentMode", c_silent.GetCheck());
-	cfg.SetValue("LameFE", "ReadCDPlayer.ini", c_readCDPlayerIni.GetCheck());
-	cfg.SetValue("LameFE", "WriteCDPlayer.ini", c_writeCDPlayerIni.GetCheck());
-	cfg.SetValue("LameFE", "ReadCDText", c_cdTextRead.GetCheck());
-	cfg.SetValue("LameFE", "SaveWinPos", c_saveWinPos.GetCheck());
-	cfg.SetValue("LameFE", "UseHighColBar", c_highColBar.GetCheck());
-	cfg.SetValue("LameFE", "ShowSplash", c_showSplash.GetCheck());
-	cfg.SetValue("LameFE", "ShowAlbumEditor", c_showAlbumEditor.GetCheck());
-	cfg.SetValue("LameFE", "ShowAlbumEditoOnFile", c_teditOnFile.GetCheck());
-	cfg.SetValue("LameFE", "HideMainWnd", c_hideMainWnd.GetCheck());
-	cfg.SetValue("LameFE", "RememberEncoder", c_rememberEncoder.GetCheck());
+	g_sSettings.SetSilentMode(c_silent.GetCheck());
+	g_sSettings.SetReadCDPlayerIni(c_readCDPlayerIni.GetCheck());
+	g_sSettings.SetWriteCDPlayerIni(c_writeCDPlayerIni.GetCheck());
+	g_sSettings.SetReadCDTex(c_cdTextRead.GetCheck());
+	g_sSettings.SetSaveWinPos(c_saveWinPos.GetCheck());
+	g_sSettings.SetUseHighColBar(c_highColBar.GetCheck());
+	g_sSettings.SetShowSplash(c_showSplash.GetCheck());
+	g_sSettings.SetShowAlbumEditor(c_showAlbumEditor.GetCheck());
+	g_sSettings.SetShowAlbumEditorOnFile( c_teditOnFile.GetCheck());
+	g_sSettings.SetHideMainWnd(c_hideMainWnd.GetCheck());
+	g_sSettings.SetRememberEncoder(c_rememberEncoder.GetCheck());
+	g_sSettings.Save();
+
 	return TRUE;
 }
 

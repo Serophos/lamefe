@@ -17,7 +17,7 @@
 */
 
 #include "stdafx.h"
-#include "Ini.h"
+#include "Settings.h"
 #include "Encoder.h"
 #include "Resource.h"
 
@@ -63,7 +63,7 @@ extern DWORD MPEGBitrates[3][3][15];
 // Konstruktion/Destruktion
 //////////////////////////////////////////////////////////////////////
 
-extern CString g_strIniFile;
+extern CSettings g_sSettings;
 
 CEncoder::CEncoder(CString wdir)
 {
@@ -141,7 +141,7 @@ BOOL CEncoder::Init()
 		
 		TRACE("Initializing Encoder for Plugin Output\n");
 
-		outputPlugin = new COutPlugin(wd + "\\Plugins\\" + strOutputDLL, g_strIniFile);
+		outputPlugin = new COutPlugin(wd + "\\Plugins\\" + strOutputDLL, g_sSettings.GetIniFilename());
 		
 		if(!outputPlugin->Load()){
 	
@@ -253,26 +253,20 @@ BOOL CEncoder::PrepareMP3(CString strFilename, int nNumchannels, int nSamplerate
 	//////////////////////////////////////////////////////////
 	// Get Preset and Encoder settings
 	//////////////////////////////////////////////////////////
-	CIni cfg;
-//	CString strPreset;
 
-	cfg.SetIniFileName(g_strIniFile);
-//	strPreset = cfg.GetValue("L.A.M.E.", "PresetName", "default");
-//	cfg.SetIniFileName(cfg.GetValue("LameFE", "PresetPath", wd) + "\\" + strPreset + ".ini");
-	
 
 	/////////////////////////////////////////////////////////
 	// Now Init Encoder with proper settings
 	/////////////////////////////////////////////////////////
 
 	// Divide sample rate by two for MPEG2
-	if ((cfg.GetValue("L.A.M.E.", "MpegVer", 0) == 1) && (nSamplerate >= 32000))
+	if ((g_sSettings.GetMpegVer() == 1) && (nSamplerate >= 32000))
 	{
 		m_dResampleRatio = 2.0;
 		nSamplerate = nSamplerate / 2;  // ACHTUNG!!!
 	}
 
-	INT nMode = cfg.GetValue("L.A.M.E.", "Channels", BE_MP3_MODE_STEREO);
+	INT nMode = g_sSettings.GetChannels();
 
 	// mask mode, just to be sure (due to an old hack)
 	nMode&= 0x0F;
@@ -311,7 +305,7 @@ BOOL CEncoder::PrepareMP3(CString strFilename, int nNumchannels, int nSamplerate
 	
 
 	//Basic Encoder Settings
-	int	nCRC		= (BOOL)cfg.GetValue("L.A.M.E.", "Crc", FALSE);
+	int	nCRC		= (BOOL)g_sSettings.GetCrc();
 	int nVBR		= (nCRC>>12)&0x0F;
 	int nVbrMethod	= (nCRC>>16)&0x0F;
 
@@ -319,25 +313,25 @@ BOOL CEncoder::PrepareMP3(CString strFilename, int nNumchannels, int nSamplerate
 	beConfig.format.LHV1.dwSampleRate	= nSamplerate;
 
 	// Set OutputSampleRate 
-	if(cfg.GetValue("L.A.M.E.", "OutSampleRate", 0) == 0){
+	if(g_sSettings.GetOutPutSampleRate() == 0){
 
 		beConfig.format.LHV1.dwReSampleRate = 0;
 	}
 	else{
 
-		beConfig.format.LHV1.dwReSampleRate = MP3SampleRates[cfg.GetValue("L.A.M.E.", "MpegVer", 0)][cfg.GetValue("L.A.M.E.", "OutSampleRate", 1) - 1];
+		beConfig.format.LHV1.dwReSampleRate = MP3SampleRates[g_sSettings.GetMpegVer()][g_sSettings.GetOutPutSampleRate() - 1];
 	}
 	
 	//Number of channels
 	beConfig.format.LHV1.nMode			= nMode;		
 	//CBR bitrate / VBR min bitrate
-	beConfig.format.LHV1.dwBitrate		= (DWORD)FormatBps(cfg.GetValue("L.A.M.E.", "MpegVer", 0), 
-		                                                    cfg.GetValue("L.A.M.E.", "Bitrate", 11));				
+	beConfig.format.LHV1.dwBitrate		= (DWORD)FormatBps(g_sSettings.GetMpegVer(), 
+		                                                    g_sSettings.GetBitrate());				
 	//VBR max bitrate
-	beConfig.format.LHV1.dwMaxBitrate	= (DWORD)FormatBps(cfg.GetValue("L.A.M.E.", "MpegVer", 0),
-		                                                    cfg.GetValue("L.A.M.E.", "MaxBitrate", 13));
+	beConfig.format.LHV1.dwMaxBitrate	= (DWORD)FormatBps(g_sSettings.GetMpegVer(),
+		                                                    g_sSettings.GetMaxBitrate());
 	//Quality preset
-	beConfig.format.LHV1.nPreset		= cfg.GetValue("L.A.M.E.", "QualityPreset", 0);
+	beConfig.format.LHV1.nPreset		= g_sSettings.GetQualityPreset();
 	//MPEG Version. This is for future use and isn't supported by the lame_enc.dll yet
 	beConfig.format.LHV1.dwMpegVersion	= (beConfig.format.LHV1.dwSampleRate>=32000)? MPEG1 : MPEG2;				
 	//Future use
@@ -345,29 +339,29 @@ BOOL CEncoder::PrepareMP3(CString strFilename, int nNumchannels, int nSamplerate
 	beConfig.format.LHV1.dwEmphasis		= 0;	
 	//Bit stream settings
 	beConfig.format.LHV1.bCRC			= nCRC&0x01;			
-	beConfig.format.LHV1.bOriginal		= (BOOL)cfg.GetValue("L.A.M.E.", "Original", FALSE);
-	beConfig.format.LHV1.bCopyright		= (BOOL)cfg.GetValue("L.A.M.E.", "Copyright", FALSE);	
-	beConfig.format.LHV1.bPrivate		= (BOOL)cfg.GetValue("L.A.M.E.", "Private", FALSE);
+	beConfig.format.LHV1.bOriginal		= g_sSettings.GetOriginal();
+	beConfig.format.LHV1.bCopyright		= g_sSettings.GetCopyright();	
+	beConfig.format.LHV1.bPrivate		= g_sSettings.GetPrivate();
 	
 	// allways write the VBR header, even for CBR file
 	beConfig.format.LHV1.bWriteVBRHeader	= TRUE;
 
 	//VBR stuff
-	if(cfg.GetValue("L.A.M.E.", "VbrMethod", 0) != 0){
+	if(g_sSettings.GetVbrMethod() != 0){
 
 		//Enable VBR
 		beConfig.format.LHV1.bEnableVBR		 = TRUE;
-		beConfig.format.LHV1.nVbrMethod		 = (VBRMETHOD)(cfg.GetValue("L.A.M.E.", "VbrMethod", 0) - 1); 
+		beConfig.format.LHV1.nVbrMethod		 = (VBRMETHOD)(g_sSettings.GetVbrMethod() - 1); 
 
 		//Is This ABR?
-		if(cfg.GetValue("L.A.M.E.", "VbrMethod", 0) == 5){
+		if(g_sSettings.GetVbrMethod() == 5){
 			
 			beConfig.format.LHV1.nVBRQuality	 = 0;
-			beConfig.format.LHV1.dwVbrAbr_bps	 = cfg.GetValue("L.A.M.E.", "Abr", 14) * 1000;
+			beConfig.format.LHV1.dwVbrAbr_bps	 = g_sSettings.GetAbr() * 1000;
 		}
 		else{
 
-			beConfig.format.LHV1.nVBRQuality	 = cfg.GetValue("L.A.M.E.", "VbrQuality", 5);
+			beConfig.format.LHV1.nVBRQuality	 = g_sSettings.GetVbrQuality();
 			beConfig.format.LHV1.dwVbrAbr_bps	 = 0;
 		}
 		
@@ -405,7 +399,7 @@ BOOL CEncoder::PrepareMP3(CString strFilename, int nNumchannels, int nSamplerate
 	}
 
 	//alocate mp3 and resampling buffers
-	if((cfg.GetValue("L.A.M.E.", "MpegVer", 0) == 1) && (nSamplerate >= 32000))
+	if((g_sSettings.GetMpegVer() == 1) && (nSamplerate >= 32000))
 	{
 		// Add multiplcation factor for resampling
 		m_dwInBufferSize *= 2;
@@ -429,8 +423,55 @@ BOOL CEncoder::PrepareMP3(CString strFilename, int nNumchannels, int nSamplerate
 		m_dwInBufferSize /= 2;
 	}
 
-	pFileOut = fopen(strFilename, "wb+");
+	pFileOut = _tfopen(strFilename, "wb+");
+	
+	if (pFileOut == NULL){
 
+		return FALSE;  // We failed to open the output file
+	}
+
+	if(g_sSettings.GetId3v2()){
+
+		// Save initial ID3V2 Tag
+		//pFile = _tfopen( strFileName, _T( "wb+" ) );
+		DWORD dwPadSize = 2048;
+
+
+		if ( dwPadSize > 10 )
+		{
+			DWORD	dwTagSize = dwPadSize - 10;
+			char	strHeader[10] = {'\0',};
+			int		i = 0;
+
+			// Tag identification
+			strHeader[0] = 'I';
+			strHeader[1] = 'D';
+			strHeader[2] = '3';
+		
+			// Version number
+			strHeader[3] = 3;
+			strHeader[4] = 0;
+
+			// Clear Flags byte
+			strHeader[5] = 0;
+
+			// Write tag length
+			strHeader[6] = ((dwTagSize >> 21) & 0x7F );
+			strHeader[7] = ((dwTagSize >> 14) & 0x7F );
+			strHeader[8] = ((dwTagSize >>  7) & 0x7F );
+			strHeader[9] = ((dwTagSize      ) & 0x7F );
+
+			// Write header  
+			fwrite(strHeader, sizeof(strHeader), 1, pFileOut);
+
+			// Write padding data
+			for (i=0;i< dwTagSize; i++){
+
+				strHeader[0] = 0;
+				fwrite(strHeader, 1, 1, pFileOut);
+			}
+		}
+	}
 	TRACE("Leaving CEncoder::PrepareMP3()\n");
 	return TRUE;
 }
@@ -441,8 +482,6 @@ BOOL CEncoder::DeInit()
 
 	TRACE("Entering CEncoder::DeInit()\n");
 
-	CIni cfg;
-	cfg.SetIniFileName(g_strIniFile);
 
 	if(strOutputDLL == "lame_enc.dll"){
 
@@ -481,7 +520,7 @@ BOOL CEncoder::DeInit()
 			// Close output file
 
 			// Write the VBR Tag
-			if(cfg.GetValue("L.A.M.E.", "VbrMethod", 0) != 0){
+			if(g_sSettings.GetVbrMethod() != 0){
 
 				//Why the crash :-(
 				beWriteVBRHeader(strFileOut);
@@ -515,7 +554,7 @@ unsigned long CEncoder::GetSamplesToRead()
 
 
 
-int CEncoder::GetEstimatedSize(int nSamplesPerSec, int nChannels, int wBitsPerSample, __int64 nFileSize)
+__int64 CEncoder::GetEstimatedSize(int nSamplesPerSec, int nChannels, int wBitsPerSample, __int64 nFileSize)
 {
 	
 	TRACE("Entering CEncoder::GetEstimatedSize()\n");
@@ -527,7 +566,7 @@ int CEncoder::GetEstimatedSize(int nSamplesPerSec, int nChannels, int wBitsPerSa
 		//The lenght in seconds of the wavefile is
 		__int64 lenght = (nFileSize * 8) / (nSamplesPerSec * nChannels * wBitsPerSample);
 		//The size of the mp3 will be about
-		nEstimatedSize = (int)beConfig.format.LHV1.dwSampleRate / 576 * bytesPerFrame * lenght;
+		nEstimatedSize = beConfig.format.LHV1.dwSampleRate / 576 * bytesPerFrame * lenght;
 	}
 	else{
 

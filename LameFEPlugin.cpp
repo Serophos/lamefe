@@ -19,7 +19,7 @@
 #include "stdafx.h"
 #include "stdafx.h"
 #include "LameFEPlugin.h"
-#include "Ini.h"
+#include "Settings.h"
 
 #ifdef _DEBUG
 #undef THIS_FILE
@@ -27,7 +27,7 @@ static char THIS_FILE[]=__FILE__;
 #define new DEBUG_NEW
 #endif
 
-extern CString		g_strIniFile;
+extern CSettings g_sSettings;
 
 //////////////////////////////////////////////////////////////////////
 // Konstruktion/Destruktion
@@ -174,10 +174,7 @@ int CLameFEPlugin::GetProfileString(const char *entry, char *value, int size, in
 
 	CString strTmp;
 
-	CIni cfg;
-	cfg.SetIniFileName(g_strIniFile);
-	
-	strTmp = cfg.GetValue("Plugins", entry, "");
+	strTmp = g_sSettings.GetPluginValue(entry);
 	strcpy(value, strTmp);
 	//strTmp.ReleaseBuffer();
 	return TRUE;
@@ -188,8 +185,6 @@ int CLameFEPlugin::SetProfileString(const char *entry, const char *value)
 
 	CString strTmp;
 
-	CIni cfg;
-	cfg.SetIniFileName(g_strIniFile);
-	cfg.SetValue("Plugins", entry, value);
+	g_sSettings.SetPluginValue(entry, value);
 	return TRUE;
 }

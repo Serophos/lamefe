@@ -1,9 +1,24 @@
-// MainFrm.cpp : Implementierung der Klasse CMainFrame
-//
+/*
+** Copyright (C) 2002-2003 Thees Winkler
+**  
+** This program is free software; you can redistribute it and/or modify
+** it under the terms of the GNU General Public License as published by
+** the Free Software Foundation; either version 2 of the License, or
+** (at your option) any later version.
+** 
+** This program is distributed in the hope that it will be useful,
+** but WITHOUT ANY WARRANTY; without even the implied warranty of
+** MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+** GNU General Public License for more details.
+** 
+** You should have received a copy of the GNU General Public License
+** along with this program; if not, write to the Free Software 
+** Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+*/
 
 #include "stdafx.h"
 #include "lameFE.h"
-#include "Ini.h"
+#include "Settings.h"
 #include "MainFrm.h"
 #include "Utils.h"
 
@@ -15,7 +30,8 @@ static char THIS_FILE[] = __FILE__;
 
 #pragma comment(lib, "version")
 
-extern CString		g_strIniFile;
+extern CSettings g_sSettings;
+
 
 /////////////////////////////////////////////////////////////////////////////
 // CMainFrame
@@ -30,7 +46,6 @@ BEGIN_MESSAGE_MAP(CMainFrame, CFrameWnd)
 	ON_COMMAND(ID_HELP_LICENSE, OnHelpLicense)
 	ON_COMMAND(ID_VIEW_SHOWTOOLBAR, OnViewShowtoolbar)
 	ON_COMMAND(ID_VIEW_SHOWSTATUSLINE, OnViewShowstatusline)
-	ON_COMMAND(IDS_SHOW_PLAYER, OnShowPlayer)
 	ON_COMMAND(ID_VIEW_SHOWPRESETBAR, OnViewShowPresets)
 	ON_WM_MEASUREITEM()
 	ON_WM_MENUCHAR()
@@ -67,40 +82,19 @@ int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	if (!m_wndToolBar.CreateEx(this, TBSTYLE_FLAT | TBSTYLE_TRANSPARENT ) ||
 		!m_wndToolBar.LoadToolBar(IDR_MAINFRAME))
 	{
-		TRACE0("Symbolleiste konnte nicht erstellt werden\n");
+		TRACE0("Couldnt create toolbar\n");
 		return -1;      // Fehler bei Erstellung
 	}
 	
-	if(!m_wndPlayerBar.CreateEx(this, TBSTYLE_FLAT | TBSTYLE_TRANSPARENT) ||
-		!m_wndPlayerBar.LoadToolBar(IDR_INT_PLAYER)){
-
-		TRACE0("Couldn't create playerbar\n");
-	}
-
 	if(!m_wndPresetBar.Create(this, WS_CHILD | WS_VISIBLE | CBRS_TOP, ID_PRESETBAR))
 	{
 
-		TRACE0("Couldn't create presetbar\n");
+		//TRACE0("Couldn't create presetbar\n");
 	}
 
-/*	if (!m_wndDlgBar.Create(this, IDR_MAINFRAME, 
-		CBRS_ALIGN_TOP, AFX_IDW_DIALOGBAR))
-	{
-		TRACE0("Dialogleiste konnte nicht erstellt werden\n");
-		return -1;		// Fehler bei Erstellung
-	}
-*/
-	TCHAR	szBuffer[_MAX_PATH]; 
-	VERIFY(::GetModuleFileName(AfxGetInstanceHandle(), szBuffer, _MAX_PATH));
-	
-	CString wd = szBuffer;
-	wd = wd.Left(wd.ReverseFind('\\'));
-
-	CIni cfg;
-	cfg.SetIniFileName(g_strIniFile);
 
 	// set high color icons if possible
-	if ((::GetDeviceCaps(GetDC()->m_hDC,BITSPIXEL) > 8) && cfg.GetValue("LameFE", "UseHighColBar", TRUE)) 
+	if ((::GetDeviceCaps(GetDC()->m_hDC,BITSPIXEL) > 8) && g_sSettings.GetUseHighColBar()) 
 	{
 	
 		CImageList	imageList;
@@ -118,7 +112,7 @@ int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
 		// Create and set the disabled toolbar image list.
 		bitmap.LoadMappedBitmap( IDB_TOOLBAR_HI_DEACT );
 		imageList.Create( 32, 32, ILC_COLORDDB|ILC_MASK, 9, 1);
-		imageList.Add(&bitmap, RGB(255,0,255));
+		imageList.Add(&bitmap, RGB(254,2,254));
 		m_wndToolBar.SendMessage( TB_SETDISABLEDIMAGELIST, 0, (LPARAM)imageList.m_hImageList);
 		imageList.Detach();
 		bitmap.Detach();
@@ -126,12 +120,11 @@ int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	}
 	
 	m_wndToolBar.SetBarStyle(m_wndToolBar.GetBarStyle() | CBRS_TOOLTIPS | CBRS_FLYBY | CBRS_SIZE_DYNAMIC);
-	m_wndPlayerBar.SetBarStyle(m_wndPlayerBar.GetBarStyle() | CBRS_TOOLTIPS | CBRS_FLYBY | CBRS_SIZE_DYNAMIC);
+//	m_wndPlayerBar.SetBarStyle(m_wndPlayerBar.GetBarStyle() | CBRS_TOOLTIPS | CBRS_FLYBY | CBRS_SIZE_DYNAMIC);
 	m_wndPresetBar.SetBarStyle(m_wndPresetBar.GetBarStyle() | CBRS_TOOLTIPS | CBRS_FLYBY | CBRS_SIZE_DYNAMIC);
 
 	if (!m_wndReBar.Create(this) ||
 		!m_wndReBar.AddBar(&m_wndToolBar) ||
-		!m_wndReBar.AddBar(&m_wndPlayerBar) ||
 		!m_wndReBar.AddBar(&m_wndPresetBar)
 		)
 	{
@@ -150,7 +143,7 @@ int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
     m_wndStatusBar.SetPaneInfo(1,ID_SEPARATOR,SBPS_NORMAL,250);
 	m_wndStatusBar.SetPaneInfo(0,ID_SEPARATOR,SBPS_STRETCH,100);
 	
-	OnShowPlayer();
+//	OnShowPlayer();
 	return 0;
 }
 
@@ -158,24 +151,13 @@ BOOL CMainFrame::PreCreateWindow(CREATESTRUCT& cs)
 {
 	if( !CFrameWnd::PreCreateWindow(cs) )
 		return FALSE;
-	// ZU ERLEDIGEN: Ändern Sie hier die Fensterklasse oder das Erscheinungsbild, indem Sie
-	//  CREATESTRUCT cs modifizieren.
-	
-	TCHAR	szBuffer[_MAX_PATH]; 
-	VERIFY(::GetModuleFileName(AfxGetInstanceHandle(), szBuffer, _MAX_PATH));
-	
-	CString wd = szBuffer;
-	wd = wd.Left(wd.ReverseFind('\\'));
 
-	CIni cfg;
-	cfg.SetIniFileName(g_strIniFile);
-	
-	if(cfg.GetValue("LameFE", "SaveWinPos", TRUE)){
+	if(g_sSettings.GetSaveWinPos()){
 
-		cs.x	= cfg.GetValue("LameFE", "Window.x", 60);
-		cs.y	= cfg.GetValue("LameFE", "Window.y", 60);
-		cs.cx	= cfg.GetValue("LameFE", "Window.cx", 665);
-		cs.cy	= cfg.GetValue("LameFE", "Window.cy", 520);
+		cs.x	= g_sSettings.GetWindowX();
+		cs.y	= g_sSettings.GetWindowY();
+		cs.cx	= g_sSettings.GetWindowCX();
+		cs.cy	= g_sSettings.GetWindowCY();
 	}
 	else{
 
@@ -251,11 +233,11 @@ void CMainFrame::OnViewShowstatusline()
 	ShowControlBar(&m_wndStatusBar, (m_wndStatusBar.GetStyle() & WS_VISIBLE) == 0,FALSE);
 }
 
-void CMainFrame::OnShowPlayer() 
-{
-
-	ShowControlBar(&m_wndPlayerBar, (m_wndPlayerBar.GetStyle() & WS_VISIBLE) == 0,FALSE);
-}
+//DEL void CMainFrame::OnShowPlayer() 
+//DEL {
+//DEL 
+//DEL 	ShowControlBar(&m_wndPlayerBar, (m_wndPlayerBar.GetStyle() & WS_VISIBLE) == 0,FALSE);
+//DEL }
 
 void CMainFrame::OnViewShowPresets()
 {

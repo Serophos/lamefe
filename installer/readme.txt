@@ -1,58 +1,75 @@
-INTRODUCTION:
+IMPORTANT NOTICES FOR THIS RELEASE:
 ===============================================================
-lameFE is a is utility which can extract Digital Audio (DA) 
-tracks from an Audio CD into files on the hard disk. The 
-extracted audio tracks can be stored as WAV or MP3 (MPEG-1 
-Audio Layer-3) files. lameFE is using the Adaptec's ASPI library 
-Manager to communicate with the CD-ROM device, So make sure 
-that you have installed the proper ASPI drivers (see also the 
-HELP file and the FAQ page!
+· Since LameFE 2.2 Beta 6 the format of the configuration-file
+  has changed. Please do NOT use your old version of the 
+  LameFE.ini for this release if your are upgrading from ver-
+  sions older as LameFE 2.2 Beta 6!
+· If you change the preset directory of LameFE please make
+  sure you copy the preset files (<name>.ini) to this direcotry
+  Before you start LameFE again
+· If you want to use the highcoloricons with Windows 98/ME/2000
+  make sure you have the newest version of the common control
+  library (COMTL32.DLL). Please run Windows Update to upgrade
+  this library or download it form www.windows.com.
+  LameFE requires at least a COMCTL32.DLL verion newer as 5.81
+· On some system you may require an ASPI driver to use LameFE.
+  If you run into any problems using LameFE (Exceptions in
+  CDRip.dll etc.) please install new ASPI drivers. You can 
+  obtain them either on the homepage of your CD-Drive manu-
+  facturer or from lamefe.sourceforge.net
+· CAUTION. This version of LameFE is a NOT the final relase. 
+  Though most parts of the program work just fine, there may 
+  still be some bugs, that may also endager the system-stability.
+  You use the program on your own risk (see also GPL)!
 
+NEW IN VERSIOn 2.2 RC 1:
+===============================================================
+· Support for Winamp plugins
+· Upgraded to Lame 3.93.1
+· Renamed LAME Quality presets to match 
+  names known from LAME.EXE
+· Select default decoder
+· Setup preset path
+· Bugfix: Windows 9x/2000 COMCTL32.DLL load error
+· Bugfix: Wrong settings handling for LAME
+· Bugfix: VBR/ABR encoder initialisiation failes
+· Bugfix: Encoder crash on Mono files
+· Upgraded CDRip.dll to include several bugfixes
+· Other minor changes and bugfixes
 
 SYSTEM REQUIREMENTS:
 ===============================================================
 
-1)	Microsoft Windows 95/98/ME & Windows NT (4.x) / 2000 / XP 
+1)	Microsoft Windows 98/ME & Windows 2000 / XP 
 2)	Adaptec ASPI for Win32 Manager
-3)    DirectX 8 or better to use the internal wave player
-4)	Digital Audio Extracting capable CD drive
-5)	Intel Pentium or compatible processor
-6)    Internet connection to use freed (Cod) feature.
+3)	Digital Audio Extracting capable CD drive
+4)	Intel Pentium or compatible processor
+5)      Internet connection to use freed (Cod) feature.
 
 
 
 KNOWN PROBLEMS:
 ===============================================================
-No known Problems.
+· Ogg/Vorbis Encoder sometimes cut off the last 10 seconds of 
+  file  (this does not affect the original file
 
 Bugs, comments & suggestions:
 ===============================================================
 Bugs, undefined behaviour etc. and suggestions can be forwarded 
 to the author (Thees Winkler). If you have a question, make sure
 that you have READ the HELP file first. If you still have problems,
-you can send me an e-mail at thees@uni.de
-
+you can send me an e-mail at theesw@users.sourceforge.net
+Please attach the error message (with screenshot is prefered :-))
+and a DETAILED description what steps you've done before you ran
+into the error.
 
 
 Warranty & licence:
 ===============================================================
 
-see Help file for GNU license
+This program is distributed under the terms of the GNU General
+Public license. Please refer the file "license.txt" for the
+license text.
 
-
-This distribution of lameFE (ZIP file) should contain the 
-following files:
-===============================================================
-
-tagWriter.dll (library file with id3 tag rendering routines)
-dsiPlayer.dll (library file of the internal wave player)
-lame_enc.dll (MPEG-I Layer 3 encoder)
-CDRip.dll (library file with CD-ripper routines)
-lameFE.exe (The lameFE executable)
-lameFE.cnt (lameFE Help Contents File)
-lameFE.hlp (lameFE Help File)
-Readme.txt (this file)
-lameFE.ini (lame configuration file)
-cddb.cfg (list of freeDB servers)
 
                     ======= ### ======

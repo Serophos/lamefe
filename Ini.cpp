@@ -18,7 +18,7 @@
 
 
 #include "StdAfx.h"
-#include "Ini.h"
+#include "Settings.h"
 
 #ifdef _DEBUG
 #undef THIS_FILE

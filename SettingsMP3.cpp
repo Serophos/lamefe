@@ -4,7 +4,8 @@
 #include "stdafx.h"
 #include "lamefe.h"
 #include "SettingsMP3.h"
-#include "Ini.h"
+#include "Settings.h"
+#include "Utils.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -12,7 +13,7 @@
 static char THIS_FILE[] = __FILE__;
 #endif
 
-extern CString		g_strIniFile;
+extern CSettings g_sSettings;
 
 
 DWORD MPEGBitrates[3][3][15] = 
@@ -133,7 +134,7 @@ void CSettingsMP3::Init(CString strWd)
 	}
 
 	UpdateData(FALSE);
-//	m_cPresetName.EnableAutoCompletion(FALSE);
+
 	//Setup Thread warning
 
 	m_mToolTip.Create(this);
@@ -155,46 +156,48 @@ void CSettingsMP3::Init(CString strWd)
 		m_pToolTip->AddTool(&c_writeId3v2, IDS_TOOL_WRITEID3);
 		m_pToolTip->AddTool(&m_qualityPreset, IDS_TOOL_QUALPRESET);
 		m_pToolTip->AddTool(&m_cThreadPriority, IDS_TOOL_ENCTHREADP);
-
+		m_pToolTip->AddTool(&c_OutSampleRate, IDS_TOOL_MP3OUTSAMPLE);
+		m_pToolTip->AddTool(&c_writeId3v1, IDS_TOOL_ID3V1);
 		m_pToolTip->Activate(TRUE);
 	}
 
 //	InitPresets();
 
-	CIni cfg;
-	cfg.SetIniFileName(g_strIniFile);
 	
-	c_MPEG.SetCurSel(cfg.GetValue("L.A.M.E.", "MpegVer", 0));
+	c_MPEG.SetCurSel(g_sSettings.GetMpegVer());
 	OnSelendokMpeg() ;
 
-	m_qualityPreset.SetCurSel(cfg.GetValue("L.A.M.E.", "QualityPreset", 0));
+	m_qualityPreset.SetCurSel(g_sSettings.GetQualityPreset());
 	OnSelchangeQuality();
 
-	c_OutSampleRate.SetCurSel(cfg.GetValue("L.A.M.E.", "OutSampleRate", 0));
-	c_bitsPerSample.SetCurSel(cfg.GetValue("L.A.M.E.", "Bitrate", 14));
-	c_maxBitrate.SetCurSel(cfg.GetValue("L.A.M.E.", "MaxBitrate", 16));
-	c_checkSum.SetCheck(cfg.GetValue("L.A.M.E.", "Crc", FALSE));
-	c_copyright.SetCheck(cfg.GetValue("L.A.M.E.", "Copyright", FALSE));
-	c_original.SetCheck(cfg.GetValue("L.A.M.E.", "Original", FALSE));
-	c_private.SetCheck(cfg.GetValue("L.A.M.E.", "Private", FALSE));
-	c_writeId3v2.SetCheck(cfg.GetValue("L.A.M.E.", "Id3v2", TRUE));
-	c_vbrMethod.SetCurSel(cfg.GetValue("L.A.M.E.", "VbrMethod", 0));
-	m_abr = cfg.GetValue("L.A.M.E.", "Abr", 15);
-	c_writeId3v1.SetCheck(cfg.GetValue("L.A.M.E.", "Id3v1", FALSE));
-	m_cThreadPriority.SetCurSel(cfg.GetValue("L.A.M.E.", "ThreadPriority", 3));
-	m_nMode = cfg.GetValue("L.A.M.E.", "Channels", 0);
-	c_vbrQuality.SetCurSel(cfg.GetValue("L.A.M.E.", "VbrQuality", 5));
-//	m_strDescription = cfg.GetValue("L.A.M.E.", "Description", "");
+	c_OutSampleRate.SetCurSel(g_sSettings.GetOutPutSampleRate());
+	c_bitsPerSample.SetCurSel(g_sSettings.GetBitrate());
+	c_maxBitrate.SetCurSel(g_sSettings.GetMaxBitrate());
+	c_checkSum.SetCheck(g_sSettings.GetCrc());
+	c_copyright.SetCheck(g_sSettings.GetCopyright());
+	c_original.SetCheck(g_sSettings.GetOriginal());
+	c_private.SetCheck(g_sSettings.GetPrivate());
+	c_writeId3v2.SetCheck(g_sSettings.GetId3v2());
+	c_vbrMethod.SetCurSel(g_sSettings.GetVbrMethod());
+	m_abr = g_sSettings.GetAbr();
+	c_writeId3v1.SetCheck(g_sSettings.GetId3v1());
+	m_nMode = g_sSettings.GetChannels();
+	c_vbrQuality.SetCurSel(g_sSettings.GetVbrMethod());
 
-/*	LoadPreset(strPreset);
-
-	int nIndex = m_cPresetName.FindStringExact(0, strPreset);
-
-//	m_cPresetName.SetCurSel(nIndex);
-//	m_cPresetName.GetLBText(nIndex, m_strPresetName);
-*/
 	OnSelchangeVbrMethod();
 	OnSelchangeQuality();
+
+	if(Utils::IsWindowsNT()){
+
+		m_cThreadPriority.SetCurSel(g_sSettings.GetThreadPriority());
+	}
+	else{
+
+		m_cThreadPriority.SetCurSel(2);
+		g_sSettings.SetThreadPriority(2);
+		m_cThreadPriority.EnableWindow(FALSE);
+	}
+	
 	UpdateData(FALSE);
 }
 
@@ -206,46 +209,25 @@ BOOL CSettingsMP3::Save()
 		return FALSE;
 	}
 	
-/*	CString strTmp = m_strPresetName;
-	strTmp.MakeLower();
-
-	if((m_strPresetName.GetLength() == 0) || (strTmp == "lamefe")){
-
-		AfxMessageBox(IDS_PRESET_BLANKNAME, MB_OK+MB_ICONINFORMATION);
-		return FALSE;
-	}
-*/
-	CIni cfg;
-	cfg.SetIniFileName(g_strIniFile);
-	//cfg.SetValue("L.A.M.E.", "PresetName", m_strPresetName);
-
-
-	//cfg.SetIniFileName(cfg.GetValue("LameFE", "PresetPath", m_strWd) + "\\" + m_strPresetName + ".ini");
 	
-	cfg.SetValue("L.A.M.E.", "OutSampleRate", c_OutSampleRate.GetCurSel());
-	//cfg.SetValue("L.A.M.E.", "Description", m_strDescription);
-	cfg.SetValue("L.A.M.E.", "Bitrate", c_bitsPerSample.GetCurSel());
-	cfg.SetValue("L.A.M.E.", "Channels", c_channels.GetCurSel());
-	cfg.SetValue("L.A.M.E.", "Crc", c_checkSum.GetCheck());
-	cfg.SetValue("L.A.M.E.", "Copyright", c_copyright.GetCheck());
-	cfg.SetValue("L.A.M.E.", "Original", c_original.GetCheck());
-	cfg.SetValue("L.A.M.E.", "Private", c_private.GetCheck());
-	cfg.SetValue("L.A.M.E.", "MaxBitrate", c_maxBitrate.GetCurSel());
-	cfg.SetValue("L.A.M.E.", "QualityPreset", m_qualityPreset.GetCurSel());
-	cfg.SetValue("L.A.M.E.", "VbrMethod", c_vbrMethod.GetCurSel());
-	cfg.SetValue("L.A.M.E.", "VbrQuality", c_vbrQuality.GetCurSel());
-	cfg.SetValue("L.A.M.E.", "MpegVer", c_MPEG.GetCurSel());
-	cfg.SetValue("L.A.M.E.", "Abr", m_abr);
-	cfg.SetValue("L.A.M.E.", "Id3v1", c_writeId3v1.GetCheck());
-	cfg.SetValue("L.A.M.E.", "Id3v2", c_writeId3v2.GetCheck());
-	cfg.SetValue("L.A.M.E.", "ThreadPriority", m_cThreadPriority.GetCurSel());
+	g_sSettings.SetOutPutSampleRate(c_OutSampleRate.GetCurSel());
+	g_sSettings.SetBitrate(c_bitsPerSample.GetCurSel());
+	g_sSettings.SetChannels(c_channels.GetCurSel());
+	g_sSettings.SetCrc(c_checkSum.GetCheck());
+	g_sSettings.SetCopyright(c_copyright.GetCheck());
+	g_sSettings.SetOriginal(c_original.GetCheck());
+	g_sSettings.SetPrivate(c_private.GetCheck());
+	g_sSettings.SetMaxBitrate(c_maxBitrate.GetCurSel());
+	g_sSettings.SetQualityPreset(m_qualityPreset.GetCurSel());
+	g_sSettings.SetVbrMethod(c_vbrMethod.GetCurSel());
+	g_sSettings.SetVbrQuality(c_vbrQuality.GetCurSel());
+	g_sSettings.SetMpegVer(c_MPEG.GetCurSel());
+	g_sSettings.SetAbr(m_abr);
+	g_sSettings.SetId3v1(c_writeId3v1.GetCheck());
+	g_sSettings.SetId3v2(c_writeId3v2.GetCheck());
+	g_sSettings.SetThreadPriority(m_cThreadPriority.GetCurSel());
+	g_sSettings.Save();
 
-	/*
-	if(!m_cPresetName.FindString(0, m_strPresetName)){
-		
-		m_cPresetName.AddString(m_strPresetName);
-	}
-*/
 	return TRUE;
 }
 
@@ -430,133 +412,6 @@ void CSettingsMP3::OnSetfocusThreadpriority()
 	m_mToolTip.ShowToolTip(IDC_THREADPRIORITY);
 }
 
-/*
-void CSettingsMP3::OnSavepreset() 
-{
-
-	Save();
-}
-
-
-void CSettingsMP3::OnDelete() 
-{
-
-	if(UpdateData(TRUE) != NULL){
-	
-		if(m_strPresetName == "default"){
-
-			AfxMessageBox(IDS_DEFAULTPRESETNOTREMOVABLE, MB_OK+MB_ICONINFORMATION);
-			return;
-		}
-		TRY{
-
-
-			CIni cfg;
-			cfg.SetIniFileName(g_strIniFile);
-			CFile::Remove(cfg.GetValue("LameFE", "PresetPath", m_strWd) + "\\" + m_strPresetName + ".ini");
-			m_cPresetName.DeleteString(m_cPresetName.FindStringExact(0, m_strPresetName));
-			m_cPresetName.SetCurSel(m_cPresetName.FindStringExact(0, "default"));
-		}
-		CATCH(CFileException, e)
-		{
-			
-			AfxMessageBox(IDS_COULDNOTREMOVEPRESET, MB_OK+MB_ICONEXCLAMATION);
-		}
-		END_CATCH
-	}
-}
-
-void CSettingsMP3::InitPresets()
-{
-
-	CFileFind finder;
-	CString   strPreset;
-
-	CIni cfg;
-	cfg.SetIniFileName(g_strIniFile);
-
-	BOOL bResult = finder.FindFile(cfg.GetValue("LameFE", "PresetPath", m_strWd) + "\\*.ini");
-
-	while(bResult){
-
-		bResult = finder.FindNextFile();
-		
-		strPreset = finder.GetFileName();
-		strPreset.MakeLower();
-		if(strPreset == "lamefe.ini"){
-
-			continue;
-		}
-		strPreset = strPreset.Left(strPreset.GetLength() - 4);
-		m_cPresetName.AddString(strPreset);
-	}
-	
-	int nIndex = m_cPresetName.FindStringExact(0, "default");
-
-	if(nIndex == CB_ERR){
-
-		m_cPresetName.SetCurSel(0);
-		m_cPresetName.GetLBText(0, m_strPresetName);
-	}
-	else{
-
-		m_cPresetName.SetCurSel(nIndex);
-		m_cPresetName.GetLBText(nIndex, m_strPresetName);
-	}
-	
-
-}
-
-void CSettingsMP3::LoadPreset(CString strPreset)
-{
-
-	UpdateData(TRUE);
-	CIni cfg;
-	cfg.SetIniFileName(g_strIniFile);
-	CString strTmp = cfg.GetValue("LameFE", "PresetPath", m_strWd) + "\\" + strPreset + ".ini";
-	cfg.SetIniFileName(strTmp);
-
-	c_MPEG.SetCurSel(cfg.GetValue("L.A.M.E.", "MpegVer", 0));
-	OnSelendokMpeg() ;
-
-	m_qualityPreset.SetCurSel(cfg.GetValue("L.A.M.E.", "QualityPreset", 0));
-	OnSelchangeQuality();
-
-	c_OutSampleRate.SetCurSel(cfg.GetValue("L.A.M.E.", "OutSampleRate", 0));
-	c_bitsPerSample.SetCurSel(cfg.GetValue("L.A.M.E.", "Bitrate", 14));
-	c_maxBitrate.SetCurSel(cfg.GetValue("L.A.M.E.", "MaxBitrate", 16));
-	c_checkSum.SetCheck(cfg.GetValue("L.A.M.E.", "Crc", FALSE));
-	c_copyright.SetCheck(cfg.GetValue("L.A.M.E.", "Copyright", FALSE));
-	c_original.SetCheck(cfg.GetValue("L.A.M.E.", "Original", FALSE));
-	c_private.SetCheck(cfg.GetValue("L.A.M.E.", "Private", FALSE));
-	c_writeId3v2.SetCheck(cfg.GetValue("L.A.M.E.", "Id3v2", TRUE));
-	c_vbrMethod.SetCurSel(cfg.GetValue("L.A.M.E.", "VbrMethod", 0));
-	m_abr = cfg.GetValue("L.A.M.E.", "Abr", 15);
-	c_writeId3v1.SetCheck(cfg.GetValue("L.A.M.E.", "Id3v1", FALSE));
-	m_cThreadPriority.SetCurSel(cfg.GetValue("L.A.M.E.", "ThreadPriority", 3));
-	m_nMode = cfg.GetValue("L.A.M.E.", "Channels", 0);
-	c_vbrQuality.SetCurSel(cfg.GetValue("L.A.M.E.", "VbrQuality", 5));
-	m_strDescription = cfg.GetValue("L.A.M.E.", "Description", "");
-
-	UpdateData(FALSE);
-}
-
-void CSettingsMP3::OnSelchangePresetmp3dlg() 
-{
-
-	//UpdateData(TRUE);
-	m_cPresetName.GetLBText(m_cPresetName.GetCurSel(), m_strPresetName);
-	UpdateData(FALSE);
-	LoadPreset(m_strPresetName);
-	if(m_cPresetName.FindStringExact(0, m_strPresetName) == CB_ERR){
-
-		m_cPresetName.AddString(m_strPresetName);
-	}
-	
-}
-
-*/
-
 void CSettingsMP3::OnSelendokMpeg() 
 {
 
@@ -589,14 +444,6 @@ void CSettingsMP3::OnSelendokMpeg()
 	
 	c_maxBitrate.EnableWindow(c_vbrMethod.GetCurSel() > 0);
 
-	/*UpdateData(TRUE);
-	for (int i = 0; i < sizeof(MP3SampleRates[m_nVersion]) / sizeof(MP3SampleRates[m_nVersion][0]); i++){
-
-		CString strAdd;
-		strAdd.Format("%d",MP3SampleRates[m_nVersion][ i ]);
-		c_OutSampleRate.AddString(strAdd);
-	}
-	c_OutSampleRate.SetCurSel(0);*/
 }
 
 void CSettingsMP3::FillMaxBitrateTable()
@@ -666,7 +513,7 @@ int CSettingsMP3::GetMaxBitrate()
 }
 
 
-void CSettingsMP3::SetMaxBitrate(int nBitrate)
+void CSettingsMP3::SetMaxBitrate(unsigned int nBitrate)
 {
 	int nItems=sizeof(MPEGBitrates[m_nVersion][m_nLayer])/sizeof(MPEGBitrates[m_nVersion][m_nLayer][0]);
 	
@@ -685,7 +532,7 @@ void CSettingsMP3::SetMaxBitrate(int nBitrate)
 	c_maxBitrate.SetCurSel(9);
 }
 
-void CSettingsMP3::SetMinBitrate(int nBitrate)
+void CSettingsMP3::SetMinBitrate(unsigned int nBitrate)
 {
 	int nItems=sizeof(MPEGBitrates[m_nVersion][m_nLayer])/sizeof(MPEGBitrates[m_nVersion][m_nLayer][0]);
 	

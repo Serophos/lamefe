@@ -4,7 +4,6 @@
 #include "stdafx.h"
 
 #include "ConfigDlg.h"
-//#include "cfgFile.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -56,9 +55,6 @@ BOOL CConfigDlg::OnInitDialog()
 
 	CDialog::OnInitDialog();
 
-	//m_cMinBitrate.SetCurSel(cfg.GetValue("OGG_out.dll_minbitrate"));
-	//m_cMaxBitrate.SetCurSel(cfg.GetValue("OGG_out.dll_maxbitrate"));
-	//m_cNomBitrate.SetCurSel(cfg.GetValue("OGG_out.dll_nombitrate"));
 	UpdateData(FALSE);
 	return TRUE;
 	
@@ -67,10 +63,6 @@ BOOL CConfigDlg::OnInitDialog()
 void CConfigDlg::OnOK() 
 {
 
-	//cfgFile cfg(m_strWd);
-	//cfg.SetValue("OGG_out.dll_minbitrate", m_cMinBitrate.GetCurSel());
-	//cfg.SetValue("OGG_out.dll_maxbitrate", m_cMaxBitrate.GetCurSel());
-	//cfg.SetValue("OGG_out.dll_nombitrate", m_cNomBitrate.GetCurSel());
 	UpdateData(TRUE);
 	CDialog::OnOK();
 }

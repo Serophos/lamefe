@@ -21,7 +21,7 @@
 #include "lameFE.h"
 #include "CDdbQueryDlg.h"
 #include "mfccddb.h"
-#include "Ini.h"
+#include "Settings.h"
 #include "ID3Info.h"
 #include "Utils.h"
 #include "FreeDBStatusDlg.h"
@@ -35,7 +35,7 @@ static char THIS_FILE[] = __FILE__;
 #define TRACKSPERSEC 75
 #define CB_CDDASECTOR 2352
 
-extern CString		g_strIniFile;
+extern CSettings g_sSettings;
 
 /////////////////////////////////////////////////////////////////////////////
 // Dialogfeld CCDdbQueryDlg 
@@ -100,27 +100,25 @@ BOOL CCDdbQueryDlg::OnInitDialog()
 	}
 
 	CString msg;
-	CIni cfg;
-	cfg.SetIniFileName(g_strIniFile);
 
 	discID = m_cd->GetDiscID();
 	
 
-    if(cfg.GetValue("FreeDB", "UseProxy", FALSE)){
+    if(g_sSettings.GetUseProxy()){
 
 		statusDlg.SetMessage(IDS_FDB_PROXYCONNECT);
 		cddb.SetProxyDetails(
-				    cfg.GetValue("FreeDB", "ProxyAddress", ""), 
-					cfg.GetValue("FreeDB", "ProxyPort", 8080), 
-					(cfg.GetValue("FreeDB", "ProxyAuthentication", FALSE) ? cfg.GetValue("FreeDB", "Username", "") : ""),
-					(cfg.GetValue("FreeDB", "ProxyAuthentication", FALSE) ? Utils::DecryptString(cfg.GetValue("FreeDB", "Password", "")) : "")
+				    g_sSettings.GetProxyAdress(), 
+					g_sSettings.GetProxyPort(), 
+					(g_sSettings.GetProxyAuthentication() ? g_sSettings.GetUsername() : ""),
+					(g_sSettings.GetProxyAuthentication() ? Utils::DecryptString(g_sSettings.GetPassowrd()) : "")
 				);
 	}
 
 
 	statusDlg.SetMessage(IDS_FDB_SERVERCONNECT);
 
-	CString serverString = GetServerString(cfg.GetValue("FreeDB", "FreeDB-Server", 0));
+	CString serverString = GetServerString(g_sSettings.GetFreeDBServer());
 
 	CString sBuf;
 	int iLen = serverString.GetLength();

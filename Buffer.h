@@ -1,5 +1,5 @@
 /*
-** Copyright (C) 2002 Thees Winkler
+** Copyright (C) 2002-2003 Thees Winkler
 ** Based on code from CDEx (c) 2002 by Albert L. Faber http://cdexos.sourceforge.net
 **
 ** This program is free software; you can redistribute it and/or modify

@@ -3,665 +3,68 @@
 <pre>
 <h1>Erstellungsprotokoll</h1>
 <h3>
---------------------Konfiguration: APE_in - Win32 Release--------------------
-</h3>
-<h3>Befehlszeilen</h3>
-Creating command line "rc.exe /l 0x409 /fo"Release/APE_in.res" /d "NDEBUG" /d "_AFXDLL" /d "_ENGLISH" "D:\lameFE2\APE_in\APE_in.rc"" 
-Erstellen der temporären Datei  "C:\DOKUME~1\TWC834~1.HAT\LOKALE~1\Temp\RSP54F.tmp" mit Inhalten
-[
-/nologo /MD /W3 /GX /O2 /D "WIN32" /D "NDEBUG" /D "_WINDOWS" /D "_WINDLL" /D "_AFXDLL" /D "_MBCS" /D "_AFXEXT" /D "_ENGLISH" /Fp"Release/APE_in.pch" /Yu"stdafx.h" /Fo"Release/" /Fd"Release/" /FD /c 
-"D:\lameFE2\APE_in\APE_in.cpp"
-]
-Creating command line "cl.exe @C:\DOKUME~1\TWC834~1.HAT\LOKALE~1\Temp\RSP54F.tmp" 
-Erstellen der temporären Datei  "C:\DOKUME~1\TWC834~1.HAT\LOKALE~1\Temp\RSP550.tmp" mit Inhalten
-[
-/nologo /MD /W3 /GX /O2 /D "WIN32" /D "NDEBUG" /D "_WINDOWS" /D "_WINDLL" /D "_AFXDLL" /D "_MBCS" /D "_AFXEXT" /D "_ENGLISH" /Fp"Release/APE_in.pch" /Yc"stdafx.h" /Fo"Release/" /Fd"Release/" /FD /c 
-"D:\lameFE2\APE_in\StdAfx.cpp"
-]
-Creating command line "cl.exe @C:\DOKUME~1\TWC834~1.HAT\LOKALE~1\Temp\RSP550.tmp" 
-Erstellen der temporären Datei  "C:\DOKUME~1\TWC834~1.HAT\LOKALE~1\Temp\RSP551.tmp" mit Inhalten
-[
-MACLib.lib /nologo /subsystem:windows /dll /incremental:no /pdb:"Release/APE_in.pdb" /machine:I386 /def:".\APE_in.def" /out:"../Release/Plugins/APE_in.dll" /implib:"Release/APE_in.lib" /libpath:"./MACLib" 
-.\Release\APE_in.obj
-.\Release\StdAfx.obj
-.\Release\APE_in.res
-]
-Erstellen der Befehlzeile "link.exe @C:\DOKUME~1\TWC834~1.HAT\LOKALE~1\Temp\RSP551.tmp"
-<h3>Ausgabefenster</h3>
-Ressourcen werden kompiliert...
-Kompilierung läuft...
-StdAfx.cpp
-Kompilierung läuft...
-APE_in.cpp
-Linker-Vorgang läuft...
-   Bibliothek Release/APE_in.lib und Objekt Release/APE_in.exp wird erstellt
-LINK : warning LNK4098: Standardbibliothek "LIBCMT" steht in Konflikt mit anderen Bibliotheken; /NODEFAULT:Bibliothek verwenden
-
-
-
-<h3>Ergebnisse</h3>
-APE_in.dll - 0 Fehler, 1 Warnung(en)
-<h3>
---------------------Konfiguration: APE_out - Win32 Release--------------------
-</h3>
-<h3>Befehlszeilen</h3>
-Creating command line "rc.exe /l 0x407 /fo"Release/APE_out.res" /d "NDEBUG" /d "_AFXDLL" "D:\lameFE2\APE_out\APE_out.rc"" 
-Erstellen der temporären Datei  "C:\DOKUME~1\TWC834~1.HAT\LOKALE~1\Temp\RSP555.tmp" mit Inhalten
-[
-/nologo /MD /W3 /GX /O2 /D "WIN32" /D "NDEBUG" /D "_WINDOWS" /D "_WINDLL" /D "_AFXDLL" /D "_MBCS" /D "_AFXEXT" /Fp"Release/APE_out.pch" /Yu"stdafx.h" /Fo"Release/" /Fd"Release/" /FD /c 
-"D:\lameFE2\APE_out\APE_out.cpp"
-"D:\lameFE2\APE_out\ConfigDlg.cpp"
-]
-Creating command line "cl.exe @C:\DOKUME~1\TWC834~1.HAT\LOKALE~1\Temp\RSP555.tmp" 
-Erstellen der temporären Datei  "C:\DOKUME~1\TWC834~1.HAT\LOKALE~1\Temp\RSP556.tmp" mit Inhalten
-[
-/nologo /MD /W3 /GX /O2 /D "WIN32" /D "NDEBUG" /D "_WINDOWS" /D "_WINDLL" /D "_AFXDLL" /D "_MBCS" /D "_AFXEXT" /Fp"Release/APE_out.pch" /Yc"stdafx.h" /Fo"Release/" /Fd"Release/" /FD /c 
-"D:\lameFE2\APE_out\StdAfx.cpp"
-]
-Creating command line "cl.exe @C:\DOKUME~1\TWC834~1.HAT\LOKALE~1\Temp\RSP556.tmp" 
-Erstellen der temporären Datei  "C:\DOKUME~1\TWC834~1.HAT\LOKALE~1\Temp\RSP557.tmp" mit Inhalten
-[
-MACLib.lib /nologo /subsystem:windows /dll /incremental:no /pdb:"Release/APE_out.pdb" /machine:I386 /def:".\APE_out.def" /out:"../Release/Plugins/APE_out.dll" /implib:"Release/APE_out.lib" /libpath:"./MACLib" 
-.\Release\APE_out.obj
-.\Release\ConfigDlg.obj
-.\Release\StdAfx.obj
-.\Release\APE_out.res
-]
-Erstellen der Befehlzeile "link.exe @C:\DOKUME~1\TWC834~1.HAT\LOKALE~1\Temp\RSP557.tmp"
-<h3>Ausgabefenster</h3>
-Ressourcen werden kompiliert...
-Kompilierung läuft...
-StdAfx.cpp
-Kompilierung läuft...
-APE_out.cpp
-ConfigDlg.cpp
-Generieren von Code...
-Linker-Vorgang läuft...
-   Bibliothek Release/APE_out.lib und Objekt Release/APE_out.exp wird erstellt
-LINK : warning LNK4098: Standardbibliothek "LIBCMT" steht in Konflikt mit anderen Bibliotheken; /NODEFAULT:Bibliothek verwenden
-
-
-
-<h3>Ergebnisse</h3>
-APE_out.dll - 0 Fehler, 1 Warnung(en)
-<h3>
---------------------Konfiguration: CDRip - Win32 Release--------------------
-</h3>
-<h3>Befehlszeilen</h3>
-Creating command line "rc.exe /l 0x409 /fo"Release/CDRip.res" /d "NDEBUG" "D:\lameFE2\CDRip\CDRip.rc"" 
-Erstellen der temporären Datei  "C:\DOKUME~1\TWC834~1.HAT\LOKALE~1\Temp\RSP55B.tmp" mit Inhalten
-[
-/nologo /MT /W3 /GX /O2 /I "./paranoia" /I "./paranoia/win32" /I "../" /D "NDEBUG" /D "WIN32" /D "_WINDOWS" /D "CDEX_DLL" /D "int16_t short" /Fo"Release/" /Fd"Release/" /FD /c 
-"D:\lameFE2\CDRip\Aspi.cpp"
-"D:\lameFE2\CDRip\AspiCD.cpp"
-"D:\lameFE2\CDRip\AspiDebug.cpp"
-"D:\lameFE2\CDRip\CDExtract.cpp"
-"D:\lameFE2\CDRip\CDRip.cpp"
-"D:\lameFE2\CDRip\CDRomSettings.cpp"
-"D:\lameFE2\Ini.cpp"
-"D:\lameFE2\CDRip\NTScsi.cpp"
-"D:\lameFE2\CDRip\paranoia\gap.c"
-"D:\lameFE2\CDRip\paranoia\isort.c"
-"D:\lameFE2\CDRip\paranoia\overlap.c"
-"D:\lameFE2\CDRip\paranoia\p_block.c"
-"D:\lameFE2\CDRip\paranoia\paranoia.c"
-]
-Creating command line "cl.exe @C:\DOKUME~1\TWC834~1.HAT\LOKALE~1\Temp\RSP55B.tmp" 
-Erstellen der temporären Datei  "C:\DOKUME~1\TWC834~1.HAT\LOKALE~1\Temp\RSP55C.tmp" mit Inhalten
-[
-/nologo /subsystem:windows /dll /incremental:no /pdb:"Release/CDRip.pdb" /map:"Release/CDRip.map" /machine:I386 /def:".\CDRip.def" /out:"Release/CDRip.dll" /implib:"Release/CDRip.lib" 
-.\Release\Aspi.obj
-.\Release\AspiCD.obj
-.\Release\AspiDebug.obj
-.\Release\CDExtract.obj
-.\Release\CDRip.obj
-.\Release\CDRomSettings.obj
-.\Release\Ini.obj
-.\Release\NTScsi.obj
-.\Release\gap.obj
-.\Release\isort.obj
-.\Release\overlap.obj
-.\Release\p_block.obj
-.\Release\paranoia.obj
-.\Release\CDRip.res
-]
-Erstellen der Befehlzeile "link.exe @C:\DOKUME~1\TWC834~1.HAT\LOKALE~1\Temp\RSP55C.tmp"
-<h3>Ausgabefenster</h3>
-Ressourcen werden kompiliert...
-Kompilierung läuft...
-Aspi.cpp
-AspiCD.cpp
-AspiDebug.cpp
-CDExtract.cpp
-CDRip.cpp
-CDRomSettings.cpp
-Ini.cpp
-NTScsi.cpp
-Generieren von Code...
-Kompilieren...
-gap.c
-isort.c
-D:\lameFE2\CDRip\paranoia\p_block.h(22) : warning C4005: 'min' : Makro-Neudefinition
-        C:\Programme\Microsoft Visual Studio\VC98\INCLUDE\stdlib.h(428) : Siehe vorherige Definition von 'min'
-D:\lameFE2\CDRip\paranoia\p_block.h(23) : warning C4005: 'max' : Makro-Neudefinition
-        C:\Programme\Microsoft Visual Studio\VC98\INCLUDE\stdlib.h(427) : Siehe vorherige Definition von 'max'
-overlap.c
-D:\lameFE2\CDRip\paranoia\p_block.h(22) : warning C4005: 'min' : Makro-Neudefinition
-        C:\Programme\Microsoft Visual Studio\VC98\INCLUDE\stdlib.h(428) : Siehe vorherige Definition von 'min'
-D:\lameFE2\CDRip\paranoia\p_block.h(23) : warning C4005: 'max' : Makro-Neudefinition
-        C:\Programme\Microsoft Visual Studio\VC98\INCLUDE\stdlib.h(427) : Siehe vorherige Definition von 'max'
-D:\lameFE2\CDRip\paranoia\overlap.c(143) : warning C4244: '=' : Konvertierung von 'double ' in 'long ', moeglicher Datenverlust
-D:\lameFE2\CDRip\paranoia\overlap.c(146) : warning C4244: '=' : Konvertierung von 'double ' in 'long ', moeglicher Datenverlust
-D:\lameFE2\CDRip\paranoia\overlap.c(157) : warning C4244: '/=' : Konvertierung von 'const double ' in 'long ', moeglicher Datenverlust
-D:\lameFE2\CDRip\paranoia\overlap.c(158) : warning C4244: '/=' : Konvertierung von 'const double ' in 'long ', moeglicher Datenverlust
-D:\lameFE2\CDRip\paranoia\overlap.c(159) : warning C4244: '/=' : Konvertierung von 'const double ' in 'long ', moeglicher Datenverlust
-p_block.c
-D:\lameFE2\CDRip\paranoia\p_block.h(22) : warning C4005: 'min' : Makro-Neudefinition
-        C:\Programme\Microsoft Visual Studio\VC98\INCLUDE\stdlib.h(428) : Siehe vorherige Definition von 'min'
-D:\lameFE2\CDRip\paranoia\p_block.h(23) : warning C4005: 'max' : Makro-Neudefinition
-        C:\Programme\Microsoft Visual Studio\VC98\INCLUDE\stdlib.h(427) : Siehe vorherige Definition von 'max'
-paranoia.c
-D:\lameFE2\CDRip\paranoia\p_block.h(22) : warning C4005: 'min' : Makro-Neudefinition
-        C:\Programme\Microsoft Visual Studio\VC98\INCLUDE\stdlib.h(428) : Siehe vorherige Definition von 'min'
-D:\lameFE2\CDRip\paranoia\p_block.h(23) : warning C4005: 'max' : Makro-Neudefinition
-        C:\Programme\Microsoft Visual Studio\VC98\INCLUDE\stdlib.h(427) : Siehe vorherige Definition von 'max'
-Generieren von Code...
-Linker-Vorgang läuft...
-   Bibliothek Release/CDRip.lib und Objekt Release/CDRip.exp wird erstellt
-LINK : warning LNK4089: Alle Verweise auf "ADVAPI32.dll" wurden durch /OPT:REF verworfen
-LINK : warning LNK4089: Alle Verweise auf "SHELL32.dll" wurden durch /OPT:REF verworfen
-LINK : warning LNK4089: Alle Verweise auf "comdlg32.dll" wurden durch /OPT:REF verworfen
-
-
-
-<h3>Ergebnisse</h3>
-CDRip.dll - 0 Fehler, 16 Warnung(en)
-<h3>
---------------------Konfiguration: MP3_in - Win32 Release--------------------
-</h3>
-<h3>Befehlszeilen</h3>
-Creating command line "rc.exe /l 0x407 /fo"Release/MP3_in.res" /d "NDEBUG" /d "_AFXDLL" "D:\lameFE2\MP3_in\MP3_in.rc"" 
-Erstellen der temporären Datei  "C:\DOKUME~1\TWC834~1.HAT\LOKALE~1\Temp\RSP560.tmp" mit Inhalten
-[
-/nologo /MD /W3 /GX /O2 /D "WIN32" /D "NDEBUG" /D "_WINDOWS" /D "_WINDLL" /D "_AFXDLL" /D "_MBCS" /D "_AFXEXT" /Fp"Release/MP3_in.pch" /Yu"stdafx.h" /Fo"Release/" /Fd"Release/" /FD /c 
-"D:\lameFE2\MP3_in\MP3_in.cpp"
-]
-Creating command line "cl.exe @C:\DOKUME~1\TWC834~1.HAT\LOKALE~1\Temp\RSP560.tmp" 
-Erstellen der temporären Datei  "C:\DOKUME~1\TWC834~1.HAT\LOKALE~1\Temp\RSP561.tmp" mit Inhalten
-[
-/nologo /MD /W3 /GX /O2 /D "WIN32" /D "NDEBUG" /D "_WINDOWS" /D "_WINDLL" /D "_AFXDLL" /D "_MBCS" /D "_AFXEXT" /Fp"Release/MP3_in.pch" /Yc"stdafx.h" /Fo"Release/" /Fd"Release/" /FD /c 
-"D:\lameFE2\MP3_in\StdAfx.cpp"
-]
-Creating command line "cl.exe @C:\DOKUME~1\TWC834~1.HAT\LOKALE~1\Temp\RSP561.tmp" 
-Erstellen der Befehlzeile "link.exe /nologo /subsystem:windows /dll /incremental:no /pdb:"Release/MP3_in.pdb" /machine:I386 /def:".\MP3_in.def" /out:"Release/MP3_in.dll" /implib:"Release/MP3_in.lib"  .\Release\MP3_in.obj .\Release\StdAfx.obj .\Release\MP3_in.res "
-<h3>Ausgabefenster</h3>
-Ressourcen werden kompiliert...
-Kompilierung läuft...
-StdAfx.cpp
-Kompilierung läuft...
-MP3_in.cpp
-Linker-Vorgang läuft...
-   Bibliothek Release/MP3_in.lib und Objekt Release/MP3_in.exp wird erstellt
-
-
-
-<h3>Ergebnisse</h3>
-MP3_in.dll - 0 Fehler, 0 Warnung(en)
-<h3>
---------------------Konfiguration: OGG_in - Win32 Release--------------------
-</h3>
-<h3>Befehlszeilen</h3>
-Creating command line "rc.exe /l 0x407 /fo"Release/OGG_in.res" /d "NDEBUG" /d "_AFXDLL" "D:\lameFE2\OGG_in\OGG_in.rc"" 
-Erstellen der temporären Datei  "C:\DOKUME~1\TWC834~1.HAT\LOKALE~1\Temp\RSP565.tmp" mit Inhalten
-[
-/nologo /MD /W3 /GX /O2 /D "WIN32" /D "NDEBUG" /D "_WINDOWS" /D "_WINDLL" /D "_AFXDLL" /D "_MBCS" /D "_AFXEXT" /Fp"Release/OGG_in.pch" /Yu"stdafx.h" /Fo"Release/" /Fd"Release/" /FD /c 
-"D:\lameFE2\OGG_in\OGG_in.cpp"
-]
-Creating command line "cl.exe @C:\DOKUME~1\TWC834~1.HAT\LOKALE~1\Temp\RSP565.tmp" 
-Erstellen der temporären Datei  "C:\DOKUME~1\TWC834~1.HAT\LOKALE~1\Temp\RSP566.tmp" mit Inhalten
-[
-/nologo /MD /W3 /GX /O2 /D "WIN32" /D "NDEBUG" /D "_WINDOWS" /D "_WINDLL" /D "_AFXDLL" /D "_MBCS" /D "_AFXEXT" /Fp"Release/OGG_in.pch" /Yc"stdafx.h" /Fo"Release/" /Fd"Release/" /FD /c 
-"D:\lameFE2\OGG_in\StdAfx.cpp"
-]
-Creating command line "cl.exe @C:\DOKUME~1\TWC834~1.HAT\LOKALE~1\Temp\RSP566.tmp" 
-Erstellen der Befehlzeile "link.exe /nologo /subsystem:windows /dll /incremental:no /pdb:"Release/OGG_in.pdb" /machine:I386 /def:".\OGG_in.def" /out:"../Release/Plugins/OGG_in.dll" /implib:"Release/OGG_in.lib"  .\Release\OGG_in.obj .\Release\StdAfx.obj .\Release\OGG_in.res "
-<h3>Ausgabefenster</h3>
-Ressourcen werden kompiliert...
-Kompilierung läuft...
-StdAfx.cpp
-Kompilierung läuft...
-OGG_in.cpp
-Linker-Vorgang läuft...
-   Bibliothek Release/OGG_in.lib und Objekt Release/OGG_in.exp wird erstellt
-
-
-
-<h3>Ergebnisse</h3>
-OGG_in.dll - 0 Fehler, 0 Warnung(en)
-<h3>
---------------------Konfiguration: OGG_out - Win32 Release--------------------
-</h3>
-<h3>Befehlszeilen</h3>
-Creating command line "rc.exe /l 0x407 /fo"Release/OGG_out.res" /d "NDEBUG" /d "_AFXDLL" "D:\lameFE2\OGG_out\OGG_out.rc"" 
-Erstellen der temporären Datei  "C:\DOKUME~1\TWC834~1.HAT\LOKALE~1\Temp\RSP56A.tmp" mit Inhalten
-[
-/nologo /MD /W3 /GX /O2 /D "WIN32" /D "NDEBUG" /D "_WINDOWS" /D "_WINDLL" /D "_AFXDLL" /D "_MBCS" /D "_AFXEXT" /Fp"Release/OGG_out.pch" /Yu"stdafx.h" /Fo"Release/" /Fd"Release/" /FD /c 
-"D:\lameFE2\OGG_out\ConfigDlg.cpp"
-"D:\lameFE2\OGG_out\OGG_out.cpp"
-]
-Creating command line "cl.exe @C:\DOKUME~1\TWC834~1.HAT\LOKALE~1\Temp\RSP56A.tmp" 
-Erstellen der temporären Datei  "C:\DOKUME~1\TWC834~1.HAT\LOKALE~1\Temp\RSP56B.tmp" mit Inhalten
-[
-/nologo /MD /W3 /GX /O2 /D "WIN32" /D "NDEBUG" /D "_WINDOWS" /D "_WINDLL" /D "_AFXDLL" /D "_MBCS" /D "_AFXEXT" /Fp"Release/OGG_out.pch" /Yc"stdafx.h" /Fo"Release/" /Fd"Release/" /FD /c 
-"D:\lameFE2\OGG_out\StdAfx.cpp"
-]
-Creating command line "cl.exe @C:\DOKUME~1\TWC834~1.HAT\LOKALE~1\Temp\RSP56B.tmp" 
-Erstellen der temporären Datei  "C:\DOKUME~1\TWC834~1.HAT\LOKALE~1\Temp\RSP56C.tmp" mit Inhalten
-[
-/nologo /subsystem:windows /dll /incremental:no /pdb:"Release/OGG_out.pdb" /machine:I386 /def:".\OGG_out.def" /out:"../Release/Plugins/OGG_out.dll" /implib:"Release/OGG_out.lib" 
-.\Release\ConfigDlg.obj
-.\Release\OGG_out.obj
-.\Release\StdAfx.obj
-.\Release\OGG_out.res
-]
-Erstellen der Befehlzeile "link.exe @C:\DOKUME~1\TWC834~1.HAT\LOKALE~1\Temp\RSP56C.tmp"
-<h3>Ausgabefenster</h3>
-Ressourcen werden kompiliert...
-Kompilierung läuft...
-StdAfx.cpp
-Kompilierung läuft...
-ConfigDlg.cpp
-OGG_out.cpp
-Generieren von Code...
-Linker-Vorgang läuft...
-   Bibliothek Release/OGG_out.lib und Objekt Release/OGG_out.exp wird erstellt
-
-
-
-<h3>Ergebnisse</h3>
-OGG_out.dll - 0 Fehler, 0 Warnung(en)
-<h3>
---------------------Konfiguration: id3lib - Win32 Release--------------------
-</h3>
-<h3>Befehlszeilen</h3>
-Erstellen der temporären Datei  "C:\DOKUME~1\TWC834~1.HAT\LOKALE~1\Temp\RSP570.tmp" mit Inhalten
-[
-/nologo /MT /W3 /GX /O2 /I ".\\" /I "..\\" /I "..\include" /I "..\include\id3" /I "..\zlib\include" /D "NDEBUG" /D "WIN32" /D "_MBCS" /D "_LIB" /D "_WINDOWS" /D "HAVE_CONFIG_H" /D "ID3LIB_COMPILATION" /Fp"Release/id3lib.pch" /YX /Fo"Release/" /Fd"Release/" /FD /c 
-"D:\lameFE2\ID3Lib\src\c_wrapper.cpp"
-"D:\lameFE2\ID3Lib\src\error.cpp"
-"D:\lameFE2\ID3Lib\src\field.cpp"
-"D:\lameFE2\ID3Lib\src\field_binary.cpp"
-"D:\lameFE2\ID3Lib\src\field_integer.cpp"
-"D:\lameFE2\ID3Lib\src\field_string_ascii.cpp"
-"D:\lameFE2\ID3Lib\src\field_string_unicode.cpp"
-"D:\lameFE2\ID3Lib\src\frame.cpp"
-"D:\lameFE2\ID3Lib\src\frame_parse.cpp"
-"D:\lameFE2\ID3Lib\src\frame_render.cpp"
-"D:\lameFE2\ID3Lib\src\globals.cpp"
-"D:\lameFE2\ID3Lib\src\header.cpp"
-"D:\lameFE2\ID3Lib\src\header_frame.cpp"
-"D:\lameFE2\ID3Lib\src\header_tag.cpp"
-"D:\lameFE2\ID3Lib\src\misc_support.cpp"
-"D:\lameFE2\ID3Lib\src\spec.cpp"
-"D:\lameFE2\ID3Lib\src\tag.cpp"
-"D:\lameFE2\ID3Lib\src\tag_file.cpp"
-"D:\lameFE2\ID3Lib\src\tag_find.cpp"
-"D:\lameFE2\ID3Lib\src\tag_parse.cpp"
-"D:\lameFE2\ID3Lib\src\tag_parse_lyrics3.cpp"
-"D:\lameFE2\ID3Lib\src\tag_parse_v1.cpp"
-"D:\lameFE2\ID3Lib\src\tag_render.cpp"
-"D:\lameFE2\ID3Lib\src\tag_sync.cpp"
-"D:\lameFE2\ID3Lib\src\uint28.cpp"
-"D:\lameFE2\ID3Lib\src\utils.cpp"
-]
-Creating command line "cl.exe @C:\DOKUME~1\TWC834~1.HAT\LOKALE~1\Temp\RSP570.tmp" 
-Erstellen der temporären Datei  "C:\DOKUME~1\TWC834~1.HAT\LOKALE~1\Temp\RSP571.tmp" mit Inhalten
-[
-/nologo /out:"Release\id3lib.lib" 
-.\Release\c_wrapper.obj
-.\Release\error.obj
-.\Release\field.obj
-.\Release\field_binary.obj
-.\Release\field_integer.obj
-.\Release\field_string_ascii.obj
-.\Release\field_string_unicode.obj
-.\Release\frame.obj
-.\Release\frame_parse.obj
-.\Release\frame_render.obj
-.\Release\globals.obj
-.\Release\header.obj
-.\Release\header_frame.obj
-.\Release\header_tag.obj
-.\Release\misc_support.obj
-.\Release\spec.obj
-.\Release\tag.obj
-.\Release\tag_file.obj
-.\Release\tag_find.obj
-.\Release\tag_parse.obj
-.\Release\tag_parse_lyrics3.obj
-.\Release\tag_parse_v1.obj
-.\Release\tag_render.obj
-.\Release\tag_sync.obj
-.\Release\uint28.obj
-.\Release\utils.obj
-]
-Erstellen der Befehlzeile "link.exe -lib @C:\DOKUME~1\TWC834~1.HAT\LOKALE~1\Temp\RSP571.tmp"
-<h3>Ausgabefenster</h3>
-Kompilierung läuft...
-c_wrapper.cpp
-error.cpp
-field.cpp
-field_binary.cpp
-field_integer.cpp
-field_string_ascii.cpp
-field_string_unicode.cpp
-frame.cpp
-frame_parse.cpp
-frame_render.cpp
-globals.cpp
-header.cpp
-header_frame.cpp
-header_tag.cpp
-misc_support.cpp
-spec.cpp
-tag.cpp
-tag_file.cpp
-tag_find.cpp
-tag_parse.cpp
-tag_parse_lyrics3.cpp
-tag_parse_v1.cpp
-tag_render.cpp
-tag_sync.cpp
-uint28.cpp
-utils.cpp
-Bibliothek wird erstellt...
-
-
-
-<h3>Ergebnisse</h3>
-id3lib.lib - 0 Fehler, 0 Warnung(en)
-<h3>
---------------------Konfiguration: lameFE - Win32 Release--------------------
-</h3>
-<h3>Befehlszeilen</h3>
-Creating command line "rc.exe /l 0x407 /fo"Release/lameFE.res" /d "NDEBUG" /d "_AFXDLL" /d "_ENGLISH" "D:\lameFE2\lameFE.rc"" 
-Erstellen der temporären Datei  "C:\DOKUME~1\TWC834~1.HAT\LOKALE~1\Temp\RSP572.tmp" mit Inhalten
-[
-/nologo /MD /W3 /GX /O2 /I "LibSndFile\src" /D "WIN32" /D "NDEBUG" /D "_WINDOWS" /D "_AFXDLL" /D "_MBCS" /D "_ENGLISH" /FR"Release/" /Fp"Release/lameFE.pch" /Yu"stdafx.h" /Fo"Release/" /Fd"Release/" /FD /c 
-"D:\lameFE2\AlbumInfoCtrl.cpp"
-"D:\lameFE2\Buffer.cpp"
-"D:\lameFE2\CDDBPage.cpp"
-"D:\lameFE2\CDdbQueryDlg.cpp"
-"D:\lameFE2\CDPlayerIni.cpp"
-"D:\lameFE2\CDROMPage.cpp"
-"D:\lameFE2\CDTrack.cpp"
-"D:\lameFE2\cfgFile.cpp"
-"D:\lameFE2\CompactDisk.cpp"
-"D:\lameFE2\CPlugin.cpp"
-"D:\lameFE2\Encoder.cpp"
-"D:\lameFE2\EncoderFeeder.cpp"
-"D:\lameFE2\EncoderSheet.cpp"
-"D:\lameFE2\EncodingStatusDlg.cpp"
-"D:\lameFE2\ETSLayout.cpp"
-"D:\lameFE2\ExtListCtrl.cpp"
-"D:\lameFE2\FilenamePage.cpp"
-"D:\lameFE2\FolderDialog.cpp"
-"D:\lameFE2\FreeDBStatusDlg.cpp"
-"D:\lameFE2\ID3Info.cpp"
-"D:\lameFE2\Ini.cpp"
-"D:\lameFE2\InternalPlayer.cpp"
-"D:\lameFE2\lameFE.cpp"
-"D:\lameFE2\lameFEDoc.cpp"
-"D:\lameFE2\LameFEPlugin.cpp"
-"D:\lameFE2\LameFESplash.cpp"
-"D:\lameFE2\lameFEView.cpp"
-"D:\lameFE2\LogFile.cpp"
-"D:\lameFE2\LogginPage.cpp"
-"D:\lameFE2\MainFrm.cpp"
-"D:\lameFE2\MainSettingsPage.cpp"
-"D:\lameFE2\Mfccddb.cpp"
-"D:\lameFE2\MP3File.cpp"
-"D:\lameFE2\MultimediaFile.cpp"
-"D:\lameFE2\MyFileDialog.cpp"
-"D:\lameFE2\OutPlugin.cpp"
-"D:\lameFE2\PathDialog.cpp"
-"D:\lameFE2\PlayList.cpp"
-"D:\lameFE2\PluginPage.cpp"
-"D:\lameFE2\SettingsSheet.cpp"
-"D:\lameFE2\TimeStatus.cpp"
-"D:\lameFE2\TrayDialog.cpp"
-]
-Creating command line "cl.exe @C:\DOKUME~1\TWC834~1.HAT\LOKALE~1\Temp\RSP572.tmp" 
-Erstellen der temporären Datei  "C:\DOKUME~1\TWC834~1.HAT\LOKALE~1\Temp\RSP573.tmp" mit Inhalten
-[
-/nologo /MD /W3 /GX /O2 /I "LibSndFile\src" /D "WIN32" /D "NDEBUG" /D "_WINDOWS" /D "_AFXDLL" /D "_MBCS" /D "_ENGLISH" /FR"Release/" /Fp"Release/lameFE.pch" /Yc"stdafx.h" /Fo"Release/" /Fd"Release/" /FD /c 
-"D:\lameFE2\StdAfx.cpp"
-]
-Creating command line "cl.exe @C:\DOKUME~1\TWC834~1.HAT\LOKALE~1\Temp\RSP573.tmp" 
-Erstellen der temporären Datei  "C:\DOKUME~1\TWC834~1.HAT\LOKALE~1\Temp\RSP574.tmp" mit Inhalten
-[
-winmm.lib htmlhelp.lib id3lib.lib zlib.lib /nologo /subsystem:windows /incremental:no /pdb:"Release/lameFE.pdb" /machine:I386 /out:"Release/lameFE.exe" /libpath:"ID3Lib\libprj\Release" /libpath:"ID3Lib/zlib" 
-.\Release\AlbumInfoCtrl.obj
-.\Release\Buffer.obj
-.\Release\CDDBPage.obj
-.\Release\CDdbQueryDlg.obj
-.\Release\CDPlayerIni.obj
-.\Release\CDROMPage.obj
-.\Release\CDTrack.obj
-.\Release\cfgFile.obj
-.\Release\CompactDisk.obj
-.\Release\CPlugin.obj
-.\Release\Encoder.obj
-.\Release\EncoderFeeder.obj
-.\Release\EncoderSheet.obj
-.\Release\EncodingStatusDlg.obj
-.\Release\ETSLayout.obj
-.\Release\ExtListCtrl.obj
-.\Release\FilenamePage.obj
-.\Release\FolderDialog.obj
-.\Release\FreeDBStatusDlg.obj
-.\Release\ID3Info.obj
-.\Release\Ini.obj
-.\Release\InternalPlayer.obj
-.\Release\lameFE.obj
-.\Release\lameFEDoc.obj
-.\Release\LameFEPlugin.obj
-.\Release\LameFESplash.obj
-.\Release\lameFEView.obj
-.\Release\LogFile.obj
-.\Release\LogginPage.obj
-.\Release\MainFrm.obj
-.\Release\MainSettingsPage.obj
-.\Release\Mfccddb.obj
-.\Release\MP3File.obj
-.\Release\MultimediaFile.obj
-.\Release\MyFileDialog.obj
-.\Release\OutPlugin.obj
-.\Release\PathDialog.obj
-.\Release\PlayList.obj
-.\Release\PluginPage.obj
-.\Release\SettingsSheet.obj
-.\Release\StdAfx.obj
-.\Release\TimeStatus.obj
-.\Release\TrayDialog.obj
-.\Release\lameFE.res
-.\CDRip\Release\CDRip.lib
-.\LibSndFile\Win32\Release\libsndfile.lib
-.\ID3Lib\libprj\Release\id3lib.lib
-]
-Erstellen der Befehlzeile "link.exe @C:\DOKUME~1\TWC834~1.HAT\LOKALE~1\Temp\RSP574.tmp"
-<h3>Ausgabefenster</h3>
-Ressourcen werden kompiliert...
-Kompilierung läuft...
-StdAfx.cpp
-Kompilierung läuft...
-AlbumInfoCtrl.cpp
-Buffer.cpp
-CDDBPage.cpp
-CDdbQueryDlg.cpp
-CDPlayerIni.cpp
-CDROMPage.cpp
-CDTrack.cpp
-cfgFile.cpp
-CompactDisk.cpp
-CPlugin.cpp
-Encoder.cpp
-EncoderFeeder.cpp
-EncoderSheet.cpp
-EncodingStatusDlg.cpp
-ETSLayout.cpp
-ExtListCtrl.cpp
-FilenamePage.cpp
-FolderDialog.cpp
-FreeDBStatusDlg.cpp
-ID3Info.cpp
-Generieren von Code...
-Kompilieren...
-Ini.cpp
-InternalPlayer.cpp
-lameFE.cpp
-lameFEDoc.cpp
-LameFEPlugin.cpp
-LameFESplash.cpp
-lameFEView.cpp
-LogFile.cpp
-LogginPage.cpp
-MainFrm.cpp
-MainSettingsPage.cpp
-Mfccddb.cpp
-MP3File.cpp
-MultimediaFile.cpp
-MyFileDialog.cpp
-OutPlugin.cpp
-PathDialog.cpp
-PlayList.cpp
-PluginPage.cpp
-SettingsSheet.cpp
-Generieren von Code...
-Kompilieren...
-TimeStatus.cpp
-TrayDialog.cpp
-Generieren von Code...
-Linker-Vorgang läuft...
-LINK : fatal error LNK1181: Eingabedatei ".\LibSndFile\Win32\Release\libsndfile.lib" kann nicht geoeffnet werden
-Fehler beim Ausführen von link.exe.
-Erstellen der temporären Datei  "C:\DOKUME~1\TWC834~1.HAT\LOKALE~1\Temp\RSP576.tmp" mit Inhalten
-[
-/nologo /o"Release/lameFE.bsc" 
-.\Release\StdAfx.sbr
-.\Release\AlbumInfoCtrl.sbr
-.\Release\Buffer.sbr
-.\Release\CDDBPage.sbr
-.\Release\CDdbQueryDlg.sbr
-.\Release\CDPlayerIni.sbr
-.\Release\CDROMPage.sbr
-.\Release\CDTrack.sbr
-.\Release\cfgFile.sbr
-.\Release\CompactDisk.sbr
-.\Release\CPlugin.sbr
-.\Release\Encoder.sbr
-.\Release\EncoderFeeder.sbr
-.\Release\EncoderSheet.sbr
-.\Release\EncodingStatusDlg.sbr
-.\Release\ETSLayout.sbr
-.\Release\ExtListCtrl.sbr
-.\Release\FilenamePage.sbr
-.\Release\FolderDialog.sbr
-.\Release\FreeDBStatusDlg.sbr
-.\Release\ID3Info.sbr
-.\Release\Ini.sbr
-.\Release\InternalPlayer.sbr
-.\Release\lameFE.sbr
-.\Release\lameFEDoc.sbr
-.\Release\LameFEPlugin.sbr
-.\Release\LameFESplash.sbr
-.\Release\lameFEView.sbr
-.\Release\LogFile.sbr
-.\Release\LogginPage.sbr
-.\Release\MainFrm.sbr
-.\Release\MainSettingsPage.sbr
-.\Release\Mfccddb.sbr
-.\Release\MP3File.sbr
-.\Release\MultimediaFile.sbr
-.\Release\MyFileDialog.sbr
-.\Release\OutPlugin.sbr
-.\Release\PathDialog.sbr
-.\Release\PlayList.sbr
-.\Release\PluginPage.sbr
-.\Release\SettingsSheet.sbr
-.\Release\TimeStatus.sbr
-.\Release\TrayDialog.sbr]
-Erstellen der Befehlzeile "bscmake.exe @C:\DOKUME~1\TWC834~1.HAT\LOKALE~1\Temp\RSP576.tmp"
-Browse-Informationsdatei wird erstellt...
-<h3>Ausgabefenster</h3>
-
-
-
-<h3>Ergebnisse</h3>
-lameFE.exe - 1 Fehler, 0 Warnung(en)
-<h3>
 --------------------Konfiguration: libsndfile - Win32 Release--------------------
 </h3>
 <h3>Befehlszeilen</h3>
-Creating command line "rc.exe /l 0x407 /fo"Release/libsndfile.res" /d "NDEBUG" "D:\lameFE2\LibSndFile\Win32\libsndfile.rc"" 
-Erstellen der temporären Datei  "C:\DOKUME~1\TWC834~1.HAT\LOKALE~1\Temp\RSP577.tmp" mit Inhalten
+Creating command line "rc.exe /l 0x407 /fo"Release/libsndfile.res" /d "NDEBUG" "C:\cpp\lameFE2\LibSndFile\Win32\libsndfile.rc"" 
+Erstellen der temporären Datei  "C:\DOKUME~1\tw\LOKALE~1\Temp\RSP3AD.tmp" mit Inhalten
 [
 /nologo /MT /W3 /GX /O2 /I "..\win32" /D "NDEBUG" /D "WIN32" /D "_WINDOWS" /D "_MBCS" /D "_USRDLL" /Fp"Release/libsndfile.pch" /YX /Fo"Release/" /Fd"Release/" /FD /c 
-"D:\lameFE2\LibSndFile\src\GSM610\add.c"
-"D:\lameFE2\LibSndFile\src\aiff.c"
-"D:\lameFE2\LibSndFile\src\alaw.c"
-"D:\lameFE2\LibSndFile\src\au.c"
-"D:\lameFE2\LibSndFile\src\au_g72x.c"
-"D:\lameFE2\LibSndFile\src\GSM610\code.c"
-"D:\lameFE2\LibSndFile\src\command.c"
-"D:\lameFE2\LibSndFile\src\common.c"
-"D:\lameFE2\LibSndFile\src\GSM610\decode.c"
-"D:\lameFE2\LibSndFile\src\double64.c"
-"D:\lameFE2\LibSndFile\src\dwd.c"
-"D:\lameFE2\LibSndFile\src\dwvw.c"
-"D:\lameFE2\LibSndFile\src\file_io.c"
-"D:\lameFE2\LibSndFile\src\float32.c"
-"D:\lameFE2\LibSndFile\src\G72x\g721.c"
-"D:\lameFE2\LibSndFile\src\G72x\g723_16.c"
-"D:\lameFE2\LibSndFile\src\G72x\g723_24.c"
-"D:\lameFE2\LibSndFile\src\G72x\g723_40.c"
-"D:\lameFE2\LibSndFile\src\G72x\g72x.c"
-"D:\lameFE2\LibSndFile\src\G72x\g72x_test.c"
-"D:\lameFE2\LibSndFile\src\gsm610.c"
-"D:\lameFE2\LibSndFile\src\GSM610\gsm_create.c"
-"D:\lameFE2\LibSndFile\src\GSM610\gsm_decode.c"
-"D:\lameFE2\LibSndFile\src\GSM610\gsm_destroy.c"
-"D:\lameFE2\LibSndFile\src\GSM610\gsm_encode.c"
-"D:\lameFE2\LibSndFile\src\GSM610\gsm_option.c"
-"D:\lameFE2\LibSndFile\src\ima_adpcm.c"
-"D:\lameFE2\LibSndFile\src\ircam.c"
-"D:\lameFE2\LibSndFile\src\GSM610\long_term.c"
-"D:\lameFE2\LibSndFile\src\GSM610\lpc.c"
-"D:\lameFE2\LibSndFile\src\ms_adpcm.c"
-"D:\lameFE2\LibSndFile\src\nist.c"
-"D:\lameFE2\LibSndFile\src\paf.c"
-"D:\lameFE2\LibSndFile\src\pcm.c"
-"D:\lameFE2\LibSndFile\src\GSM610\preprocess.c"
-"D:\lameFE2\LibSndFile\src\raw.c"
-"D:\lameFE2\LibSndFile\src\GSM610\rpe.c"
-"D:\lameFE2\LibSndFile\src\rx2.c"
-"D:\lameFE2\LibSndFile\src\sd2.c"
-"D:\lameFE2\LibSndFile\src\sds.c"
-"D:\lameFE2\LibSndFile\src\sfendian.c"
-"D:\lameFE2\LibSndFile\src\GSM610\short_term.c"
-"D:\lameFE2\LibSndFile\src\sndfile.c"
-"D:\lameFE2\LibSndFile\src\svx.c"
-"D:\lameFE2\LibSndFile\src\GSM610\table.c"
-"D:\lameFE2\LibSndFile\src\txw.c"
-"D:\lameFE2\LibSndFile\src\ulaw.c"
-"D:\lameFE2\LibSndFile\src\voc.c"
-"D:\lameFE2\LibSndFile\src\w64.c"
-"D:\lameFE2\LibSndFile\src\wav.c"
-"D:\lameFE2\LibSndFile\src\wav_w64.c"
-"D:\lameFE2\LibSndFile\src\wve.c"
+"C:\cpp\lameFE2\LibSndFile\src\GSM610\add.c"
+"C:\cpp\lameFE2\LibSndFile\src\aiff.c"
+"C:\cpp\lameFE2\LibSndFile\src\alaw.c"
+"C:\cpp\lameFE2\LibSndFile\src\au.c"
+"C:\cpp\lameFE2\LibSndFile\src\au_g72x.c"
+"C:\cpp\lameFE2\LibSndFile\src\GSM610\code.c"
+"C:\cpp\lameFE2\LibSndFile\src\command.c"
+"C:\cpp\lameFE2\LibSndFile\src\common.c"
+"C:\cpp\lameFE2\LibSndFile\src\GSM610\decode.c"
+"C:\cpp\lameFE2\LibSndFile\src\double64.c"
+"C:\cpp\lameFE2\LibSndFile\src\dwd.c"
+"C:\cpp\lameFE2\LibSndFile\src\dwvw.c"
+"C:\cpp\lameFE2\LibSndFile\src\file_io.c"
+"C:\cpp\lameFE2\LibSndFile\src\float32.c"
+"C:\cpp\lameFE2\LibSndFile\src\G72x\g721.c"
+"C:\cpp\lameFE2\LibSndFile\src\G72x\g723_16.c"
+"C:\cpp\lameFE2\LibSndFile\src\G72x\g723_24.c"
+"C:\cpp\lameFE2\LibSndFile\src\G72x\g723_40.c"
+"C:\cpp\lameFE2\LibSndFile\src\G72x\g72x.c"
+"C:\cpp\lameFE2\LibSndFile\src\G72x\g72x_test.c"
+"C:\cpp\lameFE2\LibSndFile\src\gsm610.c"
+"C:\cpp\lameFE2\LibSndFile\src\GSM610\gsm_create.c"
+"C:\cpp\lameFE2\LibSndFile\src\GSM610\gsm_decode.c"
+"C:\cpp\lameFE2\LibSndFile\src\GSM610\gsm_destroy.c"
+"C:\cpp\lameFE2\LibSndFile\src\GSM610\gsm_encode.c"
+"C:\cpp\lameFE2\LibSndFile\src\GSM610\gsm_option.c"
+"C:\cpp\lameFE2\LibSndFile\src\ima_adpcm.c"
+"C:\cpp\lameFE2\LibSndFile\src\ircam.c"
+"C:\cpp\lameFE2\LibSndFile\src\GSM610\long_term.c"
+"C:\cpp\lameFE2\LibSndFile\src\GSM610\lpc.c"
+"C:\cpp\lameFE2\LibSndFile\src\ms_adpcm.c"
+"C:\cpp\lameFE2\LibSndFile\src\nist.c"
+"C:\cpp\lameFE2\LibSndFile\src\paf.c"
+"C:\cpp\lameFE2\LibSndFile\src\pcm.c"
+"C:\cpp\lameFE2\LibSndFile\src\GSM610\preprocess.c"
+"C:\cpp\lameFE2\LibSndFile\src\raw.c"
+"C:\cpp\lameFE2\LibSndFile\src\GSM610\rpe.c"
+"C:\cpp\lameFE2\LibSndFile\src\rx2.c"
+"C:\cpp\lameFE2\LibSndFile\src\sd2.c"
+"C:\cpp\lameFE2\LibSndFile\src\sds.c"
+"C:\cpp\lameFE2\LibSndFile\src\sfendian.c"
+"C:\cpp\lameFE2\LibSndFile\src\GSM610\short_term.c"
+"C:\cpp\lameFE2\LibSndFile\src\sndfile.c"
+"C:\cpp\lameFE2\LibSndFile\src\svx.c"
+"C:\cpp\lameFE2\LibSndFile\src\GSM610\table.c"
+"C:\cpp\lameFE2\LibSndFile\src\txw.c"
+"C:\cpp\lameFE2\LibSndFile\src\ulaw.c"
+"C:\cpp\lameFE2\LibSndFile\src\voc.c"
+"C:\cpp\lameFE2\LibSndFile\src\w64.c"
+"C:\cpp\lameFE2\LibSndFile\src\wav.c"
+"C:\cpp\lameFE2\LibSndFile\src\wav_w64.c"
+"C:\cpp\lameFE2\LibSndFile\src\wve.c"
 ]
-Creating command line "cl.exe @C:\DOKUME~1\TWC834~1.HAT\LOKALE~1\Temp\RSP577.tmp" 
-Erstellen der temporären Datei  "C:\DOKUME~1\TWC834~1.HAT\LOKALE~1\Temp\RSP578.tmp" mit Inhalten
+Creating command line "cl.exe @C:\DOKUME~1\tw\LOKALE~1\Temp\RSP3AD.tmp" 
+Erstellen der temporären Datei  "C:\DOKUME~1\tw\LOKALE~1\Temp\RSP3AE.tmp" mit Inhalten
 [
 /nologo /dll /incremental:no /pdb:"Release/libsndfile.pdb" /machine:I386 /def:".\libsndfile.def" /out:"Release/libsndfile.dll" /implib:"Release/libsndfile.lib" 
 .\Release\add.obj
@@ -718,7 +121,7 @@ Erstellen der temporären Datei  "C:\DOKUME~1\TWC834~1.HAT\LOKALE~1\Temp\RSP578.t
 .\Release\wve.obj
 .\Release\libsndfile.res
 ]
-Erstellen der Befehlzeile "link.exe @C:\DOKUME~1\TWC834~1.HAT\LOKALE~1\Temp\RSP578.tmp"
+Erstellen der Befehlzeile "link.exe @C:\DOKUME~1\tw\LOKALE~1\Temp\RSP3AE.tmp"
 <h3>Ausgabefenster</h3>
 Ressourcen werden kompiliert...
 Kompilierung läuft...
@@ -741,7 +144,7 @@ g723_16.c
 g723_24.c
 g723_40.c
 g72x.c
-D:\lameFE2\LibSndFile\src\G72x\g72x.c(462) : warning C4244: '=' : Konvertierung von 'long ' in 'short ', moeglicher Datenverlust
+C:\cpp\lameFE2\LibSndFile\src\G72x\g72x.c(462) : warning C4244: '=' : Konvertierung von 'long ' in 'short ', moeglicher Datenverlust
 g72x_test.c
 gsm610.c
 gsm_create.c
@@ -752,22 +155,22 @@ gsm_option.c
 ima_adpcm.c
 ircam.c
 long_term.c
-D:\lameFE2\LibSndFile\src\GSM610\long_term.c(510) : warning C4244: '=' : Konvertierung von 'int ' in 'float ', moeglicher Datenverlust
-D:\lameFE2\LibSndFile\src\GSM610\long_term.c(570) : warning C4244: '=' : Konvertierung von 'float ' in 'int ', moeglicher Datenverlust
-D:\lameFE2\LibSndFile\src\GSM610\long_term.c(571) : warning C4244: '=' : Konvertierung von 'float ' in 'int ', moeglicher Datenverlust
-D:\lameFE2\LibSndFile\src\GSM610\long_term.c(572) : warning C4244: '=' : Konvertierung von 'float ' in 'int ', moeglicher Datenverlust
-D:\lameFE2\LibSndFile\src\GSM610\long_term.c(573) : warning C4244: '=' : Konvertierung von 'float ' in 'int ', moeglicher Datenverlust
-D:\lameFE2\LibSndFile\src\GSM610\long_term.c(574) : warning C4244: '=' : Konvertierung von 'float ' in 'int ', moeglicher Datenverlust
-D:\lameFE2\LibSndFile\src\GSM610\long_term.c(575) : warning C4244: '=' : Konvertierung von 'float ' in 'int ', moeglicher Datenverlust
-D:\lameFE2\LibSndFile\src\GSM610\long_term.c(576) : warning C4244: '=' : Konvertierung von 'float ' in 'int ', moeglicher Datenverlust
-D:\lameFE2\LibSndFile\src\GSM610\long_term.c(577) : warning C4244: '=' : Konvertierung von 'float ' in 'int ', moeglicher Datenverlust
-D:\lameFE2\LibSndFile\src\GSM610\long_term.c(578) : warning C4244: '=' : Konvertierung von 'float ' in 'int ', moeglicher Datenverlust
-D:\lameFE2\LibSndFile\src\GSM610\long_term.c(819) : warning C4244: '=' : Konvertierung von 'double ' in 'int ', moeglicher Datenverlust
+C:\cpp\lameFE2\LibSndFile\src\GSM610\long_term.c(510) : warning C4244: '=' : Konvertierung von 'int ' in 'float ', moeglicher Datenverlust
+C:\cpp\lameFE2\LibSndFile\src\GSM610\long_term.c(570) : warning C4244: '=' : Konvertierung von 'float ' in 'int ', moeglicher Datenverlust
+C:\cpp\lameFE2\LibSndFile\src\GSM610\long_term.c(571) : warning C4244: '=' : Konvertierung von 'float ' in 'int ', moeglicher Datenverlust
+C:\cpp\lameFE2\LibSndFile\src\GSM610\long_term.c(572) : warning C4244: '=' : Konvertierung von 'float ' in 'int ', moeglicher Datenverlust
+C:\cpp\lameFE2\LibSndFile\src\GSM610\long_term.c(573) : warning C4244: '=' : Konvertierung von 'float ' in 'int ', moeglicher Datenverlust
+C:\cpp\lameFE2\LibSndFile\src\GSM610\long_term.c(574) : warning C4244: '=' : Konvertierung von 'float ' in 'int ', moeglicher Datenverlust
+C:\cpp\lameFE2\LibSndFile\src\GSM610\long_term.c(575) : warning C4244: '=' : Konvertierung von 'float ' in 'int ', moeglicher Datenverlust
+C:\cpp\lameFE2\LibSndFile\src\GSM610\long_term.c(576) : warning C4244: '=' : Konvertierung von 'float ' in 'int ', moeglicher Datenverlust
+C:\cpp\lameFE2\LibSndFile\src\GSM610\long_term.c(577) : warning C4244: '=' : Konvertierung von 'float ' in 'int ', moeglicher Datenverlust
+C:\cpp\lameFE2\LibSndFile\src\GSM610\long_term.c(578) : warning C4244: '=' : Konvertierung von 'float ' in 'int ', moeglicher Datenverlust
+C:\cpp\lameFE2\LibSndFile\src\GSM610\long_term.c(819) : warning C4244: '=' : Konvertierung von 'double ' in 'int ', moeglicher Datenverlust
 lpc.c
-D:\lameFE2\LibSndFile\src\GSM610\lpc.c(165) : warning C4244: '=' : Konvertierung von 'float ' in 'int ', moeglicher Datenverlust
+C:\cpp\lameFE2\LibSndFile\src\GSM610\lpc.c(165) : warning C4244: '=' : Konvertierung von 'float ' in 'int ', moeglicher Datenverlust
 ms_adpcm.c
-D:\lameFE2\LibSndFile\src\ms_adpcm.c(247) : warning C4305: '-=' : Verkuerzung von 'const int ' in 'short '
-D:\lameFE2\LibSndFile\src\ms_adpcm.c(249) : warning C4305: '-=' : Verkuerzung von 'const int ' in 'short '
+C:\cpp\lameFE2\LibSndFile\src\ms_adpcm.c(247) : warning C4305: '-=' : Verkuerzung von 'const int ' in 'short '
+C:\cpp\lameFE2\LibSndFile\src\ms_adpcm.c(249) : warning C4305: '-=' : Verkuerzung von 'const int ' in 'short '
 nist.c
 paf.c
 pcm.c
@@ -775,40 +178,40 @@ preprocess.c
 raw.c
 rpe.c
 rx2.c
-D:\lameFE2\LibSndFile\src\GSM610\rpe.c(297) : Warnung C4761: Größenkonflikt im Argument. Konvertierung vorgenommen
-D:\lameFE2\LibSndFile\src\GSM610\rpe.c(297) : Warnung C4761: Größenkonflikt im Argument. Konvertierung vorgenommen
+C:\cpp\lameFE2\LibSndFile\src\GSM610\rpe.c(297) : Warnung C4761: Größenkonflikt im Argument. Konvertierung vorgenommen
+C:\cpp\lameFE2\LibSndFile\src\GSM610\rpe.c(297) : Warnung C4761: Größenkonflikt im Argument. Konvertierung vorgenommen
 sd2.c
 sds.c
 sfendian.c
 short_term.c
-D:\lameFE2\LibSndFile\src\GSM610\short_term.c(57) : warning C4244: '=' : Konvertierung von 'const long ' in 'short ', moeglicher Datenverlust
-D:\lameFE2\LibSndFile\src\GSM610\short_term.c(57) : warning C4244: '=' : Konvertierung von 'const long ' in 'short ', moeglicher Datenverlust
-D:\lameFE2\LibSndFile\src\GSM610\short_term.c(57) : warning C4244: '=' : Konvertierung von 'const long ' in 'short ', moeglicher Datenverlust
-D:\lameFE2\LibSndFile\src\GSM610\short_term.c(58) : warning C4244: '=' : Konvertierung von 'const long ' in 'short ', moeglicher Datenverlust
-D:\lameFE2\LibSndFile\src\GSM610\short_term.c(58) : warning C4244: '=' : Konvertierung von 'const long ' in 'short ', moeglicher Datenverlust
-D:\lameFE2\LibSndFile\src\GSM610\short_term.c(58) : warning C4244: '=' : Konvertierung von 'const long ' in 'short ', moeglicher Datenverlust
-D:\lameFE2\LibSndFile\src\GSM610\short_term.c(59) : warning C4244: '=' : Konvertierung von 'const long ' in 'short ', moeglicher Datenverlust
-D:\lameFE2\LibSndFile\src\GSM610\short_term.c(59) : warning C4244: '=' : Konvertierung von 'const long ' in 'short ', moeglicher Datenverlust
-D:\lameFE2\LibSndFile\src\GSM610\short_term.c(59) : warning C4244: '=' : Konvertierung von 'const long ' in 'short ', moeglicher Datenverlust
-D:\lameFE2\LibSndFile\src\GSM610\short_term.c(60) : warning C4244: '=' : Konvertierung von 'const long ' in 'short ', moeglicher Datenverlust
-D:\lameFE2\LibSndFile\src\GSM610\short_term.c(60) : warning C4244: '=' : Konvertierung von 'const long ' in 'short ', moeglicher Datenverlust
-D:\lameFE2\LibSndFile\src\GSM610\short_term.c(60) : warning C4244: '=' : Konvertierung von 'const long ' in 'short ', moeglicher Datenverlust
-D:\lameFE2\LibSndFile\src\GSM610\short_term.c(62) : warning C4244: '=' : Konvertierung von 'const long ' in 'short ', moeglicher Datenverlust
-D:\lameFE2\LibSndFile\src\GSM610\short_term.c(62) : warning C4244: '=' : Konvertierung von 'const long ' in 'short ', moeglicher Datenverlust
-D:\lameFE2\LibSndFile\src\GSM610\short_term.c(62) : warning C4244: '=' : Konvertierung von 'const long ' in 'short ', moeglicher Datenverlust
-D:\lameFE2\LibSndFile\src\GSM610\short_term.c(63) : warning C4244: '=' : Konvertierung von 'const long ' in 'short ', moeglicher Datenverlust
-D:\lameFE2\LibSndFile\src\GSM610\short_term.c(63) : warning C4244: '=' : Konvertierung von 'const long ' in 'short ', moeglicher Datenverlust
-D:\lameFE2\LibSndFile\src\GSM610\short_term.c(63) : warning C4244: '=' : Konvertierung von 'const long ' in 'short ', moeglicher Datenverlust
-D:\lameFE2\LibSndFile\src\GSM610\short_term.c(64) : warning C4244: '=' : Konvertierung von 'const long ' in 'short ', moeglicher Datenverlust
-D:\lameFE2\LibSndFile\src\GSM610\short_term.c(64) : warning C4244: '=' : Konvertierung von 'const long ' in 'short ', moeglicher Datenverlust
-D:\lameFE2\LibSndFile\src\GSM610\short_term.c(64) : warning C4244: '=' : Konvertierung von 'const long ' in 'short ', moeglicher Datenverlust
-D:\lameFE2\LibSndFile\src\GSM610\short_term.c(65) : warning C4244: '=' : Konvertierung von 'const long ' in 'short ', moeglicher Datenverlust
-D:\lameFE2\LibSndFile\src\GSM610\short_term.c(65) : warning C4244: '=' : Konvertierung von 'const long ' in 'short ', moeglicher Datenverlust
-D:\lameFE2\LibSndFile\src\GSM610\short_term.c(65) : warning C4244: '=' : Konvertierung von 'const long ' in 'short ', moeglicher Datenverlust
-D:\lameFE2\LibSndFile\src\GSM610\short_term.c(256) : warning C4244: '=' : Konvertierung von 'float ' in 'short ', moeglicher Datenverlust
-D:\lameFE2\LibSndFile\src\GSM610\short_term.c(258) : warning C4244: '=' : Konvertierung von 'float ' in 'short ', moeglicher Datenverlust
-D:\lameFE2\LibSndFile\src\GSM610\short_term.c(336) : warning C4244: '=' : Konvertierung von 'float ' in 'short ', moeglicher Datenverlust
-D:\lameFE2\LibSndFile\src\GSM610\short_term.c(338) : warning C4244: '=' : Konvertierung von 'float ' in 'short ', moeglicher Datenverlust
+C:\cpp\lameFE2\LibSndFile\src\GSM610\short_term.c(57) : warning C4244: '=' : Konvertierung von 'const long ' in 'short ', moeglicher Datenverlust
+C:\cpp\lameFE2\LibSndFile\src\GSM610\short_term.c(57) : warning C4244: '=' : Konvertierung von 'const long ' in 'short ', moeglicher Datenverlust
+C:\cpp\lameFE2\LibSndFile\src\GSM610\short_term.c(57) : warning C4244: '=' : Konvertierung von 'const long ' in 'short ', moeglicher Datenverlust
+C:\cpp\lameFE2\LibSndFile\src\GSM610\short_term.c(58) : warning C4244: '=' : Konvertierung von 'const long ' in 'short ', moeglicher Datenverlust
+C:\cpp\lameFE2\LibSndFile\src\GSM610\short_term.c(58) : warning C4244: '=' : Konvertierung von 'const long ' in 'short ', moeglicher Datenverlust
+C:\cpp\lameFE2\LibSndFile\src\GSM610\short_term.c(58) : warning C4244: '=' : Konvertierung von 'const long ' in 'short ', moeglicher Datenverlust
+C:\cpp\lameFE2\LibSndFile\src\GSM610\short_term.c(59) : warning C4244: '=' : Konvertierung von 'const long ' in 'short ', moeglicher Datenverlust
+C:\cpp\lameFE2\LibSndFile\src\GSM610\short_term.c(59) : warning C4244: '=' : Konvertierung von 'const long ' in 'short ', moeglicher Datenverlust
+C:\cpp\lameFE2\LibSndFile\src\GSM610\short_term.c(59) : warning C4244: '=' : Konvertierung von 'const long ' in 'short ', moeglicher Datenverlust
+C:\cpp\lameFE2\LibSndFile\src\GSM610\short_term.c(60) : warning C4244: '=' : Konvertierung von 'const long ' in 'short ', moeglicher Datenverlust
+C:\cpp\lameFE2\LibSndFile\src\GSM610\short_term.c(60) : warning C4244: '=' : Konvertierung von 'const long ' in 'short ', moeglicher Datenverlust
+C:\cpp\lameFE2\LibSndFile\src\GSM610\short_term.c(60) : warning C4244: '=' : Konvertierung von 'const long ' in 'short ', moeglicher Datenverlust
+C:\cpp\lameFE2\LibSndFile\src\GSM610\short_term.c(62) : warning C4244: '=' : Konvertierung von 'const long ' in 'short ', moeglicher Datenverlust
+C:\cpp\lameFE2\LibSndFile\src\GSM610\short_term.c(62) : warning C4244: '=' : Konvertierung von 'const long ' in 'short ', moeglicher Datenverlust
+C:\cpp\lameFE2\LibSndFile\src\GSM610\short_term.c(62) : warning C4244: '=' : Konvertierung von 'const long ' in 'short ', moeglicher Datenverlust
+C:\cpp\lameFE2\LibSndFile\src\GSM610\short_term.c(63) : warning C4244: '=' : Konvertierung von 'const long ' in 'short ', moeglicher Datenverlust
+C:\cpp\lameFE2\LibSndFile\src\GSM610\short_term.c(63) : warning C4244: '=' : Konvertierung von 'const long ' in 'short ', moeglicher Datenverlust
+C:\cpp\lameFE2\LibSndFile\src\GSM610\short_term.c(63) : warning C4244: '=' : Konvertierung von 'const long ' in 'short ', moeglicher Datenverlust
+C:\cpp\lameFE2\LibSndFile\src\GSM610\short_term.c(64) : warning C4244: '=' : Konvertierung von 'const long ' in 'short ', moeglicher Datenverlust
+C:\cpp\lameFE2\LibSndFile\src\GSM610\short_term.c(64) : warning C4244: '=' : Konvertierung von 'const long ' in 'short ', moeglicher Datenverlust
+C:\cpp\lameFE2\LibSndFile\src\GSM610\short_term.c(64) : warning C4244: '=' : Konvertierung von 'const long ' in 'short ', moeglicher Datenverlust
+C:\cpp\lameFE2\LibSndFile\src\GSM610\short_term.c(65) : warning C4244: '=' : Konvertierung von 'const long ' in 'short ', moeglicher Datenverlust
+C:\cpp\lameFE2\LibSndFile\src\GSM610\short_term.c(65) : warning C4244: '=' : Konvertierung von 'const long ' in 'short ', moeglicher Datenverlust
+C:\cpp\lameFE2\LibSndFile\src\GSM610\short_term.c(65) : warning C4244: '=' : Konvertierung von 'const long ' in 'short ', moeglicher Datenverlust
+C:\cpp\lameFE2\LibSndFile\src\GSM610\short_term.c(256) : warning C4244: '=' : Konvertierung von 'float ' in 'short ', moeglicher Datenverlust
+C:\cpp\lameFE2\LibSndFile\src\GSM610\short_term.c(258) : warning C4244: '=' : Konvertierung von 'float ' in 'short ', moeglicher Datenverlust
+C:\cpp\lameFE2\LibSndFile\src\GSM610\short_term.c(336) : warning C4244: '=' : Konvertierung von 'float ' in 'short ', moeglicher Datenverlust
+C:\cpp\lameFE2\LibSndFile\src\GSM610\short_term.c(338) : warning C4244: '=' : Konvertierung von 'float ' in 'short ', moeglicher Datenverlust
 sndfile.c
 svx.c
 table.c
@@ -821,96 +224,46 @@ wav_w64.c
 wve.c
 Linker-Vorgang läuft...
    Bibliothek Release/libsndfile.lib und Objekt Release/libsndfile.exp wird erstellt
-
-
-
-<h3>Ergebnisse</h3>
-libsndfile.dll - 0 Fehler, 43 Warnung(en)
 <h3>
 --------------------Konfiguration: wave_in - Win32 Release--------------------
 </h3>
 <h3>Befehlszeilen</h3>
-Creating command line "rc.exe /l 0x409 /fo"Release/wave_in.res" /d "_AFXDLL" /d "NDEBUG" /d "_ENGLISH" "D:\lameFE2\wave_in\wave_in.rc"" 
-Erstellen der temporären Datei  "C:\DOKUME~1\TWC834~1.HAT\LOKALE~1\Temp\RSP57C.tmp" mit Inhalten
+Creating command line "rc.exe /l 0x409 /fo"Release/wave_in.res" /d "_AFXDLL" /d "NDEBUG" /d "_ENGLISH" "C:\cpp\lameFE2\wave_in\wave_in.rc"" 
+Erstellen der temporären Datei  "C:\DOKUME~1\tw\LOKALE~1\Temp\RSP3B2.tmp" mit Inhalten
 [
 /nologo /MD /W3 /GX /O2 /D "_WINDLL" /D "_AFXDLL" /D "_MBCS" /D "_AFXEXT" /D "WIN32" /D "NDEBUG" /D "_WINDOWS" /D "_ENGLISH" /Fp"Release/wave_in.pch" /Yu"stdafx.h" /Fo"Release/" /Fd"Release/" /FD /c 
-"D:\lameFE2\wave_in\wave_in.cpp"
+"C:\cpp\lameFE2\wave_in\wave_in.cpp"
 ]
-Creating command line "cl.exe @C:\DOKUME~1\TWC834~1.HAT\LOKALE~1\Temp\RSP57C.tmp" 
-Erstellen der temporären Datei  "C:\DOKUME~1\TWC834~1.HAT\LOKALE~1\Temp\RSP57D.tmp" mit Inhalten
+Creating command line "cl.exe @C:\DOKUME~1\tw\LOKALE~1\Temp\RSP3B2.tmp" 
+Erstellen der temporären Datei  "C:\DOKUME~1\tw\LOKALE~1\Temp\RSP3B3.tmp" mit Inhalten
 [
 /nologo /MD /W3 /GX /O2 /D "_WINDLL" /D "_AFXDLL" /D "_MBCS" /D "_AFXEXT" /D "WIN32" /D "NDEBUG" /D "_WINDOWS" /D "_ENGLISH" /Fp"Release/wave_in.pch" /Yc"stdafx.h" /Fo"Release/" /Fd"Release/" /FD /c 
-"D:\lameFE2\wave_in\StdAfx.cpp"
+"C:\cpp\lameFE2\wave_in\StdAfx.cpp"
 ]
-Creating command line "cl.exe @C:\DOKUME~1\TWC834~1.HAT\LOKALE~1\Temp\RSP57D.tmp" 
-Erstellen der temporären Datei  "C:\DOKUME~1\TWC834~1.HAT\LOKALE~1\Temp\RSP57E.tmp" mit Inhalten
+Creating command line "cl.exe @C:\DOKUME~1\tw\LOKALE~1\Temp\RSP3B3.tmp" 
+Erstellen der temporären Datei  "C:\DOKUME~1\tw\LOKALE~1\Temp\RSP3B4.tmp" mit Inhalten
 [
 /nologo /subsystem:windows /dll /incremental:no /pdb:"Release/wave_in.pdb" /machine:I386 /def:".\wave_in.def" /out:"../Release/Plugins/wave_in.dll" /implib:"Release/wave_in.lib" /libpath:"../libsndfile/win32/Release" 
 .\Release\StdAfx.obj
 .\Release\wave_in.obj
 .\Release\wave_in.res
-\lameFE2\LibSndFile\Win32\Release\libsndfile.lib
+\cpp\lameFE2\LibSndFile\Win32\Release\libsndfile.lib
 ]
-Erstellen der Befehlzeile "link.exe @C:\DOKUME~1\TWC834~1.HAT\LOKALE~1\Temp\RSP57E.tmp"
+Erstellen der Befehlzeile "link.exe @C:\DOKUME~1\tw\LOKALE~1\Temp\RSP3B4.tmp"
 <h3>Ausgabefenster</h3>
 Ressourcen werden kompiliert...
 Kompilierung läuft...
 StdAfx.cpp
 Kompilierung läuft...
 wave_in.cpp
-D:\lameFE2\wave_in\wave_in.cpp(172) : warning C4244: 'return' : Konvertierung von '__int64' in 'unsigned int', moeglicher Datenverlust
+C:\cpp\lameFE2\wave_in\wave_in.cpp(172) : warning C4244: 'return' : Konvertierung von '__int64' in 'unsigned int', moeglicher Datenverlust
 Linker-Vorgang läuft...
    Bibliothek Release/wave_in.lib und Objekt Release/wave_in.exp wird erstellt
 
 
 
 <h3>Ergebnisse</h3>
-wave_in.dll - 0 Fehler, 1 Warnung(en)
-<h3>
---------------------Konfiguration: wave_out - Win32 Release--------------------
-</h3>
-<h3>Befehlszeilen</h3>
-Creating command line "rc.exe /l 0x407 /fo"Release/wave_out.res" /d "NDEBUG" /d "_AFXDLL" "D:\lameFE2\wave_out\wave_out.rc"" 
-Erstellen der temporären Datei  "C:\DOKUME~1\TWC834~1.HAT\LOKALE~1\Temp\RSP583.tmp" mit Inhalten
-[
-/nologo /MD /W3 /GX /O2 /D "WIN32" /D "NDEBUG" /D "_WINDOWS" /D "_WINDLL" /D "_AFXDLL" /D "_MBCS" /D "_AFXEXT" /Fp"Release/wave_out.pch" /Yu"stdafx.h" /Fo"Release/" /Fd"Release/" /FD /c 
-"D:\lameFE2\wave_out\ConfigDialog.cpp"
-"D:\lameFE2\wave_out\wave_out.cpp"
-]
-Creating command line "cl.exe @C:\DOKUME~1\TWC834~1.HAT\LOKALE~1\Temp\RSP583.tmp" 
-Erstellen der temporären Datei  "C:\DOKUME~1\TWC834~1.HAT\LOKALE~1\Temp\RSP584.tmp" mit Inhalten
-[
-/nologo /MD /W3 /GX /O2 /D "WIN32" /D "NDEBUG" /D "_WINDOWS" /D "_WINDLL" /D "_AFXDLL" /D "_MBCS" /D "_AFXEXT" /Fp"Release/wave_out.pch" /Yc"stdafx.h" /Fo"Release/" /Fd"Release/" /FD /c 
-"D:\lameFE2\wave_out\StdAfx.cpp"
-]
-Creating command line "cl.exe @C:\DOKUME~1\TWC834~1.HAT\LOKALE~1\Temp\RSP584.tmp" 
-Erstellen der temporären Datei  "C:\DOKUME~1\TWC834~1.HAT\LOKALE~1\Temp\RSP585.tmp" mit Inhalten
-[
-/nologo /subsystem:windows /dll /incremental:no /pdb:"Release/wave_out.pdb" /machine:I386 /def:".\wave_out.def" /out:"../Release/Plugins/wave_out.dll" /implib:"Release/wave_out.lib" 
-.\Release\ConfigDialog.obj
-.\Release\StdAfx.obj
-.\Release\wave_out.obj
-.\Release\wave_out.res
-\lameFE2\LibSndFile\Win32\Release\libsndfile.lib
-]
-Erstellen der Befehlzeile "link.exe @C:\DOKUME~1\TWC834~1.HAT\LOKALE~1\Temp\RSP585.tmp"
-<h3>Ausgabefenster</h3>
-Ressourcen werden kompiliert...
-Kompilierung läuft...
-StdAfx.cpp
-Kompilierung läuft...
-ConfigDialog.cpp
-wave_out.cpp
-D:\lameFE2\wave_out\wave_out.cpp(386) : warning C4244: 'return' : Konvertierung von '__int64' in 'unsigned int', moeglicher Datenverlust
-D:\lameFE2\wave_out\wave_out.cpp(395) : warning C4244: 'return' : Konvertierung von '__int64' in 'unsigned int', moeglicher Datenverlust
-Generieren von Code...
-Linker-Vorgang läuft...
-   Bibliothek Release/wave_out.lib und Objekt Release/wave_out.exp wird erstellt
-
-
-
-<h3>Ergebnisse</h3>
-wave_out.dll - 0 Fehler, 2 Warnung(en)
+wave_in.dll - 0 Fehler, 44 Warnung(en)
 </pre>
 </body>
 </html>

@@ -23,7 +23,7 @@
 #include "direct.h"
 #include "LameFEPlugin.h"
 #include "WinampPlugin.h"
-#include "Ini.h"
+#include "Settings.h"
 #include "OutPlugin.h"
 
 #ifdef _DEBUG
@@ -32,7 +32,7 @@
 static char THIS_FILE[] = __FILE__;
 #endif
 
-extern CString g_strIniFile;
+extern CSettings g_sSettings;
 /////////////////////////////////////////////////////////////////////////////
 // Dialogfeld CSettingsPlugin 
 
@@ -139,9 +139,7 @@ void CSettingsPlugin::Init(CString strWd)
 {
 
 	CMySettingsPage::Init(strWd);
-	CIni cfg;
-	cfg.SetIniFileName(g_strIniFile);
-	m_strPluginDir = cfg.GetValue("LameFE", "WinampPluginPath", "");
+	m_strPluginDir = g_sSettings.GetWinampPluginPath();
 }
 
 BOOL CSettingsPlugin::Save()
