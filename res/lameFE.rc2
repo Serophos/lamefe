@@ -14,7 +14,6 @@
 
 STRINGTABLE DISCARDABLE 
 BEGIN
-    //IDS_MAIN_LIST_TITLE2    "Files to convert"
     IDS_MAIN_DATATRACK      "Data Track"
 	IDS_MAIN_AUDIOTRACK		"Audio Track %02d"
     ID_EXIT                 "Exit lameFE"
@@ -27,6 +26,7 @@ BEGIN
     IDS_ERRTOC              "Error reading Table of Content of CD (Errornumber: %d)"
 	IDS_CDPINI_NOENTRY      "No entry for this CD found in the cdplayer.ini"
 	IDS_CDPINI_ERRORWRITE	"Error writing data to cdplayer.ini"
+	IDS_OLDCOMTL32DLL		"Your version of the Common Controls Library (COMCTL32.DLL) is too old to use highcolor icons. You need at least version 4.92 to use them. You can upgrade the DLL by installing Internet Explorer 5.0 or newer."
 END
 
 STRINGTABLE DISCARDABLE 
@@ -34,7 +34,7 @@ BEGIN
 	IDS_CDPINI_DOUBLEENTRY	"There is already an entry for this CD in the CDPlayer.ini"
 	IDS_CDPINI_WRITE_OK		"Successfully saved data to CDPlayer.ini"
 	IDS_CDTEXT_ERROR		"Could not read CDText information from CD."
-	IDS_ID3SETT_INV_FSTR	"The format String contains invalid characters (/, *, ?, <, >, |, :, . are not allowd)\nRemove them automaticly?\n"
+	IDS_ID3SETT_INV_FSTR	"The format String contains invalid characters! The characters / * ? < > | "" : are not allowed in a filename.\nThey will be replaced as followed:\n\n\n/ = -      * = -\n? = -      < = (\n> = )      | = -\n: =  -      "" = '\n\n"
 	IDS_PLUGIN_NOSEL		"No plugin selected"
 	IDS_PLUGIN_DEINST		"This will remove %s from your LameFE installation. Are you sure?"
 	IDS_PLUGIN_DEINSTFAILED "Could not remove %s"
@@ -83,7 +83,7 @@ BEGIN
 	IDS_ENC_NO_PLUGIN       "No plugin found to handle this file."
 	IDS_ENC_PLUG_LOADFAILED "Failed loading library %s"
 	IDS_ENC_PLUG_APIERROR   "Could not load API from Plugin. Internal error or this is no plugin that is supported by lameFE\n(%s)"
-    END
+END
 
 STRINGTABLE DISCARDABLE 
 BEGIN
@@ -91,17 +91,16 @@ BEGIN
     IDS_CDDB_ERR_CFGREAD    "Error reading cddb.cfg. Go to freeDB Settings and set up servers first!"
     IDS_CDDB_ERR_WINSOCK    "Error initializing Winsock!"
     IDS_CDDB_ERR            "Could not connect to server.\n[Error: %d, Response:%s]"
-//   IDS_ID3_ALBUMMODE       "Apply album information of for all files?"
     IDS_NOSELECTION         "No file selected."
-/*    IDS_ID3_ARTISTMODE      "Apply artist information for all files?"
-    IDS_ID3_COMMENTMODE     "Apply comment information for all files?"
-    IDS_ID3_GENREMODE       "Apply genre information for all files?"
-    IDS_ID3_YEARMODE        "Apply year information for all files?"*/
+	IDS_BKSLHWARN			"The filename stringe may not start with a ""\\"". The filename / folders will be created relatively to the Base Output Path. If your Base Path is for example ""C:\\My Music"" and your filename-string is ""%1\%1 - %3"" your file will be saved as\n""C:\\My Music\\<Artist>\\<Artist> - <Songtitle>.mp3"".\nThe leading backslash will be removed from the string."
+	IDS_DBLBACKSLASH		"Double backslash (\\\\) found. This is not alowed as it will create a zerolength directory-name. It will be removed automatically now."
     IDS_FILEOPENERR         "Error opening file %s"
     IDS_INVBITRATE          "Invalid bitrate. Only 16bit files are currently supported. This has %d bits per sample"
     IDS_RESTARTLAME         "You have to Restart lameFE before this setting takes into effect"
 	IDS_DEFAULT_ARTIST		"Unknown Artist"
 	IDS_DEFAULT_ALBUM		"Unknown Album"
+	IDS_CDDB_UPDATEDSERVERS	"Successfully updated freeDB serverlist!"
+	IDS_CDDB_UPDATEFAILED	"The new serverlist could not be retrieved. unknow error. Please retry later."
 END
 
 STRINGTABLE DISCARDABLE		  //"Tooltips may be this long -----------------------------------------------------"
