@@ -1,5 +1,5 @@
 /*
-** Copyright (C) 1999 Albert L. Faber
+** Copyright (C) 1999 - 2002 Albert L. Faber
 **  
 ** This program is free software; you can redistribute it and/or modify
 ** it under the terms of the GNU General Public License as published by
@@ -23,6 +23,13 @@
 #include "CDExtract.h"
 #include "AspiDebug.h"
 
+#ifdef _DEBUG
+#define new DEBUG_NEW
+#undef THIS_FILE
+static char THIS_FILE[] = __FILE__;
+#endif
+
+
 CCDExtract* pExtract=NULL;
 
 
@@ -39,113 +46,85 @@ LONG CCONV CR_GetCDRipVersion()
 	return 115;
 }
 
-CDEX_ERR CheckAspi()
+DLLEXPORT CDEX_ERR CCONV CR_DeInit( )
 {
-	DebugPrintf("Entering CheckAspi");
-
-/*
-	CFileVersion	myVersion;
-	char			lpszModuleFileName[MAX_PATH];
-	CString			strVersion;
-	CString			strVersion1;
-	CString			strVersion2;
-	CString			strVersion3;
-
-	strcpy(lpszModuleFileName,"wnaspi32.dll");
-	myVersion.Open(lpszModuleFileName);
-	strVersion=myVersion.GetProductVersion();
-	OutputDebugString(strVersion);
-	myVersion.Close();
-
-	float fVersion=atof(strVersion);
-
-	if ( fVersion<4.54)
+	if ( pExtract )
 	{
-		MessageBox(NULL,"Incorrect ASPI Manager, version reported "+strVersion,"ASPI Error",MB_OK);
-		return CDEX_ERROR;
+		pExtract->Clear();
+		delete pExtract;
+		pExtract = NULL;
 	}
-*/
-/*
-	strcpy(lpszModuleFileName,"winaspi.dll");
-	myVersion.Open(lpszModuleFileName);
-	strVersion1=myVersion.GetProductVersion();
-	OutputDebugString(strVersion1);
-	myVersion.Close();
 
-	strcpy(lpszModuleFileName,"apix.vxd");
-	myVersion.Open(lpszModuleFileName);
-	strVersion2=myVersion.GetProductVersion();
-	OutputDebugString(strVersion2);
-	myVersion.Close();
-
-	strcpy(lpszModuleFileName,"aspienum.vxd");
-	myVersion.Open(lpszModuleFileName);
-	strVersion3=myVersion.GetProductVersion();
-	OutputDebugString(strVersion3);
-	myVersion.Close();
-*/
-	DebugPrintf("Leaving CheckAspi");
 	return CDEX_OK;
 }
 
 
 DLLEXPORT CDEX_ERR CCONV CR_Init( LPCSTR strIniFname )
 {
+	CDEX_ERR bReturn = CDEX_OK;
 
 	ASSERT( strIniFname );
 
 	CDRomSettings::SetIniFileName( strIniFname );
+
 
 	SetDebugLevel( ::GetPrivateProfileInt( "Debug", "DebugCDRip", FALSE, strIniFname ) );
 
 	DebugPrintf("Entering CR_Init, ini file name = %s", strIniFname);
 
 
-	if ( CheckAspi() == CDEX_OK )
-	{
-		DebugPrintf("Create new CCDExtract");
-		pExtract=new CCDExtract;
-	}
+
+	CR_DeInit();
+
+	DebugPrintf("Create new CCDExtract");
+	pExtract=new CCDExtract;
 
 	if ( pExtract == NULL )
 	{
-		DebugPrintf("CR_Init failed!");
-		return CDEX_ERROR;
-	}
-
-
-
-	// Check if low level CD-ROM drivers are intialized properly
-	if (pExtract->IsAvailable() )
-	{
-		// Obtain the specs of the SCSI devices and select the proper CD Device
-		pExtract->GetCDRomDevices();
+		DebugPrintf( _T( "pExtract creation failed!" ) );
+		bReturn = CDEX_OUTOFMEMORY;
 	}
 	else
 	{
-		pExtract->Clear();
-		delete pExtract;
-		pExtract=NULL;
-		return CDEX_ERROR;
+		// get the INI settings
+		pExtract->LoadSettings( FALSE );
+
+		bReturn = pExtract->Init();
 	}
 
-	if (CR_GetNumCDROM()<1)
+
+	// Check if low level CD-ROM drivers are intialized properly
+	if ( pExtract->IsAvailable() )
 	{
-		pExtract->Clear();
-		delete pExtract;
-		pExtract=NULL;
-		return CDEX_ERROR;
+		// Obtain the specs of the SCSI devices and select the proper CD Device
+		bReturn = pExtract->GetCDRomDevices();
+	}
+	else
+	{
+		CR_DeInit();
 	}
 
-	// Set drive zero as default
-	CR_SetActiveCDROM(0);
+	if ( CDEX_OK == bReturn )
+	{
+		if ( CR_GetNumCDROM() < 1 )
+		{
+			CR_DeInit();
+			bReturn = CDEX_NOCDROMDEVICES;
+		}
+		else
+		{
+			// Set drive zero as default
+			CR_SetActiveCDROM( 0 );
 
-	CR_LoadSettings();
-	CR_SaveSettings();
+			// Get the settings once again to set the active drive
+			CR_LoadSettings();
+		}
+	}
 
-	DebugPrintf("CR_Init, OK");
 
-	return CDEX_OK;
+	DebugPrintf( _T( "Leaving CR_Init, return value %d" ), bReturn );
+
+	return bReturn;
 }
 
 
@@ -227,6 +206,8 @@ DLLEXPORT CDEX_ERR CCONV CR_GetCDROMParameters( CDROMPARAMS* pParam)
 	pParam->nRippingMode		= pExtract->GetRippingMode();
 	pParam->nParanoiaMode		= pExtract->GetParanoiaMode();
 
+	pParam->bUseCDText			= pExtract->GetUseCDText();
+
 	return CDEX_OK;
 }
 
@@ -263,7 +244,7 @@ DLLEXPORT CDEX_ERR CCONV CR_SetCDROMParameters( CDROMPARAMS* pParam)
 	pExtract->SetMultiRead(pParam->nMultiReadCount);
 	pExtract->SetMultiReadFirstOnly(pParam->bMultiReadFirstOnly);
 
-	pExtract->SetLockDuringRead(pParam->bLockDuringRead);
+	pExtract->SetLockDuringRead( pParam->bLockDuringRead );
 
 	if (pParam->DriveTable.DriveType!=CUSTOMDRIVE)
 	{
@@ -274,6 +255,7 @@ DLLEXPORT CDEX_ERR CCONV CR_SetCDROMParameters( CDROMPARAMS* pParam)
 
 	pExtract->SetParanoiaMode( pParam->nParanoiaMode );
 
+	pExtract->SetUseCDText( pParam->bUseCDText );
 
 	return nErr;
 }
@@ -308,7 +290,7 @@ DLLEXPORT CDEX_ERR CCONV CR_OpenRipper(	LONG* plBufferSize,
 
 	// Start Thread
 	//pExtract->StartThread(pExtract->ThreadFunc,pExtract);
-	*plBufferSize= pExtract->GetNumReadSectors() * CB_CDDASECTOR;
+	*plBufferSize= pExtract->GetNumReadSectors() * CB_CDDASECTORSIZE;
 
 	DebugPrintf("Leaving CR_OpenRipper");
 	return CDEX_OK;
@@ -405,63 +387,86 @@ DLLEXPORT LONG CCONV	CR_GetNumberOfJitterErrors()
 
 DLLEXPORT CDEX_ERR CCONV CR_SaveSettings()
 {
-	DebugPrintf("CR_SaveSettings");
-	if (!pExtract)
+	DebugPrintf( "CR_SaveSettings" );
+
+	if ( !pExtract )
+	{
 		return CDEX_ERROR;
+	}
 
 	pExtract->SaveSettings();
+
 	return CDEX_OK;
 }
 
 
 DLLEXPORT CDEX_ERR CCONV CR_LoadSettings()
 {
-	DebugPrintf("CR_LoadSettings");
-	if (!pExtract)
-		return CDEX_ERROR;
+	DebugPrintf( "CR_LoadSettings" );
 
-	pExtract->LoadSettings();
+	if ( !pExtract )
+	{
+		return CDEX_ERROR;
+	}
+
+	pExtract->LoadSettings( TRUE );
 	return CDEX_OK;
 }
 
 
 DLLEXPORT CDEX_ERR CCONV CR_ReadToc()
 {
-	DebugPrintf("CR_ReadToc");
-	if (!pExtract)
+	DebugPrintf( "CR_ReadToc" );
+
+	if ( !pExtract )
+	{
 		return CDEX_ERROR;
+	}
+
 	return pExtract->ReadToc();
 }
 
 DLLEXPORT CDEX_ERR CCONV CR_ReadCDText(BYTE* pbtBuffer,int nBufferSize,LPINT pnCDTextSize)
 {
-	DebugPrintf("CR_ReadCDText");
-	if (!pExtract)
+	DebugPrintf( "CR_ReadCDText" );
+
+	if ( !pExtract )
+	{
 		return CDEX_ERROR;
+	}
+
+	if ( FALSE == pExtract->GetUseCDText() )
+	{
+		return CDEX_ERROR;
+	}
+
 	return pExtract->ReadCDText(pbtBuffer,nBufferSize,pnCDTextSize);
 }
 
 
 DLLEXPORT LONG CCONV CR_GetNumTocEntries()
 {
-	DebugPrintf("CR_GetNumTocEntries");
-	if (!pExtract)
+	DebugPrintf( "CR_GetNumTocEntries" );
+
+	if ( !pExtract )
 		return 0;
+
 	return pExtract->GetToc().GetNumTracks();
 }
 
 DLLEXPORT TOCENTRY CCONV CR_GetTocEntry(LONG nTocEntry)
 {
 	TOCENTRY TocEntry;
-	DebugPrintf("CR_GetTocEntry");
 
-	memset(&TocEntry,0x00,sizeof(TocEntry));
+	DebugPrintf( "CR_GetTocEntry" );
 
-	if (pExtract)
+	memset( &TocEntry, 0x00, sizeof( TocEntry ) );
+
+	if ( pExtract )
 	{
-		TocEntry.dwStartSector=pExtract->GetToc().GetStartSector(nTocEntry);
-		TocEntry.btFlag=pExtract->GetToc().GetFlags(nTocEntry);
-		TocEntry.btTrackNumber=pExtract->GetToc().GetTrackNumber(nTocEntry);
+		TocEntry.dwStartSector=pExtract->GetToc().GetStartSector( nTocEntry );
+		TocEntry.btFlag=pExtract->GetToc().GetFlags( nTocEntry );
+		TocEntry.btTrackNumber=pExtract->GetToc().GetTrackNumber( nTocEntry );
 	}
 
 	return TocEntry;
@@ -470,10 +475,11 @@ DLLEXPORT TOCENTRY CCONV CR_GetTocEntry(LONG nTocEntry)
 DLLEXPORT void CCONV CR_NormalizeChunk(SHORT* pbsStream,LONG nNumSamples,DOUBLE dScaleFactor)
 {
 	int i;
-	DebugPrintf("CR_NormalizeChunk");
-	for (i=0;i<nNumSamples;i++)
+	DebugPrintf( "CR_NormalizeChunk" );
+
+	for ( i = 0; i < nNumSamples; i++)
 	{
-		pbsStream[i]=(short)( (double)pbsStream[i]*dScaleFactor);
+		pbsStream[ i ] = (short)( (double)pbsStream[ i ] * dScaleFactor );
 	}
 }
 
@@ -488,6 +494,19 @@ DLLEXPORT BOOL CCONV CR_IsUnitReady()
 	return pExtract->IsUnitReady();
 }
 
+DLLEXPORT CDEX_ERR CCONV CR_IsMediaLoaded( CDMEDIASTATUS& IsMediaLoaded )
+{
+	IsMediaLoaded = CDMEDIA_NOT_PRESENT;
+
+	if (!pExtract)
+	{
+		return CDEX_ERROR;
+	}
+
+	IsMediaLoaded = pExtract->IsMediaLoaded();
+
+	return CDEX_OK;
+}
 
 DLLEXPORT BOOL CCONV CR_EjectCD(BOOL bEject)
 {
@@ -518,21 +537,24 @@ DLLEXPORT BOOL CCONV CR_IsAudioPlaying()
 	return pExtract->IsAudioPlaying();
 }
 
-DLLEXPORT CDEX_ERR CCONV CR_PlayTrack(int nTrack)
+DLLEXPORT CDEX_ERR CCONV CR_PlayTrack( int nTrack )
 {
-	if (!pExtract)
+	if ( !pExtract )
+	{
 		return CDEX_ERROR;
+	}
 
 	int nNumTocEntries=CR_GetNumTocEntries();
 	
-	for (int i=0;i<nNumTocEntries;i++)
+	for ( int i = 0; i < nNumTocEntries; i++ )
 	{
-		TOCENTRY myTocEntry=CR_GetTocEntry(i);
-		TOCENTRY myTocEntry1=CR_GetTocEntry(i+1);
+		TOCENTRY myTocEntry = CR_GetTocEntry( i );
+		TOCENTRY myTocEntry1 = CR_GetTocEntry( i + 1 );
 
-		if (pExtract && myTocEntry.btTrackNumber==nTrack)
+		if ( pExtract && myTocEntry.btTrackNumber == nTrack )
 		{
-			pExtract->PlayTrack(myTocEntry.dwStartSector,myTocEntry1.dwStartSector-1);
+			pExtract->PlayTrack(	myTocEntry.dwStartSector, 
+									myTocEntry1.dwStartSector - 1 );
 			return CDEX_OK;
 		}
 	}
@@ -542,8 +564,8 @@ DLLEXPORT CDEX_ERR CCONV CR_PlayTrack(int nTrack)
 
 DLLEXPORT CDEX_ERR CCONV CR_PlaySection(LONG lStartSector,LONG lEndSector)
 {
-	DebugPrintf("CR_PlaySection");
-	if (!pExtract)
+	DebugPrintf( "CR_PlaySection" );
+	if ( !pExtract )
 		return CDEX_ERROR;
 
 	pExtract->PlayTrack(lStartSector,lEndSector);
@@ -554,11 +576,14 @@ DLLEXPORT CDEX_ERR CCONV CR_PlaySection(LONG lStartSector,LONG lEndSector)
 
 DLLEXPORT CDEX_ERR CCONV CR_StopPlayTrack()
 {
-	DebugPrintf("CR_StopPlayTrack");
-	if (!pExtract)
+	DebugPrintf( "CR_StopPlayTrack" );
+	if ( !pExtract )
+	{
 		return CDEX_ERROR;
+	}
 
 	pExtract->StopPlayTrack();
+
 	return CDEX_OK;
 }
 
@@ -573,9 +598,9 @@ DLLEXPORT CDEX_ERR CCONV CR_PauseCD(BOOL bPause)
 }
 
 
-DLLEXPORT SENSEKEY CCONV CR_GetSenseKey()
+DLLEXPORT CDSTATUSINFO CCONV CR_GetCDStatusInfo()
 {
-	return g_SenseKey;
+	return g_CDStatusInfo;
 }
 
 
@@ -643,19 +668,16 @@ BOOL APIENTRY DllMain(HANDLE hModule,
     switch( ul_reason_for_call )
 	{
 		case DLL_PROCESS_ATTACH:
+			TRACE0("CDRIP.DLL Initializing!\n");
 		break;
 		case DLL_THREAD_ATTACH:
 		break;
 		case DLL_THREAD_DETACH:
 		break;
 		case DLL_PROCESS_DETACH:
+			TRACE0("CDRIP.DLL Terminating!\n");
 			DebugPrintf("DllMain DLL_PROCESS_DETACH");
-			if (pExtract)
-			{
-				pExtract->Clear();
-				delete pExtract;
-				pExtract=NULL;
-			}
+			CR_DeInit();
 		break;
     }
     return TRUE;
@@ -673,22 +695,40 @@ DLLEXPORT INT CCONV CR_GetTransportLayer(  )
 	return CDRomSettings::GetTransportLayer();
 }
 
-DLLEXPORT void CCONV CR_ScanForC2Errors(	
-	LONG	lStartSector,
-	LONG	lEndSector,
-	INT&	nErrors,
-	INT*	pnErrorSectors,
-	INT		nMaxErrors,
-	BOOL&	bAbort	)
+DLLEXPORT CDEX_ERR CCONV CR_ScanForC2Errors(	
+	DWORD	dwStartSector,
+	DWORD	dwNumSectors,
+	DWORD&	dwErrors,
+	DWORD*	pdwErrorSectors )
 {
-	if (pExtract)
+	CDEX_ERR bReturn = CDEX_ERROR;
+
+	if ( pExtract )
 	{
-		pExtract->ScanForC2Errors(	lStartSector, 
-									lEndSector,
-									nErrors,
-									pnErrorSectors,
-									nMaxErrors,
-									bAbort );
+		bReturn = pExtract->ScanForC2Errors(	dwStartSector, 
+												dwNumSectors,
+												dwErrors,
+												pdwErrorSectors );
 	}
+
+	return bReturn;
 }
 
+DLLEXPORT DWORD CCONV CR_GetCurrentRipSector()
+{
+	return 0;
+}
+
+DLLEXPORT CDEX_ERR CCONV CR_GetDetailedDriveInfo( 
+	LPSTR lpszInfo,
+	DWORD dwInfoSize )
+{
+	CDEX_ERR bReturn = CDEX_ERROR;
+
+	if ( pExtract )
+	{
+		bReturn = pExtract->GetDetailedDriveInfo(	lpszInfo, 
+													dwInfoSize );
+	}
+	return bReturn;
+}

@@ -1,0 +1,7 @@
+; MP3_in.def : Deklariert die Modul-Parameter für die DLL.
+
+LIBRARY      "MP3_in"
+DESCRIPTION  'MP3_in Windows Dynamic Link Library'
+
+EXPORTS
+    ; Explizite Exporte können hier eingefügt werden

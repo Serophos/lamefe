@@ -1,6 +1,7 @@
 /*
 ** Copyright (C) 2002 Thees Winkler
-**  
+** Based on code from CDEx (c) 2002 by Albert L. Faber http://cdexos.sourceforge.net
+**
 ** This program is free software; you can redistribute it and/or modify
 ** it under the terms of the GNU General Public License as published by
 ** the Free Software Foundation; either version 2 of the License, or
@@ -30,24 +31,24 @@ static char THIS_FILE[]=__FILE__;
 // Konstruktion/Destruktion
 //////////////////////////////////////////////////////////////////////
 
-Buffer::Buffer():
-m_pDataBuffer(NULL),
-m_pSizeBuffer(NULL),
-m_nReadIdx(0),
-m_nWriteIdx(0),
-m_nBufferSize(0),
-m_nBuffers(0),
-m_nBuffersAvailable(0)
+CBuffer::CBuffer():
+	m_pDataBuffer(NULL),
+	m_pSizeBuffer(NULL),
+	m_nReadIdx(0),
+	m_nWriteIdx(0),
+	m_nBufferSize(0),
+	m_nBuffers(0),
+	m_nBuffersAvailable(0)
 {
 
 }
 
-Buffer::~Buffer()
+CBuffer::~CBuffer()
 {
-
+	DeInit();
 }
 
-bool Buffer::Init( int nBufferSize, int nBuffers )
+BOOL CBuffer::Init( int nBufferSize, int nBuffers )
 {
 
 	m_nBufferSize		= nBufferSize;
@@ -60,19 +61,19 @@ bool Buffer::Init( int nBufferSize, int nBuffers )
 	memset(m_pSizeBuffer, 0, nBuffers * sizeof(INT));
 	memset(m_pDataBuffer, 0, nBufferSize * nBuffers * sizeof(SHORT));
 
-	return true;
+	return TRUE;
 
 }
 
 
 
-INT Buffer::BuffersAvailable()
+INT CBuffer::BuffersAvailable()
 {
 
 	return m_nBuffersAvailable;
 }
 
-INT Buffer::Write( PSHORT pData, int nSize )
+INT CBuffer::Write( PSHORT pData, int nSize )
 {
 	memcpy( 
 			&m_pDataBuffer[m_nWriteIdx * m_nBufferSize],
@@ -80,15 +81,15 @@ INT Buffer::Write( PSHORT pData, int nSize )
 			nSize * sizeof(SHORT)
 			);
 
-	m_pSizeBuffer[ m_nWriteIdx ] = nSize;
-	m_nWriteIdx= (m_nWriteIdx+1) % m_nBuffers;
+	m_pSizeBuffer[m_nWriteIdx] = nSize;
+	m_nWriteIdx= (m_nWriteIdx + 1) % m_nBuffers;
 	m_nBuffersAvailable--;
 
 	return  nSize;
 }
 
 
-INT Buffer::Read( PSHORT pData )
+INT CBuffer::Read( PSHORT pData )
 {
 	if ( m_nReadIdx == m_nWriteIdx )
 	{
@@ -111,7 +112,7 @@ INT Buffer::Read( PSHORT pData )
 	return nSize;
 }
 
-void Buffer::deInit()
+void CBuffer::DeInit()
 {
 
 	delete [] m_pSizeBuffer;

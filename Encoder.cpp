@@ -18,8 +18,9 @@
 
 #include "stdafx.h"
 #include "stdafx.h"
-#include "Encoder.h"
 #include "cfgFile.h"
+#include "Encoder.h"
+
 
 #ifdef _DEBUG
 #undef THIS_FILE
@@ -31,13 +32,8 @@ static char THIS_FILE[]=__FILE__;
 // Konstruktion/Destruktion
 //////////////////////////////////////////////////////////////////////
 
-BEINITSTREAM		beInitStream=NULL;
-BEENCODECHUNK		beEncodeChunk=NULL;
-BEDEINITSTREAM		beDeinitStream=NULL;
-BECLOSESTREAM		beCloseStream=NULL;
-BEWRITEVBRHEADER	beWriteVBRHeader=NULL;
 
-Encoder::Encoder(CString wdir)
+CEncoder::CEncoder(CString wdir)
 {
 
 	dwMP3Buffer = NULL;
@@ -45,26 +41,43 @@ Encoder::Encoder(CString wdir)
 	err         = 0;
 	hbeStream   = NULL;
 	lameDLL     = NULL;
-	opf         = -1;
+	strOutputDLL = "lame_enc.dll";
 	pMP3Buffer  = NULL;
 
 	dwSamples   = 0;
 	dwWrite     = 0;
 
 	wd = wdir;	
+
+	beInitStream		= NULL;
+	beEncodeChunk		= NULL;
+	beDeinitStream		= NULL;
+	beCloseStream		= NULL;
+	beWriteVBRHeader	= NULL;
+
+	outputPlugin		= NULL;
+	outModule			= NULL;
+
+	m_albumInfo.album	= "";
+	m_albumInfo.artist	= "";
+	m_albumInfo.comment = "";
+	m_albumInfo.genre	= "";
+	m_albumInfo.song	= "";
+	m_albumInfo.track	= 0;
+	m_albumInfo.year	= 0;
 }
 
-Encoder::~Encoder()
+CEncoder::~CEncoder()
 {
 
 }
 
-BOOL Encoder::init()
+BOOL CEncoder::Init()
 {
 
-	switch(opf){
-		
-	case OUTPUT_MP3:
+	if(strOutputDLL == "lame_enc.dll"){
+
+		TRACE("Initializing Encoder for MP3 Output\n");
 		lameDLL=LoadLibrary(wd + "\\lame_enc.dll");
 
 		if(lameDLL==NULL)
@@ -85,57 +98,68 @@ BOOL Encoder::init()
 		{
 
 			AfxMessageBox("Fatal error: Unable to get LAME interfaces.",MB_OK+MB_ICONEXCLAMATION,0);
-			return false;
+			return TRUE;
 		}
 
-		return true;
+	}
+	else{
+		
+		TRACE("Initializing Encoder for Plugin Output\n");
 
-	case OUTPUT_WAVE:
-		return true;
+		outputPlugin = new COutPlugin(wd + "\\Plugins\\" + strOutputDLL, wd + "\\lameFE.ini");
+		
+		if(!outputPlugin->Load()){
+	
+			TRACE("Failed loading output plugin\n");
+			return FALSE;
+		}
+		outModule = outputPlugin->GetOutModule();
+		if(!outModule){
+
+			TRACE("Failed loading outModule fromoutput plugin\n");
+			return FALSE;
+		}
+		return TRUE;
 	
 	}
 
-	return false;
+	return FALSE;
 
 }
 
-void Encoder::setOutputFormat(int outPF)
+void CEncoder::SetOutputFormat(CString outputDLL)
 {
 
-	opf = outPF;
+	strOutputDLL = outputDLL;
 }
 
-BOOL Encoder::prepareEncoding(MP3File *file)
-{
-	
-	switch(opf){
+BOOL CEncoder::PrepareEncoding(CString strFilename, int nNumchannels, int nSamplerate, int nBitspersample){
 
-	case OUTPUT_WAVE:
-		return prepareWave(file->getSaveAs());
+	if(strOutputDLL == "lame_enc.dll"){
 
-	case OUTPUT_MP3:
-		return prepareMP3(file);
-
+		return PrepareMP3(strFilename, nNumchannels, nSamplerate, nBitspersample);
 	}
+	else{
 
-	return false;
+		return PrepareWave(strFilename, nNumchannels, nSamplerate, nBitspersample);
+	}
 }
 
-void Encoder::passBuffer(LPVOID pnBuffer, DWORD dwRead)
+void CEncoder::PassBuffer(LPVOID pnBuffer, DWORD dwRead)
 {
 
-	switch(opf){
+	//TRACE("Encoder::passBuffer dwRead=%d\n", dwRead);
 
-	case OUTPUT_WAVE:
+	if(strOutputDLL != "lame_enc.dll"){
 
-		if(fwrite((BYTE*)pnBuffer, sizeof(BYTE), dwRead, pFileOut) != dwRead){
+		if(!outModule){
 
 			return;
 		}
-		break;
+		outModule->Write((SHORT*)pnBuffer, dwRead);
+	}
+	else{
 
-	case OUTPUT_MP3:
-		
 		beEncodeChunk(hbeStream, dwRead, (short*)pnBuffer, pMP3Buffer, &dwWrite);
 
 		// Check result
@@ -151,67 +175,101 @@ void Encoder::passBuffer(LPVOID pnBuffer, DWORD dwRead)
 
 			return; //something went wrong. can't guess what it is:)
 		}
-
-		break;
 	}
 }
 
 
-BOOL Encoder::prepareWave(CString outFile)
+BOOL CEncoder::PrepareWave(CString outFile, int nNumchannels, int nSamplerate, int nBitspersample)
 {
 
-	pFileOut = fopen(outFile.GetBuffer(10), "wb+");
-	outFile.ReleaseBuffer();
+	TRACE("Encoder: prepareWave\n");
 
-	if(!pFileOut){
+	if(!outModule){
 
-		return false;
+		return FALSE;
 	}
 
+	MMFILE_FORMAT mmf;
+	mmf.dwSampleRate = nSamplerate;
+	mmf.nBitsPerSample = nBitspersample;
+	mmf.nChannels = nNumchannels;
 
+	if((dwSamples = outModule->Open(outFile, &mmf, &m_albumInfo)) == -1){
 
-	return writeWaveHeader();
+		ASSERT(FALSE);
+		return FALSE;
+	}
+
+	return TRUE;
 }
 
 
-BOOL Encoder::prepareMP3(MP3File *file)
+BOOL CEncoder::PrepareMP3(CString strFilename, int nNumchannels, int nSamplerate, int nBitspersample)
 {
 
-	CString outFile = file->getSaveAs();
+	TRACE("Encoder: Prepare MP3\n");
+
 	cfgFile cfg(wd);
 
-	pFileOut = fopen(outFile.GetBuffer(10), "wb+");
-	outFile.ReleaseBuffer();
-
+	pFileOut = fopen(strFilename, "wb+");
+	strFileOut = strFilename;
 
 ////////////////////////////////////////////////////////////////////////////////
 ///////////// Now start encoding
 
 	memset(&beConfig,0,sizeof(beConfig));					// clear all fields
 
-	// fill lame config structure
+	// Structure information
 	beConfig.dwConfig = BE_CONFIG_LAME;
 	beConfig.format.LHV1.dwStructVersion	= 1;
-	beConfig.format.LHV1.dwStructSize		= sizeof(beConfig);		
-	beConfig.format.LHV1.dwSampleRate		= file->getWfx()->nSamplesPerSec;//(DWORD)cfg.GetValue(SAMPLES, TRUE);
-	beConfig.format.LHV1.dwReSampleRate		= 0;
-	beConfig.format.LHV1.nMode				= (LONG)cfg.GetValue(NUMCHNLS, TRUE);		
-	beConfig.format.LHV1.dwBitrate			= (DWORD)(DWORD)cfg.GetValue(BITRATE, TRUE);				
-	//beConfig.format.LHV1.nPreset			= LQP_HIGH_QUALITY;		
-	beConfig.format.LHV1.dwMpegVersion		= (beConfig.format.LHV1.dwSampleRate>=32000)?MPEG1:MPEG2;				
-	beConfig.format.LHV1.dwPsyModel			= 0;					
-	beConfig.format.LHV1.dwEmphasis			= 0;	
-	beConfig.format.LHV1.bCRC				= (BOOL)cfg.GetValue(CRC, FALSE);			
-	beConfig.format.LHV1.bOriginal			= (BOOL)cfg.GetValue(ORIGINAL, FALSE); // SET ORIGINAL FLAG
-	beConfig.format.LHV1.bCopyright			= (BOOL)cfg.GetValue(ORIGINAL, FALSE);// SET COPYRIGHT FLAG	
-	beConfig.format.LHV1.bPrivate			= (BOOL)cfg.GetValue(PRIVATE, FALSE);// SET PRIVATE FLAG
-	beConfig.format.LHV1.bNoRes				= TRUE;					// No Bit resorvoir
+	beConfig.format.LHV1.dwStructSize		= sizeof(beConfig);
+	
+
+	//Basic Encoder Settings
+
+	//Samplerate of input file
+	beConfig.format.LHV1.dwSampleRate	= nSamplerate;
+	//Downsample rate
+	beConfig.format.LHV1.dwReSampleRate	= 0;  //Encoder decides
+	//Number of channels
+	beConfig.format.LHV1.nMode			= (nNumchannels == 1 ? BE_MP3_MODE_MONO : (LONG)cfg.GetValue("channels"));		
+	//CBR bitrate / VBR min bitrate
+	beConfig.format.LHV1.dwBitrate		= (DWORD)cfg.GetValue("bitrate", TRUE);				
+	//VBR max bitrate
+	beConfig.format.LHV1.dwMaxBitrate	= (DWORD)cfg.GetValue("maxbitrate", TRUE);
+	//Quality preset
+	beConfig.format.LHV1.nPreset		= cfg.GetValue("qualitypreset");
+	//MPEG Version. This is for future use and isn't supported by the lame_enc.dll yet
+	beConfig.format.LHV1.dwMpegVersion	= (beConfig.format.LHV1.dwSampleRate>=32000)? MPEG1 : MPEG2;				
+	//Future use
+	beConfig.format.LHV1.dwPsyModel		= 0;					
+	beConfig.format.LHV1.dwEmphasis		= 0;	
+	//Bit stream settings
+	beConfig.format.LHV1.bCRC			= (BOOL)cfg.GetValue("crc");			
+	beConfig.format.LHV1.bOriginal		= (BOOL)cfg.GetValue("original");
+	beConfig.format.LHV1.bCopyright		= (BOOL)cfg.GetValue("copyright");	
+	beConfig.format.LHV1.bPrivate		= (BOOL)cfg.GetValue("private");
+	
+	//VBR stuff
+	if(cfg.GetValue("vbrmethod") != 0){
+
+		beConfig.format.LHV1.bWriteVBRHeader = TRUE;
+		beConfig.format.LHV1.bEnableVBR		 = TRUE;
+		beConfig.format.LHV1.nVBRQuality	 = cfg.GetValue("vbrquality");
+		beConfig.format.LHV1.dwVbrAbr_bps	 = cfg.GetValue("abr") * 1000;
+		beConfig.format.LHV1.nVbrMethod		 = (VBRMETHOD)(cfg.GetValue("vbrmethod") - 1); 
+		
+	}
+
+	beConfig.format.LHV1.bNoRes			= TRUE;	
+	beConfig.format.LHV1.bStrictIso		= FALSE;
+
 
 
 	if(beInitStream(&beConfig, &dwSamples, &dwMP3Buffer, &hbeStream) != BE_ERR_SUCCESSFUL)
 	{
 
-		return false;
+		return FALSE;
 	}
 
 	//alocate mp3 buffers
@@ -221,18 +279,19 @@ BOOL Encoder::prepareMP3(MP3File *file)
 	if(!pMP3Buffer)
 	{
 
-		return false;
+		return FALSE;
 	}
-	return true;
+	return TRUE;
 }
 
 
-BOOL Encoder::deInit()
+BOOL CEncoder::DeInit()
 {
 
-	switch(opf){
+	cfgFile cfg(wd);
+	if(strOutputDLL == "lame_enc.dll"){
 
-	case OUTPUT_MP3:
+			TRACE("Deinit Encoder Mode MP3\n");
 			err = beDeinitStream(hbeStream, pMP3Buffer, &dwWrite);
 
 			// Check result
@@ -241,7 +300,7 @@ BOOL Encoder::deInit()
 
 				beCloseStream(hbeStream);
 
-				return false;
+				return FALSE;
 			}
 
 			//some bytes left (returned by Deinitbla...) -> Write to disk!
@@ -250,7 +309,7 @@ BOOL Encoder::deInit()
 				if(fwrite(pMP3Buffer,1,dwWrite,pFileOut) != dwWrite)
 				{
 
-					return false;
+					return FALSE;
 				}
 			}
 
@@ -266,62 +325,67 @@ BOOL Encoder::deInit()
 			// Close output file
 
 			// Write the VBR Tag
-			//beWriteVBRHeader(strFileOut);
+			if(cfg.GetValue("vbrmethod") != 0){
+
+				//Why the crash :-(
+				beWriteVBRHeader(strFileOut);
+			}
 
 			FreeLibrary(lameDLL);
 		
-			break;
+	}
+	else{
+
+		TRACE("Deiniting Encoder WAVE. Closing file\n");
+		if(outModule){
+
+			outModule->Close();
+			outModule->Quit();
+			outputPlugin->Unload();
+		}
 	}
 
-	return true;
+	return TRUE;
 }
 
-BOOL Encoder::writeWaveHeader()
-{
 
-	WAVHDR wav;
-
-	if(!pFileOut){
-		
-		return false;
-	}
-
-	memcpy( wav.riff, "RIFF", 4 );
-	memcpy( wav.cWavFmt, "WAVEfmt ", 8 );
-	memcpy( wav.cData, "data", 4 );
-
-	wav.len            = 44 - 8;
-	wav.dwHdrLen       = 16;
-	wav.wFormat        = 1;
-	wav.wNumChannels   = 2;
-	wav.dwSampleRate   = 44100;
-	wav.dwBytesPerSec  = 44100*2*2;
-	wav.wBlockAlign    = 4;
-	wav.wBitsPerSample = 16;
-	wav.dwDataLen      = 0;
-	
-	fseek(pFileOut, 0, SEEK_SET);
-	fwrite(&wav, 1, sizeof(wav), pFileOut);
-
-	return true;
-}
-
-unsigned long Encoder::getSamplesToRead()
+unsigned long CEncoder::GetSamplesToRead()
 {
 
 	return dwSamples;
 }
 
-int Encoder::getEstimatedSize(int nSamplesPerSec, int nChannels, int wBitsPerSample, int nFileSize)
+int CEncoder::GetEstimatedSize(int nSamplesPerSec, int nChannels, int wBitsPerSample, int nFileSize)
 {
-	//Calculate estimated file size
-	//One MPEGII Layer 3 Frame with current setting is bitrate*576*samplerate bytes
-	long bytesPerFrame = beConfig.format.LHV1.dwBitrate * 576 / (beConfig.format.LHV1.dwSampleRate/1000) / 8;
-	//The lenght in seconds of the wavefile is
-	long lenght = nFileSize * 8 / (nSamplesPerSec * nChannels * wBitsPerSample);
-	//The size of the mp3 will be about
-	nEstimatedSize = beConfig.format.LHV1.dwSampleRate / 576 * bytesPerFrame * lenght;
+	
+	if(strOutputDLL == "lame_enc.dll"){
+
+		//Calculate estimated file size
+		//One MPEGII Layer 3 Frame with current setting is bitrate*576*samplerate bytes
+		long bytesPerFrame = beConfig.format.LHV1.dwBitrate * 576 / (beConfig.format.LHV1.dwSampleRate/1000) / 8;
+		//The lenght in seconds of the wavefile is
+		long lenght = nFileSize * 8 / (nSamplesPerSec * nChannels * wBitsPerSample);
+		//The size of the mp3 will be about
+		nEstimatedSize = beConfig.format.LHV1.dwSampleRate / 576 * bytesPerFrame * lenght;
+	}
+	else{
+
+		nEstimatedSize = nFileSize;
+	}
 	
 
 	return nEstimatedSize;
+}
+
+
+void CEncoder::SetAlbumInfo(MMFILE_ALBUMINFO albumInfo)
+{
+
+	m_albumInfo.album   = albumInfo.album;
+	m_albumInfo.artist  = albumInfo.artist;
+	m_albumInfo.comment = albumInfo.comment;
+	m_albumInfo.genre   = albumInfo.genre;
+	m_albumInfo.song    = albumInfo.song;
+	m_albumInfo.track   = albumInfo.track;
+	m_albumInfo.year    = albumInfo.year;
 }

@@ -1,0 +1,8 @@
+; wave_in.def : Deklariert die Modul-Parameter für die DLL.
+
+LIBRARY      "wave_in"
+DESCRIPTION  'wave_in Windows Dynamic Link Library'
+
+EXPORTS
+
+	GetLFINModule   @ 1

@@ -78,15 +78,17 @@ public:
 
 	// Standard constructor
 	CDRomSettings();
+
 	// Standard destructor
-	~CDRomSettings();
+	virtual ~CDRomSettings();
 
 	void UpdateDriveSettings();
 
-	void LoadSettings();
+	void LoadSettings( BOOL bUpdateDriveSettings  );
 	void SaveSettings();
 
 	int	GetNumDrives() const {return m_CDParams.size();}
+	void LoadCDSettingsEntry( CDSETTINGSPARAMS& cdSettings, const char* lpszKey );
 
 	// Set the active CDROM device
 	void SetActiveCDROM(BYTE nValue)	{m_nActive=nValue;}
@@ -157,6 +159,11 @@ public:
 	// Sets the multiple read for first block only
 	void SetLockDuringRead(BOOL nValue)	{m_CDParams[m_nActive].bLockDuringRead=nValue;}
 	BOOL GetLockDuringRead() const {return m_CDParams[m_nActive].bLockDuringRead;}
+
+
+	// Sets the multiple read for first block only
+	void SetUseCDText(BOOL nValue)	{m_CDParams[m_nActive].bUseCDText=nValue;}
+	BOOL GetUseCDText() const {return m_CDParams[m_nActive].bUseCDText;}
 
 	// Sets the CD-ROM spin up time in seconds
 	void SetSpinUpTime(int nValue)	{m_CDParams[m_nActive].nSpinUpTime=nValue;}

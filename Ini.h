@@ -32,16 +32,16 @@ private:
 	CString	m_strFileName;
 
 public:
-	BOOL	SetValue( const char * cSection, const char * cItem, const char * cVal );
-	BOOL	SetValue( const char * cSection, const char * cItem, const int iVal );
-	BOOL	SetValue( const char * cSection, const char * cItem, const long lVal );
-	BOOL	SetValue( const char * cSection, const char * cItem, const DWORD lVal );
+	BOOL	SetValue( const CString& strSection, const CString& strItem, const CString& strVal );
+	BOOL	SetValue( const CString& strSection, const CString& strItem, const int iVal );
+	BOOL	SetValue( const CString& strSection, const CString& strItem, const long lVal );
+	BOOL	SetValue( const CString& strSection, const CString& strItem, const DWORD lVal );
 
 
-	CString GetValue( const char * cSection, const char * cItem, CString strDefault );
-	INT		GetValue( const char * cSection, const char * cItem, const INT nDefault );
-	LONG	GetValue( const char * cSection, const char * cItem, const LONG nDefault );
-	DWORD	GetValue( const char * cSection, const char * cItem, const DWORD nDefault );
+	CString GetValue( const CString& strSection, const CString& strItem, CString strDefault );
+	INT		GetValue( const CString& strSection, const CString& strItem, const INT nDefault );
+	LONG	GetValue( const CString& strSection, const CString& strItem, const LONG nDefault );
+	DWORD	GetValue( const CString& strSection, const CString& strItem, const DWORD nDefault );
 
 	CIni( );
 	virtual ~CIni();

@@ -1,8 +1,22 @@
-// TrayDialog.cpp : implementation file
-//
+/*
+** Copyright (C) 2002 Thees Winkler
+**  
+** This program is free software; you can redistribute it and/or modify
+** it under the terms of the GNU General Public License as published by
+** the Free Software Foundation; either version 2 of the License, or
+** (at your option) any later version.
+** 
+** This program is distributed in the hope that it will be useful,
+** but WITHOUT ANY WARRANTY; without even the implied warranty of
+** MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+** GNU General Public License for more details.
+** 
+** You should have received a copy of the GNU General Public License
+** along with this program; if not, write to the Free Software 
+** Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+*/
 
 #include "stdafx.h"
-//#include "TrayDemo.h"
 #include "TrayDialog.h"
 
 #ifdef _DEBUG
@@ -124,7 +138,7 @@ void CTrayDialog::TraySetToolTip(LPCTSTR lpszToolTip)
 
 BOOL CTrayDialog::TrayShow()
 {
-	BOOL bSuccess = FALSE;
+/*	BOOL bSuccess = FALSE;
 	if(!m_bTrayIconVisible)
 	{
 		bSuccess = Shell_NotifyIcon(NIM_ADD,&m_nidIconData);
@@ -133,9 +147,25 @@ BOOL CTrayDialog::TrayShow()
 	}
 	else
 	{
-		TRACE0("ICON ALREADY VISIBLE");
+		TRACE0("ICON ALREADY VISIBLE\n");
 	}
+	return bSuccess;*/
+
+	if(m_bTrayIconVisible){
+
+		TRACE0("ICON ALREADY VISIBLE\n");
+		return TRUE;
+	}
+
+	BOOL bSuccess = Shell_NotifyIcon(NIM_ADD, &m_nidIconData);
+	
+	if(bSuccess){
+		
+		m_bTrayIconVisible = TRUE;
+	}
+
 	return bSuccess;
+	
 }
 
 BOOL CTrayDialog::TrayHide()
@@ -149,7 +179,7 @@ BOOL CTrayDialog::TrayHide()
 	}
 	else
 	{
-		TRACE0("ICON ALREADY HIDDEN");
+		TRACE0("ICON ALREADY HIDDEN\n");
 	}
 	return bSuccess;
 }
@@ -163,7 +193,7 @@ BOOL CTrayDialog::TrayUpdate()
 	}
 	else
 	{
-		TRACE0("ICON NOT VISIBLE");
+		TRACE0("ICON NOT VISIBLE\n");
 	}
 	return bSuccess;
 }
@@ -243,7 +273,7 @@ void CTrayDialog::OnSysCommand(UINT nID, LPARAM lParam)
 		{
 		
 			if( TrayShow())
-				this->ShowWindow(SW_HIDE);		
+				this->ShowWindow(SW_HIDE);
 		}
 		else
 			CDialog::OnSysCommand(nID, lParam);	
@@ -270,9 +300,13 @@ void CTrayDialog::OnTrayLButtonDown(CPoint pt)
 
 void CTrayDialog::OnTrayLButtonDblClk(CPoint pt)
 {
-	if(m_bMinimizeToTray)
+/*	if(m_bMinimizeToTray)
 		if(TrayHide())
-			this->ShowWindow(SW_SHOW);
+			this->ShowWindow(SW_SHOW);*/
+	ShowWindow(SW_SHOW);
+	SetFocus();
+	SetForegroundWindow( );
+
 }
 
 void CTrayDialog::OnTrayRButtonDblClk(CPoint pt)

@@ -23,7 +23,7 @@
 #include "mfccddb.h"
 #include "cfgFile.h"
 #include "ID3Info.h"
-#include "MP3File.h"
+#include "FreeDBStatusDlg.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -35,29 +35,16 @@ static char THIS_FILE[] = __FILE__;
 #define CB_CDDASECTOR 2352
 
 
-int cddb_sum(int n)
-{
-	char	buf[12],*p;
-	int	ret = 0;
-
-	// For backward compatibility this algorithm must not change
-	sprintf(buf, "%lu", n);
-	for (p = buf; *p != '\0'; p++)
-		ret += (*p - '0');
-
-	return (ret);
-}
-
 /////////////////////////////////////////////////////////////////////////////
 // Dialogfeld CCDdbQueryDlg 
 
 
-CCDdbQueryDlg::CCDdbQueryDlg(CWnd* pParent /*=NULL*/, CPtrArray *files, int activeCD, CString wdir)
+CCDdbQueryDlg::CCDdbQueryDlg(CWnd* pParent /*=NULL*/, CCompactDisc *cd, int activeCD, CString wdir)
 	: CDialog(CCDdbQueryDlg::IDD, pParent)
 {
 	//{{AFX_DATA_INIT(CCDdbQueryDlg)
 	//}}AFX_DATA_INIT
-	m_pFiles = files;
+	m_cd = cd;
 	nActiveCD = activeCD;
 	wd = wdir;
 }
@@ -95,31 +82,40 @@ BOOL CCDdbQueryDlg::OnInitDialog()
 
 	CDialog::OnInitDialog();
 
+	FreeDBStatusDlg statusDlg;
+	statusDlg.Create(IDD_FREEDB_STATUS, this);
+	statusDlg.ShowWindow(TRUE);
+	statusDlg.SetMessage("Initializing...");
 	//Initialise the Winsock stack
     if (!AfxSocketInit()){
 
-		MessageBox("Error initializing Winsock!");
+		statusDlg.ShowWindow(FALSE);
+		AfxMessageBox(IDS_CDDB_ERR_WINSOCK, MB_OK+MB_ICONEXCLAMATION);
 		CDialog::OnCancel();
+		return FALSE;
 	}
 
 	CString msg;
 	cfgFile cfg(wd);
 
-	discID = CalculateDiscID();
+	discID = m_cd->GetDiscID();
 	
 
-    if(cfg.GetValue(PROXY, FALSE)){
+    if(cfg.GetValue("useproxy", FALSE)){
 
+		statusDlg.SetMessage(IDS_FDB_PROXYCONNECT);
 		cddb.SetProxyDetails(
-				    cfg.GetStringValue(PROXYADDR), 
-					cfg.GetValue(PROXYPORT, FALSE), 
-					(cfg.GetValue(AUTH, FALSE) ? cfg.GetStringValue(USERNAME) : ""),
-					(cfg.GetValue(AUTH, FALSE) ? cfg.GetStringValue(PASSWORD) : "")
+				    cfg.GetStringValue("proxyaddress"), 
+					cfg.GetValue("proxyport", FALSE), 
+					(cfg.GetValue("authentication", FALSE) ? cfg.GetStringValue("username") : ""),
+					(cfg.GetValue("authentication", FALSE) ? cfg.GetStringValue("passwd") : "")
 				);
 	}
 
 
-	CString serverString = GetServerString(cfg.GetValue(CDDBSERVER, FALSE));
+	statusDlg.SetMessage(IDS_FDB_SERVERCONNECT);
+
+	CString serverString = GetServerString(cfg.GetValue("cddbserver", FALSE));
 
 	CString sBuf;
 	int iLen = serverString.GetLength();
@@ -133,8 +129,7 @@ BOOL CCDdbQueryDlg::OnInitDialog()
 	//Port
 	iPosE = serverString.Find(',', iPosB);
 	sBuf = serverString.Mid(iPosB, iPosE - iPosB);
-	site.m_nPort = atoi(sBuf.GetBuffer(10));
-	sBuf.ReleaseBuffer();
+	site.m_nPort = atoi(sBuf);
 	iPosB = iPosE + 2;
 
 	//Path
@@ -152,8 +147,10 @@ BOOL CCDdbQueryDlg::OnInitDialog()
 		OutputDebugString(cddb.GetLastCommandResponse());
 		TRACE(_T("\n"));
 #endif
-		MessageBox("Server isn't responding.", "lameFE CDdb(tm) Query Error");
+		statusDlg.ShowWindow(FALSE);
+		AfxMessageBox(IDS_ERR_NOSERVERRESPONSE, MB_OK+MB_ICONSTOP);
 		CDialog::OnCancel();
+		return FALSE;
 	}
 
 	CArray<CCDDBTrackPosition, CCDDBTrackPosition&> tracks;
@@ -161,12 +158,15 @@ BOOL CCDdbQueryDlg::OnInitDialog()
 	bSuccess = GetTrackPositions(tracks);
 	if (!bSuccess){
 		
-		MessageBox("cddb.GetTrackPositions(...) failed");
+		statusDlg.ShowWindow(FALSE);
+		AfxMessageBox(IDS_ERR_GETTRACKPOSFAILED, MB_OK+MB_ICONEXCLAMATION);
 		CDialog::OnCancel();
+		return FALSE;
 	}
 
-	
+	statusDlg.SetMessage(IDS_FDB_GETENTRIES);
 	bSuccess = cddb.Query(site, discID, tracks, results);
+	statusDlg.ShowWindow(FALSE);
 	if (bSuccess)
 	{
 
@@ -174,7 +174,8 @@ BOOL CCDdbQueryDlg::OnInitDialog()
 		{
 		
 			CCDDBQueryResult& result = results.ElementAt(i);
-			msg.Format("%s / %s (ID: %08x)", result.m_sArtist, result.m_sTitle, result.m_dwDiscID);
+			
+			msg.Format("%s / %s;\tGenre: %s\t(Disc-ID: %08x)", result.m_sArtist, result.m_sTitle, result.m_sCategory, result.m_dwDiscID);
 			AddLine(msg);
 		}
 	}
@@ -186,8 +187,13 @@ BOOL CCDdbQueryDlg::OnInitDialog()
 		TRACE(cddb.GetLastCommandResponse());
 		TRACE(_T("\n"));
 #endif
+		CString out;
+		out.Format(IDS_FDB_NOENTRY, discID);
+		AfxMessageBox(out, MB_OK+MB_ICONINFORMATION );
 		CDialog::OnCancel();
+		return FALSE;
 	}
+	
 	
 	m_Protocoll.SetCurSel(0);
 	
@@ -206,42 +212,52 @@ BOOL CCDdbQueryDlg::QueryCDDB()
 	BOOL bSuccess;
 	CWaitCursor wc;
 
+	FreeDBStatusDlg statusDlg;
+	statusDlg.Create(IDD_FREEDB_STATUS, this);
+	statusDlg.ShowWindow(TRUE);
+	
 	int iSel = m_Protocoll.GetCurSel();
+
 	if (iSel < 0 || iSel > results.GetSize()){
 		
-		MessageBox("Wählen Sie einen Eintrag aus dewr Liste!");
+		AfxMessageBox(IDS_FDB_QUERYSTART, MB_OK+MB_ICONINFORMATION);
 		return FALSE;
 	}
+	
+	statusDlg.SetMessage(IDS_FDB_SELECTENTRY); 
+	m_Protocoll.ResetContent();
 
 	CCDDBQueryResult& result = results.ElementAt(iSel);
 	
 	m_Start.EnableWindow(FALSE);
-	m_Protocoll.ResetContent();
-	AddLine("Starting CDddb(tm) query. Stand by...");
-
+	
 	CCDDBRecord record;
 	bSuccess = cddb.Read(site, result.m_dwDiscID, result.m_sCategory, record);
 	if (!bSuccess){
 		
-		AddLine("Failed. Server is not responding.");
+		statusDlg.ShowWindow(FALSE);
+		AfxMessageBox(IDS_ERR_NOSERVERRESPONSE, MB_OK+MB_ICONEXCLAMATION);
 		m_Cancel.EnableWindow(TRUE);
 		return FALSE;
 	}
 	
 	CString tmp;
+	statusDlg.SetMessage(IDS_FDB_TRACKUPDATE);
+	for (int i = 0; i < m_cd->GetNumTracks(); i++){
 
-	for (int i = 0; i < m_pFiles->GetSize(); i++){
+		m_cd->GetCDTrack(i)->m_id3Info.SetAlbum(record.m_sTitle);
+		m_cd->GetCDTrack(i)->m_id3Info.SetArtist(record.m_sArtist);
+		m_cd->GetCDTrack(i)->m_id3Info.SetTrack(i + 1);
+		m_cd->GetCDTrack(i)->m_id3Info.SetSong(record.m_TrackTitles.ElementAt(i));
+		m_cd->GetCDTrack(i)->m_id3Info.SetGenre(result.m_sCategory);
 
-		((MP3File*)m_pFiles->GetAt(i))->getID3Info()->setAlbum(record.m_sTitle);
-		((MP3File*)m_pFiles->GetAt(i))->getID3Info()->setArtist(record.m_sArtist);
-		((MP3File*)m_pFiles->GetAt(i))->getID3Info()->setTrack(i + 1);
-		((MP3File*)m_pFiles->GetAt(i))->getID3Info()->setSong(record.m_TrackTitles.ElementAt(i));
-		tmp.Format("Updating information for Track%d", i + 1);
-		AddLine(tmp);
+		//tmp.Format("Updating information for Track%d", i + 1);
+		//AddLine(tmp);
 	}
 
-	AddLine("Finished Successfully");
-	m_Protocoll.SetScrollPos(SB_VERT, m_Protocoll.GetScrollLimit(SB_VERT), TRUE);
+	statusDlg.ShowWindow(FALSE);
+	//AddLine("Finished Successfully");
+	//m_Protocoll.SetScrollPos(SB_VERT, m_Protocoll.GetScrollLimit(SB_VERT), TRUE);
 
 #ifdef _DEBUG
 	TRACE(_T("\nRetrieved the following album details\n"));
@@ -302,7 +318,7 @@ CString CCDdbQueryDlg::GetServerString(int i)
 	}
 	CATCH(CFileException, e){
 
-		MessageBox("Error reading cddb.cfg. Goto CDDB Settings and set up servers first!");
+		AfxMessageBox(IDS_CDDB_ERR_CFGREAD, MB_OK+MB_ICONEXCLAMATION);
 		CDialog::OnCancel();
 	}
 	END_CATCH;
@@ -310,49 +326,26 @@ CString CCDdbQueryDlg::GetServerString(int i)
 	return serverArray[i];
 }
 
-int CCDdbQueryDlg::CalculateDiscID()
-{
-
-	DWORD dwRet;
-	DWORD t = 0;
-	DWORD n = 0;
-	DWORD	dwTwoSecOffset=0;
-
-	// For backward compatibility this algorithm must not change
-	dwTwoSecOffset = 2 * TRACKSPERSEC;
-
-	for (int i = 0; i < m_pFiles->GetSize(); i++) 
-	{
-		
-		//TRACE("i=%d, size=%d\n", i, m_pFiles->GetSize());
-		// Keep in mind the two seconds offset
-		DWORD dwSectors = ((MP3File*)m_pFiles->GetAt(i))->GetStartSector() + dwTwoSecOffset;
-
-		n += cddb_sum(dwSectors/TRACKSPERSEC);
-
-		// Keep in mind the two seconds offset
-		DWORD dwSectorsNext = ((MP3File*)m_pFiles->GetAt(i))->GetEndSector() + dwTwoSecOffset;
-		t += (dwSectorsNext/TRACKSPERSEC-dwSectors/TRACKSPERSEC);
-	}
-
-	dwRet=( (n % 0xff) << 24 | t << 8 | (DWORD)(m_pFiles->GetSize()));
-
-	// Get total playing time
-	//m_dwTotalSecs=(GetEndSector(m_nNumTracks)+1+150)/75;
-	
-	return dwRet;
-}
 
 BOOL CCDdbQueryDlg::GetTrackPositions(CArray<CCDDBTrackPosition, CCDDBTrackPosition&>& tracks){
 
-	for (int i = 0; i < m_pFiles->GetSize(); i++){
+	for (int i = 0; i < m_cd->GetNumTracks(); i++){
 
-		tracks.Add(((MP3File *)m_pFiles->GetAt(i))->getTrackDuration());
-		//TRACE("%d:%d:%d -- %d\n", tracks[i].m_nMinute, tracks[i].m_nSecond, tracks[i].m_nFrame, ((MP3File *)m_pFiles->GetAt(i))->GetStartSector() );
+		CCDDBTrackPosition trackPos;
+
+		DWORD dwSector = m_cd->GetCDTrack(i)->m_dwStartSector + 150;
+
+		trackPos.m_nMinute	= (dwSector / (75 * 60));
+		trackPos.m_nSecond	= (dwSector / 75) % 60;
+		trackPos.m_nFrame	= (dwSector % 75);
+		
+		tracks.Add(trackPos);
+
+		TRACE("%d:%d:%d -- %d\n", tracks[i].m_nMinute, tracks[i].m_nSecond, tracks[i].m_nFrame, m_cd->GetCDTrack(i)->m_dwStartSector );
 	}
 
 	//LeadOutPosition
-	DWORD dwPos = ((MP3File *)m_pFiles->GetAt(i - 1))->GetEndSector() + 150;
+	DWORD dwPos = m_cd->GetCDTrack(i)->m_dwStartSector + 150;
 	
 	CCDDBTrackPosition trackPosition;
 	trackPosition.m_nFrame = dwPos % 75;

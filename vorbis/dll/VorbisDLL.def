@@ -1,0 +1,13 @@
+LIBRARY  vorbis.dll
+EXPORTS
+
+vbVersion			@1
+
+vbEncOpen			@100
+vbEncWrite			@101
+vbEncClose			@103
+
+vbDecOpen			@200
+vbDecRead			@201
+vbDecSeek			@203
+vbDecClose			@204

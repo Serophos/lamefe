@@ -18,7 +18,7 @@ public:
 
 // Dialogfelddaten
 	//{{AFX_DATA(CEncoderPage)
-	enum { IDD = IDD_ENCODER };
+	enum { IDD = IDD_ENCODER_PAGE };
 		// HINWEIS: Der Klassen-Assistent fügt hier Datenelemente ein
 	//}}AFX_DATA
 

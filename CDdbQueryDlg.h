@@ -29,13 +29,14 @@
 // Dialogfeld CCDdbQueryDlg 
 
 #include "mfccddb.h"
+#include "CompactDisk.h"
 
 class CCDdbQueryDlg : public CDialog
 {
 // Konstruktion
 public:
 	BOOL QueryCDDB();
-	CCDdbQueryDlg(CWnd* pParent = NULL, CPtrArray *files = NULL, int nActiveCD = 0, CString wd = "");   // Standardkonstruktor
+	CCDdbQueryDlg(CWnd* pParent = NULL, CCompactDisc *cd = NULL, int nActiveCD = 0, CString wd = "");   // Standardkonstruktor
 
 // Dialogfelddaten
 	//{{AFX_DATA(CCDdbQueryDlg)
@@ -64,14 +65,13 @@ protected:
 	//}}AFX_MSG
 	DECLARE_MESSAGE_MAP()
 private:
+	CCompactDisc* m_cd;
 	BOOL		GetTrackPositions(CArray<CCDDBTrackPosition, CCDDBTrackPosition&>& tracks);
-	int			CalculateDiscID();
 	CString		GetServerString(int i);
 	void		AddLine(CString msg);
 
 	CString		wd;
 	int			nActiveCD;
-	CPtrArray*	m_pFiles;
 	CCDDB		cddb;
 	CStringArray drives;
 	DWORD discID;

@@ -22,25 +22,30 @@ EXPORTS
 	CR_LockCD						@ 20
 	CR_GetSubChannelTrackInfo		@ 21
 	CR_ScanForC2Errors				@ 22
-	CR_GetNumTocEntries	@100
-	CR_ReadToc			@101
-	CR_GetTocEntry		@102
-	CR_ReadCDText		@103
+	CR_DeInit						@ 23
+	CR_GetCurrentRipSector			@ 24
+	CR_IsMediaLoaded				@ 25
 
-	CR_IsUnitReady		@200
-	CR_EjectCD			@201
-	CR_IsAudioPlaying	@202
+	CR_GetNumTocEntries				@100
+	CR_ReadToc						@101
+	CR_GetTocEntry					@102
+	CR_ReadCDText					@103
 
-	CR_StopPlayTrack	@300
-	CR_PauseCD			@301
-	CR_GetSenseKey		@302
-	CR_GetPlayPosition	@303
-	CR_SetPlayPosition  @304
-	CR_PlayTrack		@305
-	CR_PlaySection		@306
+	CR_IsUnitReady					@200
+	CR_EjectCD						@201
+	CR_IsAudioPlaying				@202
 
-	CR_LoadSettings		@400
-	CR_SaveSettings		@401
+	CR_StopPlayTrack				@300
+	CR_PauseCD						@301
+	CR_GetCDStatusInfo				@302
+	CR_GetPlayPosition				@303
+	CR_SetPlayPosition				@304
+	CR_PlayTrack					@305
+	CR_PlaySection					@306
 
-	CR_GetTransportLayer @500
-	CR_SetTransportLayer @501
+	CR_LoadSettings					@400
+	CR_SaveSettings					@401
+
+	CR_GetTransportLayer			@500
+	CR_SetTransportLayer			@501
+	CR_GetDetailedDriveInfo			@502

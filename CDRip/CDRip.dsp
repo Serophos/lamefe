@@ -1,25 +1,24 @@
 # Microsoft Developer Studio Project File - Name="CDRip" - Package Owner=<4>
 # Microsoft Developer Studio Generated Build File, Format Version 6.00
-# ** NICHT BEARBEITEN **
+# ** DO NOT EDIT **
 
 # TARGTYPE "Win32 (x86) Dynamic-Link Library" 0x0102
 
 CFG=CDRip - Win32 Debug
-!MESSAGE Dies ist kein gültiges Makefile. Zum Erstellen dieses Projekts mit NMAKE
-!MESSAGE verwenden Sie den Befehl "Makefile exportieren" und führen Sie den Befehl
+!MESSAGE This is not a valid makefile. To build this project using NMAKE,
+!MESSAGE use the Export Makefile command and run
 !MESSAGE 
 !MESSAGE NMAKE /f "CDRip.mak".
 !MESSAGE 
-!MESSAGE Sie können beim Ausführen von NMAKE eine Konfiguration angeben
-!MESSAGE durch Definieren des Makros CFG in der Befehlszeile. Zum Beispiel:
+!MESSAGE You can specify a configuration when running NMAKE
+!MESSAGE by defining the macro CFG on the command line. For example:
 !MESSAGE 
 !MESSAGE NMAKE /f "CDRip.mak" CFG="CDRip - Win32 Debug"
 !MESSAGE 
-!MESSAGE Für die Konfiguration stehen zur Auswahl:
+!MESSAGE Possible choices for configuration are:
 !MESSAGE 
-!MESSAGE "CDRip - Win32 Release" (basierend auf  "Win32 (x86) Dynamic-Link Library")
-!MESSAGE "CDRip - Win32 Debug" (basierend auf  "Win32 (x86) Dynamic-Link Library")
-!MESSAGE "CDRip - Win32 Release German" (basierend auf  "Win32 (x86) Dynamic-Link Library")
+!MESSAGE "CDRip - Win32 Release" (based on "Win32 (x86) Dynamic-Link Library")
+!MESSAGE "CDRip - Win32 Debug" (based on "Win32 (x86) Dynamic-Link Library")
 !MESSAGE 
 
 # Begin Project
@@ -45,7 +44,7 @@ RSC=rc.exe
 # PROP Target_Dir ""
 # ADD BASE CPP /nologo /MT /W3 /GX /O2 /D "WIN32" /D "NDEBUG" /D "_WINDOWS" /YX /FD /c
 # ADD CPP /nologo /MT /W3 /GX /O2 /I "./paranoia" /I "./paranoia/win32" /I "../" /D "NDEBUG" /D "WIN32" /D "_WINDOWS" /D "CDEX_DLL" /D "int16_t short" /FD /c
-# SUBTRACT CPP /YX /Yc /Yu
+# SUBTRACT CPP /Z<none> /YX /Yc /Yu
 # ADD BASE MTL /nologo /D "NDEBUG" /mktyplib203 /o "NUL" /win32
 # ADD MTL /nologo /D "NDEBUG" /mktyplib203 /o "NUL" /win32
 # ADD BASE RSC /l 0x409 /d "NDEBUG"
@@ -55,7 +54,7 @@ BSC32=bscmake.exe
 # ADD BSC32 /nologo
 LINK32=link.exe
 # ADD BASE LINK32 kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /nologo /subsystem:windows /dll /machine:I386
-# ADD LINK32 /nologo /subsystem:windows /dll /map /machine:I386 /out:"../Release/CDRip.dll"
+# ADD LINK32 /nologo /subsystem:windows /dll /map /machine:I386
 # SUBTRACT LINK32 /nodefaultlib
 
 !ELSEIF  "$(CFG)" == "CDRip - Win32 Debug"
@@ -72,7 +71,7 @@ LINK32=link.exe
 # PROP Ignore_Export_Lib 0
 # PROP Target_Dir ""
 # ADD BASE CPP /nologo /MTd /W3 /Gm /GX /Zi /Od /D "WIN32" /D "_DEBUG" /D "_WINDOWS" /YX /FD /c
-# ADD CPP /nologo /MTd /W3 /Gm /GX /ZI /Od /I "./paranoia" /I "./paranoia/win32" /I "../" /D "_DEBUG" /D "WIN32" /D "_WINDOWS" /D "CDEX_DLL" /D "int16_t short" /FR /FD /c
+# ADD CPP /nologo /MTd /W3 /Gm /GX /ZI /Od /I "./paranoia" /I "./paranoia/win32" /I "../" /D "_DEBUG" /D "WIN32" /D "_WINDOWS" /D "CDEX_DLL" /D "int16_t short" /FD /c
 # SUBTRACT CPP /YX /Yc /Yu
 # ADD BASE MTL /nologo /D "_DEBUG" /mktyplib203 /o "NUL" /win32
 # ADD MTL /nologo /D "_DEBUG" /mktyplib203 /o "NUL" /win32
@@ -83,38 +82,7 @@ BSC32=bscmake.exe
 # ADD BSC32 /nologo
 LINK32=link.exe
 # ADD BASE LINK32 kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /nologo /subsystem:windows /dll /debug /machine:I386 /pdbtype:sept
-# ADD LINK32 /nologo /subsystem:windows /dll /map /debug /machine:I386 /out:"../Debug/CDRip.dll" /pdbtype:sept /libpath:"./paranoia/debug"
-# SUBTRACT LINK32 /nodefaultlib
-
-!ELSEIF  "$(CFG)" == "CDRip - Win32 Release German"
-
-# PROP BASE Use_MFC 1
-# PROP BASE Use_Debug_Libraries 0
-# PROP BASE Output_Dir "CDRip___Win32_Release_German"
-# PROP BASE Intermediate_Dir "CDRip___Win32_Release_German"
-# PROP BASE Ignore_Export_Lib 0
-# PROP BASE Target_Dir ""
-# PROP Use_MFC 1
-# PROP Use_Debug_Libraries 0
-# PROP Output_Dir "CDRip___Win32_Release_German"
-# PROP Intermediate_Dir "CDRip___Win32_Release_German"
-# PROP Ignore_Export_Lib 0
-# PROP Target_Dir ""
-# ADD BASE CPP /nologo /MT /W3 /GX /O2 /I "./paranoia" /I "./paranoia/win32" /I "../" /D "NDEBUG" /D "WIN32" /D "_WINDOWS" /D "CDEX_DLL" /D "int16_t short" /FD /c
-# SUBTRACT BASE CPP /YX /Yc /Yu
-# ADD CPP /nologo /MT /W3 /GX /O2 /I "./paranoia" /I "./paranoia/win32" /I "../" /D "NDEBUG" /D "WIN32" /D "_WINDOWS" /D "CDEX_DLL" /D "int16_t short" /FD /c
-# SUBTRACT CPP /YX /Yc /Yu
-# ADD BASE MTL /nologo /D "NDEBUG" /mktyplib203 /o "NUL" /win32
-# ADD MTL /nologo /D "NDEBUG" /mktyplib203 /o "NUL" /win32
-# ADD BASE RSC /l 0x409 /d "NDEBUG"
-# ADD RSC /l 0x409 /d "NDEBUG"
-BSC32=bscmake.exe
-# ADD BASE BSC32 /nologo
-# ADD BSC32 /nologo
-LINK32=link.exe
-# ADD BASE LINK32 /nologo /subsystem:windows /dll /map /machine:I386 /out:"../Release/CDRip.dll"
-# SUBTRACT BASE LINK32 /nodefaultlib
-# ADD LINK32 /nologo /subsystem:windows /dll /map /machine:I386 /out:"../lameFE___Win32_Release_German/CDRip.dll"
+# ADD LINK32 /nologo /subsystem:windows /dll /profile /map /debug /machine:I386 /libpath:"./paranoia/debug"
 # SUBTRACT LINK32 /nodefaultlib
 
 !ENDIF 
@@ -123,7 +91,6 @@ LINK32=link.exe
 
 # Name "CDRip - Win32 Release"
 # Name "CDRip - Win32 Debug"
-# Name "CDRip - Win32 Release German"
 # Begin Group "Source Files"
 
 # PROP Default_Filter "cpp"
@@ -158,22 +125,7 @@ SOURCE=.\CDRomSettings.cpp
 # Begin Source File
 
 SOURCE=..\FileVersion.cpp
-
-!IF  "$(CFG)" == "CDRip - Win32 Release"
-
 # PROP Exclude_From_Build 1
-
-!ELSEIF  "$(CFG)" == "CDRip - Win32 Debug"
-
-# PROP Exclude_From_Build 1
-
-!ELSEIF  "$(CFG)" == "CDRip - Win32 Release German"
-
-# PROP BASE Exclude_From_Build 1
-# PROP Exclude_From_Build 1
-
-!ENDIF 
-
 # End Source File
 # Begin Source File
 

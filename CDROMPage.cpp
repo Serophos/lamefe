@@ -42,16 +42,21 @@ CCDROMPage::CCDROMPage() : CPropertyPage(CCDROMPage::IDD)
 	m_spinUpTime = 0;
 	m_nativeSCSI = FALSE;
 	//}}AFX_DATA_INIT
+	m_pToolTip = NULL;
 }
 
 CCDROMPage::~CCDROMPage()
 {
+	delete m_pToolTip;
 }
 
 void CCDROMPage::DoDataExchange(CDataExchange* pDX)
 {
 	CPropertyPage::DoDataExchange(pDX);
 	//{{AFX_DATA_MAP(CCDROMPage)
+	DDX_Control(pDX, IDC_CD_SPIN_UP, c_spinUpTime);
+	DDX_Control(pDX, IDC_NATIVE, c_nativeSCSI);
+	DDX_Control(pDX, IDC_CD_SPEED, c_cdSpeed);
 	DDX_Control(pDX, IDC_SELECT_ALL, c_select);
 	DDX_Control(pDX, IDC_SWAP, c_swapChannels);
 	DDX_Control(pDX, IDC_RIPPING_METHOD, c_rippingMethod);
@@ -65,6 +70,7 @@ void CCDROMPage::DoDataExchange(CDataExchange* pDX)
 	DDX_Text(pDX, IDC_CD_SPIN_UP, m_spinUpTime);
 	DDV_MinMaxInt(pDX, m_spinUpTime, 0, 120);
 	DDX_Check(pDX, IDC_NATIVE, m_nativeSCSI);
+	DDX_Control(pDX, IDC_CUE, c_cue);
 	//}}AFX_DATA_MAP
 }
 
@@ -79,9 +85,10 @@ END_MESSAGE_MAP()
 /////////////////////////////////////////////////////////////////////////////
 // Behandlungsroutinen für Nachrichten CCDROMPage 
 
-void CCDROMPage::init(CString wdir)
+void CCDROMPage::init(CString wdir, BOOL bRipperPresent)
 {
 	wd = wdir;
+	m_bRipperPresent = bRipperPresent;
 
 }
 
@@ -140,9 +147,10 @@ void CCDROMPage::SaveSettings()
 
 	cfgFile cfg(wd);
 
-	cfg.SetValue(LOCK, (void*)c_lockDrive.GetCheck());
-	cfg.SetValue(EJECT, (void*)c_ejectWhenFinished.GetCheck());
-	cfg.SetValue(SELECT, (void*)c_select.GetCheck());
+	cfg.SetValue("lock", c_lockDrive.GetCheck());
+	cfg.SetValue("eject", c_ejectWhenFinished.GetCheck());
+	cfg.SetValue("select", c_select.GetCheck());
+	cfg.SetValue("writecue", c_cue.GetCheck());
 }
 
 BOOL CCDROMPage::OnInitDialog()
@@ -150,27 +158,51 @@ BOOL CCDROMPage::OnInitDialog()
 
 	CPropertyPage::OnInitDialog();
 
-	//CR_Init(wd + "\\lameFE.ini");
+
+	m_pToolTip = new CToolTipCtrl;
+	if(!m_pToolTip->Create(this))
+	{
+	   TRACE("Unable To create ToolTip\n");
+	   return TRUE;
+	}
+
+	//m_pToolTip->AddTool(this, "Encoder Settings");
+	m_pToolTip->AddTool(&c_cdDrive, IDS_TOOL_DEFAULTDRIVE);
+	m_pToolTip->AddTool(&c_cdromType, IDS_TOOL_CDROMTYPE);
+	m_pToolTip->AddTool(&c_ejectWhenFinished, IDS_TOOL_EJECTCD);
+	m_pToolTip->AddTool(&c_lockDrive, IDS_TOOL_LOCKDRIVE);
+	m_pToolTip->AddTool(&c_rippingMethod, IDS_TOOL_RMETHOD);
+	m_pToolTip->AddTool(&c_select, IDS_TOOL_SELECT);
+	m_pToolTip->AddTool(&c_swapChannels, IDS_TOOL_SWAPCHNL);
+	m_pToolTip->AddTool(&c_spinUpTime, IDS_TOOL_SPINUP);
+	m_pToolTip->AddTool(&c_nativeSCSI, IDS_TOOL_NTSCSI);
+	m_pToolTip->AddTool(&c_cdSpeed, IDS_TOOL_CDSPEED);
+
+	m_pToolTip->Activate(TRUE);
 
 	m_cdripVersion.Format("CDRip.dll Version %.2f\n(c) 1998-2002 by Albert L. Faber\nhttp://www.cdex.n3.net", (float)CR_GetCDRipVersion()/100);
 
 	CDROMPARAMS cdParams;
 
+	//nSelCD = -1;
 
-	int nSelCD = CR_GetActiveCDROM();
+	if(m_bRipperPresent){
+
+		int nSelCD = CR_GetActiveCDROM();
 
 
-	for (int i = 0; i < CR_GetNumCDROM(); i++)
-	{
+		for (int i = 0; i < CR_GetNumCDROM(); i++)
+		{
 
-		CR_SetActiveCDROM(i);
-		CR_GetCDROMParameters(&cdParams);
-		c_cdDrive.AddString(cdParams.lpszCDROMID);
+			CR_SetActiveCDROM(i);
+			CR_GetCDROMParameters(&cdParams);
+			c_cdDrive.AddString(cdParams.lpszCDROMID);
+		}
+		
+		CR_SetActiveCDROM(nSelCD);
+
+		c_cdDrive.SetCurSel(nSelCD);
 	}
-	
-	CR_SetActiveCDROM(nSelCD);
-
-	c_cdDrive.SetCurSel(nSelCD);
 
 	initControls();
 
@@ -180,21 +212,26 @@ BOOL CCDROMPage::OnInitDialog()
 void CCDROMPage::initControls()
 {
 
-	CDROMPARAMS cdParams;
+	if(m_bRipperPresent){
 
-	CR_GetCDROMParameters(&cdParams);
-	
-	m_cdSpeed = cdParams.nSpeed;
-	m_spinUpTime = cdParams.nSpinUpTime;
-	c_swapChannels.SetCheck(cdParams.bSwapLefRightChannel);
+		CDROMPARAMS cdParams;
 
-	c_cdromType.SetCurSel((int)CR_GetCDROMType());
-	c_rippingMethod.SetCurSel(cdParams.nRippingMode + cdParams.nParanoiaMode); 
+		CR_GetCDROMParameters(&cdParams);
+		
+		m_cdSpeed = cdParams.nSpeed;
+		m_spinUpTime = cdParams.nSpinUpTime;
+		c_swapChannels.SetCheck(cdParams.bSwapLefRightChannel);
+
+		c_cdromType.SetCurSel(CR_GetCDROMType());
+		c_rippingMethod.SetCurSel(cdParams.nRippingMode + cdParams.nParanoiaMode); 
+	}
 	
 	cfgFile cfg(wd);
-	c_ejectWhenFinished.SetCheck((int)cfg.GetValue(EJECT, false));
-	c_lockDrive.SetCheck((int)cfg.GetValue(LOCK, false));
-	c_select.SetCheck((int)cfg.GetValue(SELECT, false));
+	c_ejectWhenFinished.SetCheck(cfg.GetValue("eject"));
+	c_lockDrive.SetCheck(cfg.GetValue("lock"));
+	c_select.SetCheck(cfg.GetValue("select"));
+	c_cue.SetCheck(cfg.GetValue("writecue"));
+
 
 	UpdateData(FALSE);
 }
@@ -214,7 +251,22 @@ void CCDROMPage::OnSelchangeCdDrive()
 
 	UpdateData(TRUE);
 	
-	SaveSettings();
-	CR_SetActiveCDROM(c_cdDrive.GetCurSel());
-	initControls();
+	if(m_bRipperPresent){
+
+		SaveSettings();
+		CR_SetActiveCDROM(c_cdDrive.GetCurSel());
+		initControls();
+	}
 }
+
+BOOL CCDROMPage::PreTranslateMessage(MSG* pMsg) 
+{
+
+	if (NULL != m_pToolTip){
+		
+		m_pToolTip->RelayEvent(pMsg);
+	}
+	
+	return CPropertyPage::PreTranslateMessage(pMsg);
+}
+

@@ -23,55 +23,46 @@
 #pragma once
 #endif // _MSC_VER > 1000
 
-#include "MP3File.h"
+#include "CDTrack.h"
 #include "BladeMP3EncDLL.h"
+#include "OutPlugin.h"
+#include "mmfile.h"	// Hinzugefügt von der Klassenansicht
+
 
 #define  OUTPUT_WAVE  0
 #define  OUTPUT_MP3   1
 
-typedef struct
-{
-  BYTE  riff[4];            // must be "RIFF"             
-  DWORD len;                // #bytes + 44 - 8 
-  BYTE  cWavFmt[8];         // must be "WAVEfmt" 
-  DWORD dwHdrLen;
-  WORD  wFormat;
-  WORD  wNumChannels;
-  DWORD dwSampleRate;
-  DWORD dwBytesPerSec;
-  WORD  wBlockAlign;
-  WORD  wBitsPerSample;
-  BYTE  cData[4];            // must be "data"
-  DWORD dwDataLen;           // #bytes 
-
-} WAVHDR, *PWAVHDR;
-
-
-class Encoder  
+class CEncoder  
 {
 public:
-	int getEstimatedSize(int nSamplesPerSec, int nChannels, int wBitsperSample, int nFileSize);
-	unsigned long getSamplesToRead();
+	
+	CEncoder(CString wd);
+	virtual ~CEncoder();
 
-	Encoder(CString wd);
-	virtual ~Encoder();
+	// Public Initialisation and access methods
+	BOOL Init();
+	BOOL DeInit();
+	void SetAlbumInfo(MMFILE_ALBUMINFO albumInfo);
 
-	BOOL deInit();
-	void passBuffer(LPVOID pnBuffer, DWORD dwRead);
-	BOOL prepareEncoding(MP3File *file);
-	void setOutputFormat(int outPF);
-	BOOL init();
+	BOOL PrepareEncoding(CString strFilename, int nNumchannels, int nSamplerate, int nBitspersample);
+	BOOL PrepareMP3(CString strFilename, int nNumchannels, int nSamplerate, int nBitspersample);
+	int  GetEstimatedSize(int nSamplesPerSec, int nChannels, int wBitsperSample, int nFileSize);
+	unsigned long GetSamplesToRead();
+
+
+	void PassBuffer(LPVOID pnBuffer, DWORD dwRead);
+	void SetOutputFormat(CString outputDLL);
 
 private:
+	MMFILE_ALBUMINFO m_albumInfo;
 	long nEstimatedSize;
-	int opf;
+	CString strOutputDLL;
 	CString wd;
 
 	FILE*			pFileOut;		
 	BE_CONFIG		beConfig;	
 
-	CHAR			strFileIn[255];	
-	CHAR			strFileOut[255];	
+	CString			strFileOut;	
 
 	DWORD			dwSamples;
 	DWORD			dwMP3Buffer;
@@ -84,11 +75,22 @@ private:
 
 	DWORD dwWrite;
 
+//	SNDFILE*		m_pSndFile;
+//	SF_INFO			m_wfInfo;
+	COutPlugin		*outputPlugin;
+	LF_OUT*			outModule;
+
 
 protected:
-	BOOL writeWaveHeader();
-	BOOL prepareMP3(MP3File *file);
-	BOOL prepareWave(CString outFile);
+
+	BEINITSTREAM		beInitStream;
+	BEENCODECHUNK		beEncodeChunk;
+	BEDEINITSTREAM		beDeinitStream;
+	BECLOSESTREAM		beCloseStream;
+	BEWRITEVBRHEADER	beWriteVBRHeader;
+
+//	BOOL PrepareMP3(CCDTrack *cdTrack);
+	BOOL PrepareWave(CString outFile, int nNumchannels, int nSamplerate, int nBitspersample);
 };
 
 #endif // !defined(AFX_ENCODER_H__A32F6493_DD48_47DC_B853_347FCCF8EE3F__INCLUDED_)

@@ -553,7 +553,7 @@ CCDDBRecord& CCDDBRecord::operator=(const CCDDBRecord& result)
 
 
 
-CCDDB::CCDDB() : m_sProductName(_T("MfcCDDB")), m_sProductVersion(_T("1.23"))
+CCDDB::CCDDB() : m_sProductName(_T("LameFE")), m_sProductVersion(_T("2.2"))
 {
   m_dwLastError = 0;
 #ifdef _DEBUG
@@ -616,204 +616,204 @@ CString CCDDB::GetErrorMessage() const
   return sError;
 }
 
-DWORD CCDDB::ComputeDiscID(const CArray<CCDDBTrackPosition, CCDDBTrackPosition&>& tracks)
-{
-  int nTracks = tracks.GetSize() - 1; //Number of tracks is 1 less than the size
-                                      //of the array as it also contains the lead 
-                                      //out position
-  //Validate our parameters
-  ASSERT(nTracks > 0);
+//DEL DWORD CCDDB::ComputeDiscID(const CArray<CCDDBTrackPosition, CCDDBTrackPosition&>& tracks)
+//DEL {
+//DEL   int nTracks = tracks.GetSize() - 1; //Number of tracks is 1 less than the size
+//DEL                                       //of the array as it also contains the lead 
+//DEL                                       //out position
+//DEL   //Validate our parameters
+//DEL   ASSERT(nTracks > 0);
+//DEL 
+//DEL   //Iterate across all the tracks
+//DEL   int n=0;
+//DEL   for (int i=0; i<nTracks; i++)
+//DEL   {
+//DEL     int sum = 0;
+//DEL     int j = tracks[i].m_nMinute*60 + tracks[i].m_nSecond;
+//DEL     while (j > 0)
+//DEL     {
+//DEL       sum += j%10;
+//DEL       j /=10;
+//DEL     }
+//DEL     n += sum;
+//DEL   }
+//DEL 
+//DEL   //Compute total track length in seconds
+//DEL   int t = tracks[nTracks].m_nMinute*60 + tracks[nTracks].m_nSecond - tracks[0].m_nMinute - tracks[0].m_nSecond;
+//DEL 
+//DEL   //Compute DISC ID
+//DEL   DWORD dwDiscID = ((n % 0xFF) << 24 | t << 8 | nTracks);
+//DEL   return dwDiscID;
+//DEL }
 
-  //Iterate across all the tracks
-  int n=0;
-  for (int i=0; i<nTracks; i++)
-  {
-    int sum = 0;
-    int j = tracks[i].m_nMinute*60 + tracks[i].m_nSecond;
-    while (j > 0)
-    {
-      sum += j%10;
-      j /=10;
-    }
-    n += sum;
-  }
+//DEL BOOL CCDDB::GetTrackPositions(CArray<CCDDBTrackPosition, CCDDBTrackPosition&>& tracks, LPCTSTR pszDrive)
+//DEL {
+//DEL   //Remove any tracks already in the array
+//DEL   tracks.RemoveAll();
+//DEL 
+//DEL   //Open the specified "cdaudio" MCI device
+//DEL   MCI_OPEN_PARMS mciOpenParms;
+//DEL   mciOpenParms.lpstrDeviceType = _T("cdaudio");
+//DEL   mciOpenParms.lpstrElementName = pszDrive;
+//DEL   m_dwLastError = ::mciSendCommand(0, MCI_OPEN, MCI_OPEN_SHAREABLE | MCI_OPEN_TYPE | (pszDrive ? MCI_OPEN_ELEMENT : 0), (DWORD) &mciOpenParms);
+//DEL   if (m_dwLastError)
+//DEL   {
+//DEL     TRACE(_T("Failed to open the cdaudio MCI device, GetLastError:%d, %s\n"), GetLastError(), GetErrorMessage());
+//DEL     return FALSE;
+//DEL   }
+//DEL 
+//DEL   //Set the time format to Minute/Second/Frame (MSF) format
+//DEL   MCI_SET_PARMS mciSetParms;
+//DEL   mciSetParms.dwTimeFormat = MCI_FORMAT_MSF;
+//DEL   m_dwLastError = ::mciSendCommand(mciOpenParms.wDeviceID, MCI_SET, MCI_SET_TIME_FORMAT, (DWORD) &mciSetParms);
+//DEL   if (m_dwLastError)
+//DEL   {
+//DEL     //Dont forget to close the MCI device
+//DEL     ::mciSendCommand(mciOpenParms.wDeviceID, MCI_CLOSE, 0, 0);
+//DEL 
+//DEL     TRACE(_T("Failed to set cdaudio MCI device to MSF format, GetLastError:%d, %s\n"), GetLastError(), GetErrorMessage());
+//DEL     return FALSE;
+//DEL   }
+//DEL 
+//DEL   //Get the total track count
+//DEL   MCI_STATUS_PARMS mciStatusParms;
+//DEL   mciStatusParms.dwItem = MCI_STATUS_NUMBER_OF_TRACKS;
+//DEL   m_dwLastError = ::mciSendCommand(mciOpenParms.wDeviceID, MCI_STATUS, MCI_STATUS_ITEM, (DWORD) &mciStatusParms);
+//DEL   if (m_dwLastError)
+//DEL   {
+//DEL     //Dont forget to close the MCI device
+//DEL     ::mciSendCommand(mciOpenParms.wDeviceID, MCI_CLOSE, 0, 0);
+//DEL 
+//DEL     TRACE(_T("Failed to get number of cdaudio tracks, GetLastError:%d, %s\n"), GetLastError(), GetErrorMessage());
+//DEL     return FALSE;
+//DEL   }
+//DEL   int nTotalTracks = (int) mciStatusParms.dwReturn;
+//DEL 
+//DEL   //check that disk contain audio track
+//DEL   BOOL bAudioTrackPresent = FALSE;	
+//DEL   for (int i=1; i<=nTotalTracks && !bAudioTrackPresent; i++)
+//DEL   {                      
+//DEL 		mciStatusParms.dwItem = MCI_CDA_STATUS_TYPE_TRACK;
+//DEL 		mciStatusParms.dwTrack = i;
+//DEL 		m_dwLastError = mciSendCommand(mciOpenParms.wDeviceID, MCI_STATUS, MCI_STATUS_ITEM | MCI_TRACK, (DWORD) &mciStatusParms);
+//DEL 		if (m_dwLastError)
+//DEL 		{
+//DEL 			//Dont forget to close the MCI device
+//DEL 			::mciSendCommand(mciOpenParms.wDeviceID, MCI_CLOSE, 0, 0);
+//DEL 			
+//DEL 			TRACE(_T("Failed to get track %d's type, GetLastError:%d, %s\n"), GetLastError(), GetErrorMessage());
+//DEL 			return FALSE;
+//DEL 		}
+//DEL 		if (mciStatusParms.dwReturn == MCI_CDA_TRACK_AUDIO)
+//DEL 			bAudioTrackPresent = TRUE;
+//DEL 	}
+//DEL   if (!bAudioTrackPresent)  
+//DEL   {
+//DEL     TRACE(_T("The CD does not contain any audio tracks!\n"));
+//DEL     return FALSE;
+//DEL   } 
+//DEL 
+//DEL   //Iterate through all the tracks getting their starting position
+//DEL   tracks.SetSize(nTotalTracks + 1);
+//DEL   for (i=1; i<=nTotalTracks; i++)
+//DEL   {                      
+//DEL     mciStatusParms.dwItem = MCI_STATUS_POSITION;
+//DEL     mciStatusParms.dwTrack = i;
+//DEL     m_dwLastError = mciSendCommand(mciOpenParms.wDeviceID, MCI_STATUS, MCI_STATUS_ITEM | MCI_TRACK, (DWORD) &mciStatusParms);
+//DEL     if (m_dwLastError)
+//DEL     {
+//DEL       //Dont forget to close the MCI device
+//DEL       ::mciSendCommand(mciOpenParms.wDeviceID, MCI_CLOSE, 0, 0);
+//DEL 
+//DEL       //Remove all the fields if we have an error getting any of the tracks
+//DEL       tracks.RemoveAll();
+//DEL 
+//DEL       TRACE(_T("Failed to get track %d's starting position, GetLastError:%d, %s\n"), GetLastError(), GetErrorMessage());
+//DEL       return FALSE;
+//DEL     }
+//DEL 
+//DEL     //Save the track position in MSF format
+//DEL     CCDDBTrackPosition trackPosition;
+//DEL     trackPosition.m_nMinute = MCI_MSF_MINUTE(mciStatusParms.dwReturn);
+//DEL     trackPosition.m_nSecond = MCI_MSF_SECOND(mciStatusParms.dwReturn);
+//DEL     trackPosition.m_nFrame  = MCI_MSF_FRAME(mciStatusParms.dwReturn);
+//DEL 
+//DEL     //Store the value in the array
+//DEL     tracks.SetAt(i-1, trackPosition);
+//DEL   }
+//DEL 
+//DEL   //Get the last track's length
+//DEL   mciStatusParms.dwItem = MCI_STATUS_LENGTH;
+//DEL   mciStatusParms.dwTrack = nTotalTracks;
+//DEL   m_dwLastError = mciSendCommand(mciOpenParms.wDeviceID, MCI_STATUS, MCI_STATUS_ITEM | MCI_TRACK, (DWORD) &mciStatusParms);
+//DEL   if (m_dwLastError)
+//DEL   {
+//DEL     //Dont forget to close the MCI device
+//DEL     ::mciSendCommand(mciOpenParms.wDeviceID, MCI_CLOSE, 0, 0);
+//DEL 
+//DEL     //Remove all the fields if we have an error getting any of the tracks
+//DEL     tracks.RemoveAll();
+//DEL 
+//DEL     TRACE(_T("Failed to get track %d's length, GetLastError:%d, %s\n"), GetLastError(), GetErrorMessage());
+//DEL     return FALSE;
+//DEL   }
+//DEL 
+//DEL 
+//DEL   //Compute lead-out track position
+//DEL   DWORD dwLenM = MCI_MSF_MINUTE(mciStatusParms.dwReturn);
+//DEL   DWORD dwLenS = MCI_MSF_SECOND(mciStatusParms.dwReturn);
+//DEL   DWORD dwLenF = MCI_MSF_FRAME(mciStatusParms.dwReturn) + 1; //Fix MCI Windows bug according to CDDB Howto doc
+//DEL   DWORD dwPosM = tracks[nTotalTracks-1].m_nMinute;
+//DEL   DWORD dwPosS = tracks[nTotalTracks-1].m_nSecond;
+//DEL   DWORD dwPosF = tracks[nTotalTracks-1].m_nFrame;
+//DEL 
+//DEL   //Compute lead out track position (in frame format)
+//DEL   DWORD dwPos = (dwPosM*60*75) + (dwPosS*75) + dwPosF + (dwLenM*60*75) + (dwLenS*75) + dwLenF;
+//DEL 
+//DEL   //Convert dwPos back to MSF format
+//DEL   CCDDBTrackPosition trackPosition;
+//DEL   trackPosition.m_nFrame = dwPos % 75;
+//DEL   dwPos /= 75;
+//DEL   trackPosition.m_nSecond = dwPos % 60;
+//DEL   dwPos /= 60;
+//DEL   trackPosition.m_nMinute = dwPos;
+//DEL 
+//DEL   //And store in the array
+//DEL   tracks.SetAt(nTotalTracks, trackPosition);
+//DEL 
+//DEL   //Dont forget to close the MCI device
+//DEL   ::mciSendCommand(mciOpenParms.wDeviceID, MCI_CLOSE, 0, 0);
+//DEL 
+//DEL   return TRUE;
+//DEL }
 
-  //Compute total track length in seconds
-  int t = tracks[nTracks].m_nMinute*60 + tracks[nTracks].m_nSecond - tracks[0].m_nMinute - tracks[0].m_nSecond;
-
-  //Compute DISC ID
-  DWORD dwDiscID = ((n % 0xFF) << 24 | t << 8 | nTracks);
-  return dwDiscID;
-}
-
-BOOL CCDDB::GetTrackPositions(CArray<CCDDBTrackPosition, CCDDBTrackPosition&>& tracks, LPCTSTR pszDrive)
-{
-  //Remove any tracks already in the array
-  tracks.RemoveAll();
-
-  //Open the specified "cdaudio" MCI device
-  MCI_OPEN_PARMS mciOpenParms;
-  mciOpenParms.lpstrDeviceType = _T("cdaudio");
-  mciOpenParms.lpstrElementName = pszDrive;
-  m_dwLastError = ::mciSendCommand(0, MCI_OPEN, MCI_OPEN_SHAREABLE | MCI_OPEN_TYPE | (pszDrive ? MCI_OPEN_ELEMENT : 0), (DWORD) &mciOpenParms);
-  if (m_dwLastError)
-  {
-    TRACE(_T("Failed to open the cdaudio MCI device, GetLastError:%d, %s\n"), GetLastError(), GetErrorMessage());
-    return FALSE;
-  }
-
-  //Set the time format to Minute/Second/Frame (MSF) format
-  MCI_SET_PARMS mciSetParms;
-  mciSetParms.dwTimeFormat = MCI_FORMAT_MSF;
-  m_dwLastError = ::mciSendCommand(mciOpenParms.wDeviceID, MCI_SET, MCI_SET_TIME_FORMAT, (DWORD) &mciSetParms);
-  if (m_dwLastError)
-  {
-    //Dont forget to close the MCI device
-    ::mciSendCommand(mciOpenParms.wDeviceID, MCI_CLOSE, 0, 0);
-
-    TRACE(_T("Failed to set cdaudio MCI device to MSF format, GetLastError:%d, %s\n"), GetLastError(), GetErrorMessage());
-    return FALSE;
-  }
-
-  //Get the total track count
-  MCI_STATUS_PARMS mciStatusParms;
-  mciStatusParms.dwItem = MCI_STATUS_NUMBER_OF_TRACKS;
-  m_dwLastError = ::mciSendCommand(mciOpenParms.wDeviceID, MCI_STATUS, MCI_STATUS_ITEM, (DWORD) &mciStatusParms);
-  if (m_dwLastError)
-  {
-    //Dont forget to close the MCI device
-    ::mciSendCommand(mciOpenParms.wDeviceID, MCI_CLOSE, 0, 0);
-
-    TRACE(_T("Failed to get number of cdaudio tracks, GetLastError:%d, %s\n"), GetLastError(), GetErrorMessage());
-    return FALSE;
-  }
-  int nTotalTracks = (int) mciStatusParms.dwReturn;
-
-  //check that disk contain audio track
-  BOOL bAudioTrackPresent = FALSE;	
-  for (int i=1; i<=nTotalTracks && !bAudioTrackPresent; i++)
-  {                      
-		mciStatusParms.dwItem = MCI_CDA_STATUS_TYPE_TRACK;
-		mciStatusParms.dwTrack = i;
-		m_dwLastError = mciSendCommand(mciOpenParms.wDeviceID, MCI_STATUS, MCI_STATUS_ITEM | MCI_TRACK, (DWORD) &mciStatusParms);
-		if (m_dwLastError)
-		{
-			//Dont forget to close the MCI device
-			::mciSendCommand(mciOpenParms.wDeviceID, MCI_CLOSE, 0, 0);
-			
-			TRACE(_T("Failed to get track %d's type, GetLastError:%d, %s\n"), GetLastError(), GetErrorMessage());
-			return FALSE;
-		}
-		if (mciStatusParms.dwReturn == MCI_CDA_TRACK_AUDIO)
-			bAudioTrackPresent = TRUE;
-	}
-  if (!bAudioTrackPresent)  
-  {
-    TRACE(_T("The CD does not contain any audio tracks!\n"));
-    return FALSE;
-  } 
-
-  //Iterate through all the tracks getting their starting position
-  tracks.SetSize(nTotalTracks + 1);
-  for (i=1; i<=nTotalTracks; i++)
-  {                      
-    mciStatusParms.dwItem = MCI_STATUS_POSITION;
-    mciStatusParms.dwTrack = i;
-    m_dwLastError = mciSendCommand(mciOpenParms.wDeviceID, MCI_STATUS, MCI_STATUS_ITEM | MCI_TRACK, (DWORD) &mciStatusParms);
-    if (m_dwLastError)
-    {
-      //Dont forget to close the MCI device
-      ::mciSendCommand(mciOpenParms.wDeviceID, MCI_CLOSE, 0, 0);
-
-      //Remove all the fields if we have an error getting any of the tracks
-      tracks.RemoveAll();
-
-      TRACE(_T("Failed to get track %d's starting position, GetLastError:%d, %s\n"), GetLastError(), GetErrorMessage());
-      return FALSE;
-    }
-
-    //Save the track position in MSF format
-    CCDDBTrackPosition trackPosition;
-    trackPosition.m_nMinute = MCI_MSF_MINUTE(mciStatusParms.dwReturn);
-    trackPosition.m_nSecond = MCI_MSF_SECOND(mciStatusParms.dwReturn);
-    trackPosition.m_nFrame  = MCI_MSF_FRAME(mciStatusParms.dwReturn);
-
-    //Store the value in the array
-    tracks.SetAt(i-1, trackPosition);
-  }
-
-  //Get the last track's length
-  mciStatusParms.dwItem = MCI_STATUS_LENGTH;
-  mciStatusParms.dwTrack = nTotalTracks;
-  m_dwLastError = mciSendCommand(mciOpenParms.wDeviceID, MCI_STATUS, MCI_STATUS_ITEM | MCI_TRACK, (DWORD) &mciStatusParms);
-  if (m_dwLastError)
-  {
-    //Dont forget to close the MCI device
-    ::mciSendCommand(mciOpenParms.wDeviceID, MCI_CLOSE, 0, 0);
-
-    //Remove all the fields if we have an error getting any of the tracks
-    tracks.RemoveAll();
-
-    TRACE(_T("Failed to get track %d's length, GetLastError:%d, %s\n"), GetLastError(), GetErrorMessage());
-    return FALSE;
-  }
-
-
-  //Compute lead-out track position
-  DWORD dwLenM = MCI_MSF_MINUTE(mciStatusParms.dwReturn);
-  DWORD dwLenS = MCI_MSF_SECOND(mciStatusParms.dwReturn);
-  DWORD dwLenF = MCI_MSF_FRAME(mciStatusParms.dwReturn) + 1; //Fix MCI Windows bug according to CDDB Howto doc
-  DWORD dwPosM = tracks[nTotalTracks-1].m_nMinute;
-  DWORD dwPosS = tracks[nTotalTracks-1].m_nSecond;
-  DWORD dwPosF = tracks[nTotalTracks-1].m_nFrame;
-
-  //Compute lead out track position (in frame format)
-  DWORD dwPos = (dwPosM*60*75) + (dwPosS*75) + dwPosF + (dwLenM*60*75) + (dwLenS*75) + dwLenF;
-
-  //Convert dwPos back to MSF format
-  CCDDBTrackPosition trackPosition;
-  trackPosition.m_nFrame = dwPos % 75;
-  dwPos /= 75;
-  trackPosition.m_nSecond = dwPos % 60;
-  dwPos /= 60;
-  trackPosition.m_nMinute = dwPos;
-
-  //And store in the array
-  tracks.SetAt(nTotalTracks, trackPosition);
-
-  //Dont forget to close the MCI device
-  ::mciSendCommand(mciOpenParms.wDeviceID, MCI_CLOSE, 0, 0);
-
-  return TRUE;
-}
-
-BOOL CCDDB::ComputeDiscID(DWORD& dwDiscID, LPCTSTR pszDrive)
-{
-  //Get the track details
-  CArray<CCDDBTrackPosition, CCDDBTrackPosition&> tracks;
-  if (!GetTrackPositions(tracks, pszDrive))
-    return FALSE;
-  
-  //Compute the DISC ID now that we have got all the track information
-  dwDiscID = ComputeDiscID(tracks);
-  
-  return TRUE;    
-}
+//DEL BOOL CCDDB::ComputeDiscID(DWORD& dwDiscID, LPCTSTR pszDrive)
+//DEL {
+//DEL   //Get the track details
+//DEL   CArray<CCDDBTrackPosition, CCDDBTrackPosition&> tracks;
+//DEL   if (!GetTrackPositions(tracks, pszDrive))
+//DEL     return FALSE;
+//DEL   
+//DEL   //Compute the DISC ID now that we have got all the track information
+//DEL   dwDiscID = ComputeDiscID(tracks);
+//DEL   
+//DEL   return TRUE;    
+//DEL }
     
-void CCDDB::GetCDROMDrives(CStringArray& drives)
-{
-  //empty out the array
-  drives.RemoveAll();
-
-  //Iterate across all the drive letters to find out which ones are CDROMs
-  for (int i=1; i<=26; i++)
-  {
-    CString sDrive;
-    sDrive.Format(_T("%c:"), i-1+'A');
-    if (GetDriveType(sDrive) == DRIVE_CDROM)
-      drives.Add(sDrive);
-  }
-}
+//DEL void CCDDB::GetCDROMDrives(CStringArray& drives)
+//DEL {
+//DEL   //empty out the array
+//DEL   drives.RemoveAll();
+//DEL 
+//DEL   //Iterate across all the drive letters to find out which ones are CDROMs
+//DEL   for (int i=1; i<=26; i++)
+//DEL   {
+//DEL     CString sDrive;
+//DEL     sDrive.Format(_T("%c:"), i-1+'A');
+//DEL     if (GetDriveType(sDrive) == DRIVE_CDROM)
+//DEL       drives.Add(sDrive);
+//DEL   }
+//DEL }
 
 BOOL CCDDB::ReadResponse(CHTTPSocket& socket, LPSTR pszTerminator, LPSTR& pszRecvBuffer, int nGrowBy, DWORD dwHint)
 {

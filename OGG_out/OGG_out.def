@@ -1,0 +1,8 @@
+; OGG_out.def : Deklariert die Modul-Parameter für die DLL.
+
+LIBRARY      "OGG_out"
+DESCRIPTION  'OGG_out Windows Dynamic Link Library'
+
+EXPORTS
+	
+	GetLFOutModule	@1

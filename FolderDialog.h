@@ -35,6 +35,7 @@ public:
 	BROWSEINFO m_bi;
 
 protected:
+	virtual void OnOK();
 	CString m_strInitialFolderName;
 	CString m_strFinalFolderName;
 

@@ -34,16 +34,20 @@ class CCDROMPage : public CPropertyPage
 
 // Konstruktion
 public:
+	BOOL m_bRipperPresent;
 	virtual BOOL OnInitDialog();
 	void OnCancel();
 	void OnOK();
-	void init(CString wdir);
+	void init(CString wdir, BOOL bRipperPresent);
 	CCDROMPage();
 	~CCDROMPage();
 
 // Dialogfelddaten
 	//{{AFX_DATA(CCDROMPage)
 	enum { IDD = IDD_CDRIP_PAGE };
+	CEdit	c_spinUpTime;
+	CButton	c_nativeSCSI;
+	CEdit	c_cdSpeed;
 	CButton	c_select;
 	CButton	c_swapChannels;
 	CComboBox	c_rippingMethod;
@@ -56,12 +60,15 @@ public:
 	int		m_cdSpeed;
 	int		m_spinUpTime;
 	BOOL	m_nativeSCSI;
+	CButton c_cue;
 	//}}AFX_DATA
 
 
 // Überschreibungen
 	// Der Klassen-Assistent generiert virtuelle Funktionsüberschreibungen
 	//{{AFX_VIRTUAL(CCDROMPage)
+	public:
+	virtual BOOL PreTranslateMessage(MSG* pMsg);
 	protected:
 	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV-Unterstützung
 	//}}AFX_VIRTUAL
@@ -76,6 +83,7 @@ protected:
 	DECLARE_MESSAGE_MAP()
 
 private:
+	CToolTipCtrl* m_pToolTip;
 	void initControls();
 	void SaveSettings();
 	CString wd;

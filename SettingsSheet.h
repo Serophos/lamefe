@@ -24,6 +24,9 @@
 #include "MainSettingsPage.h"
 #include "PluginPage.h"
 #include "CDROMPage.h"	// Hinzugefügt von der Klassenansicht
+#include "FilenamePage.h"
+#include "LogginPage.h"
+
 #if _MSC_VER > 1000
 #pragma once
 #endif // _MSC_VER > 1000
@@ -56,7 +59,7 @@ public:
 
 // Implementierung
 public:
-	void init(CString wd);
+	void init(CString wd, BOOL bRipperPresent);
 	virtual ~CSettingsSheet();
 
 	// Generierte Nachrichtenzuordnungsfunktionen
@@ -66,11 +69,13 @@ protected:
 	//}}AFX_MSG
 	DECLARE_MESSAGE_MAP()
 private:
-	CString wd;
+
 	CCDDBPage m_cddbPage;
 	CCDROMPage m_CDROMPage;
 	CPluginPage m_PluginPage;
+	CLogginPage m_LoggingPage;
 	CEncoderSheet m_EncoderPage;
+	CFilenamePage m_FilenamePage;
 	CMainSettingsPage m_MainPage;
 
 };

@@ -19,7 +19,6 @@ CFG=lameFE - Win32 Debug
 !MESSAGE 
 !MESSAGE "lameFE - Win32 Release" (basierend auf  "Win32 (x86) Application")
 !MESSAGE "lameFE - Win32 Debug" (basierend auf  "Win32 (x86) Application")
-!MESSAGE "lameFE - Win32 Release German" (basierend auf  "Win32 (x86) Application")
 !MESSAGE 
 
 # Begin Project
@@ -44,17 +43,17 @@ RSC=rc.exe
 # PROP Ignore_Export_Lib 0
 # PROP Target_Dir ""
 # ADD BASE CPP /nologo /MD /W3 /GX /O2 /D "WIN32" /D "NDEBUG" /D "_WINDOWS" /D "_AFXDLL" /Yu"stdafx.h" /FD /c
-# ADD CPP /nologo /MD /W3 /GX /O2 /Ob2 /D "WIN32" /D "NDEBUG" /D "_WINDOWS" /D "_AFXDLL" /FR /Yu"stdafx.h" /FD /c
+# ADD CPP /nologo /MD /W3 /GX /O2 /I "LibSndFile\src" /D "WIN32" /D "NDEBUG" /D "_WINDOWS" /D "_AFXDLL" /D "_MBCS" /D "_ENGLISH" /FR /Yu"stdafx.h" /FD /c
 # ADD BASE MTL /nologo /D "NDEBUG" /mktyplib203 /win32
 # ADD MTL /nologo /D "NDEBUG" /mktyplib203 /win32
 # ADD BASE RSC /l 0x407 /d "NDEBUG" /d "_AFXDLL"
-# ADD RSC /l 0x409 /d "NDEBUG" /d "_AFXDLL" /d "_ENGLISH"
+# ADD RSC /l 0x407 /d "NDEBUG" /d "_AFXDLL" /d "_ENGLISH"
 BSC32=bscmake.exe
 # ADD BASE BSC32 /nologo
 # ADD BSC32 /nologo
 LINK32=link.exe
 # ADD BASE LINK32 /nologo /subsystem:windows /machine:I386
-# ADD LINK32 winmm.lib htmlhelp.lib /nologo /subsystem:windows /machine:I386
+# ADD LINK32 winmm.lib htmlhelp.lib id3lib.lib zlib.lib /nologo /subsystem:windows /machine:I386 /libpath:"ID3Lib\libprj\Release" /libpath:"ID3Lib/zlib"
 
 !ELSEIF  "$(CFG)" == "lameFE - Win32 Debug"
 
@@ -70,45 +69,17 @@ LINK32=link.exe
 # PROP Ignore_Export_Lib 0
 # PROP Target_Dir ""
 # ADD BASE CPP /nologo /MDd /W3 /Gm /GX /ZI /Od /D "WIN32" /D "_DEBUG" /D "_WINDOWS" /D "_AFXDLL" /Yu"stdafx.h" /FD /GZ /c
-# ADD CPP /nologo /MDd /W3 /Gm /GX /ZI /Od /D "WIN32" /D "_DEBUG" /D "_WINDOWS" /D "_AFXDLL" /D "_MBCS" /FR /Yu"stdafx.h" /FD /GZ /c
+# ADD CPP /nologo /MDd /W3 /Gm /GX /ZI /Od /I "LibSndFile\src" /D "WIN32" /D "_DEBUG" /D "_WINDOWS" /D "_AFXDLL" /D "_MBCS" /D "ENGLISH" /FR /Yu"stdafx.h" /FD /GZ /c
 # ADD BASE MTL /nologo /D "_DEBUG" /mktyplib203 /win32
 # ADD MTL /nologo /D "_DEBUG" /mktyplib203 /win32
 # ADD BASE RSC /l 0x407 /d "_DEBUG" /d "_AFXDLL"
-# ADD RSC /l 0x409 /d "_DEBUG" /d "_AFXDLL" /d "_ENGLISH"
+# ADD RSC /l 0x407 /d "_DEBUG" /d "_AFXDLL" /d "_ENGLISH"
 BSC32=bscmake.exe
 # ADD BASE BSC32 /nologo
 # ADD BSC32 /nologo
 LINK32=link.exe
 # ADD BASE LINK32 /nologo /subsystem:windows /debug /machine:I386 /pdbtype:sept
-# ADD LINK32 winmm.lib htmlhelp.lib /nologo /subsystem:windows /map /debug /machine:I386 /pdbtype:sept
-
-!ELSEIF  "$(CFG)" == "lameFE - Win32 Release German"
-
-# PROP BASE Use_MFC 6
-# PROP BASE Use_Debug_Libraries 0
-# PROP BASE Output_Dir "lameFE___Win32_Release_German0"
-# PROP BASE Intermediate_Dir "lameFE___Win32_Release_German0"
-# PROP BASE Ignore_Export_Lib 0
-# PROP BASE Target_Dir ""
-# PROP Use_MFC 6
-# PROP Use_Debug_Libraries 0
-# PROP Output_Dir "lameFE___Win32_Release_German0"
-# PROP Intermediate_Dir "lameFE___Win32_Release_German0"
-# PROP Ignore_Export_Lib 0
-# PROP Target_Dir ""
-# ADD BASE CPP /nologo /MD /W3 /GX /O2 /Ob2 /D "WIN32" /D "NDEBUG" /D "_WINDOWS" /D "_AFXDLL" /FR /Yu"stdafx.h" /FD /c
-# ADD CPP /nologo /MD /W3 /GX /O2 /Ob2 /D "WIN32" /D "NDEBUG" /D "_WINDOWS" /D "_AFXDLL" /Fp"lameFE___Win32_Release_German/lameFE.pch" /Yu"stdafx.h" /Fo"lameFE___Win32_Release_German/" /Fd"lameFE___Win32_Release_German/" /FD /c
-# ADD BASE MTL /nologo /D "NDEBUG" /mktyplib203 /win32
-# ADD MTL /nologo /D "NDEBUG" /mktyplib203 /win32
-# ADD BASE RSC /l 0x409 /d "NDEBUG" /d "_AFXDLL"
-# ADD RSC /l 0x407 /fo"lameFE___Win32_Release_German/lameFE.res" /d "NDEBUG" /d "_AFXDLL" /d "_GERMAN"
-BSC32=bscmake.exe
-# ADD BASE BSC32 /nologo
-# ADD BSC32 /nologo
-LINK32=link.exe
-# ADD BASE LINK32 winmm.lib /nologo /subsystem:windows /machine:I386
-# ADD LINK32 winmm.lib htmlhelp.lib /nologo /subsystem:windows /pdb:"lameFE___Win32_Release_German/lameFE.pdb" /machine:I386 /out:"lameFE___Win32_Release_German/lameFE.exe"
-# SUBTRACT LINK32 /pdb:none
+# ADD LINK32 winmm.lib htmlhelp.lib id3libD.lib zlibD.lib /nologo /subsystem:windows /debug /machine:I386 /pdbtype:sept /libpath:"ID3Lib\libprj\Debug" /libpath:"ID3Lib/zlib"
 
 !ENDIF 
 
@@ -116,10 +87,13 @@ LINK32=link.exe
 
 # Name "lameFE - Win32 Release"
 # Name "lameFE - Win32 Debug"
-# Name "lameFE - Win32 Release German"
 # Begin Group "Quellcodedateien"
 
 # PROP Default_Filter "cpp;c;cxx;rc;def;r;odl;idl;hpj;bat"
+# Begin Source File
+
+SOURCE=.\AlbumInfoCtrl.cpp
+# End Source File
 # Begin Source File
 
 SOURCE=.\Buffer.cpp
@@ -134,11 +108,27 @@ SOURCE=.\CDdbQueryDlg.cpp
 # End Source File
 # Begin Source File
 
+SOURCE=.\CDPlayerIni.cpp
+# End Source File
+# Begin Source File
+
 SOURCE=.\CDROMPage.cpp
 # End Source File
 # Begin Source File
 
+SOURCE=.\CDTrack.cpp
+# End Source File
+# Begin Source File
+
 SOURCE=.\cfgFile.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\CompactDisk.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\CPlugin.cpp
 # End Source File
 # Begin Source File
 
@@ -158,7 +148,19 @@ SOURCE=.\EncodingStatusDlg.cpp
 # End Source File
 # Begin Source File
 
+SOURCE=.\ExtListCtrl.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\FilenamePage.cpp
+# End Source File
+# Begin Source File
+
 SOURCE=.\FolderDialog.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\FreeDBStatusDlg.cpp
 # End Source File
 # Begin Source File
 
@@ -166,7 +168,7 @@ SOURCE=.\ID3Info.cpp
 # End Source File
 # Begin Source File
 
-SOURCE=.\ID3TagEditor.cpp
+SOURCE=.\Ini.cpp
 # End Source File
 # Begin Source File
 
@@ -174,15 +176,7 @@ SOURCE=.\InternalPlayer.cpp
 # End Source File
 # Begin Source File
 
-SOURCE=".\hlp\LameFE XP.hpj"
-# End Source File
-# Begin Source File
-
 SOURCE=.\lameFE.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\hlp\LameFE.hpj
 # End Source File
 # Begin Source File
 
@@ -190,7 +184,11 @@ SOURCE=.\lameFE.rc
 # End Source File
 # Begin Source File
 
-SOURCE=.\lameFEDlg.cpp
+SOURCE=.\lameFEDoc.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\LameFEPlugin.cpp
 # End Source File
 # Begin Source File
 
@@ -198,15 +196,47 @@ SOURCE=.\LameFESplash.cpp
 # End Source File
 # Begin Source File
 
+SOURCE=.\lameFEView.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\LogFile.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\LogginPage.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\MainFrm.cpp
+# End Source File
+# Begin Source File
+
 SOURCE=.\MainSettingsPage.cpp
 # End Source File
 # Begin Source File
 
-SOURCE=.\cddb\Mfccddb.cpp
+SOURCE=.\Mfccddb.cpp
 # End Source File
 # Begin Source File
 
-SOURCE=.\MP3File.cpp
+SOURCE=.\MultimediaFile.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\MyFileDialog.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\OutPlugin.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\PathDialog.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\PlayList.cpp
 # End Source File
 # Begin Source File
 
@@ -235,6 +265,14 @@ SOURCE=.\TrayDialog.cpp
 # PROP Default_Filter "h;hpp;hxx;hm;inl"
 # Begin Source File
 
+SOURCE=.\AlbumInfoCtrl.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\BladeMP3EncDLL.h
+# End Source File
+# Begin Source File
+
 SOURCE=.\Buffer.h
 # End Source File
 # Begin Source File
@@ -247,11 +285,27 @@ SOURCE=.\CDdbQueryDlg.h
 # End Source File
 # Begin Source File
 
+SOURCE=.\CDPlayerIni.h
+# End Source File
+# Begin Source File
+
 SOURCE=.\CDROMPage.h
 # End Source File
 # Begin Source File
 
+SOURCE=.\CDTrack.h
+# End Source File
+# Begin Source File
+
 SOURCE=.\cfgFile.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\CompactDisk.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\CPlugin.h
 # End Source File
 # Begin Source File
 
@@ -271,7 +325,19 @@ SOURCE=.\EncodingStatusDlg.h
 # End Source File
 # Begin Source File
 
+SOURCE=.\ExtListCtrl.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\FilenamePage.h
+# End Source File
+# Begin Source File
+
 SOURCE=.\FolderDialog.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\FreeDBStatusDlg.h
 # End Source File
 # Begin Source File
 
@@ -279,7 +345,7 @@ SOURCE=.\ID3Info.h
 # End Source File
 # Begin Source File
 
-SOURCE=.\ID3TagEditor.h
+SOURCE=.\Ini.h
 # End Source File
 # Begin Source File
 
@@ -287,19 +353,15 @@ SOURCE=.\InternalPlayer.h
 # End Source File
 # Begin Source File
 
-SOURCE=".\hlp\LameFE XP.hm"
-# End Source File
-# Begin Source File
-
 SOURCE=.\lameFE.h
 # End Source File
 # Begin Source File
 
-SOURCE=.\hlp\LameFE.hm
+SOURCE=.\lameFEDoc.h
 # End Source File
 # Begin Source File
 
-SOURCE=.\lameFEDlg.h
+SOURCE=.\LameFEPlugin.h
 # End Source File
 # Begin Source File
 
@@ -307,15 +369,59 @@ SOURCE=.\LameFESplash.h
 # End Source File
 # Begin Source File
 
+SOURCE=.\lameFEView.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\LogFile.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\LogginPage.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\MainFrm.h
+# End Source File
+# Begin Source File
+
 SOURCE=.\MainSettingsPage.h
 # End Source File
 # Begin Source File
 
-SOURCE=.\cddb\Mfccddb.h
+SOURCE=.\Mfccddb.h
 # End Source File
 # Begin Source File
 
-SOURCE=.\MP3File.h
+SOURCE=.\mmfile.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\MultimediaFile.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\MyFileDialog.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\out_plugin.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\OutPlugin.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\PathDialog.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\PlayList.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\plugin_api.h
 # End Source File
 # Begin Source File
 
@@ -347,10 +453,6 @@ SOURCE=.\TrayDialog.h
 # PROP Default_Filter "ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe"
 # Begin Source File
 
-SOURCE=.\res\bitmap1.bmp
-# End Source File
-# Begin Source File
-
 SOURCE=.\res\bmp00001.bmp
 # End Source File
 # Begin Source File
@@ -363,23 +465,15 @@ SOURCE=.\res\bmp00003.bmp
 # End Source File
 # Begin Source File
 
-SOURCE=.\res\bmp00004.bmp
+SOURCE=.\res\busy_cd.cur
 # End Source File
 # Begin Source File
 
-SOURCE=.\res\cd_mp3.ico
+SOURCE=.\res\config_i.ico
 # End Source File
 # Begin Source File
 
-SOURCE=.\res\cd_wav.ico
-# End Source File
-# Begin Source File
-
-SOURCE=.\res\cddb.ico
-# End Source File
-# Begin Source File
-
-SOURCE=.\res\cursor1.cur
+SOURCE=.\res\config_o.ico
 # End Source File
 # Begin Source File
 
@@ -388,14 +482,6 @@ SOURCE=.\res\default1.bin
 # Begin Source File
 
 SOURCE=.\res\eject.ico
-# End Source File
-# Begin Source File
-
-SOURCE=.\res\encoder.ico
-# End Source File
-# Begin Source File
-
-SOURCE=.\res\ico00001.ico
 # End Source File
 # Begin Source File
 
@@ -415,10 +501,6 @@ SOURCE=.\res\icon4.ico
 # End Source File
 # Begin Source File
 
-SOURCE=.\res\id3.ico
-# End Source File
-# Begin Source File
-
 SOURCE=.\res\lameFE.ico
 # End Source File
 # Begin Source File
@@ -427,40 +509,56 @@ SOURCE=.\res\lameFE.rc2
 # End Source File
 # Begin Source File
 
+SOURCE=.\res\lameFEDoc.ico
+# End Source File
+# Begin Source File
+
+SOURCE=.\res\list_bk.bmp
+# End Source File
+# Begin Source File
+
+SOURCE=.\res\log_images.bmp
+# End Source File
+# Begin Source File
+
 SOURCE=.\res\next.ico
 # End Source File
 # Begin Source File
 
-SOURCE=.\res\refresh.ico
-# End Source File
-# Begin Source File
-
-SOURCE=.\res\start.ico
+SOURCE=.\res\splash.bmp
 # End Source File
 # Begin Source File
 
 SOURCE=.\res\stop.ico
 # End Source File
+# Begin Source File
+
+SOURCE=.\res\Toolbar.bmp
+# End Source File
+# Begin Source File
+
+SOURCE=.\res\toolbar1.bmp
+# End Source File
+# Begin Source File
+
+SOURCE=.\res\Toolbar256.bmp
+# End Source File
+# Begin Source File
+
+SOURCE=.\res\Toolbar256_deact.bmp
+# End Source File
+# Begin Source File
+
+SOURCE=.\res\Toolbar_hi.bmp
+# End Source File
+# Begin Source File
+
+SOURCE=.\res\Toolbar_hi_deact.bmp
+# End Source File
 # End Group
 # Begin Source File
 
-SOURCE=.\hlp\AfxDlg.rtf
-# End Source File
-# Begin Source File
-
-SOURCE=.\hlp\LameFE.cnt
-# End Source File
-# Begin Source File
-
-SOURCE=.\lameFE___Win32_Release_German\lameFE.exe.manifest
-# End Source File
-# Begin Source File
-
-SOURCE=.\hlp\lameFE.HLP
-# End Source File
-# Begin Source File
-
-SOURCE=.\hlp\LameFE.ph
+SOURCE=.\res\finished.wav
 # End Source File
 # Begin Source File
 

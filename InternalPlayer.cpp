@@ -19,7 +19,7 @@
 #include "stdafx.h"
 #include "stdafx.h"
 #include "InternalPlayer.h"
-#include "MP3File.h"
+//#include "MP3File.h"
 #include <string>
 #include <fstream>
 #include <io.h>
@@ -38,21 +38,16 @@ static char THIS_FILE[]=__FILE__;
 
 
 
-InternalPlayer::InternalPlayer(int playerMode, HWND hWnd)
+InternalPlayer::InternalPlayer(int playerMode, HWND hWnd /*= NULL */)
 
 {
 	
 	mode		 = playerMode;
-	isPlaying	 = false;
+	isPlaying	 = FALSE;
 	currentTrack = 0;
-	files        = NULL;
+	m_cd        = NULL;
 	m_bPaused	 = FALSE;
 	m_bStopped   = FALSE;
-
-/*	if(playerMode == PLAYER_MODE_WAVE){
-		
-		DSIP_Init(hWnd);
-	}*/
 }
 
 InternalPlayer::~InternalPlayer()
@@ -61,13 +56,15 @@ InternalPlayer::~InternalPlayer()
 }
 
 
-UINT InternalPlayer::playback(LPVOID lParam){
+UINT InternalPlayer::playback(LPVOID lParam){  // This is the internal Thread func
 	
+	TRACE("Starting Internal Player Thread\n");
 	InternalPlayer *ip = (InternalPlayer*)lParam;
 
 	ip->playInternal();
 	
-	AfxEndThread(0, TRUE);
+	//AfxEndThread(0, TRUE);
+	TRACE("------- Terminating Internal Player Thread ---------\n");
 	return 0;
 }
 
@@ -78,15 +75,13 @@ void InternalPlayer::play()
 	thread = AfxBeginThread(playback, (void*)this);
 }
 
-
-
 void InternalPlayer::stop()
 {
 	
-	if(!files){
+	if(!m_cd){
 		return;
 	}
-	if(!files->GetSize()){
+	if(!m_cd->GetNumTracks()){
 		return;
 	}
 
@@ -95,38 +90,30 @@ void InternalPlayer::stop()
 		
 		CR_StopPlayTrack();
 	}
-
-	/*if(mode == PLAYER_MODE_WAVE){
-
-		DSIP_Stop();
-	}*/
 	currentTrack = 0;
+
 }
 
 
 
-void InternalPlayer::setPlaylist(CPtrArray *pFiles)
+void InternalPlayer::setPlaylist(CCompactDisc *cd)
 {
 
-	files = pFiles;
+	m_cd = cd;
 }
 
 void InternalPlayer::next()
 {
 
-	if(!files){
+	if(!m_cd){
 		return;
 	}
-	if(!files->GetSize()){
+	if(!m_cd->GetNumTracks()){
 		return;
 	}
-
-/*	if(mode == PLAYER_MODE_WAVE){
-
-		DSIP_Stop();
-	}
-*/
-	if(currentTrack + 1 >= files->GetSize()){
+	
+	TRACE("Next Track\n");
+	if(currentTrack + 1 >= m_cd->GetNumTracks()){
 
 		currentTrack = 0;
 	}
@@ -134,25 +121,22 @@ void InternalPlayer::next()
 
 		currentTrack++;
 	}
-	play();
+	TRACE("Playback Stop");
+	CR_StopPlayTrack();
 }
 
 void InternalPlayer::prev()
 {
-	if(!files){
+	if(!m_cd){
 		return;
 	}
-	if(!files->GetSize()){
+	if(!m_cd->GetNumTracks()){
 		return;
 	}
 
-/*	if(mode == PLAYER_MODE_WAVE){
-
-		DSIP_Stop();
-	}*/
 	if(currentTrack - 1< 0){
 
-		currentTrack = files->GetSize() - 1;
+		currentTrack = m_cd->GetNumTracks() - 1;
 	}
 	else{
 
@@ -164,13 +148,12 @@ void InternalPlayer::prev()
 void InternalPlayer::playInternal()
 {
 
-	if(!files){
+	if(!m_cd){
 		return;
 	}
-	if(!files->GetSize()){
+	if(!m_cd->GetNumTracks()){
 		return;
 	}
-
 
 	if(mode == PLAYER_MODE_CD){
 		
@@ -180,34 +163,17 @@ void InternalPlayer::playInternal()
 			return;
 		}
 
-		for(int i = currentTrack; i < files->GetSize() && !m_bStopped; i++){
+		for(int i = currentTrack; i < m_cd->GetNumTracks() && !m_bStopped; i++){
 			
-			CR_PlayTrack(((MP3File*)files->GetAt(currentTrack))->getCDTrackNum());
-			while(CR_IsAudioPlaying()){
+			TRACE("Starting playback of Audio Track %d\n", currentTrack);
+			CR_PlayTrack(m_cd->GetCDTrack(currentTrack)->m_btTrack);
+			while(isCDPlaying()){
 
 				Sleep(500);
+				//TRACE("Sleep %d\n", i);
 			}
 		}
 	}
-/*	if(mode == PLAYER_MODE_WAVE){
-
-		for(int i = currentTrack; i < files->GetSize() && !m_bStopped; i++){
-			
-			TRACE("%d\n", i);
-			CString filename = ((MP3File*)files->GetAt(i))->getFileName();
-
-			if(DSIP_Open(filename.GetBuffer(10))){
-
-				DSIP_Play();
-				Sleep(200);
-			}
-			filename.ReleaseBuffer();
-			while(DSIP_IsAudioPlaying() || m_bPaused){
-
-				Sleep(500);
-			}
-		}
-	}*/
 }
 
 
@@ -215,24 +181,6 @@ void InternalPlayer::deInit()
 {
 
 	stop();
-
-	if(mode == PLAYER_MODE_CD){
-
-		if(files){
-
-			MP3File *tmp;
-			
-			for(int i = files->GetSize() - 1; i >= 0; i--){
-
-				tmp = (MP3File*)files->GetAt(i);
-				files->RemoveAt(i);
-				delete tmp;
-			}
-
-			files->FreeExtra();
-		}
-		delete files;
-	}
 }
 
 void InternalPlayer::pause()
@@ -246,10 +194,21 @@ void InternalPlayer::pause()
 		return;
 	}
 
-/*	if(mode == PLAYER_MODE_WAVE){
+}
 
-		m_bPaused = !m_bPaused;
-		DSIP_Play();
+BOOL InternalPlayer::isCDPlaying()
+{
 
-	}*/
+	BOOL bReturn = TRUE;
+
+	BYTE btAudioPlaying = CR_IsAudioPlaying();
+
+	// Are we still playing
+	if (( btAudioPlaying==0x13 || btAudioPlaying==0x14 || btAudioPlaying==0x15 ))
+	{
+		bReturn = FALSE;
+	}
+
+	return bReturn;
+
 }

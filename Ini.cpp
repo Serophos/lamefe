@@ -44,40 +44,40 @@ CIni::~CIni()
 
 // **********************************************************************************
 
-BOOL CIni::SetValue(const char * cSection, const char * cItem, const char * cVal)
+BOOL CIni::SetValue(const CString& strSection, const CString& strItem, const CString& strVal)
 {
 	ASSERT( !m_strFileName.IsEmpty() );
 
-	return WritePrivateProfileString( cSection, cItem, cVal, m_strFileName );
+	return WritePrivateProfileString( strSection, strItem, strVal, m_strFileName );
 }
 
-BOOL CIni::SetValue(const char * cSection, const char * cItem, const int iVal)
+BOOL CIni::SetValue(const CString& strSection, const CString& strItem, const int iVal)
 {
 	CString strEntry;
-	strEntry.Format( "%d", iVal );
-	return SetValue( cSection, cItem, strEntry );
+	strEntry.Format( _T( "%d" ), iVal );
+	return SetValue( strSection, strItem, strEntry );
 }
 
-BOOL CIni::SetValue(const char * cSection, const char * cItem, const long lVal)
+BOOL CIni::SetValue(const CString& strSection, const CString& strItem, const long lVal)
 {
-	return SetValue( cSection, cItem, (int) lVal );
+	return SetValue( strSection, strItem, (int) lVal );
 }
 
-BOOL CIni::SetValue(const char * cSection, const char * cItem, const DWORD dwVal)
+BOOL CIni::SetValue(const CString& strSection, const CString& strItem, const DWORD dwVal)
 {
-	return SetValue( cSection, cItem, (int)dwVal );
+	return SetValue( strSection, strItem, (int)dwVal );
 }
 
 
 
-CString CIni::GetValue( const char * cSection, const char * cItem, CString strDefault )
+CString CIni::GetValue( const CString& strSection, const CString& strItem, CString strDefault )
 {
 	ASSERT( !m_strFileName.IsEmpty() );
 
 	CHAR lpszValue[ 1024 ] = {'\0',};
 
-	::GetPrivateProfileString(	cSection,
-								cItem,
+	::GetPrivateProfileString(	strSection,
+								strItem,
 								strDefault,
 								lpszValue,
 								sizeof( lpszValue),
@@ -86,29 +86,29 @@ CString CIni::GetValue( const char * cSection, const char * cItem, CString strDe
 	return CString( lpszValue );
 }
 
-INT CIni::GetValue( const char * cSection, const char * cItem, const INT nDefault )
+INT CIni::GetValue( const CString& strSection, const CString& strItem, const INT nDefault )
 {
 	INT nReturn = nDefault;
 
-	CString strReturn = GetValue( cSection, cItem, "" );
+	CString strReturn = GetValue( strSection, strItem, "" );
 
 	if ( !strReturn.IsEmpty() )
 	{
-		nReturn = atoi( (LPSTR)(LPCSTR)strReturn );
+		nReturn = _ttoi( strReturn );
 	}
 
 	return nReturn;
 }
 
 
-LONG CIni::GetValue( const char * cSection, const char * cItem, const LONG nDefault )
+LONG CIni::GetValue( const CString& strSection, const CString& strItem, const LONG nDefault )
 {
-	return (LONG) GetValue ( cSection, cItem, (INT) nDefault );
+	return (LONG) GetValue ( strSection, strItem, (INT) nDefault );
 }
 
-DWORD CIni::GetValue( const char * cSection, const char * cItem, const DWORD nDefault )
+DWORD CIni::GetValue( const CString& strSection, const CString& strItem, const DWORD nDefault )
 {
-	return (DWORD) GetValue ( cSection, cItem, (INT) nDefault );
+	return (DWORD) GetValue ( strSection, strItem, (INT) nDefault );
 }
 
 

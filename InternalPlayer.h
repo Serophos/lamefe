@@ -24,6 +24,7 @@
 #pragma once
 #endif // _MSC_VER > 1000
 
+#include "CompactDisk.h"
 
 #define PLAYER_MODE_CD    0
 #define PLAYER_MODE_WAVE  1
@@ -31,11 +32,12 @@
 class InternalPlayer  
 {
 public:
+	BOOL isCDPlaying();
 	void pause();
 	void deInit();
 	void prev();
 	void next();
-	void setPlaylist(CPtrArray *files);
+	void setPlaylist(CCompactDisc *cd);
 	void stop();
 	static UINT playback(LPVOID lParam);
 	void play();
@@ -50,7 +52,7 @@ private:
 	BOOL m_bStopped;
 	BOOL m_bPaused;
 	CWinThread *thread;
-	CPtrArray *files;
+	CCompactDisc *m_cd;
 	int currentTrack;
 };
 
