@@ -16,6 +16,7 @@ static char THIS_FILE[] = __FILE__;
 
 /////////////////////////////////////////////////////////////////////////////
 // Dialogfeld CSettingsLameFE 
+extern CString		g_strIniFile;
 
 
 CSettingsLameFE::CSettingsLameFE(CWnd* pParent /*=NULL*/)
@@ -65,7 +66,7 @@ void CSettingsLameFE::Init(CString strWd)
 	CMySettingsPage::Init(strWd);
 
 	CIni cfg;
-	cfg.SetIniFileName(m_strWd + "\\LameFE.ini");
+	cfg.SetIniFileName(g_strIniFile);
 	c_beep.SetCheck(cfg.GetValue("LameFE", "Beep", TRUE));
 	c_finishedDialog.SetCheck(cfg.GetValue("LameFE", "Dialog", FALSE));
 	c_m3u.SetCheck(cfg.GetValue("LameFE", "M3U", FALSE));
@@ -102,7 +103,7 @@ BOOL CSettingsLameFE::Save()
 {
 
 	CIni cfg;
-	cfg.SetIniFileName(m_strWd + "\\LameFE.ini");
+	cfg.SetIniFileName(g_strIniFile);
 
 	cfg.SetValue("LameFE", "Beep", c_beep.GetCheck());
 	cfg.SetValue("LameFE", "Dialog", c_finishedDialog.GetCheck());

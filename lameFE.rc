@@ -61,11 +61,19 @@ END
 
 /////////////////////////////////////////////////////////////////////////////
 //
+// RT_MANIFEST
+//
+
+CREATEPROCESS_MANIFEST_RESOURCE_ID RT_MANIFEST MOVEABLE PURE "res\\lameFE.exe.manifest"
+
+/////////////////////////////////////////////////////////////////////////////
+//
 // Icon
 //
 
 // Icon with lowest ID value placed first to ensure application icon
 // remains consistent on all systems.
+IDR_MAINFRAME           ICON    DISCARDABLE     "res\\lameFE.ico"
 IDI_CONFIG_OUT          ICON    DISCARDABLE     "res\\config_o.ico"
 IDI_CONFIG_IN           ICON    DISCARDABLE     "res\\config_i.ico"
 IDI_ENCODER             ICON    DISCARDABLE     "res\\encoder.ico"
@@ -76,7 +84,6 @@ IDI_DECODER             ICON    DISCARDABLE     "res\\decoder.ico"
 // Bitmap
 //
 
-LAMEFE                  BITMAP  DISCARDABLE     "res\\bmp00001.bmp"
 IDB_FREEDB              BITMAP  DISCARDABLE     "res\\bmp00002.bmp"
 IDB_IMAGES              BITMAP  DISCARDABLE     "res\\bmp00003.bmp"
 IDB_LIST_BK             BITMAP  DISCARDABLE     "res\\list_bk.bmp"
@@ -86,13 +93,9 @@ IDB_TOOLBAR_HI          BITMAP  DISCARDABLE     "res\\Toolbar_hi.bmp"
 IDB_SPLASH              BITMAP  DISCARDABLE     "res\\splash.bmp"
 IDB_SETTINGS_IMAGES     BITMAP  DISCARDABLE     "res\\bitmap3.bmp"
 IDB_MENUITEMS           BITMAP  DISCARDABLE     "res\\bmp00004.bmp"
-
-/////////////////////////////////////////////////////////////////////////////
-//
-// 24
-//
-
-1                       24      DISCARDABLE     "res\\default1.bin"
+IDR_PRESETBAR_2         BITMAP  DISCARDABLE     "res\\presetba.bmp"
+IDR_MAINFRAME           BITMAP  MOVEABLE PURE   "res\\Toolbar.bmp"
+IDR_INT_PLAYER          BITMAP  DISCARDABLE     "res\\int_play.bmp"
 
 /////////////////////////////////////////////////////////////////////////////
 //
@@ -103,8 +106,61 @@ IDR_SYSTRAY_MENU MENU DISCARDABLE
 BEGIN
     POPUP "POPUP"
     BEGIN
-        MENUITEM "&Fenster wiederherstellen",   IDC_ST_RESTORE
-        MENUITEM "&Encodieren abbrechen",       IDC_ST_EXIT
+        MENUITEM "&Restore Window",             IDC_ST_RESTORE
+        MENUITEM "&Abort Encoding",             IDC_ST_EXIT
+    END
+END
+
+IDR_MAINFRAME MENU PRELOAD DISCARDABLE 
+BEGIN
+    POPUP "&File"
+    BEGIN
+        MENUITEM "&Add file(s)...\tCtrl+O",     ID_FILE_OPEN
+        MENUITEM "&Remove File(s)...\tCtrl+R",  ID_REMOVE_FILE
+        MENUITEM SEPARATOR
+        MENUITEM "Start &Encoding\tCtrl+E",     ID_FILE_STARTENCODING
+        MENUITEM "Start Encoding (&Batch-Mode)", ID_BATCH_SINGLETRACKS
+        MENUITEM "&Start Albumbackup",          ID_START_TO_SINGLE_FILE
+        MENUITEM "Start Albumbackup (Batch-&Mode)", ID_BATCH_ALBUM
+        MENUITEM SEPARATOR
+        MENUITEM "E&xit",                       ID_APP_EXIT
+    END
+    POPUP "&View"
+    BEGIN
+        MENUITEM "Show Toolbar",                ID_VIEW_SHOWTOOLBAR
+        MENUITEM "Show &Presetbar",             ID_VIEW_SHOWPRESETBAR
+        MENUITEM "Show Playpack Toolbar",       IDS_SHOW_PLAYER, GRAYED
+        MENUITEM "Show Statusline",             ID_VIEW_SHOWSTATUSLINE
+        MENUITEM SEPARATOR
+        MENUITEM "Reload CD\tF5",               ID_VIEW_RELOADCD
+        MENUITEM "&Select All\tCtrl+A",         ID_VIEW_SELECTALLTRACKSFILES
+    END
+    POPUP "&Album Tags"
+    BEGIN
+        MENUITEM "Read &freeDB Server",         ID_ID3TAGS_READFREEDBSERVER
+        MENUITEM "Read CD&Text",                ID_ID3TAGS_READCDTEXT
+        MENUITEM "Read &CDPlayer.ini",          ID_ID3TAGS_READCDPLAYERINI
+        MENUITEM SEPARATOR
+        MENUITEM "&Save to CDPlayer.ini",       ID_ID3TAGS_SAVETOCDPLAYERINI
+        MENUITEM "Save cues&heet",              ID_ID3TAGS_SAVECUESHEET
+        MENUITEM SEPARATOR
+        MENUITEM "Show Album-Tag-&Editor",      ID_ID3TAGS_ID3TAGEDITOR
+    END
+    POPUP "&Tools"
+    BEGIN
+        MENUITEM "&Check for new Version",      ID_CHECKFORNEWVESION
+        MENUITEM SEPARATOR
+        MENUITEM "&Preferences",                ID_SETTINGS
+    END
+    POPUP "&Help"
+    BEGIN
+        MENUITEM "Help &Contents...\tF1",       ID_HELP
+        MENUITEM "Help &Index",                 ID_HELP_HELPINDEX
+        MENUITEM SEPARATOR
+        MENUITEM "Report a Bug",                ID_HELP_REPORTABUG
+        MENUITEM SEPARATOR
+        MENUITEM "&License",                    ID_HELP_LICENSE
+        MENUITEM "&About lameFE...",            ID_APP_ABOUT
     END
 END
 
@@ -116,47 +172,47 @@ END
 
 IDD_SETTINGSDIALOG DIALOG DISCARDABLE  0, 0, 459, 249
 STYLE DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
-CAPTION "Einstellungen"
+CAPTION "Settings"
 FONT 8, "MS Sans Serif"
 BEGIN
     DEFPUSHBUTTON   "OK",IDOK,150,228,50,14
-    PUSHBUTTON      "Abbrechen",IDCANCEL,259,228,50,14
+    PUSHBUTTON      "Cancel",IDCANCEL,259,228,50,14
     CONTROL         "",IDC_STATIC,"Static",SS_ETCHEDHORZ,7,223,445,1
     CONTROL         "Tree1",IDC_MODULES,"SysTreeView32",TVS_HASBUTTONS | 
                     TVS_HASLINES | TVS_LINESATROOT | TVS_DISABLEDRAGDROP | 
                     TVS_TRACKSELECT | TVS_INFOTIP | TVS_NONEVENHEIGHT | 
                     WS_BORDER | WS_TABSTOP,7,7,130,210
-    LTEXT           "Keine Einstellungen vorhanden\nWählen Sie einen anderen Eintrag aus der Strukturansicht auf der linken Seite,",
-                    IDC_PLACEHOLDER_STATIC,145,7,245,32
-    PUSHBUTTON      "Übernehmen",IDC_APPLY,204,228,50,14
+    LTEXT           "Nothing to configure for this Item.\nPlease select a subitem for configuration from the treeview on the left hand.",
+                    IDC_PLACEHOLDER_STATIC,145,7,245,20
+    PUSHBUTTON      "Apply",IDC_APPLY,204,228,50,14
 END
 
 IDD_SETTINGS_FILENAMES DIALOGEX 0, 0, 291, 198
 STYLE WS_CHILD
-FONT 8, "MS Sans Serif"
+FONT 8, "MS Sans Serif", 0, 0, 0x1
 BEGIN
-    CONTROL         "&Sichern als:",IDC_RENAME,"Button",BS_AUTOCHECKBOX | 
+    CONTROL         "&Save files as:",IDC_RENAME,"Button",BS_AUTOCHECKBOX | 
                     BS_RIGHT | BS_VCENTER | BS_MULTILINE | WS_TABSTOP,7,80,
                     55,13
     EDITTEXT        IDC_FORMAT,64,78,219,15,ES_AUTOHSCROLL
-    GROUPBOX        "Dateinamen Setup",IDC_STATIC,1,68,287,40
+    GROUPBOX        "Filename Setup",IDC_STATIC,1,68,287,40
     LTEXT           "<filenamepreview>",IDC_FILENAME_VIS,64,96,219,8
-    RTEXT           "Vorschau:",IDC_STATIC,7,96,54,8
-    GROUPBOX        "Album Modus",IDC_STATIC,1,112,287,37
+    RTEXT           "Preview:",IDC_STATIC,7,96,54,8
+    GROUPBOX        "Album Mode",IDC_STATIC,1,112,287,37
     RTEXT           "Filename:",IDC_STATIC,7,123,54,12,SS_CENTERIMAGE
     EDITTEXT        IDC_ALBUM_MODE_FILENAME,64,121,219,14,ES_AUTOHSCROLL
-    RTEXT           "Vorschau:",IDC_STATIC,7,138,54,8
+    RTEXT           "Preview:",IDC_STATIC,7,138,54,8
     LTEXT           "<filenamepreview>",IDC_ALBUM_MODE_VIS,64,138,219,8
     GROUPBOX        "Playlist",IDC_STATIC,1,153,287,38
     RTEXT           "Save Playlist as:",IDC_STATIC,7,162,54,14,
                     SS_CENTERIMAGE
     EDITTEXT        IDC_PLAYLIST_FILENAME,64,162,219,14,ES_AUTOHSCROLL
-    RTEXT           "Vorschau:",IDC_STATIC,7,180,54,8
+    RTEXT           "Preview:",IDC_STATIC,7,180,54,8
     LTEXT           "<filenamepreview>",IDC_PLAYLIST_VIS,64,180,219,8
-    GROUPBOX        "Basis Pfad",IDC_STATIC,1,4,287,31
+    GROUPBOX        "Base Output Path",IDC_STATIC,1,4,287,31
     LTEXT           "not set",IDC_OUTPUTPATH,7,16,251,13,SS_CENTERIMAGE,
                     WS_EX_STATICEDGE
-    LTEXT           "Dateinamen werden relativ zum Basispfad angelegt. Sie können im Dateinamen auch weitere Unterverzeichnisse angeben, der Name sollte aber nicht mit einem ""\\"" anfangen. Es gelten die üblichen Dateinamensbeschränkunegn (Sonderzeichen etc.)",
+    LTEXT           "Filenames will be relative to the Base Outputp Path. Subfolders are allowed, though you shouldn't start a filename with a leading ""\\"". Keep in mind the usual restrictions for filenames (illegal characters etc.)",
                     IDC_STATIC,7,39,276,25
     PUSHBUTTON      "...",IDC_PATH,263,16,20,13
 END
@@ -165,53 +221,417 @@ IDD_SETTINGS_BATCHMODE DIALOG DISCARDABLE  0, 0, 299, 202
 STYLE WS_CHILD
 FONT 8, "MS Sans Serif"
 BEGIN
-    CONTROL         "&FreeDB Server abfragen, wenn keine Albuminformationen auf lokalen Quellen",
+    CONTROL         "&Query freeDB server if no Albuminformation is found on local sources",
                     IDC_BATCH_FREEDB,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,
-                    16,25,259,10
-    CONTROL         "&Signal duch Systemlautsprecher, wenn CD abgeschlossen",
-                    IDC_BATCH_BEEP,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,16,
-                    55,199,10
-    CONTROL         "Batchmodus Zeitlimit",IDC_BATCHTIMEOUT,"Button",
+                    16,25,231,10
+    CONTROL         "&Beep on finish CD",IDC_BATCH_BEEP,"Button",
+                    BS_AUTOCHECKBOX | WS_TABSTOP,16,55,73,10
+    CONTROL         "Batchmode times out after",IDC_BATCHTIMEOUT,"Button",
                     BS_AUTOCHECKBOX | WS_TABSTOP,16,67,103,13
     EDITTEXT        IDC_BATCH_TIMEOUTEDIT,125,66,45,14,ES_AUTOHSCROLL | 
                     ES_NUMBER
-    CONTROL         "Alle CD Laufwerke benutzen",IDC_BATCHALLDRIVES,"Button",
+    CONTROL         "Use all CD drives",IDC_BATCHALLDRIVES,"Button",
                     BS_AUTOCHECKBOX | WS_TABSTOP,16,85,228,10
-    LTEXT           "Minuten",IDC_STATIC,176,67,64,13,SS_CENTERIMAGE
-    GROUPBOX        "Batch&modus",IDC_STATIC,7,7,285,98
-    CONTROL         "Disc ID an Dateinamen anhängen, wenn keine Albuminfos verfügbar (empfohlen) ",
+    LTEXT           "Minutes",IDC_STATIC,176,67,64,13,SS_CENTERIMAGE
+    GROUPBOX        "Batch&mode",IDC_STATIC,7,7,285,98
+    CONTROL         "Append Disc &ID to filename(s) if no Albuminformation is available (recommended)",
                     IDC_APPENDDISCID,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,
-                    16,40,269,10
-END
-
-IDR_MAINFRAME DIALOG DISCARDABLE  0, 0, 186, 16
-STYLE WS_CHILD
-FONT 8, "MS Sans Serif"
-BEGIN
-    COMBOBOX        IDC_SELECTPRESET,60,2,119,74,CBS_DROPDOWNLIST | CBS_SORT | 
-                    WS_VSCROLL | WS_TABSTOP
-    LTEXT           "Wähle Preset:",IDC_STATIC,7,4,46,8
+                    16,40,265,10
 END
 
 IDD_SETTINGS_DECODER DIALOGEX 0, 0, 293, 197
 STYLE WS_CHILD
-FONT 8, "MS Sans Serif"
+FONT 8, "MS Sans Serif", 0, 0, 0x1
 BEGIN
-    GROUPBOX        "Standard Decoder",IDC_STATIC,7,7,279,83
-    LTEXT           "Hier können Sie wählen ob Sie standardmäßig CDs rippen wollen oder Audiodateien konvertieren wollen. LameFE lädt dann beim Starten gelich die richtigen Einstellungen für Sie aus.",
+    GROUPBOX        "Default Decoder",IDC_STATIC,7,7,279,83
+    LTEXT           "You can select the default input source LameFE selects on startup. Choose between ""Audio File"" and CD-ROM.\nNOTE: You dont select the default CD-Drive, you can do that at the CD-ROM settings tab.",
                     IDC_STATIC,12,22,268,34
-    CONTROL         """Audio Datei"" als Standard",IDC_DEFAULT_FILE,"Button",
+    CONTROL         "Use ""Audio file"" as default",IDC_DEFAULT_FILE,"Button",
                     BS_AUTORADIOBUTTON,150,74,130,10
-    CONTROL         "&CD-Ripper als Standard",IDC_DEFAULT_CD,"Button",
+    CONTROL         "&Use CD-Ripper as default",IDC_DEFAULT_CD,"Button",
                     BS_AUTORADIOBUTTON,12,74,134,10
     GROUPBOX        "Winamp Plugins",IDC_STATIC,7,97,279,81
-    LTEXT           "LameFE kann Winamp plugins laden, um eine größere Anzahl von Audiodateien zu decodieren. Legen Sie hier das Verzeichnis fest, in dem die Plugins sind. Normalerweise sind diese in C:\\Programme\\Winamp\\Plugins",
+    LTEXT           "LameFE can use Winamp input plugins to decode files. You can setup the folder where the Winamp plugins are located here. Usually Winamp plugins are located in C:\\Program Files\\Winamp\\Plugins",
                     IDC_STATIC,12,109,268,25
     LTEXT           "",IDC_PATH_WINAMP,12,160,242,14,SS_CENTERIMAGE,
                     WS_EX_STATICEDGE
     PUSHBUTTON      "...",IDC_WINAMP_PATH,258,160,22,14
-    LTEXT           "Wenn Sie keine Winampinstallation haben, lassen den Wert unverändert.",
+    LTEXT           "If you don't have a Winamp installation, leave these settings untouched.",
                     IDC_STATIC,12,141,268,13
+END
+
+IDD_SAVEPRESET DIALOG DISCARDABLE  0, 0, 187, 105
+STYLE DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Preset speichern"
+FONT 8, "MS Sans Serif"
+BEGIN
+    GROUPBOX        "Please enter a name for the preset: ",IDC_STATIC,
+                    7,7,173,33
+    EDITTEXT        IDC_PRESETNAME,13,18,157,14,ES_AUTOHSCROLL
+    GROUPBOX        "Comment(optional)",IDC_STATIC,7,41,173,39
+    EDITTEXT        IDC_PRESETCOMMENT,13,56,157,14,ES_AUTOHSCROLL
+    PUSHBUTTON      "Save as",IDOK,29,84,50,14
+    PUSHBUTTON      "Cancel",IDCANCEL,101,84,50,14
+END
+
+IDD_TRACKLIST DIALOGEX 0, 0, 433, 176
+STYLE WS_CHILD
+EXSTYLE WS_EX_ACCEPTFILES
+FONT 8, "MS Sans Serif", 0, 0, 0x1
+BEGIN
+    CTEXT           "&Convert from:",IDC_STATIC_1,7,7,54,12,SS_CENTERIMAGE
+    COMBOBOX        IDC_INPUT_DEVICE,69,7,150,62,CBS_DROPDOWNLIST | 
+                    WS_VSCROLL | WS_TABSTOP
+    PUSHBUTTON      "Configure &In",IDC_CONFIG_IN,221,7,18,12,BS_ICON | 
+                    BS_FLAT
+    CTEXT           "&to:",IDC_STATIC_2,244,7,17,12,SS_CENTERIMAGE
+    COMBOBOX        IDC_OUTPUT_DEVICE,267,7,135,46,CBS_DROPDOWNLIST | 
+                    WS_VSCROLL | WS_TABSTOP
+    PUSHBUTTON      "&Configure Output",IDC_CONFIG_OUT,407,7,18,12,BS_ICON | 
+                    BS_FLAT
+    CONTROL         "List2",IDC_FILES_TRACKS,"SysListView32",LVS_REPORT | 
+                    LVS_SHOWSELALWAYS | LVS_NOSORTHEADER | WS_BORDER | 
+                    WS_TABSTOP,7,24,418,145
+END
+
+IDD_SETTINGS_FREEDB DIALOG DISCARDABLE  0, 0, 299, 199
+STYLE WS_CHILD
+FONT 8, "MS Sans Serif"
+BEGIN
+END
+
+IDD_CDDB_QUERY DIALOG DISCARDABLE  0, 0, 367, 153
+STYLE DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "FreeDB Abfrage"
+FONT 8, "MS Sans Serif"
+BEGIN
+    LISTBOX         IDC_PROTOCOLL,7,27,353,97,LBS_USETABSTOPS | 
+                    LBS_NOINTEGRALHEIGHT | WS_VSCROLL | WS_HSCROLL | 
+                    WS_TABSTOP
+    PUSHBUTTON      "&Continue",IDC_START,243,132,50,14
+    PUSHBUTTON      "&Close",IDCANCEL,310,132,50,14,WS_DISABLED
+    LTEXT           "Please select the correct entry and click on ""Continue"".",
+                    IDC_STATIC,7,132,217,14,SS_CENTERIMAGE
+    CONTROL         139,IDC_STATIC,"Static",SS_BITMAP,293,7,68,17
+    LTEXT           "The FreeDB database continues following entries for your CD:",
+                    IDC_STATIC,7,10,277,11,SS_CENTERIMAGE
+    CONTROL         "",IDC_STATIC,"Static",SS_ETCHEDHORZ,7,23,286,0
+END
+
+IDD_SETTINGS_CDRIPPER DIALOG DISCARDABLE  0, 0, 301, 197
+STYLE WS_CHILD
+FONT 8, "MS Sans Serif"
+BEGIN
+    LTEXT           "&CD ROM",IDC_STATIC,14,19,56,12,SS_CENTERIMAGE
+    COMBOBOX        IDC_CD_DRIVE,80,19,215,68,CBS_DROPDOWNLIST | WS_VSCROLL | 
+                    WS_TABSTOP
+    LTEXT           "CD &ROM Type",IDC_STATIC,14,36,56,13,SS_CENTERIMAGE
+    COMBOBOX        IDC_CDROM_TYPE,80,36,98,69,CBS_DROPDOWNLIST | WS_VSCROLL | 
+                    WS_TABSTOP
+    LTEXT           "Ripping &Method",IDC_STATIC,14,52,58,13,SS_CENTERIMAGE
+    COMBOBOX        IDC_RIPPING_METHOD,80,52,98,69,CBS_DROPDOWNLIST | 
+                    WS_VSCROLL | WS_TABSTOP
+    LTEXT           "CD &Speed",IDC_STATIC,186,36,56,13,SS_CENTERIMAGE
+    EDITTEXT        IDC_CD_SPEED,251,36,44,13,ES_AUTOHSCROLL | ES_NUMBER
+    LTEXT           "Spin &up time (sec)",IDC_STATIC,186,52,56,12,
+                    SS_CENTERIMAGE
+    EDITTEXT        IDC_CD_SPIN_UP,251,52,44,12,ES_AUTOHSCROLL | ES_NUMBER
+    CONTROL         "&Lock CD Drive during extraction",IDC_LOCK,"Button",
+                    BS_AUTOCHECKBOX | WS_TABSTOP,14,75,120,10
+    CONTROL         "&Eject CD when done",IDC_EJECT,"Button",BS_AUTOCHECKBOX | 
+                    WS_TABSTOP,14,90,80,10
+    CONTROL         "&Write CUE-Sheet for Albumbackup",IDC_CUE,"Button",
+                    BS_AUTOCHECKBOX | WS_TABSTOP,154,75,141,10
+    CONTROL         "Select all &tracks by default",IDC_SELECT_ALL,"Button",
+                    BS_AUTOCHECKBOX | WS_TABSTOP,154,100,141,10
+    CONTROL         "Swap channels",IDC_SWAP,"Button",BS_AUTOCHECKBOX | 
+                    WS_TABSTOP,14,103,119,10
+    CONTROL         "Check for new CD in background",IDC_CHECKFORNEWCD,
+                    "Button",BS_AUTOCHECKBOX | WS_TABSTOP,154,88,141,10
+    CONTROL         "Use native &NT SCSI Library",IDC_NATIVE,"Button",
+                    BS_AUTOCHECKBOX | WS_TABSTOP,14,113,120,10
+    LTEXT           "Number of Buffers:",IDC_STATIC,14,169,56,16
+    COMBOBOX        IDC_NUMBUFFERS,80,173,98,48,CBS_DROPDOWNLIST | 
+                    WS_VSCROLL | WS_TABSTOP
+    GROUPBOX        "CD ROM (CDRip.dll)",IDC_STATIC,7,7,291,120
+    GROUPBOX        "Advanced performance settings",IDC_STATIC,7,128,293,66
+    LTEXT           "This is the number of Buffers LameFE uses while ripping the CD. More Buffers usually result in higher performance, though on Computers with low RAM it might slow the Encodingprocess down.",
+                    IDC_STATIC,14,141,282,26
+END
+
+IDD_STATUS_DIALOG DIALOGEX 0, 0, 402, 234
+STYLE DS_MODALFRAME | DS_3DLOOK | DS_CENTER | WS_MINIMIZEBOX | WS_POPUP | 
+    WS_VISIBLE | WS_CAPTION | WS_SYSMENU
+EXSTYLE WS_EX_CONTROLPARENT
+CAPTION "LameFE - Status"
+FONT 8, "MS Sans Serif", 0, 0, 0x1
+BEGIN
+    DEFPUSHBUTTON   "&Abort",IDCANCEL,345,213,50,14
+    LTEXT           "in.wav",IDC_IN,73,134,219,8
+    LTEXT           "out.mp3",IDC_OUT,73,148,212,8
+    RTEXT           "0",IDC_IN_SIZE,344,134,43,8
+    RTEXT           "0",IDC_EST_SIZE,344,148,43,8
+    LTEXT           "0%",IDC_STATIC,169,183,10,12,SS_CENTERIMAGE
+    LTEXT           "100%",IDC_STATIC,369,183,18,12,SS_CENTERIMAGE
+    CONTROL         "Progress3",IDC_FILE_STATUS_BAR,"msctls_progress32",0x0,
+                    184,182,171,13
+    LTEXT           "0:00:00",IDC_EST_TIME,73,169,41,8
+    LTEXT           "0:00:00",IDC_ELA_TIME,73,183,41,12,SS_CENTERIMAGE
+    LTEXT           "0:00:00",IDC_REM_TIME,73,198,41,8
+    LTEXT           "Original File:",IDC_STATIC,14,134,54,8
+    LTEXT           "Output File:",IDC_STATIC,14,148,54,8
+    LTEXT           "Size (MB)",IDC_STATIC,301,134,38,8
+    LTEXT           "Size (MB)",IDC_STATIC,301,148,38,8
+    LTEXT           "Status: (0%)",IDC_STATUS_STRING,121,183,41,12,
+                    SS_CENTERIMAGE
+    LTEXT           "Estimated time:",IDC_STATIC,14,169,54,8
+    LTEXT           "Elapsed time:",IDC_STATIC,14,183,54,12,SS_CENTERIMAGE
+    LTEXT           "Remaining time:",IDC_STATIC,14,198,54,8
+    LTEXT           "Full",IDC_STATIC,363,29,24,8
+    LTEXT           "Empty",IDC_STATIC,363,89,24,8
+    LTEXT           "Read Buffer",IDC_STATIC,344,103,43,8
+    CONTROL         "Progress2",IDC_LIST_STATUS_BAR,"msctls_progress32",
+                    PBS_VERTICAL,345,29,14,68
+    CONTROL         "Progress1",IDC_JITTERSTATUS,"msctls_progress32",
+                    PBS_VERTICAL,317,29,14,68
+    LTEXT           "Jitter Status",IDC_STATIC,301,103,38,8
+    LTEXT           "Min",IDC_STATIC,301,89,12,8
+    LTEXT           "Nominal",IDC_STATIC,287,60,25,8
+    LTEXT           "Max",IDC_STATIC,297,29,18,8
+    CONTROL         "List2",IDC_LOG,"SysListView32",LVS_REPORT | 
+                    LVS_SINGLESEL | LVS_NOSORTHEADER | WS_BORDER | 
+                    WS_TABSTOP,7,11,274,106
+    GROUPBOX        "Reader / Buffer State",IDC_STATIC,285,7,108,111
+    GROUPBOX        "File Status Information",IDC_STATIC,7,121,388,90
+    PUSHBUTTON      "&Save",IDC_SAVE_LOG,289,213,50,14
+    LTEXT           "",IDC_PRINTMSG,14,213,266,14,SS_CENTERIMAGE
+END
+
+IDD_FREEDB_STATUS DIALOG DISCARDABLE  0, 0, 318, 65
+STYLE DS_MODALFRAME | DS_SETFOREGROUND | DS_3DLOOK | DS_NOFAILCREATE | 
+    DS_CENTER | WS_POPUP | WS_VISIBLE
+FONT 8, "MS Sans Serif"
+BEGIN
+    CONTROL         139,IDC_STATIC,"Static",SS_BITMAP,242,41,67,17
+    LTEXT           "CDDB(tm) services brought to you by http://www.freedb.org",
+                    IDC_STATIC,7,46,231,8
+    CONTROL         "",IDC_STATIC,"Static",SS_ETCHEDHORZ,7,39,305,1
+    CTEXT           "FreeDB Status Messages:",IDC_STATIC,7,7,302,9,
+                    SS_CENTERIMAGE
+    CTEXT           "",IDC_STATUS_MSG,7,21,302,14,SS_CENTERIMAGE | SS_SUNKEN
+END
+
+IDD_ABOUTBOX DIALOG DISCARDABLE  0, 0, 365, 214
+STYLE DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "About lameFE"
+FONT 8, "MS Sans Serif"
+BEGIN
+    DEFPUSHBUTTON   "OK",IDOK,308,7,50,14,WS_GROUP
+    LTEXT           "LameFE <Vesion>",IDC_DISPLAY_STATIC,68,7,129,8
+    CONTROL         159,IDC_STATIC,"Static",SS_BITMAP,7,7,58,23
+    LTEXT           "Bugs, Questions and suggestions can be forwarded to the author. The email adress us theesw@users.sourceforge.net\nOr visit the LameFE internet forum at http://lamefe.sourceforge.net/forums",
+                    IDC_STATIC,14,123,332,28
+    LTEXT           "Copyright ©2000-2003 by Thees Christian Winkler",
+                    IDC_STATIC,69,21,220,8
+    LTEXT           "Development:\nLameFE:\tThees Christian Winkler\nCDRip.dll:\tAlber L. Faber\nFreeDB stuff:\tP.J. Naughter\n",
+                    IDC_STATIC,14,36,139,33
+    LTEXT           "Testing:\nLorenzo Prince,  Jason Faber, Simone Singh, William F. Pearson, Jann Peterecki",
+                    IDC_STATIC,206,36,140,33
+    LTEXT           "Special thanks to:\nJan Christoph Winkler for the initial idea and the programs name.",
+                    IDC_STATIC,13,74,333,18
+    LTEXT           "This program is freeware and is developed in my sparetime. However, if you like this program and use it on a regular basis I'd be happy about a postcard about your city/country to this adress.",
+                    IDC_STATIC,98,171,248,33
+    LTEXT           "Thees Christian Winkler\nAm Taubenfelde 8\nD-30159 Hannover\nGermany",
+                    IDC_STATIC,14,171,77,32
+    GROUPBOX        "",IDC_STATIC,7,161,351,47
+    GROUPBOX        "",IDC_STATIC,7,29,351,83
+    CONTROL         "",IDC_STATIC,"Static",SS_ETCHEDFRAME,7,117,351,42
+    LTEXT           "All the users giving feedback and bug reports. Without them LameFE would not be, what it is today:-)",
+                    IDC_STATIC,14,91,332,17
+END
+
+IDD_SETTINGS_MP3 DIALOG DISCARDABLE  0, 0, 297, 214
+STYLE WS_CHILD
+FONT 8, "MS Sans Serif"
+BEGIN
+    LTEXT           "&MPEG Version",IDC_STATIC,5,24,55,12,SS_CENTERIMAGE
+    COMBOBOX        IDC_MPEG,64,23,64,48,CBS_DROPDOWNLIST | WS_VSCROLL | 
+                    WS_TABSTOP
+    LTEXT           "&Bitrate (Minimum)",IDC_STATIC,5,56,55,12,
+                    SS_CENTERIMAGE
+    COMBOBOX        IDC_BITSPERSAMPLE,64,56,64,61,CBS_DROPDOWNLIST | 
+                    WS_VSCROLL | WS_TABSTOP
+    LTEXT           "&Channels",IDC_STATIC,138,40,57,12,SS_CENTERIMAGE
+    COMBOBOX        IDC_CHANNELS,200,40,82,52,CBS_DROPDOWNLIST | WS_VSCROLL | 
+                    WS_TABSTOP
+    LTEXT           "Quality",IDC_STATIC,5,40,55,12,SS_CENTERIMAGE
+    COMBOBOX        IDC_QUALITY,64,40,64,48,CBS_DROPDOWNLIST | WS_VSCROLL | 
+                    WS_TABSTOP
+    LTEXT           "VBR Method",IDC_STATIC,5,74,55,12,SS_CENTERIMAGE
+    COMBOBOX        IDC_VBR_METHOD,64,74,64,60,CBS_DROPDOWNLIST | WS_VSCROLL | 
+                    WS_TABSTOP
+    LTEXT           "ABR",IDC_STATIC,5,91,55,12,SS_CENTERIMAGE
+    EDITTEXT        IDC_ABR,64,91,39,14,ES_AUTOHSCROLL | ES_NUMBER | 
+                    WS_DISABLED
+    LTEXT           "VBR Quality",IDC_STATIC,5,109,55,12,SS_CENTERIMAGE
+    COMBOBOX        IDC_VBR_QUALITY,64,109,63,52,CBS_DROPDOWNLIST | 
+                    WS_VSCROLL | WS_TABSTOP
+    LTEXT           "Thread Priority",IDC_STATIC,5,127,55,12,SS_CENTERIMAGE
+    COMBOBOX        IDC_THREADPRIORITY,64,127,64,39,CBS_DROPDOWNLIST | 
+                    WS_VSCROLL | WS_TABSTOP
+    CONTROL         "&Original",IDC_ORIGINAL,"Button",BS_AUTOCHECKBOX | 
+                    WS_TABSTOP,138,74,57,12
+    CONTROL         "Checksum&summe",IDC_CHECKSUM,"Button",BS_AUTOCHECKBOX | 
+                    WS_TABSTOP,200,74,63,12
+    CONTROL         "Pri&vat",IDC_PRIVATE,"Button",BS_AUTOCHECKBOX | 
+                    WS_TABSTOP,138,93,57,12
+    CONTROL         "Copyright",IDC_COPYRIGHT,"Button",BS_AUTOCHECKBOX | 
+                    WS_TABSTOP,200,93,68,12
+    CONTROL         "Write ID3 v.1 Tag",IDC_ID3V1,"Button",
+                    BS_AUTOCHECKBOX | WS_TABSTOP,5,162,123,10
+    CONTROL         "Write ID&3 v.2 Tag",IDC_ID3_2,"Button",
+                    BS_AUTOCHECKBOX | WS_TABSTOP,5,181,123,10
+    CTEXT           "lame_enc.dll",IDC_ENCODER_VERSION,138,167,144,30,
+                    SS_SUNKEN
+    GROUPBOX        "Output Format && Quality (lame_enc.dll)",IDC_STATIC,1,
+                    7,290,136
+    GROUPBOX        "ID3Tags",IDC_STATIC,1,148,131,61
+    LTEXT           "Bitrate (Ma&ximum)",IDC_STATIC,138,56,57,12,
+                    SS_CENTERIMAGE
+    COMBOBOX        IDC_BITSPERSAMPLE_MAX,200,56,82,61,CBS_DROPDOWNLIST | 
+                    WS_DISABLED | WS_VSCROLL | WS_TABSTOP
+    LTEXT           "Kbps",IDC_STATIC,108,92,20,13,SS_CENTERIMAGE
+    LTEXT           "Output Samplerate",IDC_STATIC,138,24,57,11,
+                    SS_CENTERIMAGE
+    COMBOBOX        IDC_OUTSAMPLERATE,199,22,83,30,CBS_DROPDOWNLIST | 
+                    WS_VSCROLL | WS_TABSTOP
+END
+
+IDD_ALBUMINFOCTRL DIALOG DISCARDABLE  0, 0, 363, 60
+STYLE WS_CHILD
+FONT 8, "MS Sans Serif"
+BEGIN
+    LTEXT           "Song&title:",IDC_STATIC,1,7,35,14,SS_CENTERIMAGE
+    EDITTEXT        IDC_SONGTITLE,43,7,95,14,ES_AUTOHSCROLL
+    LTEXT           "&Intrepret:",IDC_STATIC,146,7,34,14,SS_CENTERIMAGE
+    EDITTEXT        IDC_SONGINTERPRET,181,7,101,14,ES_AUTOHSCROLL
+    LTEXT           "Track&#:",IDC_STATIC,290,7,28,14,SS_CENTERIMAGE
+    EDITTEXT        IDC_TRACKNUMBER,322,7,40,14,ES_AUTOHSCROLL | ES_NUMBER
+    LTEXT           "&Album:",IDC_STATIC,1,24,35,14,SS_CENTERIMAGE
+    EDITTEXT        IDC_ALBUMNAME,43,24,95,14,ES_AUTOHSCROLL
+    LTEXT           "&Genre:",IDC_STATIC,146,24,35,14,SS_CENTERIMAGE
+    COMBOBOX        IDC_GENRE,181,26,102,65,CBS_DROPDOWN | WS_VSCROLL | 
+                    WS_TABSTOP
+    LTEXT           "&Yearr:",IDC_STATIC,290,24,21,14,SS_CENTERIMAGE
+    EDITTEXT        IDC_YEAR,322,24,40,14,ES_AUTOHSCROLL | ES_NUMBER
+    LTEXT           "&Comment:",IDC_STATIC,1,41,39,14,SS_CENTERIMAGE
+    EDITTEXT        IDC_COMMENT,43,41,160,14,ES_AUTOHSCROLL
+END
+
+IDD_SETTINGS_LAMEFE DIALOGEX 0, 0, 293, 198
+STYLE WS_CHILD
+FONT 8, "MS Sans Serif", 0, 0, 0x1
+BEGIN
+    GROUPBOX        "External Player",IDC_STATIC,7,7,275,31
+    PUSHBUTTON      "...",IDC_PLAYER,258,18,20,13
+    LTEXT           "[system default]",IDC_PLAYER_PATH,12,18,241,13,
+                    SS_CENTERIMAGE,WS_EX_STATICEDGE
+    GROUPBOX        "TO-DO when finished Encoding / Ripping",IDC_STATIC,7,74,
+                    275,117
+    CONTROL         "Show &notification dialog",IDC_FINISH_DLG,"Button",
+                    BS_AUTOCHECKBOX | WS_TABSTOP,25,86,253,10
+    CONTROL         "Bring Status Window up to front (get focus)",IDC_FOCUS,
+                    "Button",BS_AUTOCHECKBOX | WS_TABSTOP,25,97,253,10
+    CONTROL         "Play soun&d...",IDC_PLAY_SOUND,"Button",BS_AUTOCHECKBOX | 
+                    WS_TABSTOP,25,108,253,10
+    CONTROL         "&Beep (Systemspeaker)",IDC_BEEP,"Button",
+                    BS_AUTOCHECKBOX | WS_TABSTOP,25,119,253,10
+    CONTROL         "&Play file(s) [external player required]",
+                    IDC_PLAY_FILES,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,25,
+                    131,253,10
+    CONTROL         "Enqueue &file(s)",IDC_ENQUEUE_FILES,"Button",
+                    BS_AUTOCHECKBOX | WS_DISABLED | WS_TABSTOP,37,142,241,10
+    CONTROL         "Generate M&3U Playlist",IDC_M3U,"Button",
+                    BS_AUTOCHECKBOX | WS_TABSTOP,25,154,253,10
+    CONTROL         "&Shutdown Windows",IDC_SHUTDOWN,"Button",
+                    BS_AUTOCHECKBOX | WS_TABSTOP,25,165,253,10
+    CONTROL         "E&xit lameFE",IDC_EXIT_FINISHED,"Button",
+                    BS_AUTOCHECKBOX | WS_TABSTOP,25,176,253,10
+    GROUPBOX        "Path for presets",IDC_STATIC,7,42,275,27
+    LTEXT           "Static",IDC_PRESET_PATH_DISPLAY,12,52,241,13,
+                    SS_CENTERIMAGE,WS_EX_STATICEDGE
+    PUSHBUTTON      "...",IDC_PRESETPATH,258,52,20,13
+END
+
+IDD_CHECKNEWVERSION DIALOG DISCARDABLE  0, 0, 278, 179
+STYLE DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Nach Update suchen"
+FONT 8, "MS Sans Serif"
+BEGIN
+   DEFPUSHBUTTON   "Check now!",IDOK,221,7,50,14
+    PUSHBUTTON      "Close",IDCANCEL,221,24,50,14
+    LTEXT           "You can  check if a new version of LameFE is available from the internet. Click on ""Check now!"" to proceed.",
+                    IDC_STATIC,7,7,198,29
+    GROUPBOX        "Installed version",IDC_STATIC,7,43,127,37
+    GROUPBOX        "Newest version",IDC_STATIC,144,43,127,37
+    CTEXT           "",IDC_YOUR_VERSION,13,59,111,8
+    CTEXT           "",IDC_NEWESTVERSION,151,59,112,8
+    LTEXT           "",IDC_MESSAGE_VERSION,34,152,181,20
+    ICON            IDR_MAINFRAME,IDC_STATIC,7,152,20,20
+    PUSHBUTTON      "&Download",IDC_DOWNLOAD,221,158,50,14,WS_DISABLED
+    GROUPBOX        "Change-Log",IDC_STATIC,7,85,264,62
+    EDITTEXT        IDC_CHANGELOG,11,95,255,46,ES_MULTILINE | ES_AUTOHSCROLL | 
+                    ES_OEMCONVERT | ES_READONLY | ES_WANTRETURN | WS_VSCROLL
+END
+
+IDD_SETTINGS_LOOKNFEEL DIALOG DISCARDABLE  0, 0, 293, 197
+STYLE WS_CHILD
+FONT 8, "MS Sans Serif"
+BEGIN
+     GROUPBOX        "Miscellaneous",IDC_STATIC,7,7,279,73
+    CONTROL         "Always over&write existing files",IDC_SILENT,"Button",
+                    BS_AUTOCHECKBOX | WS_TABSTOP,16,22,262,10
+    CONTROL         "&Always read CDPlayer.ini on new CDs",
+                    IDC_CPLAYERINI_ALWAYS_READ,"Button",BS_AUTOCHECKBOX | 
+                    WS_TABSTOP,16,36,262,10
+    CONTROL         "Always write CDdb Queries to CDPlayer.ini",
+                    IDC_CPLAYERINI_ALWAYS_WRITE,"Button",BS_AUTOCHECKBOX | 
+                    WS_TABSTOP,16,49,262,10
+    CONTROL         "Always look for CDText information on CD",
+                    IDC_CDTEXT_ALWAYSREAD,"Button",BS_AUTOCHECKBOX | 
+                    WS_TABSTOP,16,62,262,10
+    GROUPBOX        "Look && Feel",IDC_STATIC,7,96,279,94
+    CONTROL         "Sa&ve window state and position",IDC_SAVE_WINDOW_STATE,
+                    "Button",BS_AUTOCHECKBOX | WS_TABSTOP,16,109,262,10
+    CONTROL         "&Use highcolor toolbar icons",IDC_USE_HIGH_COLOR_ICONS,
+                    "Button",BS_AUTOCHECKBOX | WS_TABSTOP,16,122,262,10
+    CONTROL         "Show Splashs&creen",IDC_SHOW_SPLASH,"Button",
+                    BS_AUTOCHECKBOX | WS_TABSTOP,16,135,262,10
+    CONTROL         "Always show Album &Tag Editor",IDC_ALBUMEDIT,"Button",
+                    BS_AUTOCHECKBOX | WS_TABSTOP,16,147,262,10
+    CONTROL         "Hide Mainwindow while encoding",IDC_HIDEMWND_ENC,"Button",
+                    BS_AUTOCHECKBOX | WS_TABSTOP,16,173,262,10
+    CONTROL         "Show tag editor when switching to ""Au&dio file"" mode",
+                    IDC_SHOW_TAGEDITOR_ONFILE,"Button",BS_AUTOCHECKBOX | 
+                    WS_TABSTOP,16,160,262,10
+END
+
+IDD_SETTINGS_PLUGINCODEC DIALOG DISCARDABLE  0, 0, 297, 197
+STYLE WS_CHILD
+FONT 8, "MS Sans Serif"
+BEGIN
+    ICON            IDI_DECODER,IDC_STATIC,7,7,20,20
+    ICON            IDI_ENCODER,IDC_STATIC,270,7,20,20
+    CTEXT           "",IDC_PLUGINNAME,32,7,232,20,SS_CENTERIMAGE
+    GROUPBOX        "Plugin-Information",IDC_STATIC,7,32,283,65,BS_CENTER
+    LTEXT           "",IDC_ABOUTSTRING,28,44,242,32
+    GROUPBOX        "Supported Audioformats",IDC_STATIC,7,102,283,54,
+                    BS_CENTER
+    LTEXT           "",IDC_EXTENSIONS,28,117,242,31
+    PUSHBUTTON      "&About",IDC_ABOUT,124,78,50,14
+    PUSHBUTTON      "Configure...",IDC_CONFIGURATION,220,167,50,14
+    LTEXT           "Click on ""Configure..."" to setup the preferences of the plugin.",
+                    IDC_STATIC,7,167,206,14,SS_CENTERIMAGE
 END
 
 
@@ -300,511 +720,7 @@ BEGIN
         HORZGUIDE, 154
         HORZGUIDE, 174
     END
-END
-#endif    // APSTUDIO_INVOKED
 
-#endif    // Deutsch (Deutschland) resources
-/////////////////////////////////////////////////////////////////////////////
-
-
-/////////////////////////////////////////////////////////////////////////////
-// Englisch (USA) resources
-
-#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_ENU)
-#ifdef _WIN32
-LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_US
-#pragma code_page(1252)
-#endif //_WIN32
-
-/////////////////////////////////////////////////////////////////////////////
-//
-// Icon
-//
-
-// Icon with lowest ID value placed first to ensure application icon
-// remains consistent on all systems.
-IDR_MAINFRAME           ICON    DISCARDABLE     "res\\lameFE.ico"
-
-/////////////////////////////////////////////////////////////////////////////
-//
-// Bitmap
-//
-
-IDR_MAINFRAME           BITMAP  MOVEABLE PURE   "res\\Toolbar.bmp"
-IDR_INT_PLAYER          BITMAP  DISCARDABLE     "res\\int_play.bmp"
-
-/////////////////////////////////////////////////////////////////////////////
-//
-// Menu
-//
-
-IDR_MAINFRAME MENU PRELOAD DISCARDABLE 
-BEGIN
-    POPUP "&Datei"
-    BEGIN
-        MENUITEM "&Datei(en) hinzufügen...\tCtrl+O", ID_FILE_OPEN
-        MENUITEM "&Datei(en) entfernen...\tCtrl+R", ID_REMOVE_FILE
-        MENUITEM SEPARATOR
-        MENUITEM "Starte &Encodieren\tCtrl+E",  ID_FILE_STARTENCODING
-        MENUITEM "Starte Encodieren (&Batch-Modus)", ID_BATCH_SINGLETRACKS
-        MENUITEM "&Starte Albumbackup",         ID_START_TO_SINGLE_FILE
-        MENUITEM "Starte Albumbackup (Batch-&Modus)", ID_BATCH_ALBUM
-        MENUITEM SEPARATOR
-        MENUITEM "E&xit",                       ID_APP_EXIT
-    END
-    POPUP "&Ansicht"
-    BEGIN
-        MENUITEM "&Werkzeugleiste anzeigen",    ID_VIEW_SHOWTOOLBAR
-        MENUITEM "&Presetleiste anzeigen",      ID_VIEW_SHOWPRESETBAR
-        MENUITEM "Playbackleiste anzeigen",     IDS_SHOW_PLAYER, GRAYED
-        MENUITEM "&Statuszeile anzeigen",       ID_VIEW_SHOWSTATUSLINE
-        MENUITEM SEPARATOR
-        MENUITEM "CD neuladen\tF5",             ID_VIEW_RELOADCD
-        MENUITEM "Alles &auswählen\tCtrl+A",    ID_VIEW_SELECTALLTRACKSFILES
-    END
-    POPUP "&Album Tags"
-    BEGIN
-        MENUITEM "&FreeDB Server abfragen",     ID_ID3TAGS_READFREEDBSERVER
-        MENUITEM "CD&Text auslesen",            ID_ID3TAGS_READCDTEXT
-        MENUITEM "&CDPlayer.ini lesen",         ID_ID3TAGS_READCDPLAYERINI
-        MENUITEM SEPARATOR
-        MENUITEM "&Speichere in CDPlayer.ini",  ID_ID3TAGS_SAVETOCDPLAYERINI
-        MENUITEM "Cues&heet schreiben",         ID_ID3TAGS_SAVECUESHEET
-        MENUITEM SEPARATOR
-        MENUITEM "Albumtag-&Editor anzeigen",   ID_ID3TAGS_ID3TAGEDITOR
-    END
-    POPUP "&Werkzeuge"
-    BEGIN
-        MENUITEM "&Nach Update suchen",         ID_CHECKFORNEWVESION
-        MENUITEM SEPARATOR
-        MENUITEM "&Einstellungen",              ID_SETTINGS
-    END
-    POPUP "&Hilfe"
-    BEGIN
-        MENUITEM "Help &Inhalt...\tF1",         ID_HELP
-        MENUITEM "Hilfe &Index",                ID_HELP_HELPINDEX
-        MENUITEM SEPARATOR
-        MENUITEM "Einen Bug melden",            ID_HELP_REPORTABUG
-        MENUITEM SEPARATOR
-        MENUITEM "&Lizens (GPL)",               ID_HELP_LICENSE
-        MENUITEM "&Über LameFE...",             ID_APP_ABOUT
-    END
-END
-
-
-/////////////////////////////////////////////////////////////////////////////
-//
-// Dialog
-//
-
-IDD_TRACKLIST DIALOGEX 0, 0, 433, 176
-STYLE WS_CHILD
-EXSTYLE WS_EX_ACCEPTFILES
-FONT 8, "MS Sans Serif"
-BEGIN
-    CTEXT           "&Konvertiere von:",IDC_STATIC_1,7,7,54,12,
-                    SS_CENTERIMAGE
-    COMBOBOX        IDC_INPUT_DEVICE,69,7,150,62,CBS_DROPDOWNLIST | 
-                    WS_VSCROLL | WS_TABSTOP
-    PUSHBUTTON      "Configure &In",IDC_CONFIG_IN,221,7,18,12,BS_ICON | 
-                    BS_FLAT
-    CTEXT           "&nach",IDC_STATIC_2,244,7,17,12,SS_CENTERIMAGE
-    COMBOBOX        IDC_OUTPUT_DEVICE,267,7,135,46,CBS_DROPDOWNLIST | 
-                    WS_VSCROLL | WS_TABSTOP
-    PUSHBUTTON      "&Configure Output",IDC_CONFIG_OUT,407,7,18,12,BS_ICON | 
-                    BS_FLAT
-    CONTROL         "List2",IDC_FILES_TRACKS,"SysListView32",LVS_REPORT | 
-                    LVS_SHOWSELALWAYS | LVS_NOSORTHEADER | WS_BORDER | 
-                    WS_TABSTOP,7,24,418,145
-END
-
-IDD_SETTINGS_FREEDB DIALOG DISCARDABLE  0, 0, 299, 199
-STYLE WS_CHILD
-FONT 8, "MS Sans Serif"
-BEGIN
-    LTEXT           "&Server",IDC_STATIC,7,22,51,12,SS_CENTERIMAGE
-    COMBOBOX        IDC_REMOTE_SERVER,64,22,228,81,CBS_DROPDOWNLIST | 
-                    CBS_SORT | WS_VSCROLL | WS_TABSTOP
-    PUSHBUTTON      "Liste neuladen",IDC_UPDATE,227,39,65,14
-    LTEXT           "&E-Mail",IDC_STATIC,7,113,51,14,SS_CENTERIMAGE
-    EDITTEXT        IDC_EMAIL,64,113,228,14,ES_AUTOHSCROLL
-    LTEXT           "&Zeitlimit",IDC_STATIC,167,93,32,14,SS_CENTERIMAGE
-    EDITTEXT        IDC_TIMEOUT,206,93,86,14,ES_AUTOHSCROLL | ES_NUMBER
-    CONTROL         "&Proxy ",IDC_USE_PROXY,"Button",BS_AUTOCHECKBOX | 
-                    WS_TABSTOP,7,150,51,14
-    EDITTEXT        IDC_PROXY,64,150,98,14,ES_AUTOHSCROLL | WS_DISABLED
-    LTEXT           "Proxy&port",IDC_STATIC,167,150,33,14,SS_CENTERIMAGE
-    EDITTEXT        IDC_PROXY_PORT,206,150,86,14,ES_AUTOHSCROLL | ES_NUMBER | 
-                    WS_DISABLED
-    CONTROL         "An Proxy Server anmelden",IDC_AUTHENTICATION,"Button",
-                    BS_AUTOCHECKBOX | WS_TABSTOP,7,166,155,10
-    LTEXT           "Benutzer&name",IDC_STATIC,7,179,51,14,SS_CENTERIMAGE
-    EDITTEXT        IDC_USERNAME,64,179,98,14,ES_AUTOHSCROLL | WS_DISABLED
-    LTEXT           "Pass&wort",IDC_STATIC,167,179,33,14,SS_CENTERIMAGE
-    EDITTEXT        IDC_PASSWORD,206,179,86,14,ES_PASSWORD | ES_AUTOHSCROLL | 
-                    WS_DISABLED
-    GROUPBOX        "Server Setup",IDC_STATIC,2,6,296,124
-    EDITTEXT        IDC_LOCATION,64,39,158,14,ES_AUTOHSCROLL | ES_READONLY
-    LTEXT           "Standort",IDC_STATIC,7,39,51,14,SS_CENTERIMAGE
-    LTEXT           "Addresse",IDC_STATIC,7,58,51,14,SS_CENTERIMAGE
-    EDITTEXT        IDC_ADDRESS,64,58,228,14,ES_AUTOHSCROLL | ES_READONLY
-    LTEXT           "Pfad",IDC_STATIC,7,76,51,12,SS_CENTERIMAGE
-    EDITTEXT        IDC_PATH,64,76,98,12,ES_AUTOHSCROLL | ES_READONLY
-    LTEXT           "Port",IDC_STATIC,167,77,28,12,SS_CENTERIMAGE
-    EDITTEXT        IDC_REMOTE_PORT,206,76,86,12,ES_AUTOHSCROLL | 
-                    ES_READONLY | ES_NUMBER
-    GROUPBOX        "Http Proxy Einstellungen",IDC_STATIC,2,132,296,65
-END
-
-IDD_CDDB_QUERY DIALOG DISCARDABLE  0, 0, 367, 153
-STYLE DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
-CAPTION "FreeDB Abfrage"
-FONT 8, "MS Sans Serif"
-BEGIN
-    LISTBOX         IDC_PROTOCOLL,7,28,353,102,LBS_USETABSTOPS | 
-                    LBS_NOINTEGRALHEIGHT | WS_VSCROLL | WS_HSCROLL | 
-                    WS_TABSTOP
-    PUSHBUTTON      "&Fortfahren",IDC_START,81,134,50,14
-    PUSHBUTTON      "&Schließen",IDCANCEL,169,134,50,14,WS_DISABLED
-    LTEXT           "Der FreeDB Server enthält folgende Einträge für Ihre CD. Bitte wählen Sie den korrekten un klicken Sie auf ""Fortfahren""",
-                    IDC_STATIC,7,7,353,16
-    CONTROL         139,IDC_STATIC,"Static",SS_BITMAP,293,131,67,17
-END
-
-IDD_SETTINGS_CDRIPPER DIALOG DISCARDABLE  0, 0, 301, 197
-STYLE WS_CHILD
-FONT 8, "MS Sans Serif"
-BEGIN
-    LTEXT           "&CD ROM",IDC_STATIC,14,19,56,12,SS_CENTERIMAGE
-    COMBOBOX        IDC_CD_DRIVE,80,19,215,68,CBS_DROPDOWNLIST | WS_VSCROLL | 
-                    WS_TABSTOP
-    LTEXT           "CD &ROM Typ",IDC_STATIC,14,36,56,13,SS_CENTERIMAGE
-    COMBOBOX        IDC_CDROM_TYPE,80,36,98,69,CBS_DROPDOWNLIST | WS_VSCROLL | 
-                    WS_TABSTOP
-    LTEXT           "Lese &Methode",IDC_STATIC,14,52,58,13,SS_CENTERIMAGE
-    COMBOBOX        IDC_RIPPING_METHOD,80,52,98,69,CBS_DROPDOWNLIST | 
-                    WS_VSCROLL | WS_TABSTOP
-    LTEXT           "Geschwindigkeit",IDC_STATIC,186,36,56,13,SS_CENTERIMAGE
-    EDITTEXT        IDC_CD_SPEED,251,36,44,13,ES_AUTOHSCROLL | ES_NUMBER
-    LTEXT           "Verzögerung",IDC_STATIC,186,52,56,12,SS_CENTERIMAGE
-    EDITTEXT        IDC_CD_SPIN_UP,251,52,44,12,ES_AUTOHSCROLL | ES_NUMBER
-    CONTROL         "&Lade beim Lesen abschließen",IDC_LOCK,"Button",
-                    BS_AUTOCHECKBOX | WS_TABSTOP,14,75,120,10
-    CONTROL         "CD auswerfen",IDC_EJECT,"Button",BS_AUTOCHECKBOX | 
-                    WS_TABSTOP,14,90,80,10
-    CONTROL         "Schreibe CUE-Sheets",IDC_CUE,"Button",BS_AUTOCHECKBOX | 
-                    WS_TABSTOP,154,75,141,10
-    CONTROL         "Immer alle Tracks  auswählen",IDC_SELECT_ALL,"Button",
-                    BS_AUTOCHECKBOX | WS_TABSTOP,154,100,141,10
-    CONTROL         "Kanäle vertauschen",IDC_SWAP,"Button",BS_AUTOCHECKBOX | 
-                    WS_TABSTOP,14,103,119,10
-    CONTROL         "Im Hintegrund nach neuer CD prüfen",IDC_CHECKFORNEWCD,
-                    "Button",BS_AUTOCHECKBOX | WS_TABSTOP,154,88,141,10
-    CONTROL         "Windows NT SCSI Bibliothek benutzen",IDC_NATIVE,"Button",
-                    BS_AUTOCHECKBOX | WS_TABSTOP,14,113,164,10
-    LTEXT           "Anzahl der Lesepuffer:",IDC_STATIC,14,169,56,16
-    COMBOBOX        IDC_NUMBUFFERS,80,173,98,48,CBS_DROPDOWNLIST | 
-                    WS_VSCROLL | WS_TABSTOP
-    GROUPBOX        "CD ROM (CDRip.dll)",IDC_STATIC,7,7,291,120
-    GROUPBOX        "Experten Einstellungen",IDC_STATIC,7,128,293,66
-    LTEXT           "Anzahl der Puffer, die LameFE zum zwischenspeichern von Audiodaten im Arbeitsspeicher benutzt. Mehr Puffer beschleunigen den Vorgang, normalerweise. Auf PCs mit wenig Arbeitsspeicher kann es sich aber auch negativ auswirken.",
-                    IDC_STATIC,14,141,282,26
-END
-
-IDD_STATUS_DIALOG DIALOGEX 0, 0, 402, 234
-STYLE DS_MODALFRAME | DS_3DLOOK | DS_CENTER | WS_MINIMIZEBOX | WS_POPUP | 
-    WS_VISIBLE | WS_CAPTION | WS_SYSMENU
-EXSTYLE WS_EX_CONTROLPARENT
-CAPTION "LameFE - Status"
-FONT 8, "MS Sans Serif"
-BEGIN
-    DEFPUSHBUTTON   "&Abbrechen",IDCANCEL,345,213,50,14
-    LTEXT           "in.wav",IDC_IN,73,134,219,8
-    LTEXT           "out.mp3",IDC_OUT,73,148,212,8
-    RTEXT           "0",IDC_IN_SIZE,344,134,43,8
-    RTEXT           "0",IDC_EST_SIZE,344,148,43,8
-    LTEXT           "0%",IDC_STATIC,169,183,10,12,SS_CENTERIMAGE
-    LTEXT           "100%",IDC_STATIC,369,183,18,12,SS_CENTERIMAGE
-    CONTROL         "Progress3",IDC_FILE_STATUS_BAR,"msctls_progress32",0x0,
-                    184,182,171,13
-    LTEXT           "0:00:00",IDC_EST_TIME,73,169,41,8
-    LTEXT           "0:00:00",IDC_ELA_TIME,73,183,41,12,SS_CENTERIMAGE
-    LTEXT           "0:00:00",IDC_REM_TIME,73,198,41,8
-    LTEXT           "Original Datei:",IDC_STATIC,14,134,54,8
-    LTEXT           "Ausgabe Datei:",IDC_STATIC,14,148,54,8
-    LTEXT           "Größe (MB)",IDC_STATIC,301,134,38,8
-    LTEXT           "Größe (MB)",IDC_STATIC,301,148,38,8
-    LTEXT           "Status: (0%)",IDC_STATUS_STRING,121,183,41,12,
-                    SS_CENTERIMAGE
-    LTEXT           "Geschätzte Zeit:",IDC_STATIC,14,175,54,8
-    LTEXT           "Abgelaufen:",IDC_STATIC,14,183,54,12,SS_CENTERIMAGE
-    LTEXT           "Übrig:",IDC_STATIC,14,198,54,8
-    LTEXT           "Full",IDC_STATIC,363,29,24,8
-    LTEXT           "Empty",IDC_STATIC,363,89,24,8
-    LTEXT           "Read Buffer",IDC_STATIC,344,103,43,8
-    CONTROL         "Progress2",IDC_LIST_STATUS_BAR,"msctls_progress32",
-                    PBS_VERTICAL,345,29,14,68
-    CONTROL         "Progress1",IDC_JITTERSTATUS,"msctls_progress32",
-                    PBS_VERTICAL,317,29,14,68
-    LTEXT           "Jitter Status",IDC_STATIC,301,103,38,8
-    LTEXT           "Min",IDC_STATIC,301,89,12,8
-    LTEXT           "Nominal",IDC_STATIC,287,60,25,8
-    LTEXT           "Max",IDC_STATIC,297,29,18,8
-    CONTROL         "List2",IDC_LOG,"SysListView32",LVS_REPORT | 
-                    LVS_SINGLESEL | LVS_NOSORTHEADER | WS_BORDER | 
-                    WS_TABSTOP,7,11,274,106
-    GROUPBOX        "Lese- / Pufferstatus",IDC_STATIC,285,7,108,111
-    GROUPBOX        "Datei Status Information",IDC_STATIC,7,121,388,90
-    PUSHBUTTON      "&Speichern",IDC_SAVE_LOG,289,213,50,14
-    LTEXT           "",IDC_PRINTMSG,14,213,266,14,SS_CENTERIMAGE
-END
-
-IDD_FREEDB_STATUS DIALOG DISCARDABLE  0, 0, 316, 65
-STYLE DS_MODALFRAME | DS_SETFOREGROUND | DS_3DLOOK | DS_NOFAILCREATE | 
-    DS_CENTER | WS_POPUP
-FONT 8, "MS Sans Serif"
-BEGIN
-    CONTROL         139,IDC_STATIC,"Static",SS_BITMAP,242,41,67,17
-    LTEXT           "FreeDB service von http://www.freedb.org",IDC_STATIC,7,
-                    46,231,8
-    CONTROL         "",IDC_STATIC,"Static",SS_ETCHEDHORZ,7,39,305,1
-    CTEXT           "FreeDB Status Nachricht:",IDC_STATIC,7,7,302,9,
-                    SS_CENTERIMAGE
-    CTEXT           "",IDC_STATUS_MSG,7,21,302,14,SS_CENTERIMAGE | SS_SUNKEN
-END
-
-IDD_ABOUTBOX DIALOG DISCARDABLE  0, 0, 310, 222
-STYLE DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
-CAPTION "Über lameFE"
-FONT 8, "MS Sans Serif"
-BEGIN
-    DEFPUSHBUTTON   "OK",IDOK,253,7,50,14,WS_GROUP
-    LTEXT           "LameFE <Vesion>",IDC_DISPLAY_STATIC,68,7,129,8
-    CONTROL         159,IDC_STATIC,"Static",SS_BITMAP,7,7,58,22
-    LTEXT           "Programmfehler, Fragen und Vorschläge können Sie gerne an mich senden. Meine E-Mail Adresse ist: theesw@users.sourceforge.net",
-                    IDC_STATIC,7,198,296,18
-    LTEXT           "©2000-2002 by Thees Christian Winkler",IDC_STATIC,69,21,
-                    128,8
-    LTEXT           "Development:\nLameFE:\tThees Christian Winkler\nCDRip.dll:\tAlber L. Faber\nFreeDB stuff:\tP.J. Naughter\n",
-                    IDC_STATIC,14,36,139,36
-    LTEXT           "Testing:\nLorenzo Prince,  Jason Faber, Simone Singh, William F. Pearson, Jann Peterecki",
-                    IDC_STATIC,157,36,140,36
-    LTEXT           "Besonderer Dank an:\nJan Christoph Winkler für die ursprüngliche Idee und den Programmnamen.\nJo aka Trithemius aka TvT für feedback und Bug-Reports",
-                    IDC_STATIC,13,74,284,25
-    LTEXT           "This program is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation; either version 2 of the License, or (at your option) any later version.",
-                    IDC_STATIC,7,107,296,26
-    LTEXT           "Die Programm ist freeware und wird von mir in meiner Freizeit entwickelt. Wenn es Ihnen gefällt freue ich mich über ein Postkarte über Sie/Ihre Stadt/Ihr Land an:",
-                    IDC_STATIC,18,138,271,18
-    LTEXT           "Thees Christian Winkler\nAm Taubenfelde 8\nD-30159 Hannover\nGermany",
-                    IDC_STATIC,115,156,77,35
-    GROUPBOX        "",IDC_STATIC,7,131,296,64
-    GROUPBOX        "",IDC_STATIC,7,29,296,76
-END
-
-IDD_SETTINGS_MP3 DIALOG DISCARDABLE  0, 0, 297, 214
-STYLE WS_CHILD
-FONT 8, "MS Sans Serif"
-BEGIN
-    LTEXT           "&MPEG Version",IDC_STATIC,5,24,55,12,SS_CENTERIMAGE
-    COMBOBOX        IDC_MPEG,64,23,64,48,CBS_DROPDOWNLIST | WS_VSCROLL | 
-                    WS_TABSTOP
-    LTEXT           "&Bitrate (Minimum)",IDC_STATIC,5,56,55,12,
-                    SS_CENTERIMAGE
-    COMBOBOX        IDC_BITSPERSAMPLE,64,56,64,61,CBS_DROPDOWNLIST | 
-                    WS_VSCROLL | WS_TABSTOP
-    LTEXT           "&Kanäle",IDC_STATIC,138,40,57,12,SS_CENTERIMAGE
-    COMBOBOX        IDC_CHANNELS,200,40,82,52,CBS_DROPDOWNLIST | WS_VSCROLL | 
-                    WS_TABSTOP
-    LTEXT           "Qualität",IDC_STATIC,5,40,55,12,SS_CENTERIMAGE
-    COMBOBOX        IDC_QUALITY,64,40,64,48,CBS_DROPDOWNLIST | WS_VSCROLL | 
-                    WS_TABSTOP
-    LTEXT           "VBR Methode",IDC_STATIC,5,74,55,12,SS_CENTERIMAGE
-    COMBOBOX        IDC_VBR_METHOD,64,74,64,60,CBS_DROPDOWNLIST | WS_VSCROLL | 
-                    WS_TABSTOP
-    LTEXT           "ABR",IDC_STATIC,5,91,55,12,SS_CENTERIMAGE
-    EDITTEXT        IDC_ABR,64,91,39,14,ES_AUTOHSCROLL | ES_NUMBER | 
-                    WS_DISABLED
-    LTEXT           "VBR Quality",IDC_STATIC,5,109,55,12,SS_CENTERIMAGE
-    COMBOBOX        IDC_VBR_QUALITY,64,109,63,52,CBS_DROPDOWNLIST | 
-                    WS_VSCROLL | WS_TABSTOP
-    LTEXT           "Thread Priority",IDC_STATIC,5,127,55,12,SS_CENTERIMAGE
-    COMBOBOX        IDC_THREADPRIORITY,64,127,64,39,CBS_DROPDOWNLIST | 
-                    WS_VSCROLL | WS_TABSTOP
-    CONTROL         "&Original",IDC_ORIGINAL,"Button",BS_AUTOCHECKBOX | 
-                    WS_TABSTOP,138,74,57,12
-    CONTROL         "Prüf&summe",IDC_CHECKSUM,"Button",BS_AUTOCHECKBOX | 
-                    WS_TABSTOP,200,74,63,12
-    CONTROL         "Pri&vat",IDC_PRIVATE,"Button",BS_AUTOCHECKBOX | 
-                    WS_TABSTOP,138,93,57,12
-    CONTROL         "Copyright",IDC_COPYRIGHT,"Button",BS_AUTOCHECKBOX | 
-                    WS_TABSTOP,200,93,68,12
-    CONTROL         "Schreibe ID3 v.1 Tag",IDC_ID3V1,"Button",
-                    BS_AUTOCHECKBOX | WS_TABSTOP,5,162,123,10
-    CONTROL         "Schreibe ID&3 v.2 Tag",IDC_ID3_2,"Button",
-                    BS_AUTOCHECKBOX | WS_TABSTOP,5,181,123,10
-    COMBOBOX        IDC_PRESETMP3DLG,147,160,135,30,CBS_DROPDOWN | CBS_SORT | 
-                    WS_VSCROLL | WS_TABSTOP
-    EDITTEXT        IDC_PRESETDESCRIPTION,147,191,100,15,ES_MULTILINE | 
-                    ES_AUTOVSCROLL | ES_WANTRETURN
-    PUSHBUTTON      "&Sichern",IDC_SAVEPRESET,251,191,31,15
-    CTEXT           "lame_enc.dll",IDC_ENCODER_VERSION,138,109,144,30,
-                    SS_SUNKEN
-    GROUPBOX        "Ausgabe Format && Qualität (lame_enc.dll)",IDC_STATIC,1,
-                    7,290,136
-    GROUPBOX        "ID3Tags",IDC_STATIC,1,148,131,61
-    LTEXT           "Bitrate (Ma&ximum)",IDC_STATIC,138,56,57,12,
-                    SS_CENTERIMAGE
-    COMBOBOX        IDC_BITSPERSAMPLE_MAX,200,56,82,61,CBS_DROPDOWNLIST | 
-                    WS_DISABLED | WS_VSCROLL | WS_TABSTOP
-    LTEXT           "Kbps",IDC_STATIC,108,92,20,13,SS_CENTERIMAGE
-    GROUPBOX        "Preset",IDC_STATIC,138,148,153,61
-    LTEXT           "Beschreibung (optional)",IDC_STATIC,147,178,100,8
-    PUSHBUTTON      "&Löschen",IDC_DELETE,251,175,31,14
-    LTEXT           "Ausg. Samplerate",IDC_STATIC,138,24,57,11,
-                    SS_CENTERIMAGE
-    COMBOBOX        IDC_OUTSAMPLERATE,199,22,83,30,CBS_DROPDOWNLIST | 
-                    WS_VSCROLL | WS_TABSTOP
-END
-
-IDD_ALBUMINFOCTRL DIALOG DISCARDABLE  0, 0, 363, 60
-STYLE WS_CHILD
-FONT 8, "MS Sans Serif"
-BEGIN
-    LTEXT           "Song&titel:",IDC_STATIC,1,7,35,14,SS_CENTERIMAGE
-    EDITTEXT        IDC_SONGTITLE,43,7,95,14,ES_AUTOHSCROLL
-    LTEXT           "&Intrepret:",IDC_STATIC,146,7,34,14,SS_CENTERIMAGE
-    EDITTEXT        IDC_SONGINTERPRET,181,7,101,14,ES_AUTOHSCROLL
-    LTEXT           "Track&#:",IDC_STATIC,290,7,28,14,SS_CENTERIMAGE
-    EDITTEXT        IDC_TRACKNUMBER,322,7,40,14,ES_AUTOHSCROLL | ES_NUMBER
-    LTEXT           "&Album:",IDC_STATIC,1,24,35,14,SS_CENTERIMAGE
-    EDITTEXT        IDC_ALBUMNAME,43,24,95,14,ES_AUTOHSCROLL
-    LTEXT           "&Genre:",IDC_STATIC,146,24,35,14,SS_CENTERIMAGE
-    COMBOBOX        IDC_GENRE,181,26,102,65,CBS_DROPDOWN | WS_VSCROLL | 
-                    WS_TABSTOP
-    LTEXT           "&Jahr:",IDC_STATIC,290,24,21,14,SS_CENTERIMAGE
-    EDITTEXT        IDC_YEAR,322,24,40,14,ES_AUTOHSCROLL | ES_NUMBER
-    LTEXT           "&Kommentar:",IDC_STATIC,1,41,39,14,SS_CENTERIMAGE
-    EDITTEXT        IDC_COMMENT,43,41,160,14,ES_AUTOHSCROLL
-END
-
-IDD_SETTINGS_LAMEFE DIALOGEX 0, 0, 293, 198
-STYLE WS_CHILD
-FONT 8, "MS Sans Serif"
-BEGIN
-    GROUPBOX        "Externer Player",IDC_STATIC,7,7,275,31
-    PUSHBUTTON      "...",IDC_PLAYER,258,18,20,13
-    LTEXT           "[system default]",IDC_PLAYER_PATH,12,18,241,13,
-                    SS_CENTERIMAGE,WS_EX_STATICEDGE
-    GROUPBOX        "Nach dem Encodieren:",IDC_STATIC,7,74,275,117
-    CONTROL         "Dialog anzeigen",IDC_FINISH_DLG,"Button",
-                    BS_AUTOCHECKBOX | WS_TABSTOP,25,86,253,10
-    CONTROL         "Statusfenster in den Vordergund bringen (Fokus holen)",
-                    IDC_FOCUS,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,25,97,
-                    253,10
-    CONTROL         "Sound abspielen",IDC_PLAY_SOUND,"Button",
-                    BS_AUTOCHECKBOX | WS_TABSTOP,25,108,253,10
-    CONTROL         "Signal durch Systemlautsprecher",IDC_BEEP,"Button",
-                    BS_AUTOCHECKBOX | WS_TABSTOP,25,119,253,10
-    CONTROL         "Datei(en) wiedergeben [Externer Player benötigt]",
-                    IDC_PLAY_FILES,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,25,
-                    131,253,10
-    CONTROL         "Dateien nur in die Warteschlange stellen (Enqueue)",
-                    IDC_ENQUEUE_FILES,"Button",BS_AUTOCHECKBOX | WS_DISABLED | 
-                    WS_TABSTOP,37,142,241,10
-    CONTROL         "M3U Playliste schreiben",IDC_M3U,"Button",
-                    BS_AUTOCHECKBOX | WS_TABSTOP,25,154,253,10
-    CONTROL         "Windows runterfahren",IDC_SHUTDOWN,"Button",
-                    BS_AUTOCHECKBOX | WS_TABSTOP,25,165,253,10
-    CONTROL         "LameFE beenden",IDC_EXIT_FINISHED,"Button",
-                    BS_AUTOCHECKBOX | WS_TABSTOP,25,176,253,10
-    GROUPBOX        "Pfad für Presets",IDC_STATIC,7,42,275,27
-    LTEXT           "Static",IDC_PRESET_PATH_DISPLAY,12,52,241,13,
-                    SS_CENTERIMAGE,WS_EX_STATICEDGE
-    PUSHBUTTON      "...",IDC_PRESETPATH,258,52,20,13
-END
-
-IDD_CHECKNEWVERSION DIALOG DISCARDABLE  0, 0, 278, 179
-STYLE DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
-CAPTION "Nach Update suchen"
-FONT 8, "MS Sans Serif"
-BEGIN
-    DEFPUSHBUTTON   "Abfragen!",IDOK,221,7,50,14
-    PUSHBUTTON      "Schließen",IDCANCEL,221,24,50,14
-    LTEXT           "Sie können abfragen ob eine neue Programmversion auf lamefe.sourceforge.net verfügbar ist. Klicken Sie einfach auf Abfragen!",
-                    IDC_STATIC,7,7,198,29
-    GROUPBOX        "Installierte Version",IDC_STATIC,7,43,127,37
-    GROUPBOX        "Neueste Version",IDC_STATIC,144,43,127,37
-    CTEXT           "",IDC_YOUR_VERSION,13,59,111,8
-    CTEXT           "",IDC_NEWESTVERSION,151,59,112,8
-    LTEXT           "",IDC_MESSAGE_VERSION,34,152,181,20
-    ICON            IDR_MAINFRAME,IDC_STATIC,7,152,20,20
-    PUSHBUTTON      "&Download",IDC_DOWNLOAD,221,158,50,14,WS_DISABLED
-    GROUPBOX        "Change-Log",IDC_STATIC,7,85,264,62
-    EDITTEXT        IDC_CHANGELOG,11,95,255,46,ES_MULTILINE | ES_AUTOHSCROLL | 
-                    ES_OEMCONVERT | ES_READONLY | ES_WANTRETURN | WS_VSCROLL
-END
-
-IDD_SETTINGS_LOOKNFEEL DIALOG DISCARDABLE  0, 0, 293, 197
-STYLE WS_CHILD
-FONT 8, "MS Sans Serif"
-BEGIN
-    GROUPBOX        "Miscellaneous",IDC_STATIC,7,7,279,73
-    CONTROL         "Vorhandene Dateien immer überschreiben",IDC_SILENT,
-                    "Button",BS_AUTOCHECKBOX | WS_TABSTOP,16,22,262,10
-    CONTROL         "Immer CD Player.ini lesen",IDC_CPLAYERINI_ALWAYS_READ,
-                    "Button",BS_AUTOCHECKBOX | WS_TABSTOP,16,36,262,10
-    CONTROL         "FreeDB abfragen immer in CDPlayer.ini abspeichern",
-                    IDC_CPLAYERINI_ALWAYS_WRITE,"Button",BS_AUTOCHECKBOX | 
-                    WS_TABSTOP,16,49,262,10
-    CONTROL         "Immer CD Text lesen (wenn vorhanden und vom LAufwerk unterstütz)",
-                    IDC_CDTEXT_ALWAYSREAD,"Button",BS_AUTOCHECKBOX | 
-                    WS_TABSTOP,16,62,262,10
-    GROUPBOX        "Aussehen und Verhalten",IDC_STATIC,7,96,279,94
-    CONTROL         "Fensterposition und -status merken",
-                    IDC_SAVE_WINDOW_STATE,"Button",BS_AUTOCHECKBOX | 
-                    WS_TABSTOP,16,109,262,10
-    CONTROL         "Echtfarben Bilder in Werkzeugliste benutzen",
-                    IDC_USE_HIGH_COLOR_ICONS,"Button",BS_AUTOCHECKBOX | 
-                    WS_TABSTOP,16,122,262,10
-    CONTROL         "Splashscreen anzeigen",IDC_SHOW_SPLASH,"Button",
-                    BS_AUTOCHECKBOX | WS_TABSTOP,16,135,262,10
-    CONTROL         "Albumtag Editor immer anzeigen",IDC_ALBUMEDIT,"Button",
-                    BS_AUTOCHECKBOX | WS_TABSTOP,16,147,262,10
-    CONTROL         "Hauptfenster während des Encodierens verstecken",
-                    IDC_HIDEMWND_ENC,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,
-                    16,173,262,10
-    CONTROL         "Albumtag Editor beim Wechsel in ""Audiodatei-Modus"" anzeigen",
-                    IDC_SHOW_TAGEDITOR_ONFILE,"Button",BS_AUTOCHECKBOX | 
-                    WS_TABSTOP,16,160,262,10
-END
-
-IDD_SETTINGS_PLUGINCODEC DIALOG DISCARDABLE  0, 0, 297, 197
-STYLE WS_CHILD
-FONT 8, "MS Sans Serif"
-BEGIN
-    ICON            IDI_DECODER,IDC_STATIC,7,7,20,20
-    ICON            IDI_ENCODER,IDC_STATIC,270,7,20,20
-    CTEXT           "",IDC_PLUGINNAME,32,7,232,20,SS_CENTERIMAGE
-    GROUPBOX        "Plugin-Information",IDC_STATIC,7,32,283,65,BS_CENTER
-    LTEXT           "",IDC_ABOUTSTRING,28,44,242,32
-    GROUPBOX        "Unterstützte Audioformate",IDC_STATIC,7,102,283,54,
-                    BS_CENTER
-    LTEXT           "",IDC_EXTENSIONS,28,117,242,31
-    PUSHBUTTON      "&Über",IDC_ABOUT,124,78,50,14
-    PUSHBUTTON      "Einstellungen...",IDC_CONFIGURATION,220,167,50,14
-    LTEXT           "Klicken Sie auf ""Einstellungen"" um das Plugin zu konfigurieren.",
-                    IDC_STATIC,7,167,206,14,SS_CENTERIMAGE
-END
-
-
-/////////////////////////////////////////////////////////////////////////////
-//
-// DESIGNINFO
-//
-
-#ifdef APSTUDIO_INVOKED
-GUIDELINES DESIGNINFO DISCARDABLE 
-BEGIN
     IDD_TRACKLIST, DIALOG
     BEGIN
         LEFTMARGIN, 7
@@ -832,6 +748,18 @@ BEGIN
         HORZGUIDE, 164
         HORZGUIDE, 176
         HORZGUIDE, 193
+    END
+
+    IDD_CDDB_QUERY, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 360
+        VERTGUIDE, 293
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 146
+        HORZGUIDE, 24
+        HORZGUIDE, 124
+        HORZGUIDE, 132
     END
 
     IDD_SETTINGS_CDRIPPER, DIALOG
@@ -873,7 +801,7 @@ BEGIN
         HORZGUIDE, 121
         HORZGUIDE, 142
         HORZGUIDE, 156
-        HORZGUIDE, 166
+        HORZGUIDE, 171
         HORZGUIDE, 183
         HORZGUIDE, 195
         HORZGUIDE, 213
@@ -882,21 +810,20 @@ BEGIN
     IDD_ABOUTBOX, DIALOG
     BEGIN
         LEFTMARGIN, 7
-        RIGHTMARGIN, 303
+        RIGHTMARGIN, 358
         VERTGUIDE, 14
         VERTGUIDE, 68
-        VERTGUIDE, 153
-        VERTGUIDE, 157
-        VERTGUIDE, 197
-        VERTGUIDE, 250
-        VERTGUIDE, 297
+        VERTGUIDE, 346
         TOPMARGIN, 7
-        BOTTOMMARGIN, 216
+        BOTTOMMARGIN, 208
         HORZGUIDE, 29
         HORZGUIDE, 33
         HORZGUIDE, 69
         HORZGUIDE, 74
-        HORZGUIDE, 105
+        HORZGUIDE, 108
+        HORZGUIDE, 112
+        HORZGUIDE, 161
+        HORZGUIDE, 171
     END
 
     IDD_SETTINGS_MP3, DIALOG
@@ -999,12 +926,13 @@ BEGIN
         VERTGUIDE, 278
         TOPMARGIN, 7
         BOTTOMMARGIN, 190
-        HORZGUIDE, 32
-        HORZGUIDE, 46
-        HORZGUIDE, 59
+        HORZGUIDE, 29
+        HORZGUIDE, 41
+        HORZGUIDE, 53
+        HORZGUIDE, 65
         HORZGUIDE, 72
-        HORZGUIDE, 80
-        HORZGUIDE, 96
+        HORZGUIDE, 81
+        HORZGUIDE, 107
         HORZGUIDE, 119
         HORZGUIDE, 132
         HORZGUIDE, 145
@@ -1039,6 +967,14 @@ END
 //
 // Toolbar
 //
+
+IDR_PRESETBAR_2 TOOLBAR DISCARDABLE  16, 15
+BEGIN
+    BUTTON      ID_PRESETDROPDOWN
+    SEPARATOR
+    BUTTON      ID_SAVEPRESET
+    BUTTON      ID_DELETEPRESET
+END
 
 IDR_MAINFRAME TOOLBAR DISCARDABLE  32, 32
 BEGIN
@@ -1146,15 +1082,16 @@ END
 
 IDD_SETTINGS_MP3 DLGINIT
 BEGIN
-    IDC_MPEG, 0x403, 18, 0
-0x504d, 0x4745, 0x4920, 0x2020, 0x6428, 0x6665, 0x7561, 0x746c, 0x0029, 
-
+    IDC_MPEG, 0x403, 19, 0
+0x504d, 0x4745, 0x4920, 0x2020, 0x5328, 0x6174, 0x646e, 0x7261, 0x2964, 
+"\000" 
     IDC_MPEG, 0x403, 8, 0
 0x504d, 0x4745, 0x4920, 0x0049, 
     IDC_MPEG, 0x403, 10, 0
 0x504d, 0x4745, 0x4920, 0x2e49, 0x0035, 
-    IDC_CHANNELS, 0x403, 17, 0
-0x7453, 0x7265, 0x6f65, 0x2820, 0x6564, 0x6166, 0x6c75, 0x2974, "\000" 
+    IDC_CHANNELS, 0x403, 18, 0
+0x7453, 0x7265, 0x6f65, 0x2820, 0x7453, 0x6e61, 0x6164, 0x6472, 0x0029, 
+
     IDC_CHANNELS, 0x403, 13, 0
 0x6f4a, 0x6e69, 0x2074, 0x7453, 0x7265, 0x6f65, "\000" 
     IDC_CHANNELS, 0x403, 13, 0
@@ -1163,18 +1100,18 @@ BEGIN
 0x6f4d, 0x6f6e, "\000" 
     IDC_QUALITY, 0x403, 15, 0
 0x6f4e, 0x6d72, 0x6c61, 0x2820, 0x7120, 0x353d, 0x2920, "\000" 
-    IDC_QUALITY, 0x403, 12, 0
-0x6f4c, 0x2077, 0x2028, 0x3d71, 0x2039, 0x0029, 
+    IDC_QUALITY, 0x403, 16, 0
+0x694e, 0x6465, 0x6972, 0x2067, 0x2028, 0x3d71, 0x2039, 0x0029, 
     IDC_QUALITY, 0x403, 13, 0
-0x6948, 0x6867, 0x2820, 0x7120, 0x323d, 0x2920, "\000" 
-    IDC_QUALITY, 0x403, 29, 0
-0x6f56, 0x6369, 0x2065, 0x6628, 0x726f, 0x7620, 0x696f, 0x6563, 0x7220, 
-0x6365, 0x726f, 0x6964, 0x676e, 0x2973, "\000" 
+0x6f48, 0x6863, 0x2820, 0x7120, 0x323d, 0x2920, "\000" 
+    IDC_QUALITY, 0x403, 28, 0
+0x7453, 0x6d69, 0x656d, 0x2820, 0xfc66, 0x2072, 0x7453, 0x6d69, 0x616d, 
+0x6675, 0x616e, 0x6d68, 0x6e65, 0x0029, 
     IDC_QUALITY, 0x403, 13, 0
 0x3352, 0x694d, 0x2078, 0x7250, 0x7365, 0x7465, "\000" 
-    IDC_QUALITY, 0x403, 26, 0
-0x6556, 0x7972, 0x4820, 0x6769, 0x2068, 0x7551, 0x6c61, 0x7469, 0x2079, 
-0x2028, 0x3d71, 0x2030, 0x0029, 
+    IDC_QUALITY, 0x403, 27, 0
+0x6553, 0x7268, 0x6820, 0x686f, 0x2065, 0x7551, 0x6c61, 0x7469, 0x74e4, 
+0x2820, 0x7120, 0x303d, 0x2920, "\000" 
     IDC_QUALITY, 0x403, 22, 0
 0x2d2d, 0x6c61, 0x2d74, 0x7270, 0x7365, 0x7465, 0x7320, 0x6174, 0x646e, 
 0x7261, 0x0064, 
@@ -1194,8 +1131,8 @@ BEGIN
 0x2d2d, 0x6c61, 0x2d74, 0x7270, 0x7365, 0x7465, 0x4120, 0x5242, "\000" 
     IDC_QUALITY, 0x403, 17, 0
 0x2d2d, 0x6c61, 0x2d74, 0x7270, 0x7365, 0x7465, 0x4320, 0x5242, "\000" 
-    IDC_VBR_METHOD, 0x403, 9, 0
-0x6944, 0x6173, 0x6c62, 0x6465, "\000" 
+    IDC_VBR_METHOD, 0x403, 12, 0
+0x6544, 0x6b61, 0x6974, 0x6976, 0x7265, 0x0074, 
     IDC_VBR_METHOD, 0x403, 12, 0
 0x4256, 0x2052, 0x6544, 0x6166, 0x6c75, 0x0074, 
     IDC_VBR_METHOD, 0x403, 8, 0
@@ -1216,8 +1153,8 @@ BEGIN
 0x4256, 0x2052, 0x0033, 
     IDC_VBR_QUALITY, 0x403, 6, 0
 0x4256, 0x2052, 0x0034, 
-    IDC_VBR_QUALITY, 0x403, 16, 0
-0x4256, 0x2052, 0x2035, 0x6428, 0x6665, 0x7561, 0x746c, 0x0029, 
+    IDC_VBR_QUALITY, 0x403, 17, 0
+0x4256, 0x2052, 0x2035, 0x5328, 0x6174, 0x646e, 0x7261, 0x2964, "\000" 
     IDC_VBR_QUALITY, 0x403, 6, 0
 0x4256, 0x2052, 0x0036, 
     IDC_VBR_QUALITY, 0x403, 6, 0
@@ -1232,9 +1169,9 @@ BEGIN
 0x6542, 0x6f6c, 0x2077, 0x6f4e, 0x6d72, 0x6c61, "\000" 
     IDC_THREADPRIORITY, 0x403, 7, 0
 0x6f4e, 0x6d72, 0x6c61, "\000" 
-    IDC_THREADPRIORITY, 0x403, 23, 0
-0x6241, 0x766f, 0x2065, 0x6f4e, 0x6d72, 0x6c61, 0x2820, 0x6564, 0x6166, 
-0x6c75, 0x2974, "\000" 
+    IDC_THREADPRIORITY, 0x403, 24, 0
+0x6241, 0x766f, 0x2065, 0x6f4e, 0x6d72, 0x6c61, 0x2820, 0x7453, 0x6e61, 
+0x6164, 0x6472, 0x0029, 
     IDC_THREADPRIORITY, 0x403, 8, 0
 0x6948, 0x6867, 0x7365, 0x0074, 
     0
@@ -1252,7 +1189,7 @@ BEGIN
     "E",            ID_FILE_STARTENCODING,  VIRTKEY, CONTROL, NOINVERT
     "O",            ID_FILE_OPEN,           VIRTKEY, CONTROL, NOINVERT
     "R",            ID_REMOVE_FILE,         VIRTKEY, CONTROL, NOINVERT
-    VK_F4,          ID_SETTINGS_LAMEENCODER, VIRTKEY, NOINVERT
+    VK_F4,          ID_SETTINGS,            VIRTKEY, NOINVERT
     VK_F5,          ID_VIEW_RELOADCD,       VIRTKEY, NOINVERT
 END
 
@@ -1278,11 +1215,11 @@ VS_VERSION_INFO VERSIONINFO
 BEGIN
     BLOCK "StringFileInfo"
     BEGIN
-        BLOCK "040904b0"
+        BLOCK "040704b0"
         BEGIN
             VALUE "Comments", "\0"
             VALUE "CompanyName", "Thees Christian Winkler\0"
-            VALUE "FileDescription", "lameFE 2 - Not Just Another L.A.M.E. Front End\0"
+            VALUE "FileDescription", "LameFE 2 - Not Just Another L.A.M.E. Front End\0"
             VALUE "FileVersion", "2, 2, 6, 1\0"
             VALUE "InternalName", "lameFE\0"
             VALUE "LegalCopyright", "Copyright (C) 2001 - 2002\0"
@@ -1296,7 +1233,7 @@ BEGIN
     END
     BLOCK "VarFileInfo"
     BEGIN
-        VALUE "Translation", 0x409, 1200
+        VALUE "Translation", 0x407, 1200
     END
 END
 
@@ -1311,16 +1248,16 @@ END
 STRINGTABLE PRELOAD DISCARDABLE 
 BEGIN
     IDR_MAINFRAME           "lameFE\n\nLameFE\n\n\nLameFE.Document\nLameFE Document"
-    IDS_THREADWARNING       "Warnung: Das Ändern der Thread-Priorität kann die Systemstabilität beeinträchtigen.\nBitte ändern Sie diesen Wert nur, wenn Sie wissen was Sie tun.\nWenn LameFE nach dem Ändern des Wertes fehlerhaft arbeitet ändern Sie den Wert auf den Standardwert."
-    IDS_APPALREADYRUNNING   "LameFE läuft bereits!"
+    IDS_THREADWARNING       "Warning: Changing the thread priority might affect system stability.\nPlease don't change these settings unless you know what you are doing.\nIf you experience any problems change this back to Normal."
+    IDS_APPALREADYRUNNING   "Another instance of LameFE is already running!"
     IDS_DECODER             "Decoder"
     IDS_ENCODER             "Encoder"
     IDS_ALBUMINFO           "Album Information"
-    IDS_BATCHMODE           "Batchmodus"
-    IDS_FILENAMES           "Dateinamen"
-    IDS_LOOKNFEEL           "Aussehen & Verhalten"
-    IDS_NONESELECTED        "Keine Auswahl"
-    IDS_PRESET_BLANKNAME    "Bitte geben Sie erst einen gültigen Namen für das Preset an!"
+    IDS_BATCHMODE           "Batchmode"
+    IDS_FILENAMES           "Filenames"
+    IDS_LOOKNFEEL           "Look & Feel"
+    IDS_NONESELECTED        "None selected"
+    IDS_PRESET_BLANKNAME    "Specifiy a valid name for the preset first!"
 END
 
 STRINGTABLE PRELOAD DISCARDABLE 
@@ -1341,203 +1278,206 @@ END
 
 STRINGTABLE DISCARDABLE 
 BEGIN
-    IDS_ENCODER_ERROR_INVALIDINPUTSTREAM "Ungültiger Input Stream"
+    IDS_ENCODER_ERROR_INVALIDINPUTSTREAM "Invalid Input Stream"
     IDS_ENCODER_ERROR_SAMPLERATEBITRATEMISMATCH 
-                            "Die ausgewählte Bitrate passt nicht zur Samplingrate der Datei."
-    IDS_MAIN_DATATRACK      "Daten Track"
-    IDS_NOSELECTION         "Keine Datei ausgewählt."
-    IDS_FILEOPENERR         "Fehler beim Öffnen der Datei %s"
-    IDS_INVBITRATE          "Nicht untestützte Bitrate. LameFE unterstützt nur 16bit Dateien diese hat jedoch %d"
-    IDS_RESTARTLAME         "Sie müssen LameFE neustarten, damit die Änderung wirksam wird."
+                            "Specified bitrate does not match the selected output frequency!"
+    IDS_MAIN_DATATRACK      "Data Track"
+    IDS_NOSELECTION         "No file selected."
+    IDS_FILEOPENERR         "Error opening file %s"
+    IDS_INVBITRATE          "Invalid bitrate. Only 16bit files are currently supported. This has %d bits per sample"
+    IDS_RESTARTLAME         "You have to Restart lameFE before this setting takes into effect"
     IDS_MAIN_AUDIOTRACK     "Audio Track %02d"
-    IDS_ENC_NO_PLUGIN       "Kein Plugin gefunden, das diese Datei decodieren kann."
-    IDS_ENC_PLUG_LOADFAILED "Fehler beim laden der Bibliothek %s"
-    IDS_ENC_PLUG_APIERROR   "Konnte API des Plugins nicht laden. Interner Fehler oder dies ist kein LameFE Plugin\n(%s)"
+    IDS_ENC_NO_PLUGIN       "No plugin found to handle this file."
+    IDS_ENC_PLUG_LOADFAILED "Failed loading library %s"
+    IDS_ENC_PLUG_APIERROR   "Could not load API from Plugin. Internal error or this is no plugin that is supported by lameFE\n(%s)"
 END
 
 STRINGTABLE DISCARDABLE 
 BEGIN
-    ID_EXIT                 "LameFE beenden."
-    IDS_NOFILESSELECTED     "Keine Datei(en) ausgewählt."
-    IDS_EMPTYLIST           "Keine Datei(en) in der Liste."
-    IDS_MAIN_NOAUDIOCD      "Keine Audiotracks ausgewählt oder keine CD im Laufwerk."
-    IDS_NOTRACKSSELECTED    "Bitte wählen Sie die Tracks die Sie von der CD kopieren möchten."
-    IDS_DATATRACK           "Track %d ist ein Datentrack und wird ignoriert."
-    IDS_DRIVENOTREADY       "Laufwerkfehler oder Laufwerk nicht bereit (%d)."
-    IDS_ERRTOC              "Fehler beim Lesen des CD-Inhaltsverzeichnis (TOC) (Fehlernummer: %d)"
+    ID_EXIT                 "Exit lameFE"
+    IDS_NOFILESSELECTED     "No file(s) selected."
+    IDS_EMPTYLIST           "No file(s) in list."
+    IDS_MAIN_NOAUDIOCD      "No Audiotracks selected, or no Audio CD in drive. "
+    IDS_NOTRACKSSELECTED    "Please select track(s) you want to extract from the Audio CD."
+    IDS_DATATRACK           "Track %d is a Data Track and will be ignored"
+    IDS_DRIVENOTREADY       "Drive error or drive not ready (%d)."
+    IDS_ERRTOC              "Error reading Table of Content of CD (Errornumber: %d)"
 END
 
 STRINGTABLE DISCARDABLE 
 BEGIN
-    IDS_CDPINI_NOENTRY      "Es wurde kein Eintrag für diese CD in der CDPlayer.ini gefunden."
-    IDS_CDPINI_ERRORWRITE   "Fehler beim Schreiben von Daten in CDPlayer.ini"
-    IDS_CDPINI_DOUBLEENTRY  "CD bereits in CDPlayer.ini vorhanden."
-    IDS_CDPINI_WRITE_OK     "Erfolgreich in CDPlayer.ini gespeichert."
-    IDS_CDTEXT_ERROR        "Konnte CD Text nicht lesen."
-    IDS_DEFAULT_ARTIST      "Unbekannter Künstler"
-    IDS_DEFAULT_ALBUM       "Unbekanntes Album"
-    IDS_TOOL_BEEP				"Signal durch Systemlautsprecher geben wenn fertig."
-    IDS_TOOL_NOTIFICATION		"Benachrichtigungsdialog anzeigen, wenn fertig."
-	IDS_TOOL_M3U				"M3U Wiedergabeliste schreiben (z.B. für Winamp)"
-	IDS_TOOL_PLAYFILES			"Enkodierte Dateien abspielen (Benötigt einen externen Player)."
-	IDS_TOOL_QUIT				"LameFE beenden wenn Vorgang abgeschlossen."
-	IDS_TOOL_SHUTDOWN			"Windows runterfahren. (Benötigt Administratorrechte auf Windows NT)."
-	IDS_TOOL_SILENT				"Vorhandene Dateien immer überschreiben. (Sonst wird immer gefragt)."
-	IDS_TOOL_OUTPUTPATH			"Basisausgabepfad, in dem die Dateien gespeichert werden."
-	IDS_TOOL_EXTPLAYER			"Externer Player zum wiedergeben der Audiodateien."
+    IDS_CDPINI_NOENTRY      "No entry for this CD found in the cdplayer.ini"
+    IDS_CDPINI_ERRORWRITE   "Error writing data to cdplayer.ini"
+    IDS_CDPINI_DOUBLEENTRY  "There is already an entry for this CD in the CDPlayer.ini"
+    IDS_CDPINI_WRITE_OK     "Successfully saved data to CDPlayer.ini"
+    IDS_CDTEXT_ERROR        "Could not read CDText information from CD."
+    IDS_DEFAULT_ARTIST      "Unknown Artist"
+    IDS_DEFAULT_ALBUM       "Unknown Album"
+    IDS_TOOL_BEEP           "Beep systemspeaker when finished encoding."
+    IDS_TOOL_NOTIFICATION   "Show notification dialog and logfile when finished encoding."
+    IDS_TOOL_M3U            "Write the converted files to a M3U playlist (i.e. for Winamp)."
+    IDS_TOOL_PLAYFILES      "Play encoded files when finished encoding. An external player is required."
+    IDS_TOOL_QUIT           "Exit lameFE when finished encoding."
+    IDS_TOOL_SHUTDOWN       "Shutdown Windows and turn off the PC (needs Admin preveleges on NT systems)."
+    IDS_TOOL_SILENT         "Always overwrite existing file. Otherwise lameFE will ask."
+    IDS_TOOL_OUTPUTPATH     "This is the base output path where lameFE will store the encoded/ripped files."
+    IDS_TOOL_EXTPLAYER      "The external player lameFE will use to play files after encoding process."
 END
 
 STRINGTABLE DISCARDABLE 
 BEGIN
-	IDS_CDDB_UPDATEFAILED	"Die Serverliste konnte nicht aktualisiert werden. Versuchen Sie es später noch einmal."
-    IDS_OLDCOMTL32DLL       "Ihre Version der Common Controls Library (COMCTL32.DLL) ist zu alt, um Echtfarebn Icons anzuzeigen. Sie bötigen eine Version neuer als 5.81. Führen Sie Windows Update aus oder Installieren Sie den Internet Explorer 6."
-	IDS_BATCHNEXTCD			"Bitte legen Sie die nächste CD ins Laufwerk ein"
-	IDS_BATCHTIMEDOUT		"Wartezeit überschritten. Batch-Modus wird beendet."
-	IDS_BATCHCDDRIVE		"Wechsel zu Laufwerk %s"
-	IDS_TOOL_READBUFFERS		"Anzahl der Lesepuffer,  um Adiodaten beim Lesen zwischenzuspeichern."
-	IDS_TOOL_BATCHALLCDS		"Alle CD Laufwerke nacheienander abarbeiten."
-	IDS_TOOL_BATCHFREEDB		"Wenn in lokalen Quellen keine Albuminfos gefunden werden FreeDB abfragen."
-	IDS_TOOL_BATCHTIMESOUT		"Batch-Moduse beenden, wenn nach einer bestimmten Zeit keinen neu CD geladen."
-	IDS_TOOL_BATCHBEEP			"Signal durch Systemlautsprecher, wenn eine CD abgeschlossen wurde."
-	IDS_TOOL_BATCHTIME			"Zeit in Minuten die LameFE auf das Einlegen einer neuen CD wartet"
-	IDS_TOOL_ENCTHREADP			"Hohe Priorität <-> Schnelle Kodierung aber höhere CPU-Belastung"
-	IDS_TOOL_WRITECUE			"Cuesheet erstellent(z.B. für Nero) wenn CD in eine Datei gerippt wird."
-	IDS_TOOL_HIDEMAINWND		"Hauptfenster während des Encodierens verstecken. (Systemtray)"
-	IDS_TOOL_ENQUEUE			"Dateien an geladene M3U-Liste anhängen (Player muss ""/enqueue"" unterstüzen)"
-    IDS_TOOL_FILEFORMAT     "Platzhalter:\n\\%1 = Künstler\t\t%2 = Titel\t\t%3 = Album\n%4 = Jahr\t\t%5 = Genre\t\t%a = Track # (Führende 0)\n%b = Total # Tracks\t%c = Disc ID (Hexadez.)\t%d = Vol. ID (Hexadezimal)\n\\ = Unterverzeichnis\t\tL = Großbuchst.\t\tU = Kleinbuchst.\n\t\t\t(Bsp.: %L1 or % U2)"
+    IDS_CDDB_UPDATEFAILED   "The new serverlist could not be retrieved. unknow error. Please retry later."
+    IDS_OLDCOMTL32DLL       "Your version of the Common Controls Library (COMCTL32.DLL) is too old to use highcolor icons. You need at least version 5.92 to use them. You can upgrade the DLL by installing Internet Explorer 5.5 or newer."
+    IDS_BATCHNEXTCD         "Please insert the next CD into the drive %s"
+    IDS_BATCHTIMEDOUT       "Timeout limit exceeded. Batchmode canceled."
+    IDS_BATCHCDDRIVE        "Switching to drive %s"
+    IDS_TOOL_READBUFFERS    "Number of buffers to store audiodata ripped from CD before sending to Encoder"
+    IDS_TOOL_BATCHALLCDS    "Looks for CDs in all CD Drives available"
+    IDS_TOOL_BATCHFREEDB    "If no albuminformation is found on local sources, a freeDB server is queried"
+    IDS_TOOL_BATCHTIMESOUT  "LameFE can stop the batch mode when no new CD is insterted after a certain time"
+    IDS_TOOL_BATCHBEEP      "Beep systemspeaker when a CD is finished and next one can be loaded"
+    IDS_TOOL_BATCHTIME      "Time in minutes to wait before leaving batchmode when no new CD is loaded"
+    IDS_TOOL_ENCTHREADP     "Higher priority <-> faster encoding but less cpu ressources for other programs"
+    IDS_TOOL_WRITECUE       "Write a cuesheet (for Nero i.e.) when ripping a complete album to a single file"
+    IDS_TOOL_HIDEMAINWND    "Hide the main window when encoding. Status Window minimizes to tray"
+    IDS_TOOL_ENQUEUE        "Append files to the end of a loaded playlist (player must support ""/enqueue"")"
+    IDS_TOOL_FILEFORMAT     "Identifiers:\n\\%1 = Artist\t\t%2 = Title\t\t%3 = Album\n%4 = Year\t\t%5 = Genre\t\t%a = Track # (leading zero)\n%b = Total # Tracks\t%c = Disc ID (Hexadec.)\t%d = Vol. ID (Hexadecimal)\n\\ = subfolder\t\tL = lower case\t\tU = upper case\n\t\t\t(example: %L1 or % U2)"
 END
 
 STRINGTABLE DISCARDABLE 
 BEGIN
-	IDS_TOOL_ORIG				"MP3 als Original markieren. Benutzen Sie dies für Ihre eigenen Aufnahmen."
-	IDS_TOOL_PRIVATE			"MP3 als Privat markieren."
-	IDS_TOOL_CHANNELS			"Wie viele Kanäle für die Datei (Stereo/Mono etc.)?"
-	IDS_TOOL_MINBITRATE			"Bitrate für Datei. Hohe Bitrate <-> Hohe Qualität aber große Datei."
-	IDS_TOOL_MAXBITRATE			"Maximale VBR bitrate. Wird bei konstante Bitaret ignoriert."
-	IDS_TOOL_ABR				"Encoder hält konstante Bitrate und benutzt höhere nur, wenn benötigt."
-	IDS_TOOL_VBRMETHOD			"Konstante oder variable Bitrate für MP3 beutzen?"
-	IDS_TOOL_VBRQUALITY			"9 (niedrigste Qualität/größte Störung) - 0 (Höchste Qualität/kleinste Störung). "
-	IDS_TOOL_MPEGVER			"MPEG I oder MPEG II verwenden? (Lame unterstützt dies z.Z. noch nicht.)."
-	IDS_TOOL_FORMATSTR			"Setup the filename of the encoded files. You may add subdirectories here."
-	IDS_TOOL_WRITEID3			"Im ID3 Tag werden zusätzliche Infos wie Künstler/Song etc gespeichert."
-    IDS_ID3SETT_INV_FSTR    "Der Dateiname enthält ungültige Zeichen! Die Zeichen / * ? < > | "" : dürfen nicht verwendet werden.\nSie werden wie folgt ersetzt:\n\n\n/ = -      * = -\n? = -      < = (\n> = )      | = -\n: =  -      "" = '\n\n"
-    IDS_PLUGIN_NOSEL        "Kein Plugin ausgewählt"
+    IDS_TOOL_ORIG           "Set the Original bit to the mp3 bitstream. Use this for your own recorings."
+    IDS_TOOL_PRIVATE        "Set the Private bit to the mp3 bitstream."
+    IDS_TOOL_CHANNELS       "How many channels for the output file?"
+    IDS_TOOL_MINBITRATE     "The bitrate for the mp3 file. Higher bitrate: better sound and bigger file."
+    IDS_TOOL_MAXBITRATE     "Maximum VBR bitrate. Ignored in CBR mode."
+    IDS_TOOL_ABR            "Encoder will maintain an average bitrate, using higher bitrates if needed."
+    IDS_TOOL_VBRMETHOD      "Use a constant bitrate (CBR) or a variable bitrate (VBR) for the mp3?"
+    IDS_TOOL_VBRQUALITY     "9 (lowest quality/biggest distortion) - 0 (highest quality/lowest distortion). "
+    IDS_TOOL_MPEGVER        "Encode to MPEG I or MPEG II ? (Note: lame doesn't support this, yet. Future use)."
+    IDS_TOOL_FORMATSTR      "Setup the filename of the encoded files. You may add subdirectories here."
+    IDS_TOOL_WRITEID3       "Write the id3 tag to the mp3. LameFE will only write id3v2 tags."
+    IDS_TOOL_QUALPRESET     "Use a quality preset. Other values than normal may override settings made here."
+    IDS_ID3SETT_INV_FSTR    "The format String contains invalid characters! The characters / * ? < > | "" : are not allowed in a filename.\nThey will be replaced as followed:\n\n\n/ = -      * = -\n? = -      < = (\n> = )      | = -\n: =  -      "" = '\n\n"
+    IDS_PLUGIN_NOSEL        "No plugin selected"
 END
 
 STRINGTABLE DISCARDABLE 
 BEGIN
     IDS_PLUGIN_DEINST       "This will remove %s from your LameFE installation. Are you sure?"
     IDS_PLUGIN_DEINSTFAILED "Could not remove %s"
-    	IDS_ERR_LONGFILENAME	"Der Dateiname\n%s\nist zu lang. Die Datei wird als\n%s\ngespeichert."
-	IDS_ENC_DISCARD_LOG		"Möchten Sie die Status Meldungen / Logdatei speichern oder verwerfen?"
- 	IDS_FDB_PROXYCONNECT		"Verbinde mit Proxyserver..."
-	IDS_FDB_SERVERCONNECT		"Verbinde mit freeDB Sserver..."
-	IDS_ERR_NOSERVERRESPONSE	"Der FreeDB Server antwortet nicht. Überprüfen Sie Ihre Netzwerkkonfiguration und/oder stellen Sie eine Verbindung zum Internet her.\n Eventuell müssen Sie auch einen Proxyserver im FreeDB Setup angeben.\nWenn Sie sicher sind, daß Ihre Einstellungen korrekt sind wählen Sie einen anderen FreeDB server."
-	IDS_ERR_GETTRACKPOSFAILED	"Fehler beim Berechnen der Trackposition [Fehler unbekannt]"
-	IDS_FDB_NOENTRY				"Der FreeDB entält keinen Eintrag für die CD mit der DISCID:%X in seiner Datenbank."
-	IDS_FDB_SELECTENTRY			"Bitte wählen Sie einen Eintrag aus der Liste!"
-	IDS_FDB_QUERYSTART			"Starte FreeDB Abfrage..."
-	IDS_FDB_TRACKUPDATE			"Parse Daten..."
+    IDS_ERR_LONGFILENAME    "The filename\n%s\nis too long. It will be saved as\n%s"
+    IDS_ENC_DISCARD_LOG     "Do you want to save or discard the log messages?"
+    IDS_FDB_PROXYCONNECT    "Connecting to proxy..."
+    IDS_FDB_SERVERCONNECT   "Connecting to freedb server..."
+    IDS_ERR_NOSERVERRESPONSE 
+                            "The freeDB server isn't responding. Check your internet connection and Network configuration.\n May be you have to setup a HTTP Proxy in the settings dialog.\nTry to use another freeDB server if your settings are correct."
+    IDS_ERR_GETTRACKPOSFAILED 
+                            "Failed to read track positions [unknown reason]"
+    IDS_FDB_NOENTRY         "FreeDB server does not contain the specifed album with DISCID:%X in its database"
+    IDS_FDB_SELECTENTRY     "Please select an entry from the listbox!"
+    IDS_FDB_QUERYSTART      "Starting freedb query..."
+    IDS_FDB_TRACKUPDATE     "Updating track information..."
 END
 
 STRINGTABLE DISCARDABLE 
 BEGIN
-	IDS_UNSUPPORTEDFILE			"Nicht unterstützes Datei Format: %s"
+    IDS_UNSUPPORTEDFILE     "Unsupported filetype : %s"
     IDS_TOOL_REPORTSTYLE    "Create an report style logfile. Not all events are logged. Creates an overview."
     IDS_TOOL_NEWLOGSTYLE    "Log all events with time and status- / errormessage."
     IDS_TOOL_STARTSESSION   "This text will be placed at the beginning of each session in the logfile."
     IDS_TOOL_LOGENTRY       "This is the text for the logentry of each file."
     IDS_TOOL_ENDSESSION     "This text will be place at the end of each session in the logfile."
-	IDS_LOGSAVEDSUCCESS			"Logfile saved successfully as %s"
-	IDS_TOOL_SHOWSPLASH			"Show splashscreen at program startup or not?"
- 	IDS_TOOL_CONFIGUREIN	"Eingabe Gerät / Plugin konfigurieren"
-	IDS_TOOL_CONFIGUREOUT	"Ausgabe Encoder konfigurieren"
-	IDS_TOOL_INPUTDEVICE	"Wählen Sie ein Eingabe Gerät / Plugin"
-	IDS_TOOL_OUTPUTDEVICE	"Wählen Sie den Ausgabe-Encoder"
-	IDS_TOOL_ALWAYSTAGEDIT		"Den Albumtag Editor immer im Hauptfenster anzeigen."
-	IDS_BKSLHWARN			"Der Dateinamens-String darf nicht mit einem ""\\"" anfangen. Der Dateiname / das Verzeichnis wird relativ zum Basisausgabepfad erstellt. Wenn Ihr Basispfad z.B. ""C:\\Meine Musik"" ist und Ihr Dateinamens-String ist ""%1\%1 - %3"", dann wird Ihre Datei als\n""C:\\Meine Musik\\<Artist>\\<Artist> - <Songtitel>.mp3"" gespeichert.\nDer führende jetzt Backslash wird vom String entfernt."
-	IDS_DBLBACKSLASH		"Doppelter Backslash (\\\\) gefunden. Dies ist nicht erlaubt, da dann ein Verzeichnisname mit 0 Zeichen entsteht. Der doppelte Backslash wird jetzt entfernt."
-	IDS_CDDB_UPDATEDSERVERS	"FreeDB Serverliste wurde erfolgreich aktualisiert!"
+    IDS_LOGSAVEDSUCCESS     "Logfile saved successfully as %s"
+    IDS_TOOL_SHOWSPLASH     "Show splashscreen at program startup or not?"
+    IDS_TOOL_CONFIGUREIN    "Configure Input Device"
+    IDS_TOOL_CONFIGUREOUT   "Configure Output Device"
+    IDS_TOOL_INPUTDEVICE    "Select Input Source / Device"
+    IDS_TOOL_OUTPUTDEVICE   "Select Target Encoder"
+    IDS_TOOL_ALWAYSTAGEDIT  "Always show Album Tag Editor in the main window."
+    IDS_BKSLHWARN           "The filename string may not start with a ""\\"". The filename / folders will be created relatively to the Base Output Path. If your Base Path is for example ""C:\\My Music"" and your filename-string is ""%1\\%1 - %3"" your file will be saved as\n""C:\\My Music\\<Artist>\\<Artist> - <Songtitle>.mp3"".\nThe leading backslash will be removed from the string."
+    IDS_DBLBACKSLASH        "Double backslash (\\\\) found. This is not alowed as it will create a zerolength directory-name. It will be removed automatically now."
+    IDS_CDDB_UPDATEDSERVERS "Successfully updated freeDB serverlist!"
 END
 
 STRINGTABLE DISCARDABLE 
 BEGIN
-    IDS_ENC_ID3FAILED       "Konnte ID3 Tag nicht schreiben. Interner Fehler."
-    IDS_ENC_WRITEID3        "Schreibe ID3 Tags"
-    IDS_ENC_ID3INTERR       "Konnte ID3 Tag nicht schreiben. Interner Fehler."
-    IDS_ENC_LOGENTRY        "Original: %s\nGespeichert als: %s\nOriginal Format: %d kHz, %d bit %d Kanäle\nStatus: %s\n\n"
-    IDS_ENC_LOGFAILED       "Konnte nicht in LameFE.log schreiben."
-    IDS_ENC_FILEEXISTS      "Die Datei %s ist bereits vorhanden. Überschreiben?"
-    IDS_ENC_DENIEDOVWR      "Die Datei existiert bereits und der Benutzer hat das Überschreiben verhindert."
-    IDS_ENC_ERRDIRCREATE    "Fehler beim Erstellen des Verzeichnisses "
-    IDS_ENC_TOOLTIP         "LameFE 2.2  | Arbeite an Datei / Track "
-    IDS_ENC_INITERR         "Schwerwiegend: Initialisieren des Encoders fehlgeschlagen."
-    IDS_ENC_SUCCESS         "Erfolgreich abgeschlossen"
-    IDS_ENC_PREPARING       "Bereite vor..."
-    IDS_ENC_RIPPING         "Kopiere Audio CD"
-    IDS_ENC_RIPPERROR       "Fehler beim Kopieren des Audiotracks "
-    IDS_ENC_NUMERRORS       "%d Fehler"
-    IDS_ENC_VIEW_LOG_ERR    "Während des Vorgangs sind Fehler aufgetreten. Möchten Sie die Logdatei jetzt einsehen?"
+    IDS_ENC_ID3FAILED       "Could not write id3-tag. Initialisation of tagWriter.dll failed."
+    IDS_ENC_WRITEID3        "Rendering id3 frames to file."
+    IDS_ENC_ID3INTERR       "Could not write id3-tag. Internal error."
+    IDS_ENC_LOGFAILED       "Could not write data to lameFE.log"
+    IDS_ENC_FILEEXISTS      "File %s already exists. Overwrite?"
+    IDS_ENC_DENIEDOVWR      "File already exists. User denied overwriting. File skipped."
+    IDS_ENC_ERRDIRCREATE    "Error creating directory "
+    IDS_ENC_TOOLTIP         "lameFE 2.0 | Working on file / track "
+    IDS_ENC_INITERR         "Fatal: Encoder-engine initialisation failed."
+    IDS_ENC_SUCCESS         "Encoded successfully"
+    IDS_ENC_PREPARING       "Preparing..."
+    IDS_ENC_RIPPING         "Ripping Audio CD"
+    IDS_ENC_RIPPERROR       "Error ripping audiotrack"
+    IDS_ENC_NUMERRORS       "%d error(s)"
+    IDS_ENC_VIEW_LOG_ERR    "There have been errors during encoding. View logfile?"
 END
 
 STRINGTABLE DISCARDABLE 
 BEGIN
-    IDS_ENC_VIEW_LOG        "Vorgang erfolgreich abgeschlossen. Logdatei anzeigen?"
-    IDS_ENC_FILE_XOFY       "Datei %d von %d"
-    IDS_ENC_TRACK_XOFY      "Track %d von %d"
-    IDS_ENC_EXTRACT_TRACK   "Kopiere Audiotrack %d"
-    IDS_ENC_JITTER_ERR      "Jitter Error (Sektoren %d <-> %d)"
-    IDS_ENC_FINISHED        "Abgeschlossen."
-    IDS_ENC_CLOSE_BTN       "&Verwerfen"
-    IDS_ENC_WRITE_M3U       "Schreibe Playlist."
-    IDS_ENC_SAVED_M3U       "Playlist gespeichert als "
-    IDS_ENC_FAILED_M3U      "Fehler beim Erstellen von "
-    IDS_ENC_WAVE_ENC        "Encodiere..."
-    IDS_ENC_WAVE_FILES      "Encodiere files..."
-    IDS_CDDB_ERR_CFGWRITE   "Fehler beim Schreiben in cddb.cfg"
-    IDS_CDDB_ERR_CFGREAD    "Fehler beim Lesen der freedb.cfg. Bitte aktualisieren Sie die Serverliste im Einstellungsdialog."
-    IDS_CDDB_ERR_WINSOCK    "Fehler beim Initialisieren von Winsock.dll"
-    IDS_CDDB_ERR            "Verbindung zum Server fehlgeschlagenr.\n[Fehler: %d, Antwort: %s]"
+    IDS_ENC_VIEW_LOG        "Encoding process finished successfully. View logfile?"
+    IDS_ENC_FILE_XOFY       "File %d of %d"
+    IDS_ENC_TRACK_XOFY      "Track %d of %d"
+    IDS_ENC_EXTRACT_TRACK   "Extracting Audio Track %d"
+    IDS_ENC_JITTER_ERR      "Jitter error (Sectors %d <-> %d)"
+    IDS_ENC_FINISHED        "Finished."
+    IDS_ENC_CLOSE_BTN       "&Discard"
+    IDS_ENC_WRITE_M3U       "Writing Playlist"
+    IDS_ENC_SAVED_M3U       "Saved playlist to "
+    IDS_ENC_FAILED_M3U      "Could not create "
+    IDS_ENC_WAVE_ENC        "Encoding..."
+    IDS_ENC_WAVE_FILES      "Encoding files..."
+    IDS_CDDB_ERR_CFGWRITE   "Error writing cddb.cfg"
+    IDS_CDDB_ERR_CFGREAD    "Error reading cddb.cfg. Go to freeDB Settings and set up servers first!"
+    IDS_CDDB_ERR_WINSOCK    "Error initializing Winsock!"
+    IDS_CDDB_ERR            "Could not connect to server.\n[Error: %d, Response:%s]"
 END
 
 STRINGTABLE DISCARDABLE 
 BEGIN
-    IDS_TOOL_PLAYSOUND		    "Sounddatei abspeielen, wenn fertig (Benutzt Windows Standard Sound)."
-	IDS_TOOL_SAVEWINPOS			"Position und Status des Hauptfensters speichern."
-	IDS_TOOL_HIGHCOLOR			"Echtfarben Icons auf Toolbar benutzen . Für alte Grafikkarten abschalten."
-	IDS_TOOL_GETFOCUS			"Statusfenster in den Vordergrund bringen und Tastaturfokus holen."
-    IDS_TOOL_IDENTCOMB      "Alle Kombinationen der Platzhalter ist hier erlaubt."
-    IDS_FDB_GETENTRIES      "Lese Einträge..."
-	IDS_ID3_CHOOSE_FILE			"Sie müssen erst einen Track/eine Datei aus der Liste wählen."
-	IDS_CUESHEETSAVED			"Cuesheet wurde erfolgreich als\n%s\ngespeichert."
-	IDS_CUESHEETFAILED			"Konnte Cuesheet nicht erstellen. Zugriffsfehler beim Schreiben der Datei."
-	IDS_SCSINOTSUPPORTED		"Das Betriebssystem Unterstützt keinen Nativen SCSI Zugriff.\nSie müssen einen ASPI Treiber installieren umd LameFE benutzen zu können. Lesen Sie die F.A.Q. oder die Hilfedatei für mehr Informationen."
-	IDS_FAILEDLOADINGASPI		"Fehler: Fehler beim Laden des ASPI Treibers.\nSie müssen einen ASPI Treiber installieren umd LameFE benutzen zu können. Lesen Sie die F.A.Q. oder die Hilfedatei für mehr Informationen"
-	IDS_FAILEDGETASPISTATUS		"Fehler: Konnte ASPI Treiberstatus nicht abfragen.\nSie müssen einen ASPI Treiber installieren umd LameFE benutzen zu können. Lesen Sie die F.A.Q. oder die Hilfedatei für mehr Informationen."
-	IDS_FAILEDASPINOTSELECTED	"Fehler beim Laden des ASPI Treibers!\nVersuchen Sie die Unterstützung für Nativen SCSI Zugriff im CDROM Einstellungsdialog zu aktivieren. Für mehr Informationen lesen Sie die Hilfedatei oder F.A.Q."
-	IDS_AUDIOFILEPLUGIN			"Audiodatei (Plugin)"
-	IDS_ERR_SHUTDOWN			"Konnte Windows nicht herunterfahren. Zugriff verweigert oder interner Fehler."
-	IDS_CDMODENODROP			"Wechseln Sie erst in den Audiodateimodus bevor Sie Dateien hier ablegen."
+    IDS_TOOL_PLAYSOUND      "Play notification sound when finished encoding (will use windows default sound)."
+    IDS_TOOL_SAVEWINPOS     "Save position of the LameFE main window for next session."
+    IDS_TOOL_HIGHCOLOR      "Use highcolor toolbar. Deactivate this for older graphic devices."
+    IDS_TOOL_GETFOCUS       "Bring the status window up to front and get the keyboard focus when finished."
+    IDS_TOOL_IDENTCOMB      "Any combination of IDENTIFIERS and characters is allowed here."
+    IDS_FDB_GETENTRIES      "Getting entries..."
+    IDS_ID3_CHOOSE_FILE     "Please choose file/track from the list first"
+    IDS_CUESHEETSAVED       "Cuesheet successfully saved as\n%s"
+    IDS_CUESHEETFAILED      "Could not write cuesheet file. File access error."
+    IDS_SCSINOTSUPPORTED    "Native NT SCSI Library support is not supported by this operating system.\nYou have to install ASPI drivers in order to use LameFE. Read the LameFE FAQ in the help file for more details."
+    IDS_FAILEDLOADINGASPI   "Error: Failed to load the Windows ASPI drivers.\nYou have to install ASPI drivers in order to use LameFE. Read the LameFE FAQ in the help file for more details."
+    IDS_FAILEDGETASPISTATUS "LameFE could not load the ASPI driver (wnaspi32.dll)!\nTry to use the ""Native NT SCSI library"" instead?"
+    IDS_FAILEDASPINOTSELECTED 
+                            "Failed to load the ASPI drivers!\nTry the Native NT SCSI library option in the CD-Drive configuration settings dialog box. See the LameFE help file for more details."
+    IDS_AUDIOFILEPLUGIN     "Audio file (Plugin)"
+    IDS_ERR_SHUTDOWN        "Could not shutdown computer. Permission denied or internal error."
+    IDS_CDMODENODROP        "Switch to Audiofile mode first before dropping files into the window."
 END
 
 STRINGTABLE DISCARDABLE 
 BEGIN
-	IDS_TOOL_PLUGINPATH			"Pfad zum Pluginverzeichnis (z.B. in_mod.dll.)"
-	IDS_TOOL_READCDPINI			"Immer CDPlayer.ini lesen, wenn neue CD eingelegt wird."
-	IDS_TOOL_WRITECDPINI		"FreeDB abfrage immer in CDPlayer.ini speichern."
-	IDS_TOOL_CDTEXTREAD			"CDText immer lesen (Laufwerk muss CDText unterstüzten)."
- 	IDS_TOOL_DEFAULTDRIVE		"Standard CD_Laufwerk wählen."
-	IDS_TOOL_CDROMTYPE			"Laufwerkstyp wählen. Einige Hersteller benutzen spezielle Protokolle."
-	IDS_TOOL_EJECTCD			"CD Auswerfen, wenn Vorgang abgeschlossen."
-	IDS_TOOL_LOCKDRIVE			"Laufwerk wbeim Lesen abschließen. Verhindert versehentliches Öffnen der Lade."
-	IDS_TOOL_RMETHOD			"Paranoya Modus überprüft Daten Bit pro Bit. Standard ist OK für die Meisten."
-	IDS_TOOL_SELECT				"Alle Tracks standardmässig auswählen."
-	IDS_TOOL_SWAPCHNL			"Linken und rechten Kanal vertauschen"
-	IDS_TOOL_SPINUP				"Zeit in Sekunden zum Hochfahren des Laufwerks."
-	IDS_TOOL_NTSCSI				"Native Windows NT SCSI Bibliothek statt ASPI Treiber benutzen."
-	IDS_TOOL_CDSPEED			"Maximale Geschwindigkeit zum Lesen von CDDA (Nicht die max. Laufwerksgeschw.)."
-	IDS_TOOL_CP					"MP3 als copyrighted markieren."
-	IDS_TOOL_CRC				"CR Prüfsumme in MP3 schreiben."
+    IDS_TOOL_PLUGINPATH     "Path of the Winamp plugin directory (i.e. in_mod.dll.)"
+    IDS_TOOL_READCDPINI     "Automaticly read album information from CDPlayer.ini when new CD is loaded."
+    IDS_TOOL_WRITECDPINI    "Automaticly save album information to CDPlayer.ini after freeDB/CDdb query."
+    IDS_TOOL_CDTEXTREAD     "Read CDText information when new CD is loaded (CD drive must support CD Text)."
+    IDS_TOOL_DEFAULTDRIVE   "Select the default CD drive."
+    IDS_TOOL_CDROMTYPE      "Select CD drive type. Some manufacturers use own protocols to access CDs."
+    IDS_TOOL_EJECTCD        "Eject the CD when finished ripping process"
+    IDS_TOOL_LOCKDRIVE      "This will lock the CD Drive during the ripping process."
+    IDS_TOOL_RMETHOD        "Paranoya mode will verify the data bit per bit. Standard is OK for most users."
+    IDS_TOOL_SELECT         "Select all tracks in the tracklist by default"
+    IDS_TOOL_SWAPCHNL       "Swap left and right channel"
+    IDS_TOOL_SPINUP         "Time your CD drive needs to spin up."
+    IDS_TOOL_NTSCSI         "Use the native Windows NT SCSI library instead of ASPI driver."
+    IDS_TOOL_CDSPEED        "Maximum speed you CD drive can read CDDA. (NOT the max. speed of your CD drive)."
+    IDS_TOOL_CP             "Set Copyright bit to the mp3 bitstream."
+    IDS_TOOL_CRC            "Write CRC checksum to mp3."
 END
 
 STRINGTABLE DISCARDABLE 
@@ -1558,54 +1498,27 @@ END
 
 STRINGTABLE DISCARDABLE 
 BEGIN
-    ID_FILE_MRU_FILE1       "Open this document"
-    ID_FILE_MRU_FILE2       "Open this document"
-    ID_FILE_MRU_FILE3       "Open this document"
-    ID_FILE_MRU_FILE4       "Open this document"
-    ID_FILE_MRU_FILE5       "Open this document"
-    ID_FILE_MRU_FILE6       "Open this document"
-    ID_FILE_MRU_FILE7       "Open this document"
-    ID_FILE_MRU_FILE8       "Open this document"
-    ID_FILE_MRU_FILE9       "Open this document"
-    ID_FILE_MRU_FILE10      "Open this document"
-    ID_FILE_MRU_FILE11      "Open this document"
-    ID_FILE_MRU_FILE12      "Open this document"
-    ID_FILE_MRU_FILE13      "Open this document"
-    ID_FILE_MRU_FILE14      "Open this document"
-    ID_FILE_MRU_FILE15      "Open this document"
-    ID_FILE_MRU_FILE16      "Open this document"
-END
-
-STRINGTABLE DISCARDABLE 
-BEGIN
-    ID_NEXT_PANE            "Switch to the next window pane\nNext Pane"
-    ID_PREV_PANE            "Switch back to the previous window pane\nPrevious Pane"
-END
-
-STRINGTABLE DISCARDABLE 
-BEGIN
     ID_WINDOW_SPLIT         "Split the active window into panes\nSplit"
-END
-
-STRINGTABLE DISCARDABLE 
-BEGIN
-    ID_EDIT_CLEAR           "Erase the selection\nErase"
-    ID_EDIT_CLEAR_ALL       "Erase everything\nErase All"
-    ID_EDIT_COPY            "Copy the selection and put it on the Clipboard\nCopy"
-    ID_EDIT_CUT             "Cut the selection and put it on the Clipboard\nCut"
-    ID_EDIT_FIND            "Find the specified text\nFind"
-    ID_EDIT_PASTE           "Insert Clipboard contents\nPaste"
-    ID_EDIT_REPEAT          "Repeat the last action\nRepeat"
-    ID_EDIT_REPLACE         "Replace specific text with different text\nReplace"
-    ID_EDIT_SELECT_ALL      "Select the entire document\nSelect All"
-    ID_EDIT_UNDO            "Undo the last action\nUndo"
-    ID_EDIT_REDO            "Redo the previously undone action\nRedo"
 END
 
 STRINGTABLE DISCARDABLE 
 BEGIN
     ID_VIEW_TOOLBAR         "Show or hide the toolbar\nToggle ToolBar"
     ID_VIEW_STATUS_BAR      "Show or hide the status bar\nToggle StatusBar"
+END
+
+STRINGTABLE DISCARDABLE 
+BEGIN
+    AFX_IDS_SCRESTORE       "Restore the window to normal size"
+    AFX_IDS_SCTASKLIST      "Activate Task List"
+    IDS_DEFAULTPRESETNOTREMOVABLE 
+                            "Sie können das ""Standard"" Preset nicht löschen!"
+    IDS_COULDNOTREMOVEPRESET 
+                            "Konnte Preset nicht löschen. (Dateizugriff Fehler)."
+    IDS_ERRPRESETCREATE     "Fehler beim Erstellen des Presets."
+    IDS_PRESET_INVALIDNAME  "Der Presetname enthält ungültige Zeichen (/ * ? "" < > | : \\). Bitte entfernen Sie diese Zeichen.\n"
+    IDS_PRESET_NAMENOTALLOWED 
+                            "Bitte geben Sie einen gültigen Namen für das Preset ein. Der Name ""LameFE"" ist für die Standardkonfiguration reserviert und darf nicht verwendet werden."
 END
 
 STRINGTABLE DISCARDABLE 
@@ -1621,25 +1534,17 @@ END
 
 STRINGTABLE DISCARDABLE 
 BEGIN
-    AFX_IDS_SCRESTORE       "Restore the window to normal size"
-    AFX_IDS_SCTASKLIST      "Activate Task List"
-    IDS_DEFAULTPRESETNOTREMOVABLE "You can not delete the default preset!"
-    IDS_COULDNOTREMOVEPRESET 
-                            "Could not remove the preset. Exception during file operation."
-END
-
-STRINGTABLE DISCARDABLE 
-BEGIN
-    ID_REMOVE_FILE          "Datei(en) aus Liste entfernen\nDatei(en) entfernen"
-    ID_HELP_HELPINDEX       "Hilfe Index anzeigen\nHilfe Index"
-    ID_HELP_LICENSE         "GNU General Public License anzeigen\nGPL"
-    ID_ID3TAGS_READFREEDBSERVER "CD in FreeDB Server suchen\nFreeDB abfragen"
-    ID_ID3TAGS_READCDTEXT   "CD-Text lesen (wenn vorhanden)t\nCD Text"
-    ID_ID3TAGS_READCDPLAYERINI "CDPlayer.ini leseni\nCDPlayer.ini lesen"
+    ID_REMOVE_FILE          "Remove file(s) from list\nRemove file(s)"
+    ID_HELP_HELPINDEX       "Display Help Index\nHelp Index"
+    ID_HELP_LICENSE         "Display GNU General Public License\\Show GPL"
+    ID_ID3TAGS_READFREEDBSERVER 
+                            "Query freeDB Server for Album Information\nQuery FreeDB"
+    ID_ID3TAGS_READCDTEXT   "Read CD Text Information if present\nRead CD Text"
+    ID_ID3TAGS_READCDPLAYERINI "Look up CD in CDPlayer.ini\nRead CDPlayer.ini"
     ID_ID3TAGS_SAVETOCDPLAYERINI 
-                            "CD in  CDPlayer.ini speichern\nCDPlayer.ini speichern"
-    ID_ID3TAGS_ID3TAGEDITOR "Album Tag Editor anzeigen / Verstecken\nAlbum Tag Editor anzeigen / Verstecken (z.B. für ID3 Tags)"
-    ID_SETTINGS_CDREADER    "CD Laufwerk \nCD Laufwerk "
+                            "Save CD Information in CDPlayer.ini\nSave to CDPlayer.ini"
+    ID_ID3TAGS_ID3TAGEDITOR "Toggle Album Tag Editor\nShow / Hide Album Tag Editor (i.e. ID3 tags)"
+    ID_SETTINGS_CDREADER    "Configure CD Drives\\CD Drives"
     ID_SETTINGS_PLUGINS     "Configure Installed Plugins\nPlugins"
     ID_SETTINGS_PREFERENCES "Configure LameFE\nConfigure LameFE"
     ID_SETTINGS_LAMEENCODER "Configure the LAME Encoder\nConfigure Lame"
@@ -1649,14 +1554,14 @@ END
 
 STRINGTABLE DISCARDABLE 
 BEGIN
-    ID_FILE_REMOVE          "Datei(en) entfernen"
+    ID_FILE_REMOVE          "Remove File From List"
     ID_SETTINGS_FREEDBSETUP "Configure FreeDB / Setup Proxy Server\nConfigure FreeDB"
-    ID_FILE_STARTENCODING   "Starte Encodieren\nStart Encodieren[Ein(e) Track/Datei = Eine Datei]"
-    ID_START_TO_SINGLE_FILE "Gesamte CD in eine Datei rippen (Album Backup, Cuesheet schreiben optional)\nAlbum Backup [Komplette CD = Eine Datei]"
-    ID_VIEW_SHOWTOOLBAR     "Werkzeugleiste anzeigen / verstecken"
-    ID_VIEW_SHOWSTATUSLINE  "Stauszeile anzeigen / versteken"
-    ID_VIEW_RELOADCD        "CD Inhalt neu einlesen"
-    ID_VIEW_SELECTALLTRACKSFILES "Alle Tracks / Dateien markieren"
+    ID_FILE_STARTENCODING   "Start Encoding Process\nStart Encoding [One Track/File = One File]"
+    ID_START_TO_SINGLE_FILE "Rip the complete album to a single file (Album backup, cuesheet writing optional)\nAlbum Backup [Complete CD = single file]"
+    ID_VIEW_SHOWTOOLBAR     "Show / Hide Toolbar"
+    ID_VIEW_SHOWSTATUSLINE  "Show / Hide Statusline"
+    ID_VIEW_RELOADCD        "Refresh CD contents"
+    ID_VIEW_SELECTALLTRACKSFILES "Select all tracks / files"
 END
 
 STRINGTABLE DISCARDABLE 
@@ -1667,13 +1572,12 @@ BEGIN
     ID_PREVIOUS             "One Track back"
     ID_PAUSE                "Pause playback"
     IDS_SHOW_PLAYER         "Show / Hide Playback Toolbar"
-    ID_BATCH_ALBUM          "Vollautomatisches Albumbackup für mehere CDs. Kann alle CD laufwerke benutzen.\nAutomatisches Album Backup für mehrere CDs [Komplette CD = Eine Datei]"
-    ID_BATCH_SINGLETRACKS   "Automatisches Rippen mehrerer CDs. Kann alle CD Laufwerke benutzen.\nRippe Audio CDs [Batch Modus / Ein Track = Eine Datei]"
-    ID_CHECKFORNEWVESION    "Überprüft ob eine neue Version von LameFE im Internet verfügbar ist."
-    ID_HELP_REPORTABUG      "Einen Fehler im Programm an den Autor melden"
+    ID_BATCH_ALBUM          "Automated Album backup for many CDs. Can use all CD drives.\nAutomated multiple CD Backup [Complete CD = single file]"
+    ID_BATCH_SINGLETRACKS   "Automated Ripping of many CDs. Can use all CD drives.\nRips Audio CDs [Batch Mode / One Track = One File]"
+    ID_CHECKFORNEWVESION    "Checks if a new version of LameFE is available on the net."
+    ID_HELP_REPORTABUG      "Report a Bug in the program."
 END
-
-#endif    // Englisch (USA) resources
+#endif    // Deutsch (Deutschland) resources
 /////////////////////////////////////////////////////////////////////////////
 
 

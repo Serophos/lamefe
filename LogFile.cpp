@@ -19,6 +19,7 @@
 #include "stdafx.h"
 #include "stdafx.h"
 #include "LogFile.h"
+#include "resource.h"
 
 #ifdef _DEBUG
 #undef THIS_FILE
@@ -61,7 +62,7 @@ void CLogFile::StartSession(int numEntries, CString outModule)
 	tLocalTime = localtime(&m_tStartTime);
 
 	CString	strTmp;
-	strTmp.Format("%02d:%02d:%02d Starting Session (%02d tasks, %s)", tLocalTime->tm_hour, tLocalTime->tm_min, tLocalTime->tm_sec, numEntries, outModule);
+	strTmp.Format(IDS_LOG_STARTSESSION, tLocalTime->tm_hour, tLocalTime->tm_min, tLocalTime->tm_sec, numEntries, outModule);
 	
 	m_msgOut->InsertItem(nLog, strTmp, 0);
 	m_msgOut->EnsureVisible(nLog++, FALSE);
@@ -83,7 +84,7 @@ void CLogFile::FinalizeSession()
 
 	tLocalTime = localtime(&m_tEndTime);
 	CString strTmp;
-	strTmp.Format("%02d:%02d:%02d Session Finished.", tLocalTime->tm_hour, tLocalTime->tm_min, tLocalTime->tm_sec);
+	strTmp.Format(IDS_LOG_FINISHEDSESSION, tLocalTime->tm_hour, tLocalTime->tm_min, tLocalTime->tm_sec);
 	m_msgOut->InsertItem(nLog, strTmp, 0);
 	m_msgOut->EnsureVisible(nLog++, FALSE);
 
@@ -120,10 +121,11 @@ void CLogFile::StartEntry(CString strInFile, CString strOutFile, CString inModul
 	tLocalTime = localtime(&m_tTmpStartTime);
 
 	CString	strTmp;
-	strTmp.Format("%02d:%02d:%02d Starting File (%02d/%02d): %s (Module %s)", tLocalTime->tm_hour, tLocalTime->tm_min, tLocalTime->tm_sec, m_nCurrentEntry + 1, m_nNumEntries, strInFile, inModule);
+	strTmp.Format(IDS_LOG_STARTFILE, tLocalTime->tm_hour, tLocalTime->tm_min, tLocalTime->tm_sec, m_nCurrentEntry + 1, m_nNumEntries, strInFile, inModule);
 	
 	m_msgOut->InsertItem(nLog++, strTmp, 0);
-	m_msgOut->InsertItem(nLog, "Save as: " + strOutFile, 2);
+	strTmp.Format(IDS_LOG_SAVEAS, strOutFile);
+	m_msgOut->InsertItem(nLog, strTmp, 2);
 	m_msgOut->EnsureVisible(nLog++, FALSE);
 	m_msgOut->SetColumnWidth(0, LVSCW_AUTOSIZE);
 }
@@ -138,7 +140,7 @@ void CLogFile::SetInFormat(WAVEFORMATEX *wfx)
 				  );
 //	m_staInFormat.Add(strTmp);
 
-	strTmp.Format("File has format %d kHz %d bit %d channels", wfx->nSamplesPerSec, wfx->wBitsPerSample, wfx->nChannels);
+	strTmp.Format(IDS_LOG_FILEFORMAT, wfx->nSamplesPerSec, wfx->wBitsPerSample, wfx->nChannels);
 	m_msgOut->InsertItem(nLog, strTmp, (wfx->wBitsPerSample == 16 ? 0 : 1));
 	m_msgOut->EnsureVisible(nLog++, FALSE);
 }
@@ -148,34 +150,17 @@ void CLogFile::FinalizeEntry()
 
 	time_t		tTmpEndTime;
 	struct tm*	tLocalTime;
-	double		nElapsedSecs;
+	//double		nElapsedSecs;
 	CString		strTmp;
 
 	time(&tTmpEndTime);
-	nElapsedSecs = difftime(tTmpEndTime, m_tTmpStartTime);
-	tLocalTime = localtime(&m_tTmpStartTime);
+	//nElapsedSecs = difftime(tTmpEndTime, m_tTmpStartTime);
+	//tLocalTime = localtime(&m_tTmpStartTime);
 
-	strTmp.Format("%02d:%02d:%02d", tLocalTime->tm_hour, tLocalTime->tm_min, tLocalTime->tm_sec);
-/*	m_staSystemTime.Add(strTmp);
-	strTmp.Format("%02.1f", nElapsedSecs / 60);
-	m_staTimeUsed.Add(strTmp);
-
-	double nFileSizeIn = 0;
-	double nFileSizeOut = 0;
-	double nCompressionRatio = 0;
-	CFileStatus fStatus;
-
-	CFile::GetStatus(m_staInFiles.GetAt(m_nCurrentEntry), fStatus);
-	nFileSizeIn  = fStatus.m_size;
-	CFile::GetStatus(m_staOutFiles.GetAt(m_nCurrentEntry), fStatus);
-	nFileSizeOut = fStatus.m_size;
-	nCompressionRatio = nFileSizeOut / (nFileSizeIn != 0 ? nFileSizeIn : 1) * 100;
+	//strTmp.Format("%02d:%02d:%02d", tLocalTime->tm_hour, tLocalTime->tm_min, tLocalTime->tm_sec);
 	
-	strTmp.Format("%03d%%", (int)nCompressionRatio);
-	m_staCompression.Add(strTmp);
-*/
 	tLocalTime = localtime(&tTmpEndTime);
-	strTmp.Format("%02d:%02d:%02d File Finished.", tLocalTime->tm_hour, tLocalTime->tm_min, tLocalTime->tm_sec);
+	strTmp.Format(IDS_LOG_FINISHEDFILE, tLocalTime->tm_hour, tLocalTime->tm_min, tLocalTime->tm_sec);
 	m_msgOut->InsertItem(nLog, strTmp, 0);
 	m_msgOut->EnsureVisible(nLog++, FALSE);
 
@@ -187,7 +172,10 @@ void CLogFile::SetErrorMsg(int nEntry, CString strMessage)
 
 	m_staErrors.SetAt(nEntry, strMessage);
 	m_nNumErrors++;
-	m_msgOut->InsertItem(nLog, strMessage, (strMessage == "Encoded successfully" ? 0 : 1));
+	
+	CString strTmp;
+	strTmp.LoadString(IDS_ENC_SUCCESS);
+	m_msgOut->InsertItem(nLog, strMessage, (strMessage == strTmp ? 0 : 1));
 	m_msgOut->EnsureVisible(nLog++, FALSE);
 }
 

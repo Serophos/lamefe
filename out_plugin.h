@@ -60,7 +60,15 @@ typedef struct
 
 
 	////////////////////////////////////////////////////////////////////////
-	// int Open(...) - Open file for write. Returns -1 on fail and 0 on success
+	// int Open(...) - Open file for write. 
+	//
+	//     Following return values if an error occurs:
+	//     -1 : File could not be created
+	//     -2 : Invalid file format
+	//     -3 : Other error
+	//     On success this function returns the number off samples (items) to pass
+	//     to write [some encoders expect a certain number of samples]
+	//
 	//
 	// Parameters:
 	//  const char * path

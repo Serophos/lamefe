@@ -29,6 +29,8 @@
 static char THIS_FILE[] = __FILE__;
 #endif
 
+extern CString		g_strIniFile;
+
 /////////////////////////////////////////////////////////////////////////////
 // Dialogfeld CSettingsCDRipper 
 
@@ -181,7 +183,7 @@ BOOL CSettingsCDRipper::Save()
 
 
 	CIni cfg;
-	cfg.SetIniFileName(m_strWd + "\\LameFE.ini");
+	cfg.SetIniFileName(g_strIniFile);
 
 	cfg.SetValue("CD-ROM", "Lock", c_lockDrive.GetCheck());
 	cfg.SetValue("CD-ROM", "Eject", c_ejectWhenFinished.GetCheck());
@@ -244,7 +246,7 @@ void CSettingsCDRipper::InitControls()
 	}
 	
 	CIni cfg;
-	cfg.SetIniFileName(m_strWd + "\\LameFE.ini");
+	cfg.SetIniFileName(g_strIniFile);
 
 	c_ejectWhenFinished.SetCheck(cfg.GetValue("CD-ROM", "Eject", FALSE));
 	c_lockDrive.SetCheck(cfg.GetValue("CD-ROM", "Lock", TRUE));

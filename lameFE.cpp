@@ -25,6 +25,7 @@
 #include "lameFESplash.h"
 #include "cdrip\cdrip.h"
 #include "Ini.h"
+#include "Utils.h"
 
 #pragma comment(linker, "/delayload:CDRip.dll")
 
@@ -33,6 +34,10 @@
 #undef THIS_FILE
 static char THIS_FILE[] = __FILE__;
 #endif
+
+
+CString		g_strIniFile	= "";
+CString		g_strWorkingDir = "";
 
 /////////////////////////////////////////////////////////////////////////////
 // CLameFEApp
@@ -82,7 +87,32 @@ BOOL CLameFEApp::InitInstance()
 #endif
 
 	AfxEnableControlContainer();
+	
+	TCHAR	szBuffer[_MAX_PATH]; 
+	VERIFY(::GetModuleFileName(AfxGetInstanceHandle(), szBuffer, _MAX_PATH));
+	
+	g_strWorkingDir = szBuffer;
+	g_strWorkingDir = g_strWorkingDir.Left(g_strWorkingDir.ReverseFind('\\'));
+	
+	g_strIniFile = g_strWorkingDir + "\\LameFE.ini";
+
+	CIni cfg;
+	cfg.SetIniFileName(g_strIniFile);
+
+	if(!Utils::CheckCOMTL32Dll()){  // Version of Common Controls library is too old
+
+		cfg.SetValue("LameFE", "UseHighColBar", FALSE);
+		TRACE("Deactivated highcoloricons as Common Controls library is too old\n");
+	}
+
 	InitCommonControls();
+
+	if(cfg.GetValue("LameFE", "ShowSplash", TRUE)){
+
+		CLameFESplash * pSplashWnd = new CLameFESplash(IDB_SPLASH,2500);
+		pSplashWnd->Create();
+	}
+
 
 	if (!AfxOleInit())
 	{
@@ -90,6 +120,7 @@ BOOL CLameFEApp::InitInstance()
 		return FALSE;
 	}
 	
+
 	HANDLE hEvent; 
 
 	hEvent = ::CreateEvent(NULL, FALSE, TRUE, AfxGetAppName()); 
@@ -102,24 +133,11 @@ BOOL CLameFEApp::InitInstance()
 		return FALSE; 
 	} 
 
-	TCHAR	szBuffer[_MAX_PATH]; 
-	VERIFY(::GetModuleFileName(AfxGetInstanceHandle(), szBuffer, _MAX_PATH));
-	
-	CString wd = szBuffer;
-	wd = wd.Left(wd.ReverseFind('\\'));
-
-	CIni cfg;
-	cfg.SetIniFileName(wd + "\\LameFE.ini");
-
-	if(cfg.GetValue("LameFE", "ShowSplash", TRUE)){
-
-		CLameFESplash * pSplashWnd = new CLameFESplash(IDB_SPLASH,2500);
-		pSplashWnd->Create();
-	}
 
 	m_bRipperOK = InitCDRipper();
-	SetAutoPlay(!cfg.GetValue("CD-ROM", "DisableAutoPlay", TRUE));
-	//SetRegistryKey(_T("LameFE"));
+	
+	//SetAutoPlay(!cfg.GetValue("CD-ROM", "DisableAutoPlay", TRUE));
+
 
 	LoadStdProfileSettings(0);  // Standard INI-Dateioptionen laden (einschlieﬂlich MRU)
 
@@ -260,7 +278,7 @@ void CLameFEApp::SetAutoPlay(BOOL bEnable)
 	DWORD		len				= 0;
 	DWORD		type			= 0;
 	HKEY		hkResult;
-	DWORD		dwDisposition	= 0;
+	DWORD		dg_strWorkingDirisposition	= 0;
 
 	hKernel32 = LoadLibrary("kernel32.dll");
 
@@ -282,7 +300,7 @@ void CLameFEApp::SetAutoPlay(BOOL bEnable)
 				KEY_ALL_ACCESS, 
 				NULL, 
 				&hkResult, 
-				&dwDisposition
+				&dg_strWorkingDirisposition
 			);
 			if(lResult != ERROR_SUCCESS){
 
@@ -315,12 +333,6 @@ BOOL CLameFEApp::InitCDRipper()
 
 	USES_CONVERSION;
 
-	TCHAR	szBuffer[_MAX_PATH]; 
-	VERIFY(::GetModuleFileName(AfxGetInstanceHandle(), szBuffer, _MAX_PATH));
-	
-	CString wd = szBuffer;
-	wd = wd.Left(wd.ReverseFind('\\'));
-
 	CDEX_ERR cResult = CDEX_OK;
 
 	if(m_hCDRipDll){
@@ -335,14 +347,14 @@ BOOL CLameFEApp::InitCDRipper()
 		m_hCDRipDll = NULL;
 	}
 
-	m_hCDRipDll = LoadLibrary(wd + "\\CDRip.dll");
+	m_hCDRipDll = LoadLibrary(g_strWorkingDir + "\\CDRip.dll");
 
 	if(!m_hCDRipDll){
 
 		cResult = CDEX_ERROR;
 	}
 
-	cResult = CR_Init(wd + "\\lameFE.ini");
+	cResult = CR_Init(g_strIniFile);
 
 	if(cResult != CDEX_OK){  //Error initialisng CD-Ripper
 
@@ -370,7 +382,7 @@ BOOL CLameFEApp::InitCDRipper()
 					// save settings
 					CR_SaveSettings();
 
-					cResult = CR_Init(wd + "\\lameFE.ini");				
+					cResult = CR_Init(g_strIniFile);				
 					if (cResult == CDEX_OK)
 					{
 						//g_bRipperPresent = TRUE;

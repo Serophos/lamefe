@@ -29,6 +29,9 @@
 static char THIS_FILE[] = __FILE__;
 #endif
 
+
+extern CString		g_strIniFile;
+
 /////////////////////////////////////////////////////////////////////////////
 // Dialogfeld CSettingsLookNFeel 
 
@@ -46,6 +49,7 @@ void CSettingsLookNFeel::DoDataExchange(CDataExchange* pDX)
 {
 	CMySettingsPage::DoDataExchange(pDX);
 	//{{AFX_DATA_MAP(CSettingsLookNFeel)
+	DDX_Control(pDX, IDC_REMEMBERLASTENCODER, c_rememberEncoder);
 	DDX_Control(pDX, IDC_SHOW_TAGEDITOR_ONFILE, c_teditOnFile);
 	DDX_Control(pDX, IDC_HIDEMWND_ENC, c_hideMainWnd);
 	DDX_Control(pDX, IDC_CDTEXT_ALWAYSREAD, c_cdTextRead);
@@ -76,7 +80,7 @@ void CSettingsLookNFeel::Init(CString strWd)
 	CMySettingsPage::Init(strWd);
 
 	CIni cfg;
-	cfg.SetIniFileName(m_strWd + "\\LameFE.ini");
+	cfg.SetIniFileName(g_strIniFile);
 	c_silent.SetCheck(cfg.GetValue("LameFE", "SilentMode", FALSE));
 	c_readCDPlayerIni.SetCheck(cfg.GetValue("LameFE", "ReadCDPlayer.ini", TRUE));
 	c_writeCDPlayerIni.SetCheck(cfg.GetValue("LameFE", "WriteCDPlayer.ini", TRUE));
@@ -87,7 +91,7 @@ void CSettingsLookNFeel::Init(CString strWd)
 	c_showAlbumEditor.SetCheck(cfg.GetValue("LameFE", "ShowAlbumEditor", FALSE));
 	c_teditOnFile.SetCheck(cfg.GetValue("LameFE", "ShowAlbumEditoOnFile", FALSE));
 	c_hideMainWnd.SetCheck(cfg.GetValue("LameFE", "HideMainWnd", TRUE));
-
+	c_rememberEncoder.SetCheck(cfg.GetValue("LameFE", "RememberEncoder", TRUE));
 	if(m_pToolTip != NULL){
 
 		m_pToolTip->AddTool(&c_readCDPlayerIni, IDS_TOOL_READCDPINI);
@@ -107,7 +111,7 @@ BOOL CSettingsLookNFeel::Save()
 {
 
 	CIni cfg;
-	cfg.SetIniFileName(m_strWd + "\\LameFE.ini");
+	cfg.SetIniFileName(g_strIniFile);
 	cfg.SetValue("LameFE", "SilentMode", c_silent.GetCheck());
 	cfg.SetValue("LameFE", "ReadCDPlayer.ini", c_readCDPlayerIni.GetCheck());
 	cfg.SetValue("LameFE", "WriteCDPlayer.ini", c_writeCDPlayerIni.GetCheck());
@@ -118,7 +122,7 @@ BOOL CSettingsLookNFeel::Save()
 	cfg.SetValue("LameFE", "ShowAlbumEditor", c_showAlbumEditor.GetCheck());
 	cfg.SetValue("LameFE", "ShowAlbumEditoOnFile", c_teditOnFile.GetCheck());
 	cfg.SetValue("LameFE", "HideMainWnd", c_hideMainWnd.GetCheck());
-
+	cfg.SetValue("LameFE", "RememberEncoder", c_rememberEncoder.GetCheck());
 	return TRUE;
 }
 

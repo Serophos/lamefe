@@ -28,6 +28,8 @@ static char THIS_FILE[]=__FILE__;
 #define new DEBUG_NEW
 #endif
 
+extern CString		g_strIniFile;
+
 //////////////////////////////////////////////////////////////////////
 // Konstruktion/Destruktion
 //////////////////////////////////////////////////////////////////////
@@ -56,7 +58,7 @@ CString CMultimediaFile::GetSaveAs(CString wdir, CString strExt)
 {
 
 	CIni cfg;
-	cfg.SetIniFileName(wdir + "\\LameFE.ini");
+	cfg.SetIniFileName(g_strIniFile);
 
 	CString strPath, strSaveAs, strFormat;
 	strPath = cfg.GetValue("FileNames", "BasePath", wdir + "\\Output");

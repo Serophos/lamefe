@@ -10,7 +10,8 @@
 #endif // _MSC_VER > 1000
 
 #include "BCMenu.h"
-#include "PresetBar.h"
+//#include "PresetBar.h"
+#include "NewPresetBar.h"
 
 class CMainFrame : public CFrameWnd
 {
@@ -45,7 +46,8 @@ protected:  // Eingebundene Elemente der Steuerleiste
 	CStatusBar  m_wndStatusBar;
 	CToolBar    m_wndToolBar;
 	CToolBar	m_wndPlayerBar;
-	CPresetBar  m_wndDlgBar;
+	CNewPresetBar	m_wndPresetBar;
+	//CPresetBar  m_wndDlgBar;
 	CReBar      m_wndReBar;
 	CBitmap     m_bmToolbarHi; 
 

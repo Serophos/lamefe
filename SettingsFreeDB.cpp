@@ -32,6 +32,8 @@
 static char THIS_FILE[] = __FILE__;
 #endif
 
+extern CString		g_strIniFile;
+
 /////////////////////////////////////////////////////////////////////////////
 // Dialogfeld CSettingsFreeDB 
 
@@ -103,7 +105,7 @@ void CSettingsFreeDB::Init(CString strWd)
 	CMySettingsPage::Init(strWd);
 	ReadServerList();
 	CIni cfg;
-	cfg.SetIniFileName(m_strWd + "\\lameFE.ini");
+	cfg.SetIniFileName(g_strIniFile);
 
 	c_remoteServer.SetCurSel(cfg.GetValue("FreeDB", "FreeDB-Server", 0));
 	c_useProxy.SetCheck(cfg.GetValue("FreeDB", "UseProxy", FALSE));
@@ -130,7 +132,7 @@ BOOL CSettingsFreeDB::Save()
 	}
 
 	CIni cfg;
-	cfg.SetIniFileName(m_strWd + "\\lameFE.ini");
+	cfg.SetIniFileName(g_strIniFile);
 
 	//cfg.SetIniFileName(
 	cfg.SetValue("FreeDB", "FreeDB-Server", c_remoteServer.GetCurSel());

@@ -32,6 +32,7 @@
 static char THIS_FILE[] = __FILE__;
 #endif
 
+extern CString g_strIniFile;
 /////////////////////////////////////////////////////////////////////////////
 // Dialogfeld CSettingsPlugin 
 
@@ -139,7 +140,7 @@ void CSettingsPlugin::Init(CString strWd)
 
 	CMySettingsPage::Init(strWd);
 	CIni cfg;
-	cfg.SetIniFileName(strWd + "\\LameFE.ini");
+	cfg.SetIniFileName(g_strIniFile);
 	m_strPluginDir = cfg.GetValue("LameFE", "WinampPluginPath", "");
 }
 

@@ -32,6 +32,7 @@
 static char THIS_FILE[] = __FILE__;
 #endif
 
+extern CString		g_strIniFile;
 /////////////////////////////////////////////////////////////////////////////
 // Dialogfeld CSettingsDlg 
 
@@ -311,7 +312,7 @@ void CSettingsDlg::CheckForDecoders(HTREEITEM hDecoder)
 	CString   strPlugin;
 	
 	CIni cfg;
-	cfg.SetIniFileName(m_strWd + "\\LameFE.ini");
+	cfg.SetIniFileName(g_strIniFile);
 	m_strPluginPath = cfg.GetValue("LameFE", "WinampPluginPath", "");
 
 	BOOL bResult = finder.FindFile(m_strWd + "\\Plugins\\*_in.dll");

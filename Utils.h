@@ -28,6 +28,7 @@
 class Utils  
 {
 public:
+	static BOOL CopyTxtFile(CString strSource, CString strDest);
 	static CString DecryptString(CString strEncrypted);
 	static CString EncryptString(CString strPlain);
 	static CString CreateFilename(CID3Info *id3info, CString strFormat, CString strExt, int nVolID = 0, int nDiscID = 0, int nTrack = 1, int nNumAudioTracks = 1);

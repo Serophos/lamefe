@@ -46,16 +46,20 @@ public:
 // Überschreibungen
 	// Vom Klassen-Assistenten generierte virtuelle Funktionsüberschreibungen
 	//{{AFX_VIRTUAL(FreeDBStatusDlg)
+	public:
+	virtual BOOL Create(UINT nIDTemplate, CWnd* pParentWnd = NULL);
 	protected:
 	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV-Unterstützung
 	//}}AFX_VIRTUAL
 
 // Implementierung
 protected:
+	CMutex m_mLock;
 
 	// Generierte Nachrichtenzuordnungsfunktionen
 	//{{AFX_MSG(FreeDBStatusDlg)
-		// HINWEIS: Der Klassen-Assistent fügt hier Member-Funktionen ein
+	afx_msg void OnTimer(UINT nIDEvent);
+	afx_msg void OnCancelMode();
 	//}}AFX_MSG
 	DECLARE_MESSAGE_MAP()
 };

@@ -32,6 +32,7 @@ static char THIS_FILE[]=__FILE__;
 // Konstruktion/Destruktion
 //////////////////////////////////////////////////////////////////////
 
+extern CString		g_strIniFile;
 
 CPresetBar::CPresetBar()
 {
@@ -76,7 +77,7 @@ void CPresetBar::OnInitDialogBar()
 	CString   strPreset;
 	
 	CIni cfg;
-	cfg.SetIniFileName(m_strWd + "\\LameFE.ini");
+	cfg.SetIniFileName(g_strIniFile);
 
 	strPreset = cfg.GetValue("L.A.M.E.", "PresetName", "default");
 
@@ -101,7 +102,7 @@ void CPresetBar::OnInitDialogBar()
 	}
 
 
-	cfg.SetIniFileName(m_strWd + "\\LameFE.ini");
+	cfg.SetIniFileName(g_strIniFile);
 
 	strPreset = cfg.GetValue("L.A.M.E.", "PresetName", "default");
 
@@ -129,7 +130,7 @@ void CPresetBar::OnSelchangePreset()
 
 	UpdateData(TRUE);
 	CIni cfg;
-	cfg.SetIniFileName(m_strWd + "\\LameFE.ini");
+	cfg.SetIniFileName(g_strIniFile);
 	cfg.SetValue("L.A.M.E.", "PresetName", m_strPreset);
 
 	cfg.SetIniFileName(cfg.GetValue("LameFE", "PresetPath", m_strWd) + "\\" + m_strPreset + ".ini");

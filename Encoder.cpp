@@ -63,6 +63,7 @@ extern DWORD MPEGBitrates[3][3][15];
 // Konstruktion/Destruktion
 //////////////////////////////////////////////////////////////////////
 
+extern CString g_strIniFile;
 
 CEncoder::CEncoder(CString wdir)
 {
@@ -140,7 +141,7 @@ BOOL CEncoder::Init()
 		
 		TRACE("Initializing Encoder for Plugin Output\n");
 
-		outputPlugin = new COutPlugin(wd + "\\Plugins\\" + strOutputDLL, wd + "\\lameFE.ini");
+		outputPlugin = new COutPlugin(wd + "\\Plugins\\" + strOutputDLL, g_strIniFile);
 		
 		if(!outputPlugin->Load()){
 	
@@ -231,7 +232,7 @@ BOOL CEncoder::PrepareWave(CString outFile, int nNumchannels, int nSamplerate, i
 	mmf.nBitsPerSample = nBitspersample;
 	mmf.nChannels = nNumchannels;
 
-	if((dwSamples = outModule->Open(outFile, &mmf, &m_albumInfo)) == -1){
+	if((dwSamples = outModule->Open(outFile, &mmf, &m_albumInfo)) < 0){
 
 		ASSERT(FALSE);
 		return FALSE;
@@ -253,11 +254,11 @@ BOOL CEncoder::PrepareMP3(CString strFilename, int nNumchannels, int nSamplerate
 	// Get Preset and Encoder settings
 	//////////////////////////////////////////////////////////
 	CIni cfg;
-	CString strPreset;
+//	CString strPreset;
 
-	cfg.SetIniFileName(wd + "\\LameFE.ini");
-	strPreset = cfg.GetValue("L.A.M.E.", "PresetName", "default");
-	cfg.SetIniFileName(cfg.GetValue("LameFE", "PresetPath", wd) + "\\" + strPreset + ".ini");
+	cfg.SetIniFileName(g_strIniFile);
+//	strPreset = cfg.GetValue("L.A.M.E.", "PresetName", "default");
+//	cfg.SetIniFileName(cfg.GetValue("LameFE", "PresetPath", wd) + "\\" + strPreset + ".ini");
 	
 
 	/////////////////////////////////////////////////////////
@@ -441,7 +442,7 @@ BOOL CEncoder::DeInit()
 	TRACE("Entering CEncoder::DeInit()\n");
 
 	CIni cfg;
-	cfg.SetIniFileName(wd + "\\LameFE.ini");
+	cfg.SetIniFileName(g_strIniFile);
 
 	if(strOutputDLL == "lame_enc.dll"){
 

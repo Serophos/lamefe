@@ -22,7 +22,7 @@
 #include "AlbumInfoCtrl.h"
 #include "MyComboBox.h"
 #include "EncodingStatusDlg.h"
-#include "PresetBar.h"
+#include "NewPresetBar.h"
 
 typedef CArray<CPlugin, CPlugin>  CPluginArray;
 typedef CArray<CMultimediaFile*, CMultimediaFile*>	CMMFArray;
@@ -64,6 +64,7 @@ public:
 
 // Implementierung
 public:
+	void SaveSettings();
 	void OnFileStartBatchSingle();
 	int m_nSelItem;
 	BOOL IsPluginMode();
@@ -79,10 +80,21 @@ public:
 	virtual void Dump(CDumpContext& dc) const;
 #endif
 
+protected:
+	CString m_strPresetPath;
+	void LoadSettings();
+	void InitProfileBar();
+	void OnSelchangeDevices(BOOL bReset = TRUE);
+	BOOL			  isEjected;
+	CString			  wd;
+	HICON			  m_hIcon;
+
+
 
 // Generierte Message-Map-Funktionen
 protected:
 	afx_msg void OnAlbumInfoUpdated(WPARAM wParam,LPARAM lParam);
+	afx_msg void OnPresetSelChanged(WPARAM nSelection,LPARAM lParam);
 	//{{AFX_MSG(CLameFEView)
 	afx_msg void OnConfigureIn();
 	afx_msg void OnConfigureOut();
@@ -111,12 +123,10 @@ protected:
 	afx_msg void OnSettings();
 	afx_msg void OnHelpReportabug();
 	afx_msg void OnSelchangeOutputDevice();
+	afx_msg void OnSavepreset();
+	afx_msg void OnDeletepreset();
 	//}}AFX_MSG
 	DECLARE_MESSAGE_MAP()
-	void OnSelchangeDevices(BOOL bReset = TRUE);
-	BOOL			  isEjected;
-	CString			  wd;
-	HICON			  m_hIcon;
 
 
 private:
@@ -138,7 +148,7 @@ private:
 	CToolBar		*m_pToolBar;
 	CBitmap			m_listBkImage;
 	CToolTipCtrl*   m_pToolTip;
-	CPresetBar*		m_wndPresetBar;	
+	CNewPresetBar*		m_wndPresetBar;	
 
 };
 

@@ -23,8 +23,8 @@
 #include "mfccddb.h"
 #include "Ini.h"
 #include "ID3Info.h"
-#include "FreeDBStatusDlg.h"
 #include "Utils.h"
+#include "FreeDBStatusDlg.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -35,6 +35,7 @@ static char THIS_FILE[] = __FILE__;
 #define TRACKSPERSEC 75
 #define CB_CDDASECTOR 2352
 
+extern CString		g_strIniFile;
 
 /////////////////////////////////////////////////////////////////////////////
 // Dialogfeld CCDdbQueryDlg 
@@ -85,8 +86,8 @@ BOOL CCDdbQueryDlg::OnInitDialog()
 	CDialog::OnInitDialog();
 
 	FreeDBStatusDlg statusDlg;
-	statusDlg.Create(IDD_FREEDB_STATUS, this);
-	statusDlg.ShowWindow(TRUE);
+	//statusDlg.CreateIndirect(IDD_FREEDB_STATUS, NULL);
+	statusDlg.ShowWindow(SW_SHOWNORMAL);
 	statusDlg.SetMessage("Initializing...");
 	//Initialise the Winsock stack
     if (!AfxSocketInit()){
@@ -100,7 +101,7 @@ BOOL CCDdbQueryDlg::OnInitDialog()
 
 	CString msg;
 	CIni cfg;
-	cfg.SetIniFileName(wd + "\\LameFE.ini");
+	cfg.SetIniFileName(g_strIniFile);
 
 	discID = m_cd->GetDiscID();
 	
@@ -217,8 +218,8 @@ BOOL CCDdbQueryDlg::QueryCDDB()
 	CWaitCursor wc;
 
 	FreeDBStatusDlg statusDlg;
-	statusDlg.Create(IDD_FREEDB_STATUS, this);
-	statusDlg.ShowWindow(TRUE);
+	//statusDlg.Create(IDD_FREEDB_STATUS, NULL);
+	statusDlg.ShowWindow(SW_SHOWNORMAL);
 	
 	int iSel = m_Protocoll.GetCurSel();
 
@@ -381,3 +382,4 @@ void CCDdbQueryDlg::ErrMessageBox(CString strMsg, UINT nType)
 		AfxMessageBox(strMsg, nType);
 	}
 }
+

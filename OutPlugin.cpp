@@ -30,6 +30,7 @@ static char THIS_FILE[]=__FILE__;
 //////////////////////////////////////////////////////////////////////
 // Konstruktion/Destruktion
 //////////////////////////////////////////////////////////////////////
+extern CString		g_strIniFile;
 
 COutPlugin::COutPlugin(CString path2plugin /* = "" */, CString wd /*= "" */)
 {
@@ -152,12 +153,7 @@ void COutPlugin::Configure(HWND hWnd)
 int COutPlugin::GetProfileString(const char *entry, char *value, int size, int formated)
 {
 
-	TCHAR	szBuffer[_MAX_PATH]; 
 	CString strTmp;
-	VERIFY(::GetModuleFileName(AfxGetInstanceHandle(), szBuffer, _MAX_PATH));
-	
-	strTmp = szBuffer;
-	strTmp = strTmp.Left(strTmp.ReverseFind('\\'));
 
 	CIni cfg;
 	cfg.SetIniFileName(strTmp + "\\LameFE.ini");
@@ -171,13 +167,8 @@ int COutPlugin::GetProfileString(const char *entry, char *value, int size, int f
 int COutPlugin::SetProfileString(const char *entry, const char *value)
 {
 
-	TCHAR	szBuffer[_MAX_PATH]; 
 	CString strTmp;
-	VERIFY(::GetModuleFileName(AfxGetInstanceHandle(), szBuffer, _MAX_PATH));
 	
-	strTmp = szBuffer;
-	strTmp = strTmp.Left(strTmp.ReverseFind('\\'));
-
 	CIni cfg;
 	cfg.SetIniFileName(strTmp + "\\LameFE.ini");
 	cfg.SetValue("Plugins", entry, value);

@@ -76,7 +76,12 @@ void CCheckNewVersion::OnOK()
 	try{
 
 		CHttpFile* pFile = (CHttpFile*) is.OpenURL("http://lamefe.sourceforge.net/version.info");
-
+		//some ISPs interfear with a proxy to display adds when the first page is loaded
+		//so we close and opem the file again
+		pFile->Close();
+		pFile = 0;
+		pFile = (CHttpFile*) is.OpenURL("http://lamefe.sourceforge.net/version.info");
+		
 		if(pFile != NULL){
 
 
@@ -102,18 +107,18 @@ void CCheckNewVersion::OnOK()
 		CString strFormatted;
 
 		pEx->GetErrorMessage(szCause, 255);
-		strFormatted.Format("Following error occured: %s", szCause);
+		strFormatted.Format(IDS_UPDATE_ERROR, szCause);
 		AfxMessageBox(strFormatted, MB_OK+MB_ICONEXCLAMATION);
 	}
 
 	if(m_strNewVersion != STR_VERSION_DLG){
 		
-		m_strVersionMsg = "There is a new version of LameFE available on http://lamefe.sourceforge.net";
+		m_strVersionMsg.LoadString(IDS_UPDATE_AVAILABLE);
 		m_cDownload.EnableWindow(TRUE);
 	}
 	else{
 
-		m_strVersionMsg = "You are running the newest version of LameFE.";
+		m_strVersionMsg.LoadString(IDS_UPDATE_NO);
 	}
 	UpdateData(FALSE);
 	//CDialog::OnOK();
@@ -144,7 +149,7 @@ BOOL CCheckNewVersion::OnInitDialog()
 	CDialog::OnInitDialog();
 
 	m_strOldVersion = STR_VERSION_DLG;
-	m_strNewVersion = "Not queried yet";
+	m_strNewVersion.LoadString(IDS_UPDATE_NOTQUERIED);
 
 	UpdateData(FALSE);
 

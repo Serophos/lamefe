@@ -48,8 +48,6 @@ public:
 	//{{AFX_DATA(CSettingsMP3)
 	enum { IDD = IDD_SETTINGS_MP3 };
 	CMyComboBox	c_OutSampleRate;
-	CMyEditCtrl	m_cPresetDsc;
-	CMyComboBox	m_cPresetName;
 	CMyComboBox	m_cThreadPriority;
 	CMyEditCtrl	c_abr;
 	CMyComboBox	c_maxBitrate;
@@ -67,8 +65,6 @@ public:
 	CMyComboBox	c_bitsPerSample;
 	CString	m_encoderVersion;
 	int		m_abr;
-	CString	m_strPresetName;
-	CString	m_strDescription;
 	int		m_nMode;
 	int		m_nVersion;
 	//}}AFX_DATA
@@ -85,8 +81,8 @@ public:
 
 // Implementierung
 protected:
-	void LoadPreset(CString strPreset);
-	void InitPresets();
+//	void LoadPreset(CString strPreset);
+//	void InitPresets();
 	virtual void FillMaxBitrateTable();
 	virtual void FillMinBitrateTable();
 	virtual void FillOutSampleRateCtrl();
@@ -102,9 +98,7 @@ protected:
 	afx_msg void OnSelchangeVbrMethod();
 	afx_msg void OnSelchangeQuality();
 	afx_msg void OnSetfocusThreadpriority();
-	afx_msg void OnSavepreset();
 	afx_msg void OnSelchangePresetmp3dlg();
-	afx_msg void OnDelete();
 	afx_msg void OnSelendokMpeg();
 	//}}AFX_MSG
 	DECLARE_MESSAGE_MAP()

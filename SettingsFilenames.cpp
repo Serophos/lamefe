@@ -31,6 +31,7 @@ static char THIS_FILE[] = __FILE__;
 
 /////////////////////////////////////////////////////////////////////////////
 // Dialogfeld CSettingsFilenames 
+extern CString		g_strIniFile;
 
 
 CSettingsFilenames::CSettingsFilenames(CWnd* pParent /*=NULL*/)
@@ -209,7 +210,7 @@ void CSettingsFilenames::Init(CString strWd)
 	CMySettingsPage::Init(strWd);
 
 	CIni cfg;
-	cfg.SetIniFileName(m_strWd + "\\LameFE.ini");
+	cfg.SetIniFileName(g_strIniFile);
 
 	m_strFilename	= cfg.GetValue("FileNames", "Filename", "%1\\%3\\%1 - %a - %2");
 	m_strAlbumMode	= cfg.GetValue("FileNames", "AlbumFilename", "%1\\%1 - %3 (Complete Album)");
@@ -244,7 +245,7 @@ BOOL CSettingsFilenames::Save()
 	UpdateData(TRUE);
 
 	CIni cfg;
-	cfg.SetIniFileName(m_strWd + "\\LameFE.ini");
+	cfg.SetIniFileName(g_strIniFile);
 	
 	if((!m_strFilename.GetLength() && m_bRename)){
 

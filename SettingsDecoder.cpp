@@ -13,6 +13,8 @@
 static char THIS_FILE[] = __FILE__;
 #endif
 
+extern CString		g_strIniFile;
+
 /////////////////////////////////////////////////////////////////////////////
 // Dialogfeld CSettingsDecoder 
 
@@ -55,7 +57,7 @@ void CSettingsDecoder::Init(CString strWd)
 	CMySettingsPage::Init(strWd);
 
 	CIni cfg;
-	cfg.SetIniFileName(m_strWd + "\\LameFE.ini");
+	cfg.SetIniFileName(g_strIniFile);
 	m_cCD.SetCheck(cfg.GetValue("LameFE", "DefaultFromCD", TRUE));
 	m_cFile.SetCheck(!cfg.GetValue("LameFE", "DefaultFromCD", TRUE));
 	m_strPath = cfg.GetValue("LameFE", "WinampPluginPath", m_strWd + "\\Plugins");
@@ -67,7 +69,7 @@ BOOL CSettingsDecoder::Save()
 
 	UpdateData(TRUE);
 	CIni cfg;
-	cfg.SetIniFileName(m_strWd + "\\LameFE.ini");
+	cfg.SetIniFileName(g_strIniFile);
 	cfg.SetValue("LameFE", "DefaultFromCD", m_cCD.GetCheck());
 	cfg.SetValue("LameFE", "WinampPluginPath", m_strPath);
 	return TRUE;

@@ -47,6 +47,7 @@ static char THIS_FILE[] = __FILE__;
 
 #define TIMERID    2
 
+extern CString		g_strIniFile;
 
 
 //////////////////////////////////////////////////////////////////////////////////
@@ -323,7 +324,7 @@ BOOL CEncodingStatusDlg::OnInitDialog()
 	CTrayDialog::OnInitDialog();
 	
 	CIni cfg;
-	cfg.SetIniFileName(m_strWd + "\\LameFE.ini");
+	cfg.SetIniFileName(g_strIniFile);
 	
 	SetTimer(TIMERID, 1000, NULL);
 	
@@ -364,8 +365,10 @@ BOOL CEncodingStatusDlg::OnInitDialog()
 	SetFocus();
 	SetForegroundWindow();
 
+	CString strTmp;
+	strTmp.LoadString(IDS_LOG_COLUMNCAPTION);
 	m_logOut.Init(FALSE);
-	m_logOut.InsertColumn(0, "Status Messages", LVCFMT_RIGHT, 400);
+	m_logOut.InsertColumn(0, strTmp, LVCFMT_RIGHT, 400);
 
 	// Create imaglist and attach it to the tracklist
 	// Create 256 color image lists
@@ -493,134 +496,105 @@ BOOL CEncodingStatusDlg::WriteID3Tag(MMFILE_ALBUMINFO tmpAI)
 	PostMessage(WM_TIMER,0,0);
 
 	CIni cfg;
-	cfg.SetIniFileName(m_strWd + "\\LameFE.ini");
+	CString strPreset;
+
+	cfg.SetIniFileName(g_strIniFile);
+	strPreset = cfg.GetValue("L.A.M.E.", "PresetName", "default");
+	cfg.SetIniFileName(cfg.GetValue("LameFE", "PresetPath", m_strWd) + "\\" + strPreset + ".ini");
 
 
-	ID3_Tag		id3Tag;
-	ID3_Frame	id3Frame;
-	ID3_Frame	*buffer = NULL;
+	ID3_Tag			id3Tag;
+	ID3_Frame		id3Frame;
+	ID3_Frame		*buffer = NULL;
+	unsigned short	sFlags  = 0;
+	BOOL			bV1     = FALSE;
+	BOOL			bV2		= FALSE;
 
-	//id3Tag.Link(m_out, (cfg.GetValue("id3v1") ? ID3TT_ID3V1 : 0) | (cfg.GetValue("id3v2") ? ID3TT_ID3V2 : 0));
-	if(cfg.GetValue("L.A.M.E.", "Id3v1", 0) && cfg.GetValue("L.A.M.E.", "Id3v2", 1)){
+	bV1	= cfg.GetValue("L.A.M.E.", "Id3v1", 0);
+	bV2 = cfg.GetValue("L.A.M.E.", "Id3v2", 1);
+	
+	if(bV1 && bV2){
 
-		id3Tag.Link(m_out, ID3TT_ID3);
+		sFlags = ID3TT_ID3V1 || ID3TT_ID3V2;
 	}
-	else if(cfg.GetValue("L.A.M.E.", "Id3v1", 0) && !cfg.GetValue("L.A.M.E.", "Id3v2", 1)){
+	else if(bV1 & !bV2){
 
-		id3Tag.Link(m_out, ID3TT_ID3V1);
+		sFlags = ID3TT_ID3V1;
 	}
-	else if(!cfg.GetValue("L.A.M.E.", "Id3v1", 0) && cfg.GetValue("L.A.M.E.", "Id3v2", 1)){
+	else{
 
-		id3Tag.Link(m_out, ID3TT_ID3V2);
+		sFlags = ID3TT_ID3V2;
 	}
 
-	if(cfg.GetValue("L.A.M.E.", "Id3v1", 0) || cfg.GetValue("L.A.M.E.", "Id3v2", 1)){
+	id3Tag.Link(m_out, sFlags);
 
-		
+	if(bV1 || bV2){
+
+
 		if(tmpAI.song != "" && tmpAI.song != 0){
 
-			buffer = id3Tag.Find(ID3FID_TITLE);
-			if(buffer){
-				// Remove if already exists
-				id3Tag.RemoveFrame(buffer);
-			}
-			id3Frame.SetID(ID3FID_TITLE);
-			id3Frame.Field(ID3FN_TEXT).Set(tmpAI.song);
-			id3Tag.AddFrame(&id3Frame);
-			id3Tag.Update();
+			ID3_AddTitle(&id3Tag, tmpAI.song, true);
 		}
 
 		//artist
 		if(tmpAI.artist != "" && tmpAI.artist != 0){
 
-			buffer = id3Tag.Find(ID3FID_LEADARTIST);
-			if(buffer){// Remove if already exists
-				id3Tag.RemoveFrame(buffer);
-			}
-			id3Frame.SetID(ID3FID_LEADARTIST);
-			id3Frame.Field(ID3FN_TEXT).Set(tmpAI.artist);
-			id3Tag.AddFrame(&id3Frame);
-			id3Tag.Update();
+			ID3_AddArtist(&id3Tag, tmpAI.artist, true);
 		}
 
 		//album
 		if(tmpAI.album != "" && tmpAI.album != 0){
 
-			buffer = id3Tag.Find(ID3FID_ALBUM);
-			if(buffer){// Remove if already exists
-				id3Tag.RemoveFrame(buffer);
-			}
-			id3Frame.SetID(ID3FID_ALBUM);
-			id3Frame.Field(ID3FN_TEXT).Set(tmpAI.album);
-			id3Tag.AddFrame(&id3Frame);
-			id3Tag.Update();
+			ID3_AddAlbum(&id3Tag, tmpAI.album, true);
 		}
 
 		//comment
 		if(tmpAI.comment != "" && tmpAI.comment != 0){
 
-			buffer = id3Tag.Find(ID3FID_COMMENT);
-			if(buffer){// Remove if already exists
-				id3Tag.RemoveFrame(buffer);
-			}
-			id3Frame.SetID(ID3FID_COMMENT);
-			id3Frame.Field(ID3FN_TEXT).Set(tmpAI.comment);
-			id3Tag.AddFrame(&id3Frame);
-			id3Tag.Update();
+			ID3_AddComment(&id3Tag, tmpAI.comment, "", true);
 		}
 
 		//year
+	 	char *_year = new char[4];
+		//unsigned char *_track = new unsigned char[4];
+
 		if(tmpAI.year != 0){
-
-			buffer = id3Tag.Find(ID3FID_YEAR);
-			if(buffer){// Remove if already exists
-				id3Tag.RemoveFrame(buffer);
-			}
-		 	char year;
-			itoa(tmpAI.year, &year, 10);
-
-			id3Frame.SetID(ID3FID_YEAR);
-			id3Frame.Field(ID3FN_TEXT).Set(year);
-			id3Tag.AddFrame(&id3Frame);
-			id3Tag.Update();
+	
+			itoa(tmpAI.year, _year, 10);
+			ID3_AddYear(&id3Tag, _year, true);
 		}
 
 		//track
 		if(tmpAI.track != 0){
 
-			buffer = id3Tag.Find(ID3FID_TRACKNUM);
-			if(buffer){// Remove if already exists
-				id3Tag.RemoveFrame(buffer);
-			}
-
-			char track;
- 			itoa(tmpAI.track, &track, 10);
-
-			id3Frame.SetID(ID3FID_TRACKNUM);
-			id3Frame.Field(ID3FN_TEXT).Set(track);
-			id3Tag.AddFrame(&id3Frame);
-			id3Tag.Update();
+ 			//itoa(tmpAI.track, (char*)_track, 10);
+			ID3_AddTrack(&id3Tag, tmpAI.track, 1, true);
 		}
 
 		if(tmpAI.genre != "" && tmpAI.genre != 0){
 
-			buffer = id3Tag.Find(ID3FID_CONTENTTYPE);
-			if(buffer){// Remove if already exists
-				id3Tag.RemoveFrame(buffer);
-			}
-			id3Frame.SetID(ID3FID_CONTENTTYPE);
-			id3Frame.Field(ID3FN_TEXT).Set(tmpAI.genre);
-			id3Tag.AddFrame(&id3Frame);
-			id3Tag.Update();
+			ID3_AddGenre(&id3Tag, (char*)tmpAI.genre, true);
+		}
+		
+		if(bV1){
+
+			id3Tag.Update(ID3TT_ID3V1);
+		}
+		if(bV2){
+
+			id3Tag.Update(ID3TT_ID3V2);
 		}
 
+		//delete _track;
+		delete _year;
 	}
 	
-	if(cfg.GetValue("L.A.M.E.", "WriteTLENtag", FALSE)){
+/*	if(cfg.GetValue("L.A.M.E.", "WriteTLENtag", FALSE)){
 
 
 	}
 
+*/
 	PostMessage(WM_TIMER,0,0);
  
 	return TRUE;
@@ -639,7 +613,7 @@ void CEncodingStatusDlg::SetJob(int nJob, CString strOutputDevice /* = "lame_enc
 	}
 	else{
 
-		COutPlugin tmp(m_strWd + "\\Plugins\\" + m_strOutputDevice, m_strWd + "\\lameFE.ini");
+		COutPlugin tmp(m_strWd + "\\Plugins\\" + m_strOutputDevice, g_strIniFile);
 		tmp.Load();
 		m_strExtension = tmp.GetExtension();
 		tmp.Unload();
@@ -691,7 +665,7 @@ BOOL CEncodingStatusDlg::AnyToEncoder()
 
 	CString	  strPlugin = "";
 	CIni cfg;
-	cfg.SetIniFileName(m_strWd + "\\LameFE.ini");
+	cfg.SetIniFileName(g_strIniFile);
 
 	//setup controls
 	m_fileStatus.SetRange(0, 100);
@@ -797,7 +771,7 @@ BOOL CEncodingStatusDlg::WinampPlugin2Encoder(CString plugin, CMultimediaFile *m
 	m_in.ReleaseBuffer();
 
 	CIni cfg;
-	cfg.SetIniFileName(m_strWd + "\\LameFE.ini");
+	cfg.SetIniFileName(g_strIniFile);
 
 	if(!wplugin.Load(GetSafeHwnd())){
 
@@ -1133,7 +1107,7 @@ BOOL CEncodingStatusDlg::LameFEPlugin2MP3(CString plugin, CMultimediaFile *mFile
 	float in_size = rStatus.m_size;
 	float in_sizeKB = rStatus.m_size;
 	CIni cfg;
-	cfg.SetIniFileName(m_strWd + "\\LameFE.ini");
+	cfg.SetIniFileName(g_strIniFile);
 
 	hDLL = LoadLibrary(plugin);
 	if(!hDLL){
@@ -1327,7 +1301,7 @@ BOOL CEncodingStatusDlg::RipBatchMode()
 	TRACE("Entering CEncodingStatusDlg::RipBatchMode()\n");
 
 	CIni cfg;
-	cfg.SetIniFileName(m_strWd + "\\LameFE.ini");
+	cfg.SetIniFileName(g_strIniFile);
 
 	BOOL bTimesOut	 =  cfg.GetValue("CD-ROM", "BatchTimesOut", TRUE);
 	BOOL bTimedOut	 =  FALSE;
@@ -1354,7 +1328,7 @@ BOOL CEncodingStatusDlg::RipBatchMode()
 
 				RipToSingleFile();
 			}
-			if(cfg.GetValue("LameFE", "M3U", FALSE)){
+			if(cfg.GetValue("LameFE", "M3U", FALSE)  && !m_bAbortEnc){
 
 				CPlayList playlist(m_cd);
 				playlist.WriteToDisc(m_strWd, m_strExtension, FALSE, (m_mEMode == BATCHSINGLETRACKMODE));
@@ -1455,8 +1429,15 @@ BOOL CEncodingStatusDlg::RipBatchMode()
 			
 			CCDdbQueryDlg cddbDlg(this, m_cd, CR_GetActiveCDROM(), m_strWd, TRUE);
 			
-			if(cddbDlg.DoModal() == IDCANCEL){
+			int nResult = cddbDlg.DoModal();
+			if(nResult == IDCANCEL){
+
+				//We query again, because sometimes the server just times out
+				nResult = cddbDlg.DoModal();
+			}
+			if(nResult == IDCANCEL){
 				
+				// Enough tries, no album info is available, so append disc id
 				TRACE("No Albuminformation available!\n");
 				if(cfg.GetValue("CD-ROM", "BatchAppendDiscID", TRUE)){
 
@@ -1485,7 +1466,7 @@ BOOL CEncodingStatusDlg::RipBatchMode()
 		
 		delete pAudioVerified;
 
-	}
+	} // end main loop
 	
 	TRACE("Leaving CEncodingStatusDlg::RipBatchMode()\n");
 	return TRUE;
@@ -1495,7 +1476,7 @@ BOOL CEncodingStatusDlg::RipToSingleFile(){
 
 	TRACE("RipToSingleFile: Outputdevice is %s", m_strOutputDevice);
 	CIni cfg;
-	cfg.SetIniFileName(m_strWd + "\\LameFE.ini");
+	cfg.SetIniFileName(g_strIniFile);
 
 	//setup controls
 	m_fileStatus.SetRange(0, 100);
@@ -1764,7 +1745,7 @@ BOOL CEncodingStatusDlg::RipToAny()
 	TRACE("RipToAny: Mode is %d (0 = Output Wave 1 = Output MP3) Output = %s\n", m_nJob, m_strOutputDevice);
 
 	CIni cfg;
-	cfg.SetIniFileName(m_strWd + "\\LameFE.ini");
+	cfg.SetIniFileName(g_strIniFile);
 	
 	if(cfg.GetValue("CD-ROM", "Lock", TRUE)){
 
@@ -1815,7 +1796,7 @@ BOOL CEncodingStatusDlg::RipToAny()
 	while(currentTrack < numTracks && !m_bAbortEnc){
 	
 		cdTrack = m_cd->GetCDTrack(pSel[currentTrack]);
-		m_out.Format(m_cd->GetSaveAs(cdTrack->m_btTrack, m_strWd, m_strExtension, m_bBatchAppendDiscID));
+		m_out = m_cd->GetSaveAs(cdTrack->m_btTrack, m_strWd, m_strExtension, m_bBatchAppendDiscID);
 	
 		if(!cdTrack->IsAudioTrack()){
 			
@@ -2084,7 +2065,7 @@ void CEncodingStatusDlg::FinishedJobs()
 	KillTimer(TIMERID);
 
 	CIni cfg;
-	cfg.SetIniFileName(m_strWd + "\\LameFE.ini");
+	cfg.SetIniFileName(g_strIniFile);
 	CString tmp;
 
 	if(cfg.GetValue("LameFE", "ExitLameFE", FALSE) || cfg.GetValue("LameFE", "Shutdown", FALSE)){
@@ -2105,9 +2086,13 @@ void CEncodingStatusDlg::FinishedJobs()
 	m_nFilePerc = 0;
 	m_nBufferPerc = 0;
 	m_nJitterPos = 0;
+	m_strElaTime.Empty();
+	m_strEstTime.Empty();
+	m_strRemTime.Empty();
+
 	PostMessage(WM_TIMER, 0, 0);
 	
-	if(m_mEMode == BATCHALBUMMODE){
+	if((m_mEMode == BATCHALBUMMODE) || (m_mEMode == BATCHSINGLETRACKMODE)){
 
 		TRACE0("Leave finished jobs here as BATCHMODE timed out");
 		return;
@@ -2135,7 +2120,7 @@ void CEncodingStatusDlg::FinishedJobs()
 
 		if(cfg.GetValue("LameFE", "PlaySound", FALSE)){
 
-			MessageBeep( MB_ICONSTOP );
+			MessageBeep(MB_ICONSTOP);
 		}
 		
 		if (cfg.GetValue("LameFE", "GetFocus", TRUE)){

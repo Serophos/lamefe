@@ -15,6 +15,8 @@ static char THIS_FILE[] = __FILE__;
 
 #pragma comment(lib, "version")
 
+extern CString		g_strIniFile;
+
 /////////////////////////////////////////////////////////////////////////////
 // CMainFrame
 
@@ -75,13 +77,19 @@ int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
 		TRACE0("Couldn't create playerbar\n");
 	}
 
-	if (!m_wndDlgBar.Create(this, IDR_MAINFRAME, 
+	if(!m_wndPresetBar.Create(this, WS_CHILD | WS_VISIBLE | CBRS_TOP, ID_PRESETBAR))
+	{
+
+		TRACE0("Couldn't create presetbar\n");
+	}
+
+/*	if (!m_wndDlgBar.Create(this, IDR_MAINFRAME, 
 		CBRS_ALIGN_TOP, AFX_IDW_DIALOGBAR))
 	{
 		TRACE0("Dialogleiste konnte nicht erstellt werden\n");
 		return -1;		// Fehler bei Erstellung
 	}
-
+*/
 	TCHAR	szBuffer[_MAX_PATH]; 
 	VERIFY(::GetModuleFileName(AfxGetInstanceHandle(), szBuffer, _MAX_PATH));
 	
@@ -89,13 +97,7 @@ int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	wd = wd.Left(wd.ReverseFind('\\'));
 
 	CIni cfg;
-	cfg.SetIniFileName(wd + "\\LameFE.ini");
-
-	if(!Utils::CheckCOMTL32Dll()){  // Version of Common Controls library is too old
-
-		cfg.SetValue("LameFE", "UseHighColBar", FALSE);
-		TRACE("Deactivated highcoloricons as Common Controls library is too old\n");
-	}
+	cfg.SetIniFileName(g_strIniFile);
 
 	// set high color icons if possible
 	if ((::GetDeviceCaps(GetDC()->m_hDC,BITSPIXEL) > 8) && cfg.GetValue("LameFE", "UseHighColBar", TRUE)) 
@@ -108,7 +110,7 @@ int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
 		// Create and set the normal toolbar image list.
 		bitmap.LoadMappedBitmap( IDB_TOOLBAR_HI );
 		imageList.Create(32, 32, ILC_COLORDDB|ILC_MASK, 9, 1);
-		imageList.Add(&bitmap, RGB(255,0,255));
+		imageList.Add(&bitmap, RGB(254,2,254));
 		m_wndToolBar.SendMessage(TB_SETIMAGELIST, 0, (LPARAM)imageList.m_hImageList);
 		imageList.Detach();
 		bitmap.Detach();
@@ -124,12 +126,13 @@ int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	}
 	
 	m_wndToolBar.SetBarStyle(m_wndToolBar.GetBarStyle() | CBRS_TOOLTIPS | CBRS_FLYBY | CBRS_SIZE_DYNAMIC);
-	m_wndPlayerBar.SetBarStyle(m_wndToolBar.GetBarStyle() | CBRS_TOOLTIPS | CBRS_FLYBY | CBRS_SIZE_DYNAMIC);
+	m_wndPlayerBar.SetBarStyle(m_wndPlayerBar.GetBarStyle() | CBRS_TOOLTIPS | CBRS_FLYBY | CBRS_SIZE_DYNAMIC);
+	m_wndPresetBar.SetBarStyle(m_wndPresetBar.GetBarStyle() | CBRS_TOOLTIPS | CBRS_FLYBY | CBRS_SIZE_DYNAMIC);
 
 	if (!m_wndReBar.Create(this) ||
 		!m_wndReBar.AddBar(&m_wndToolBar) ||
 		!m_wndReBar.AddBar(&m_wndPlayerBar) ||
-		!m_wndReBar.AddBar(&m_wndDlgBar)
+		!m_wndReBar.AddBar(&m_wndPresetBar)
 		)
 	{
 		TRACE0("Infoleiste konnte nicht erstellt werden\n");
@@ -144,11 +147,7 @@ int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
 		return -1;      // Fehler bei Erstellung
 	}
 
-	// ZU ERLEDIGEN: Entfernen, wenn Sie keine QuickInfos wünschen
-	/*m_wndToolBar.SetBarStyle(m_wndToolBar.GetBarStyle() |
-		CBRS_TOOLTIPS | CBRS_FLYBY);
-*/
-	m_wndStatusBar.SetPaneInfo(1,ID_SEPARATOR,SBPS_NORMAL,250);
+    m_wndStatusBar.SetPaneInfo(1,ID_SEPARATOR,SBPS_NORMAL,250);
 	m_wndStatusBar.SetPaneInfo(0,ID_SEPARATOR,SBPS_STRETCH,100);
 	
 	OnShowPlayer();
@@ -169,7 +168,7 @@ BOOL CMainFrame::PreCreateWindow(CREATESTRUCT& cs)
 	wd = wd.Left(wd.ReverseFind('\\'));
 
 	CIni cfg;
-	cfg.SetIniFileName(wd + "\\LameFE.ini");
+	cfg.SetIniFileName(g_strIniFile);
 	
 	if(cfg.GetValue("LameFE", "SaveWinPos", TRUE)){
 
@@ -261,7 +260,8 @@ void CMainFrame::OnShowPlayer()
 void CMainFrame::OnViewShowPresets()
 {
 
-	ShowControlBar(&m_wndDlgBar, (m_wndDlgBar.GetStyle() & WS_VISIBLE) == 0, FALSE);
+//	ShowControlBar(&m_wndDlgBar, (m_wndDlgBar.GetStyle() & WS_VISIBLE) == 0, FALSE);
+	ShowControlBar(&m_wndPresetBar, (m_wndPresetBar.GetStyle() & WS_VISIBLE) == 0, FALSE);
 }
 
 HMENU CMainFrame::NewMenu()

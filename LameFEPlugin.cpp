@@ -27,6 +27,8 @@ static char THIS_FILE[]=__FILE__;
 #define new DEBUG_NEW
 #endif
 
+extern CString		g_strIniFile;
+
 //////////////////////////////////////////////////////////////////////
 // Konstruktion/Destruktion
 //////////////////////////////////////////////////////////////////////
@@ -170,15 +172,10 @@ BOOL CLameFEPlugin::FindPlugin(CString fileExtension, CString &name, CString plu
 int CLameFEPlugin::GetProfileString(const char *entry, char *value, int size, int formated)
 {
 
-	TCHAR	szBuffer[_MAX_PATH]; 
 	CString strTmp;
-	VERIFY(::GetModuleFileName(AfxGetInstanceHandle(), szBuffer, _MAX_PATH));
-	
-	strTmp = szBuffer;
-	strTmp = strTmp.Left(strTmp.ReverseFind('\\'));
 
 	CIni cfg;
-	cfg.SetIniFileName(strTmp + "\\LameFE.ini");
+	cfg.SetIniFileName(g_strIniFile);
 	
 	strTmp = cfg.GetValue("Plugins", entry, "");
 	strcpy(value, strTmp);
@@ -189,15 +186,10 @@ int CLameFEPlugin::GetProfileString(const char *entry, char *value, int size, in
 int CLameFEPlugin::SetProfileString(const char *entry, const char *value)
 {
 
-	TCHAR	szBuffer[_MAX_PATH]; 
 	CString strTmp;
-	VERIFY(::GetModuleFileName(AfxGetInstanceHandle(), szBuffer, _MAX_PATH));
-	
-	strTmp = szBuffer;
-	strTmp = strTmp.Left(strTmp.ReverseFind('\\'));
 
 	CIni cfg;
-	cfg.SetIniFileName(strTmp + "\\LameFE.ini");
+	cfg.SetIniFileName(g_strIniFile);
 	cfg.SetValue("Plugins", entry, value);
 	return TRUE;
 }

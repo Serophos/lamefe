@@ -28,6 +28,8 @@
 static char THIS_FILE[] = __FILE__;
 #endif
 
+extern CString		g_strIniFile;
+
 /////////////////////////////////////////////////////////////////////////////
 // Dialogfeld CSettingsBatchMode 
 
@@ -75,7 +77,7 @@ void CSettingsBatchMode::Init(CString strWd)
 	CMySettingsPage::Init(strWd);
 
 	CIni cfg;
-	cfg.SetIniFileName(m_strWd + "\\LameFE.ini");
+	cfg.SetIniFileName(g_strIniFile);
 
 	c_batchAllDrives.SetCheck(cfg.GetValue("CD-ROM", "BatchUseAllDrives", FALSE));
 	c_appendDiscID.SetCheck(cfg.GetValue("CD-ROM", "BatchAppendDiscID", TRUE));
@@ -95,7 +97,7 @@ BOOL CSettingsBatchMode::Save()
 	}
 
 	CIni cfg;
-	cfg.SetIniFileName(m_strWd + "\\LameFE.ini");
+	cfg.SetIniFileName(g_strIniFile);
 
 	cfg.SetValue("CD-ROM", "BatchUseAllDrives", c_batchAllDrives.GetCheck());
 	cfg.SetValue("CD-ROM", "BatchBeepOnFinishCD", c_batchBeep.GetCheck());

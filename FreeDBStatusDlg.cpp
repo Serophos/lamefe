@@ -36,6 +36,7 @@ FreeDBStatusDlg::FreeDBStatusDlg(CWnd* pParent /*=NULL*/)
 	//{{AFX_DATA_INIT(FreeDBStatusDlg)
 	m_strStatusMsg = _T("Stand by...");
 	//}}AFX_DATA_INIT
+	Create(FreeDBStatusDlg::IDD, pParent);
 }
 
 
@@ -50,7 +51,8 @@ void FreeDBStatusDlg::DoDataExchange(CDataExchange* pDX)
 
 BEGIN_MESSAGE_MAP(FreeDBStatusDlg, CDialog)
 	//{{AFX_MSG_MAP(FreeDBStatusDlg)
-		// HINWEIS: Der Klassen-Assistent fügt hier Zuordnungsmakros für Nachrichten ein
+	ON_WM_TIMER()
+	ON_WM_CANCELMODE()
 	//}}AFX_MSG_MAP
 END_MESSAGE_MAP()
 
@@ -60,12 +62,44 @@ END_MESSAGE_MAP()
 void FreeDBStatusDlg::SetMessage(CString strMsg)
 {
 
+	m_mLock.Lock();
 	m_strStatusMsg = strMsg;
 	UpdateData(FALSE);
+	m_mLock.Unlock();
+	Sleep(0);
 }
 
 void FreeDBStatusDlg::SetMessage(UINT nID)
 {
 
+	m_mLock.Lock();
 	m_strStatusMsg.LoadString(nID);
+	UpdateData(FALSE);
+	m_mLock.Unlock();
+	Sleep(0);
+}
+
+BOOL FreeDBStatusDlg::Create(UINT nIDTemplate, CWnd* pParentWnd) 
+{
+
+	int nResult = CDialog::Create(nIDTemplate, pParentWnd);
+
+	//RedrawWindow(0, 0, RDW_ALLCHILDREN|RDW_ERASENOW|RDW_INVALIDATE|RDW_INTERNALPAINT|RDW_UPDATENOW);
+	SetTimer(32130, 500, 0);
+	
+	return nResult;
+}
+
+void FreeDBStatusDlg::OnTimer(UINT nIDEvent) 
+{
+	m_mLock.Lock();
+	UpdateData(FALSE);
+	m_mLock.Unlock();
+	CDialog::OnTimer(nIDEvent);
+}
+
+void FreeDBStatusDlg::OnCancelMode() 
+{
+	KillTimer(32130);
+	CDialog::OnCancelMode();
 }

@@ -35,6 +35,8 @@ static char THIS_FILE[]=__FILE__;
 
 #pragma pack(push,1)
 
+extern CString		g_strIniFile;
+
 enum CDTEXT_PACK_TYPE
 {
 	CDT_TRACK_TITLE	=0x80, // Title of Album name(ID2=00h) or Track Titles (ID2=01h...63h)
@@ -492,7 +494,7 @@ CString CCompactDisc::GetAlbumString(CString wdir, CString ext, BOOL bAppendDisc
 {
 
 	CIni cfg;
-	cfg.SetIniFileName(wdir + "\\LameFE.ini");
+	cfg.SetIniFileName(g_strIniFile);
 
 	CString strPath, strSaveAs, strFormat;
 
@@ -550,7 +552,7 @@ CString CCompactDisc::GetSaveAs(int nTrack, CString wd, CString ext, BOOL bAppen
 {
 
 	CIni cfg;
-	cfg.SetIniFileName(wd + "\\LameFE.ini");
+	cfg.SetIniFileName(g_strIniFile);
 
 	nTrack--;	// nTrack is not zero-index-based so decrease nTrack
 	CString strPath, strSaveAs, strFormat;

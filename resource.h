@@ -2,6 +2,7 @@
 // Microsoft Developer Studio generated include file.
 // Used by lameFE.rc
 //
+#define MANIFEST_RESOURCE_ID            2
 #define IDD_ABOUTBOX                    100
 #define IDD_ALBUMINFOCTRL               103
 #define IDD_ENCODER_PAGE                107
@@ -73,7 +74,9 @@
 #define IDD_PLUGINPAGE                  185
 #define IDB_MENUITEMS                   185
 #define IDD_SETTINGS_DECODER            188
+#define IDR_PRESETBAR_2                 189
 #define SPLASH                          190
+#define IDD_SAVEPRESET                  191
 #define IDD_SETUPWIZARD                 192
 #define IDR_LIST_MENU                   195
 #define IDD_FREEDB_STATUS               197
@@ -216,7 +219,10 @@
 #define IDC_WINAMP_PATH                 1123
 #define IDC_PATH_WINAMP                 1124
 #define IDC_OUTSAMPLERATE               1125
+#define IDC_REMEMBERLASTENCODER         1126
 #define IDC_EJECT_CD                    1128
+#define IDC_PRESETNAME                  1128
+#define IDC_PRESETCOMMENT               1129
 #define IDC_ENCODER_VERSION             1130
 #define IDC_BITSPERSAMPLE               1132
 #define IDC_CHANNELS                    1133
@@ -335,6 +341,9 @@
 #define ID_CHECKFORNEWVESION            32812
 #define ID_VIEW_SHOWPRESETBAR           32814
 #define ID_HELP_REPORTABUG              32815
+#define ID_SAVEPRESET                   32817
+#define ID_DELETEPRESET                 32818
+#define ID_PRESETDROPDOWN               32819
 #define ID_ADD_FILE                     40001
 #define ID_EXIT                         40003
 #define ID_TAGEDIT                      40004
@@ -360,7 +369,6 @@
 #define IDC_ST_RESTORE                  40018
 #define IDS_ENC_ID3INTERR               40018
 #define IDC_ST_EXIT                     40019
-#define IDS_ENC_LOGENTRY                40019
 #define ID_EDIT_ID3                     40020
 #define IDS_ENC_LOGFAILED               40020
 #define ID_ADD                          40021
@@ -545,17 +553,31 @@
 #define IDS_TOOL_HIDEMAINWND            40189
 #define IDS_TOOL_ENQUEUE                40190
 #define IDS_TOOL_FILEFORMAT             40191
+#define IDS_LOG_STARTSESSION            40192
+#define IDS_LOG_FINISHEDSESSION         40193
+#define IDS_LOG_STARTFILE               40194
+#define IDS_LOG_SAVEAS                  40195
+#define IDS_LOG_FILEFORMAT              40196
+#define IDS_LOG_FINISHEDFILE            40197
+#define IDS_LOG_COLUMNCAPTION           40198
+#define IDS_UPDATE_ERROR                40199
+#define IDS_UPDATE_AVAILABLE            40200
+#define IDS_UPDATE_NO                   40201
+#define IDS_UPDATE_NOTQUERIED           40202
 #define IDS_DEFAULTPRESETNOTREMOVABLE   61204
 #define IDS_COULDNOTREMOVEPRESET        61205
+#define IDS_ERRPRESETCREATE             61206
+#define IDS_PRESET_INVALIDNAME          61207
+#define IDS_PRESET_NAMENOTALLOWED       61208
 
 // Next default values for new objects
 // 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_3D_CONTROLS                     1
-#define _APS_NEXT_RESOURCE_VALUE        189
-#define _APS_NEXT_COMMAND_VALUE         32816
-#define _APS_NEXT_CONTROL_VALUE         1126
+#define _APS_NEXT_RESOURCE_VALUE        192
+#define _APS_NEXT_COMMAND_VALUE         32820
+#define _APS_NEXT_CONTROL_VALUE         1130
 #define _APS_NEXT_SYMED_VALUE           101
 #endif
 #endif

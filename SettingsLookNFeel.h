@@ -40,6 +40,7 @@ public:
 // Dialogfelddaten
 	//{{AFX_DATA(CSettingsLookNFeel)
 	enum { IDD = IDD_SETTINGS_LOOKNFEEL };
+	CButton	c_rememberEncoder;
 	CButton	c_teditOnFile;
 	CButton	c_hideMainWnd;
 	CButton	c_cdTextRead;

@@ -109,7 +109,7 @@ BOOL Utils::CheckCOMTL32Dll()
 	float fVersion = 0.0f;
 	_stscanf(strVersion, "%f", & fVersion);
 
-	bReturn = (fVersion > 5.80f);
+	bReturn = (fVersion > 4.70f);
 
 	delete[] lpVersionData; 
 	lpVersionData = NULL;
@@ -377,4 +377,39 @@ CString Utils::DecryptString(CString strEncrypted)
 	delete strArray;
 
 	return strPlain;
+}
+
+BOOL Utils::CopyTxtFile(CString strSource, CString strDest)
+{
+
+	BOOL bReturn = FALSE;
+	CString strLine;
+
+	TRY
+	{
+
+		CStdioFile fSource(strSource, CFile::modeRead | CFile::shareDenyWrite);
+		CStdioFile fDest(strDest, CFile::modeCreate | CFile::modeWrite | CFile::typeText | CFile::shareExclusive);
+
+		fSource.SeekToBegin();
+
+		while(fSource.ReadString(strLine)){
+
+			fDest.WriteString(strLine + "\n");
+		}
+
+		fDest.Flush();
+		fSource.Close();
+		fDest.Close();
+		bReturn = TRUE;
+
+	}
+	CATCH( CFileException, e )
+	{
+		
+		bReturn = FALSE;
+	}
+	END_CATCH
+
+	return bReturn;
 }
