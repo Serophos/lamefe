@@ -533,6 +533,10 @@ SOURCE=.\res\icon4.ico
 # End Source File
 # Begin Source File
 
+SOURCE=.\res\int_play.bmp
+# End Source File
+# Begin Source File
+
 SOURCE=.\res\lameFE.ico
 # End Source File
 # Begin Source File
