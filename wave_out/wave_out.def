@@ -1,0 +1,9 @@
+; wave_out.def : Deklariert die Modul-Parameter für die DLL.
+
+LIBRARY      "wave_out"
+DESCRIPTION  'wave_out Windows Dynamic Link Library'
+
+EXPORTS
+	
+	GetLFOutModule	@1
+
