@@ -47,6 +47,7 @@ public:
 // Dialogfelddaten
 	//{{AFX_DATA(CEncoderSheet)
 	enum { IDD = IDD_ENCODER_PAGE };
+	CMyComboBox	m_cThreadPriority;
 	CEdit	c_abr;
 	CMyComboBox	c_maxBitrate;
 	CMyComboBox	m_qualityPreset;

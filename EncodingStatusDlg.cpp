@@ -18,8 +18,8 @@
 ** Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 */
 
-
 #include "stdafx.h"
+#include <memory>
 #include "lameFE.h"
 #include "TimeStatus.h"
 #include "EncodingStatusDlg.h"
@@ -34,6 +34,9 @@
 #include "Playlist.h"
 #include "cfgFile.h"
 #include "Utils.h"
+
+#include "CDPlayerIni.h"
+#include "CDdbQueryDlg.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -89,7 +92,6 @@ void CEncodingStatusDlg::DoDataExchange(CDataExchange* pDX)
 	//{{AFX_DATA_MAP(CEncodingStatusDlg)
 	DDX_Control(pDX, IDC_JITTERSTATUS, m_jitterPos);
 	DDX_Control(pDX, IDCANCEL, m_closeBtn);
-	DDX_Control(pDX, IDC_PRINT, m_printBtn);
 	DDX_Control(pDX, IDC_SAVE_LOG, m_saveBtn);
 	DDX_Control(pDX, IDC_LIST_STATUS_BAR, m_listStatus);
 	DDX_Control(pDX, IDC_FILE_STATUS_BAR, m_fileStatus);
@@ -113,7 +115,6 @@ BEGIN_MESSAGE_MAP(CEncodingStatusDlg, CTrayDialog)
 	ON_COMMAND(IDC_ST_RESTORE, OnStRestore)
 	ON_COMMAND(IDC_ST_EXIT, OnStExit)
 	ON_COMMAND(IDCANCEL, OnCancel)
-	ON_COMMAND(IDC_PRINT, OnLogPrint)
 	ON_COMMAND(IDC_SAVE_LOG, OnLogSave)
 	//}}AFX_MSG_MAP
 END_MESSAGE_MAP()
@@ -126,14 +127,37 @@ BOOL CEncodingStatusDlg::OnInitDialog()
 {
 
 	CTrayDialog::OnInitDialog();
-
+	
+	cfgFile cfg(m_strWd);
+	
 	SetTimer(TIMERID, 1000, NULL);
 	
 	m_pThread = NULL;
 	
 	m_eThreadFinished.ResetEvent();
+	
 	// Fire of thread
-	m_pThread = AfxBeginThread(EncoderFunc, (void*)this);
+	int nThreadPriority = THREAD_PRIORITY_NORMAL;
+	switch(cfg.GetValue("threadpriority")){
+
+	case 0:
+		nThreadPriority = THREAD_PRIORITY_LOWEST;
+		break;
+	case 1:
+		nThreadPriority = THREAD_PRIORITY_BELOW_NORMAL;
+		break;
+	case 2:
+		nThreadPriority = THREAD_PRIORITY_NORMAL;
+		break;
+	case 3:
+		nThreadPriority = THREAD_PRIORITY_ABOVE_NORMAL;
+		break;
+	case 4:
+		nThreadPriority = THREAD_PRIORITY_HIGHEST;
+		break;
+	}
+
+	m_pThread = AfxBeginThread(EncoderFunc, (void*)this, nThreadPriority);
 	
 	TraySetIcon(IDR_MAINFRAME);
 	TraySetToolTip("lameFE");
@@ -144,11 +168,12 @@ BOOL CEncodingStatusDlg::OnInitDialog()
 	SetFocus();
 	SetForegroundWindow();
 
-	m_logOut.InsertColumn(0, "Status Messages", LVCFMT_RIGHT, 400);
 	m_logOut.Init(FALSE);
+	m_logOut.InsertColumn(0, "Status Messages", LVCFMT_RIGHT, 400);
+
 	// Create imaglist and attach it to the tracklist
 	// Create 256 color image lists
-	HIMAGELIST hList = ImageList_Create(16,16, ILC_COLOR8 |ILC_MASK , 3, 1);
+	HIMAGELIST hList = ImageList_Create(16,16, ILC_COLOR8 |ILC_MASK , 4, 1);
 	m_cImageList.Attach(hList);
 
 	CBitmap cBmp;
@@ -160,7 +185,6 @@ BOOL CEncodingStatusDlg::OnInitDialog()
 	
 	m_lLogFile.SetOutputWnd(&m_logOut);
 	
-	m_printBtn.EnableWindow(FALSE);
 	m_saveBtn.EnableWindow(FALSE);
 	
 	return TRUE;
@@ -175,7 +199,7 @@ void CEncodingStatusDlg::OnTimer(UINT nIDEvent)
 	m_listStatus.SetPos(m_nBufferPerc);
 	m_strStatusText.Format("Status (%02d%%)", m_nFilePerc);
 
-	if(m_nJob != ANY_TO_MP3){
+	if(m_nJob != ANY_TO_ENCODER){
 
 		m_jitterPos.SetPos(m_nJitterPos);
 	}
@@ -220,11 +244,11 @@ void CEncodingStatusDlg::OnCancel()
 
 void CEncodingStatusDlg::OnStRestore() 
 {
+
 	TRACE("OnStRestore()\n");
 	ShowWindow(SW_SHOW);
 	SetFocus();
 	SetForegroundWindow( );
-
 }
 
 void CEncodingStatusDlg::OnStExit() 
@@ -279,9 +303,21 @@ BOOL CEncodingStatusDlg::WriteID3Tag(MMFILE_ALBUMINFO tmpAI)
 	ID3_Frame	id3Frame;
 	ID3_Frame	*buffer = NULL;
 
-	id3Tag.Link(m_out, (cfg.GetValue("id3v1") ? ID3TT_ID3V1 : 0) | (cfg.GetValue("id3v2") ? ID3TT_ID3V2 : 0));
+	//id3Tag.Link(m_out, (cfg.GetValue("id3v1") ? ID3TT_ID3V1 : 0) | (cfg.GetValue("id3v2") ? ID3TT_ID3V2 : 0));
+	if(cfg.GetValue("id3v1") && cfg.GetValue("id3v2")){
 
-	if(cfg.GetValue("id3v2") || cfg.GetValue("id3v1")){
+		id3Tag.Link(m_out, ID3TT_ID3);
+	}
+	else if(cfg.GetValue("id3v1") && !cfg.GetValue("id3v2")){
+
+		id3Tag.Link(m_out, ID3TT_ID3V1);
+	}
+	else if(!cfg.GetValue("id3v1") && cfg.GetValue("id3v2")){
+
+		id3Tag.Link(m_out, ID3TT_ID3V2);
+	}
+
+	if(cfg.GetValue("id3v1") || cfg.GetValue("id3v2")){
 
 		
 		if(tmpAI.song != "" && tmpAI.song != 0){
@@ -386,20 +422,6 @@ BOOL CEncodingStatusDlg::WriteID3Tag(MMFILE_ALBUMINFO tmpAI)
 	if(cfg.GetValue("writetlen")){
 
 
-	/*	LPCSTR ms;
-
-		
-
-		buffer = id3Tag.Find(ID3FID_SONGLEN);
-		if(buffer){// Remove if already exists
-
-			id3Tag.RemoveFrame(buffer);
-		}
-
-		id3Frame.SetID(ID3FID_SONGLEN);
-		id3Frame.Field(ID3FN_TEXT).Set(ms);
-		id3Tag.AddFrame(&id3Frame);
-		id3Tag.Update();*/
 	}
 
 	PostMessage(WM_TIMER,0,0);
@@ -407,12 +429,12 @@ BOOL CEncodingStatusDlg::WriteID3Tag(MMFILE_ALBUMINFO tmpAI)
 	return TRUE;
 }
 
-void CEncodingStatusDlg::SetJob(int nJob, CString strOutputDevice /* = "lame_enc.dll" */, BOOL bAlbumMode /* = FALSE */)
+void CEncodingStatusDlg::SetJob(int nJob, CString strOutputDevice /* = "lame_enc.dll" */, modes mEMode  /* = NORMALMODE */)
 {
 	
 	m_nJob			  = nJob;
 	m_strOutputDevice = strOutputDevice;
-	m_bAlbumMode	  = bAlbumMode;
+	m_mEMode		  = mEMode;
 
 	if(m_strOutputDevice == "lame_enc.dll"){
 		
@@ -435,19 +457,23 @@ UINT CEncodingStatusDlg::EncoderFunc(PVOID pParams)
 	
 	switch(esdlg->GetJob()){
 
-	case RIP_TO_MP3:
-	case RIP_TO_WAVE:
-		if(esdlg->GetAlbumMode()){
+	//case RIP_TO_MP3:
+	case RIP_TO_ENCODER:
+		if(esdlg->GetAlbumMode() == ALBUMMODE){
 
 			esdlg->RipToSingleFile();
+		}
+		else if(esdlg->GetAlbumMode() == BATCHALBUMMODE){
+
+			esdlg->RipBatchMode();
 		}
 		else{
 			
 			esdlg->RipToAny();
 		}
 		break;
-	case ANY_TO_MP3:
-		esdlg->AnyToMP3();
+	case ANY_TO_ENCODER:
+		esdlg->AnyToEncoder();
 		break;
 	}
 
@@ -463,7 +489,7 @@ UINT CEncodingStatusDlg::EncoderFunc(PVOID pParams)
 	return 0;
 }
 
-BOOL CEncodingStatusDlg::AnyToMP3()
+BOOL CEncodingStatusDlg::AnyToEncoder()
 {
 
 	CString	  strPlugin = "";
@@ -742,6 +768,123 @@ BOOL CEncodingStatusDlg::LameFEPlugin2MP3(CString plugin, CMultimediaFile *mFile
 	return TRUE;
 }
 
+BOOL CEncodingStatusDlg::RipBatchMode()
+{
+	cfgFile cfg;
+	BOOL bTimesOut	 =  cfg.GetValue("BatchTimesOut");
+	BOOL bTimedOut	 =  FALSE;
+	long nTimeOutSec =  cfg.GetValue("BatchTimesOutAfterMin") * 60;
+	int nNumCDDrives =  CR_GetNumCDROM();
+	int nOrgActCD	 =  CR_GetActiveCDROM();
+	int nActiveCD	 =  nOrgActCD;
+	CString strDrive =  "";
+
+	while(!bTimedOut && !m_bAbortEnc){
+		
+		nTimeOutSec =  cfg.GetValue("BatchTimesOutAfterMin") * 60;
+
+		//OK is this an audio cd?
+		if(m_cd->GetNumAudioTracks() != 0){
+
+			RipToSingleFile();
+		}
+
+		if(m_bAbortEnc){
+			
+			return FALSE;
+		}
+
+		//Reset status stuff
+		m_lLogFile.SetNotificationMessage(IDS_BATCHNEXTCD);
+		m_fileStatus.SetRange(0, 100);
+		m_fileStatus.SetPos(0);
+		m_listStatus.SetRange(0,100);
+		m_listStatus.SetPos(0);
+		m_nErrors = 0;
+		m_in.Empty();
+		m_out.Empty();
+		m_nBufferPerc = 0;
+		m_nJitterPos = 0;
+		m_nFilePerc = 0;
+		m_inputSize.Empty();
+		m_estSize.Empty();
+		m_bResetTimer = TRUE;
+		PostMessage(WM_TIMER,0,0);
+
+		//Unlock drive and eject cd
+		CR_LockCD(FALSE);
+		CR_EjectCD(TRUE);
+		m_cd->Eject();
+
+		if(cfg.GetValue("BatchBeep")){
+
+			Beep(1000,800);
+		}
+
+
+		if(cfg.GetValue("BatchUseAllDrives")){
+
+			//switch to next drive 
+			//CR_SaveSettings();
+			CR_SetActiveCDROM((nActiveCD+1 < nNumCDDrives ? ++nActiveCD : (nActiveCD = 0)));
+			CDROMPARAMS cdParams;
+			CR_GetCDROMParameters(&cdParams);
+			strDrive.Format(IDS_BATCHCDDRIVE, cdParams.lpszCDROMID);
+			m_lLogFile.SetNotificationMessage(strDrive);
+			CR_SaveSettings();
+			CR_LoadSettings();
+		}
+
+		while((CR_IsUnitReady() != 0x001) && !bTimedOut && !m_bAbortEnc){
+
+			Sleep(5000);
+			if(bTimesOut){
+
+				nTimeOutSec -= 5;
+				if(nTimeOutSec <= 0){
+					
+					TRACE("Batchmode timed out\n");
+					m_lLogFile.SetNotificationMessage(IDS_BATCHTIMEDOUT);
+					bTimedOut = TRUE;
+					return FALSE;
+				}
+			}			
+		}
+		
+		if(m_bAbortEnc){
+			
+			return FALSE;
+		}
+
+		if(!m_cd->GetNumAudioTracks()){
+
+			TRACE("No AudioCD\n");
+			m_lLogFile.SetNotificationMessage(IDS_MAIN_NOAUDIOCD);
+			continue;
+		}
+
+
+		BOOL bSuccess = FALSE;
+		m_cd->Init();
+
+		CCDPlayerIni cdp(m_cd);
+		
+		bSuccess = cdp.Read();
+		
+		if(!bSuccess){
+
+			bSuccess = m_cd->ReadCDText();
+		}
+		if(!bSuccess && cfg.GetValue("BatchFreeDB")){
+			
+			CCDdbQueryDlg cddbDlg(this, m_cd, CR_GetActiveCDROM(), m_strWd, TRUE);
+			cddbDlg.DoModal();
+		}
+
+	}
+	return TRUE;
+}
+
 BOOL CEncodingStatusDlg::RipToSingleFile(){
 
 	TRACE("RipToSingleFile: Outputdevice is %s", m_strOutputDevice);
@@ -759,6 +902,25 @@ BOOL CEncodingStatusDlg::RipToSingleFile(){
 	BOOL     bAbort       = FALSE;
 	int*	 pSel		  = NULL;
 	int	 	 numTracks    = m_cd->GetNumSelTracks();
+
+	int nNumBuffers = cfg.GetValue("nNumReadBuffers");
+	switch(nNumBuffers){
+
+	case 0:
+		nNumBuffers = 256;
+		break;
+	case 1:
+		nNumBuffers = 1024;
+		break;
+	case 2:
+		nNumBuffers = 6144;
+		break;
+	case 3:
+		nNumBuffers = 16384;
+		break;
+	default:
+		nNumBuffers = 256;
+	}
 
 	pSel	= new int[numTracks];
 	m_cd->GetSelItems(numTracks, pSel);
@@ -870,7 +1032,7 @@ BOOL CEncodingStatusDlg::RipToSingleFile(){
 		BYTE* pbtStream= new BYTE[nBufferSize + dwSampleBufferSize * sizeof(SHORT)];
 
 		CDEX_ERR ripErr;
-		CEncoderFeeder ef(&e, dwSampleBufferSize, 512, m_bAbortEnc);
+		CEncoderFeeder ef(&e, dwSampleBufferSize, nNumBuffers, m_bAbortEnc);
 		
 		// Read all chunks
 		while((ripErr=CR_RipChunk(pbtStream + nOffset, &nNumBytesRead, m_bAbortEnc)) != CDEX_RIPPING_DONE  && !m_bAbortEnc){
@@ -981,7 +1143,7 @@ BOOL CEncodingStatusDlg::RipToSingleFile(){
 		CR_LockCD(FALSE);
 	}
 	
-	if(cfg.GetValue("eject", FALSE)){
+	if(cfg.GetValue("eject", FALSE) && (m_mEMode != BATCHALBUMMODE)){
 
 		CR_EjectCD(TRUE);
 	}
@@ -1014,6 +1176,25 @@ BOOL CEncodingStatusDlg::RipToAny()
 	CCDTrack *cdTrack	  = NULL;
 	int*	 pSel		  = NULL;
 	int	 	 numTracks    = m_cd->GetNumSelTracks();
+
+	int nNumBuffers = cfg.GetValue("nNumReadBuffers");
+	switch(nNumBuffers){
+
+	case 0:
+		nNumBuffers = 256;
+		break;
+	case 1:
+		nNumBuffers = 1024;
+		break;
+	case 2:
+		nNumBuffers = 6144;
+		break;
+	case 3:
+		nNumBuffers = 16384;
+		break;
+	default:
+		nNumBuffers = 256;
+	}
 
 	pSel	= new int[numTracks];
 	m_cd->GetSelItems(numTracks, pSel);
@@ -1138,7 +1319,7 @@ BOOL CEncodingStatusDlg::RipToAny()
 			BYTE* pbtStream= new BYTE[nBufferSize + dwSampleBufferSize * sizeof(SHORT)];
 
 			CDEX_ERR ripErr;
-			CEncoderFeeder ef(&e, dwSampleBufferSize, 512, m_bAbortEnc);
+			CEncoderFeeder ef(&e, dwSampleBufferSize, nNumBuffers, m_bAbortEnc);
 			
 			// Read all chunks
 			while((ripErr=CR_RipChunk(pbtStream + nOffset, &nNumBytesRead, m_bAbortEnc)) != CDEX_RIPPING_DONE  && !m_bAbortEnc){
@@ -1305,7 +1486,6 @@ void CEncodingStatusDlg::FinishedJobs()
 	CString text;
 	text.LoadString(IDS_ENC_CLOSE_BTN);
 	m_closeBtn.SetWindowText(text);
-	m_printBtn.EnableWindow(TRUE);
 	m_saveBtn.EnableWindow(TRUE);
 	m_strDiscardLogMsg.LoadString(IDS_ENC_DISCARD_LOG);
 	m_estSize.Empty();
@@ -1317,6 +1497,11 @@ void CEncodingStatusDlg::FinishedJobs()
 	m_nJitterPos = 0;
 	PostMessage(WM_TIMER, 0, 0);
 	
+	if(m_mEMode == BATCHALBUMMODE){
+
+		TRACE0("Leave finished jobs here as BATCHMODE timed out");
+		return;
+	}
 
 	TRACE("Starting finished Jobs\n");
 	if(m_nErrors != 0){
@@ -1374,7 +1559,7 @@ void CEncodingStatusDlg::FinishedJobs()
 				playlist = new CPlayList(m_files);
 			}
 
-			if(playlist->WriteToDisc(m_strWd, m_strExtension, FALSE, m_bAlbumMode)){
+			if(playlist->WriteToDisc(m_strWd, m_strExtension, FALSE, m_mEMode)){
 
 			}
 			else{
@@ -1402,7 +1587,7 @@ void CEncodingStatusDlg::FinishedJobs()
 				playlist = new CPlayList(m_files);
 			}
 
-			if(playlist->WriteToDisc(m_strWd, m_strExtension, TRUE,  m_bAlbumMode)){
+			if(playlist->WriteToDisc(m_strWd, m_strExtension, TRUE,  m_mEMode)){
 
 			}
 			else{
@@ -1440,151 +1625,6 @@ void CEncodingStatusDlg::FinishedJobs()
 }
 
 
-//DEL BOOL CEncodingStatusDlg::FileExists(CString filename)
-//DEL {
-//DEL 
-//DEL 	TRY{
-//DEL 		
-//DEL 		CFileStatus rStatus;
-//DEL 		if(CFile::GetStatus( filename, rStatus )){
-//DEL 
-//DEL 			return TRUE;
-//DEL 		}
-//DEL 		else{
-//DEL 
-//DEL 			return FALSE;
-//DEL 		}
-//DEL 	}
-//DEL 	CATCH(CFileException, e){
-//DEL 
-//DEL 		return FALSE;
-//DEL 	}
-//DEL 	END_CATCH;
-//DEL 
-//DEL 	return FALSE;
-//DEL }
-
-//DEL BOOL CEncodingStatusDlg::CreateSubDirs(CString basePath, CString artist, CString album)
-//DEL {
-//DEL 
-//DEL 	if(_chdir(basePath) != 0){
-//DEL 
-//DEL 		return FALSE;
-//DEL 	}
-//DEL 
-//DEL 	if(_chdir(artist) != 0){
-//DEL 
-//DEL 		
-//DEL 		if(mkdir(artist) != 0){
-//DEL 
-//DEL 			return FALSE;
-//DEL 		}
-//DEL 	}
-//DEL 
-//DEL 	if(_chdir(basePath + "\\" + artist) != 0){
-//DEL 
-//DEL 		return FALSE;
-//DEL 	}
-//DEL 
-//DEL 	if(_chdir(album) != 0){
-//DEL 
-//DEL 		
-//DEL 		if(mkdir(album) != 0){
-//DEL 
-//DEL 			return FALSE;
-//DEL 		}
-//DEL 	}
-//DEL 
-//DEL 	return TRUE;
-//DEL }
-
-//DEL BOOL CEncodingStatusDlg::CreateDirs(CString filename)
-//DEL {
-//DEL 
-//DEL 	int nStart = 3;
-//DEL 	int nEnd = 0;
-//DEL 	
-//DEL 	CString validated = filename.Left(2);
-//DEL 	_chdir(validated);
-//DEL 	
-//DEL 	while(TRUE){
-//DEL 
-//DEL 		nEnd = filename.Find('\\', nStart);
-//DEL 		if(nEnd == -1){
-//DEL 
-//DEL 			return TRUE;
-//DEL 		}
-//DEL 
-//DEL 		if(_chdir(validated + "\\" + filename.Mid(nStart, nEnd - nStart)) != 0){
-//DEL 
-//DEL 			_chdir(validated);
-//DEL 			if(_mkdir(filename.Mid(nStart, nEnd - nStart)) != 0){
-//DEL 
-//DEL 				return FALSE;
-//DEL 			}
-//DEL 			
-//DEL 		}
-//DEL 		validated += "\\" + filename.Mid(nStart, nEnd - nStart);
-//DEL 		nStart = nEnd + 1;		
-//DEL 	}
-//DEL 
-//DEL 	return FALSE;
-//DEL }
-
-
-//DEL DOUBLE CEncodingStatusDlg::GetMyFreeDiskSpace(CString& strPath)
-//DEL {
-//DEL 
-//DEL 	CString strRootDir;
-//DEL 	GFDPEX		GetDiskFreeSpaceOSR2=NULL;
-//DEL 
-//DEL 	// Check input parameter
-//DEL 	if (strPath.IsEmpty())
-//DEL 	{
-//DEL 		ASSERT(FALSE);
-//DEL 		return 0;
-//DEL 	}
-//DEL 
-//DEL 	// Copy driverletter, colon and back slash
-//DEL 	strRootDir=strPath.Left(3);
-//DEL 
-//DEL 	DOUBLE dFreeDiskSpace=0.0;
-//DEL 
-//DEL 	// Is this NT or OSR2, then call extented free disk space routine
-//DEL 	if (GetDiskFreeSpaceOSR2!=NULL)
-//DEL 	{
-//DEL 		ULARGE_INTEGER	FreeBytes; 
-//DEL 		ULARGE_INTEGER	TotalNumberOfBytes;
-//DEL 		ULARGE_INTEGER	TotalNumberOfFreeBytes;
-//DEL 
-//DEL 		// Make call to kernel 32 dll
-//DEL 		BOOL bReturn=GetDiskFreeSpaceOSR2(strRootDir,&FreeBytes,&TotalNumberOfBytes,&TotalNumberOfFreeBytes);
-//DEL 
-//DEL 		// If result is OK, then calculate result
-//DEL 		if (bReturn)
-//DEL 		{
-//DEL 			dFreeDiskSpace=(DOUBLE)FreeBytes.LowPart;
-//DEL 			dFreeDiskSpace+=((DOUBLE)FreeBytes.HighPart)*ULONG_MAX;
-//DEL 		}
-//DEL 	}
-//DEL 	else
-//DEL 	{
-//DEL 		// Standard Windows 95
-//DEL  		DWORD dwSectorsPerCluster; 
-//DEL 		DWORD dwBytesPerSector; 
-//DEL 		DWORD dwNumberOfFreeClusters; 
-//DEL 		DWORD dwTotalNumberOfClusters;
-//DEL 
-//DEL 		// Try the good old GetDiskFreeSpace
-//DEL 		GetDiskFreeSpace(strRootDir,&dwSectorsPerCluster,&dwBytesPerSector,&dwNumberOfFreeClusters,&dwTotalNumberOfClusters);
-//DEL  
-//DEL 		// Calculate free disk space
-//DEL 		dFreeDiskSpace=(DOUBLE)dwNumberOfFreeClusters*(DOUBLE)dwBytesPerSector*(DOUBLE)dwSectorsPerCluster;
-//DEL 
-//DEL 	// Get the free disc space as you already do.
-//DEL 	}
-//DEL 	return dFreeDiskSpace;
-//DEL }
 
 void CEncodingStatusDlg::OnLogSave()
 {
@@ -1605,8 +1645,5 @@ void CEncodingStatusDlg::OnLogSave()
 	}
 }
 
-void CEncodingStatusDlg::OnLogPrint()
-{
 
-	AfxMessageBox("Not implemented, yet");
-}
+

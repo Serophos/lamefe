@@ -32,16 +32,18 @@
 #include "LogFile.h"
 #include "ExtListCtrl.h"
 
-#define  RIP_TO_WAVE 0
-#define  RIP_TO_MP3  1
-#define  ANY_TO_MP3 2
+#define  RIP_TO_ENCODER  0
+//#define  RIP_TO_MP3		 1
+#define  ANY_TO_ENCODER  2
 
 typedef CArray<CMultimediaFile*, CMultimediaFile*>	CMMFArray;
+extern enum modes {NORMALMODE = 0, ALBUMMODE, BATCHALBUMMODE};
 
 class CEncodingStatusDlg : public CTrayDialog
 {
 // Konstruktion
 public:
+	BOOL RipBatchMode();
 
 	CEncodingStatusDlg(CWnd* pParent = NULL, CString wd = "");   // Standardkonstruktor
 
@@ -51,13 +53,12 @@ public:
 	//Public Class Access
 	void	SetFiles(CMMFArray *files);
 	void	SetCDROM(CCompactDisc *cd);
-	void	SetJob(int nJob, CString strOutputDevice  = "lame_enc.dll", BOOL bAlbumMode = FALSE);
+	void	SetJob(int nJob, CString strOutputDevice  = "lame_enc.dll", modes mEMode = NORMALMODE);
 	int		GetJob();
-	int		GetAlbumMode(){ return m_bAlbumMode; }
+	int		GetAlbumMode(){ return m_mEMode; }
 	CImageList	m_cImageList;
 	
 
-	void	 OnLogPrint();
 	void	 OnLogSave();
 
 // Dialogfelddaten
@@ -65,15 +66,11 @@ public:
 	enum { IDD = IDD_STATUS_DIALOG };
 	CProgressCtrl	m_jitterPos;
 	CButton			m_closeBtn;
-	CButton			m_printBtn;
 	CButton			m_saveBtn;
 	CProgressCtrl	m_listStatus;
 	CProgressCtrl	m_fileStatus;
 	CString			m_estSize;
 	CString			m_list_errors;
-	//CString			m_fileMsg;
-	//CString			m_fileXofY;
-	//CString			m_listMsg;
 	CString			m_inputSize;
 	CString			m_in;
 	CString			m_out;
@@ -101,7 +98,7 @@ private:
 	BOOL	LameFEPlugin2MP3(CString plugin, CMultimediaFile *mFile, int nPos);
 	BOOL	RipToAny();
 	BOOL	RipToSingleFile();
-	BOOL	AnyToMP3();
+	BOOL	AnyToEncoder();
 
 	// After encoding stuff
 	BOOL	WriteID3Tag(CMultimediaFile *mFile);
@@ -116,7 +113,7 @@ private:
 	
 	// Job-Details
 	int         m_nJob;
-	BOOL		m_bAlbumMode;
+	modes		m_mEMode;
 	CString		m_strInputDevice;
 	CString		m_strOutputDevice;
 	CString		m_strExtension;

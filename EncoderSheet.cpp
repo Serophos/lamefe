@@ -56,8 +56,7 @@ void CEncoderSheet::DoDataExchange(CDataExchange* pDX)
 
 	CPropertyPage::DoDataExchange(pDX);
 	//{{AFX_DATA_MAP(CEncoderSheet)
-	DDX_Control(pDX, IDC_CONVERTTO16BIT, c_convertTo16Bit);
-	DDX_Control(pDX, IDC_ID3V1, c_writeId3v1);
+	DDX_Control(pDX, IDC_THREADPRIORITY, m_cThreadPriority);
 	DDX_Control(pDX, IDC_ABR, c_abr);
 	DDX_Control(pDX, IDC_BITSPERSAMPLE_MAX, c_maxBitrate);
 	DDX_Control(pDX, IDC_QUALITY, m_qualityPreset);
@@ -66,13 +65,15 @@ void CEncoderSheet::DoDataExchange(CDataExchange* pDX)
 	DDX_Control(pDX, IDC_MPEG, c_MPEG);
 	DDX_Control(pDX, IDC_PRIVATE, c_private);
 	DDX_Control(pDX, IDC_ORIGINAL, c_original);
+	DDX_Control(pDX, IDC_ID3V1, c_writeId3v1);
 	DDX_Control(pDX, IDC_ID3_2, c_writeId3v2);
+	DDX_Control(pDX, IDC_CONVERTTO16BIT, c_convertTo16Bit);
 	DDX_Control(pDX, IDC_COPYRIGHT, c_copyright);
 	DDX_Control(pDX, IDC_CHECKSUM, c_checkSum);
 	DDX_Control(pDX, IDC_CHANNELS, c_channels);
-	DDX_Control(pDX, IDC_PLAYINGTIME, c_tlen);
 	DDX_Control(pDX, IDC_BITSPERSAMPLE, c_bitsPerSample);
 	DDX_Text(pDX, IDC_ENCODER_VERSION, m_encoderVersion);
+	DDX_Control(pDX, IDC_PLAYINGTIME, c_tlen);
 	DDX_Text(pDX, IDC_ABR, m_abr);
 	//}}AFX_DATA_MAP
 }
@@ -140,7 +141,6 @@ BOOL CEncoderSheet::OnInitDialog()
 	   return TRUE;
 	}
 
-	//m_pToolTip->AddTool(this, "Encoder Settings");
 	m_pToolTip->AddTool(&c_copyright, IDS_TOOL_CP);
 	m_pToolTip->AddTool(&c_checkSum, IDS_TOOL_CRC);
 	m_pToolTip->AddTool(&c_original, IDS_TOOL_ORIG);
@@ -154,6 +154,7 @@ BOOL CEncoderSheet::OnInitDialog()
 	m_pToolTip->AddTool(&c_MPEG, IDS_TOOL_MPEGVER);
 	m_pToolTip->AddTool(&c_writeId3v2, IDS_TOOL_WRITEID3);
 	m_pToolTip->AddTool(&m_qualityPreset, IDS_TOOL_QUALPRESET);
+	m_pToolTip->AddTool(&m_cThreadPriority, IDS_TOOL_ENCTHREADP);
 
 	m_pToolTip->Activate(TRUE);
 
@@ -175,6 +176,7 @@ BOOL CEncoderSheet::OnInitDialog()
 	c_tlen.SetCheck(cfg.GetValue("writetlantag"));
 	c_convertTo16Bit.SetCheck(cfg.GetValue("convertto16bit"));
 	c_writeId3v1.SetCheck(cfg.GetValue("id3v1"));
+	m_cThreadPriority.SetCurSel(cfg.GetValue("threadpriority"));
 	OnSelchangeVbrMethod();
 	UpdateData(FALSE);
 
@@ -217,6 +219,7 @@ void CEncoderSheet::saveSettings()
 	cfg.SetValue("writetlantag", c_tlen.GetCheck());
 	cfg.SetValue("id3v1", c_writeId3v1.GetCheck());
 	cfg.SetValue("convertto16bit", c_convertTo16Bit.GetCheck());
+	cfg.SetValue("threadpriority", m_cThreadPriority.GetCurSel());
 }
 
 
