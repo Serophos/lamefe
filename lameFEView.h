@@ -37,8 +37,15 @@
 #include "MyComboBox.h"
 #include "EncodingStatusDlg.h"
 #include "NewPresetBar.h"
+#include "GenericEncoder.h"
+#include "GenericDecoder.h"
+
+#include <vector>
+using namespace std;
 
 typedef CArray<CPlugin, CPlugin>  CPluginArray;
+//typedef CArray<CGenericEncoder, CGenericEncoder> CEncoderArray;
+//typedef CArray<CGenericDecoder, CGenericDecoder> CDecoderArray;
 typedef CArray<CMultimediaFile*, CMultimediaFile*>	CMMFArray;
 
 class CLameFEView : public CFormView
@@ -56,8 +63,8 @@ public:
 
 	CAlbumInfoCtrl m_aAlbumInfoCtrl;
 	CExtListCtrl	m_ctrlList;
-	CMyComboBox	c_inputDevice;
-	CMyComboBox	c_outputDevice;
+	CComboBox	c_inputDevice;
+	CComboBox	c_outputDevice;
 	CButton		c_configureOut;
 	CButton		c_configureIn;
 	CString		m_strInputDevice;
@@ -80,9 +87,9 @@ public:
 
 // Implementierung
 public:
+	void SetLanguage();
+	void OnAlbumTagCommand(WPARAM wParam, LPARAM lParam);
 	void SaveSettings();
-	void OnFileStartBatchSingle();
-	int m_nSelItem;
 	BOOL IsPluginMode();
 	void SetAlbumInfo();
 	void ResizeControls();
@@ -97,19 +104,18 @@ public:
 #endif
 
 protected:
-	CString m_strPresetPath;
 	void LoadSettings();
 	void InitProfileBar();
 	void OnSelchangeDevices(BOOL bReset = TRUE);
-	BOOL			  isEjected;
-	CString			  wd;
-	HICON			  m_hIcon;
+//	CString			  wd;
 
+	//Data members
+	HICON			  m_hIcon;
 
 
 // Generierte Message-Map-Funktionen
 protected:
-	BOOL AddDirectory(CString strPath, CString strExt);
+	BOOL m_bAutoRipMode;
 	afx_msg void OnAlbumInfoUpdated(WPARAM wParam,LPARAM lParam);
 	afx_msg void OnPresetSelChanged(WPARAM nSelection,LPARAM lParam);
 	//{{AFX_MSG(CLameFEView)
@@ -125,7 +131,6 @@ protected:
 	afx_msg void OnRemoveFile();
 	afx_msg void OnFileStartencoding();
 	afx_msg void OnAppExit();
-	afx_msg void OnFileStartAlbum();
 	afx_msg void OnViewReloadcd();
 	afx_msg void OnViewSelectalltracksfiles();
 	afx_msg void OnId3tagsSavecuesheet();
@@ -142,31 +147,47 @@ protected:
 	afx_msg void OnSelchangeOutputDevice();
 	afx_msg void OnSavepreset();
 	afx_msg void OnDeletepreset();
-	afx_msg void OnDateiVerzeichnishinzufgen();
+	afx_msg void OnRclickFilesTracks(NMHDR* pNMHDR, LRESULT* pResult);
+	afx_msg void OnAutoRip();
+	afx_msg void OnUpdateAutoRip(CCmdUI* pCmdUI);
+	afx_msg void OnInvertSel();
+	afx_msg void OnRipCd();
+	afx_msg void OnCdAblumRip();
+	afx_msg void OnQuerymusicbrainzdatabase();
 	//}}AFX_MSG
 	DECLARE_MESSAGE_MAP()
 
 
 private:
-	BOOL m_bCheckCD;
-	BOOL m_bTagEditorVisible;
 	void ShowSettingsDialog(int nTab);
-	void OnFileStartBatchAlbum();
-	void StartEncoding(modes m_mEMode);
+	void StartEncoding(ENC_MODE m_mEMode);
 	void RefreshTrackList();
 	void ReadCDContents();
-	int nNumCDDrives;
+	
+	int  m_nNumCDDrives;
 
 	CMutex			m_mtLock;
 	BOOL			m_bPaused;
+	BOOL		    m_bIsEjected;
 	CMMFArray		m_mmFiles;
-	CCompactDisc	m_compactDisc;
+	CCompactDisc	m_cCD;
+//	CDecoderArray	m_dDecoders;
+//	CEncoderArray	m_eEncoders;
+	vector<CGenericDecoder*> m_dDecoders;
+	vector<CGenericEncoder*> m_eEncoders;
+	
+
 	CPluginArray	m_paPlugins;
-	CStatusBar      *m_pStatus;
-	CToolBar		*m_pToolBar;
+	
+	CStatusBar*		m_pStatus;
+	CToolBar*		m_pToolBar;
 	CBitmap			m_listBkImage;
 	CToolTipCtrl*   m_pToolTip;
-	CNewPresetBar*		m_wndPresetBar;	
+	CNewPresetBar*	m_wndPresetBar;	
+	int				m_nSelItem;
+	BOOL			m_bCheckCD;
+	BOOL			m_bTagEditorVisible;
+	CString			m_strPresetPath;
 
 };
 

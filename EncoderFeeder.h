@@ -23,18 +23,17 @@
 #pragma once
 #endif // _MSC_VER > 1000
 
-#include "Encoder.h"
+#include "GenericEncoder.h"
 #include "Buffer.h"
 
 class CEncoderFeeder  
 {
 public:
-	CEncoderFeeder(CEncoder *syncEncoder, int nBufferSize, int nBuffers, BOOL &bAbortEnc);
+	CEncoderFeeder(CGenericEncoder *syncEncoder, int nBufferSize, int nBuffers, BOOL &bAbortEnc);
 	virtual ~CEncoderFeeder();
 
 	int  GetBufferStatus();
 	BOOL AddData(PSHORT pData, DWORD lenght);
-	BOOL Init(int nBufferSize, int nBuffers);
 	void WaitForFinished();
 	static UINT FeederProc(LPVOID param);
 
@@ -47,7 +46,7 @@ private:
 	CMutex		m_ArrayLock;
 	BOOL		m_bLastBlock;
 	BOOL		bRunning;
-	CEncoder*	m_pEncoder;
+	CGenericEncoder*	m_pEncoder;
 	CWinThread*	m_pThread;
 	int			m_nBufferSize;
 	int			m_nBuffers;

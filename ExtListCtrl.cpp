@@ -113,6 +113,15 @@ void CExtListCtrl::SetSelItems(int iCnt, LPINT pIndex)
 	}
 }
 
+void CExtListCtrl::InvertSelection()
+{
+
+	for(int i = 0; i < GetItemCount(); i++){
+
+		SetItemState(i, (GetItemState(i, LVNI_SELECTED) & LVNI_SELECTED ? 0 : LVNI_SELECTED), LVNI_SELECTED);
+	}
+}
+
 void CExtListCtrl::SelectAll()
 {
 
@@ -351,5 +360,3 @@ void CExtListCtrl::DrawListCtrl(STATE eState, COLORREF clrTopLeft, COLORREF clrB
 
 	ReleaseDC(pDC);
 }
-
-

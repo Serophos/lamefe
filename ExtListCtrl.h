@@ -48,6 +48,7 @@ public:
 
 // Implementierung
 public:
+	void InvertSelection();
 	BOOL Init(BOOL bFlat = TRUE);
 	int GetCurSel() const;
 	void SelectAll();

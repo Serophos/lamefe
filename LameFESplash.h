@@ -69,7 +69,7 @@ protected:
 	UINT m_nBitmapID;
 	UINT m_nDuration;
 	UINT m_nTimerID;
-	CBitmap m_bitmap;
+	CBitmap  m_bitmap;
 	CPalette m_pal;
 	CWnd m_wndInvisible;
 

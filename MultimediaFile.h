@@ -25,7 +25,7 @@
 #pragma once
 #endif // _MSC_VER > 1000
 
-class CMultimediaFile  
+class CMultimediaFile  : public CObject
 {
 public:
 	BOOL GetRename();
@@ -37,6 +37,9 @@ public:
 	CID3Info*		GetID3Info();
 	WAVEFORMATEX*	GetWfx();
 	CID3Info		m_id3Info;
+	__int64			GetFileSize(){return m_nFilesize;}
+	__int64			GetEstFileSize(){return m_nEstFilesize;}
+	void			SetEstFileSize(__int64 nSize){ m_nEstFilesize = nSize;}
 
 protected:
 	BOOL			m_bRename;
@@ -45,6 +48,8 @@ protected:
 	WAVEFORMATEX	m_wfx;
 	CString			m_strInputFile;
 	CString			m_strSaveAs;
+	__int64			m_nFilesize;
+	__int64			m_nEstFilesize;
 
 private:
 	BOOL bAlerted;

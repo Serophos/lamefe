@@ -24,7 +24,7 @@
 #pragma once
 #endif // _MSC_VER > 1000
 
-#include "BCMenu.h"
+//#include "BCMenu.h"
 //#include "PresetBar.h"
 #include "NewPresetBar.h"
 
@@ -49,28 +49,30 @@ protected: // Nur aus Serialisierung erzeugen
 public:
 	//void OnViewAlbumTagEditor();
 
-	HMENU NewMenu();	
-	BCMenu m_menu;
+	//HMENU NewMenu();	
+	//BCMenu m_menu;
 
 #ifdef _DEBUG
 	virtual void AssertValid() const;
 	virtual void Dump(CDumpContext& dc) const;
 #endif
+	virtual void GetMessageString(UINT nID, CString& rMessage) const;
 
 protected:  // Eingebundene Elemente der Steuerleiste
 	CStatusBar  m_wndStatusBar;
 	CToolBar    m_wndToolBar;
-	//CToolBar	m_wndPlayerBar;
+	CToolBar    m_wndCtrlBar;
 	CNewPresetBar	m_wndPresetBar;
-	//CPresetBar  m_wndDlgBar;
 	CReBar      m_wndReBar;
 	CBitmap     m_bmToolbarHi; 
 
 // Generierte Message-Map-Funktionen
 public:
+	void InitLanguages();
 	afx_msg void OnViewShowPresets();
 
 protected:
+	CMenu* m_pLangMenu;
 	//{{AFX_MSG(CMainFrame)
 	afx_msg int OnCreate(LPCREATESTRUCT lpCreateStruct);
 	afx_msg void OnHelp();
@@ -78,10 +80,13 @@ protected:
 	afx_msg void OnHelpLicense();
 	afx_msg void OnViewShowtoolbar();
 	afx_msg void OnViewShowstatusline();
-	afx_msg void OnMeasureItem(int nIDCtl, LPMEASUREITEMSTRUCT lpMeasureItemStruct);
+/*	afx_msg void OnMeasureItem(int nIDCtl, LPMEASUREITEMSTRUCT lpMeasureItemStruct);
 	afx_msg LRESULT OnMenuChar(UINT nChar, UINT nFlags, CMenu* pMenu);
 	afx_msg void OnInitMenuPopup(CMenu* pPopupMenu, UINT nIndex, BOOL bSysMenu);
+	*/
 	//}}AFX_MSG
+	afx_msg BOOL OnI18nToolTipText(UINT, NMHDR* pNMHDR, LRESULT* pResult);
+
 	DECLARE_MESSAGE_MAP()
 };
 

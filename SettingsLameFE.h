@@ -1,5 +1,5 @@
 /*
-** Copyright (C) 2002 Thees Winkler
+** Copyright (C) 2002-2003 Thees Winkler
 **  
 ** This program is free software; you can redistribute it and/or modify
 ** it under the terms of the GNU General Public License as published by
@@ -41,7 +41,6 @@ public:
 	//{{AFX_DATA(CSettingsLameFE)
 	enum { IDD = IDD_SETTINGS_LAMEFE };
 	CButton	c_enqueueFiles;
-	CStatic	c_playerPath;
 	CButton	c_shutdownOnFinished;
 	CButton	c_playFiles;
 	CButton	c_m3u;
@@ -52,6 +51,7 @@ public:
 	CButton c_playSound;
 	CString	m_playerPath;
 	CString	m_presetPath;
+	CString	m_strTempPath;
 	//}}AFX_DATA
 
 
@@ -70,6 +70,7 @@ protected:
 	afx_msg void OnPlayer();
 	afx_msg void OnPlayFiles();
 	afx_msg void OnPresetpath();
+	afx_msg void OnTemppath();
 	//}}AFX_MSG
 	DECLARE_MESSAGE_MAP()
 };

@@ -25,6 +25,8 @@
 #include "ID3Lib/include/id3.h"
 #include "ID3Lib/include/id3/misc_support.h"
 
+#include "I18n.h"
+
 #ifdef _DEBUG
 #undef THIS_FILE
 static char THIS_FILE[]=__FILE__;
@@ -32,6 +34,7 @@ static char THIS_FILE[]=__FILE__;
 #endif
 
 extern CSettings g_sSettings;
+extern CI18n g_iLang;
 
 //////////////////////////////////////////////////////////////////////
 // Konstruktion/Destruktion
@@ -39,8 +42,6 @@ extern CSettings g_sSettings;
 
 CMultimediaFile::CMultimediaFile(CString path, CString pluginName)
 {
-
-	TRACE("CMultimediaFile::CMultimediaFile() processing file %s\n", path);
 
 	m_bIsEncoded = FALSE;
 	m_bRename    = TRUE;
@@ -50,93 +51,33 @@ CMultimediaFile::CMultimediaFile(CString path, CString pluginName)
 	
 	BOOL bID3read = FALSE;
 
-	CString strTmp = path.Right(3);
-	strTmp.MakeLower();
+	if(path.Right(3) == "mp3"){
 
-	//
-	CException e;
-	TRY{
-	
-		if((strTmp == "mp3") || (strTmp == "ape")){
 		//Look for ID3 Tag in file
-			ID3_Tag		id3Tag;
-			id3Tag.Link(path);
+		ID3_Tag		id3Tag;
+		id3Tag.Link(path);
+		char *tmp = new char[4];
 
-			if(id3Tag.HasV1Tag() || id3Tag.HasV2Tag()){
+		if(id3Tag.HasV1Tag() || id3Tag.HasV2Tag()){
 
-				char *tmp = NULL;
+			m_id3Info.SetSong(ID3_GetArtist(&id3Tag));
+			m_id3Info.SetAlbum(ID3_GetAlbum(&id3Tag));
+			m_id3Info.SetArtist(ID3_GetArtist(&id3Tag));
+			m_id3Info.SetComment(ID3_GetComment(&id3Tag));
+			m_id3Info.SetGenre(ID3_GetGenre(&id3Tag));
+			m_id3Info.SetYear(atoi(ID3_GetYear(&id3Tag)));
+			m_id3Info.SetTrack(atoi(ID3_GetTrack(&id3Tag)));
 
-				tmp = ID3_GetTitle(&id3Tag);
-				if(tmp > NULL){
-
-					m_id3Info.SetSong(tmp);
-				}
-
-				delete tmp;
-				tmp = NULL;
-				tmp = ID3_GetAlbum(&id3Tag);
-				if(tmp > NULL){
-
-					m_id3Info.SetAlbum(tmp);
-				}
-				
-				delete tmp;
-				tmp = NULL;
-				tmp = ID3_GetArtist(&id3Tag);
-				if(tmp > NULL){
-
-					m_id3Info.SetArtist(tmp);
-				}
-				
-				delete tmp;
-				tmp = NULL;
-				tmp = ID3_GetComment(&id3Tag);
-				if(tmp > NULL){
-
-					m_id3Info.SetComment(tmp);
-				}
-				
-				delete tmp;
-				tmp = NULL;
-				tmp = ID3_GetGenre(&id3Tag);
-				if(tmp > NULL){
-
-					m_id3Info.SetGenre(tmp);
-				}
-				
-				delete tmp;
-				tmp = NULL;
-				tmp = ID3_GetTrack(&id3Tag);
-				if(tmp > NULL){
-
-					m_id3Info.SetTrack(atoi(tmp));
-				}
-					
-				delete tmp;
-				tmp = NULL;
-				tmp = ID3_GetYear(&id3Tag);
-				if(tmp > NULL){
-
-					m_id3Info.SetYear(atoi(tmp));
-				}
-				
-				delete tmp;
-				tmp = NULL;
-
-				bID3read = TRUE;
-			}
-			else{
-
-				bID3read = FALSE;
-			}
+			bID3read = TRUE;
 		}
+		else{
+
+			bID3read = FALSE;
+		}
+		
+		delete tmp;
+		
 	}
-	CATCH_ALL(e){
-
-		TRACE("CMultimediaFile::CMultimediaFile() --> Exception while rading ID3 Tag\n");
-		bID3read = FALSE;
-
-	}END_CATCH_ALL
 	
 	if(!bID3read){
 
@@ -187,7 +128,7 @@ CString CMultimediaFile::GetSaveAs(CString wdir, CString strExt)
 
 		if(!bAlerted){
 		
-			msg.Format(IDS_ERR_LONGFILENAME, strPath + tmp, strPath + out + strExt);
+			msg.Format(g_iLang.GetString(IDS_ERR_LONGFILENAME), strPath + tmp, strPath + out + strExt);
 			AfxMessageBox(msg, MB_OK+MB_ICONEXCLAMATION);
 			bAlerted = TRUE;
 		}

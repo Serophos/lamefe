@@ -6,6 +6,7 @@
 #include "SettingsDecoder.h"
 #include "PathDialog.h"
 #include "Settings.h"
+#include "I18n.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -14,6 +15,7 @@ static char THIS_FILE[] = __FILE__;
 #endif
 
 extern CSettings g_sSettings;
+extern CI18n	 g_iLang;
 
 /////////////////////////////////////////////////////////////////////////////
 // Dialogfeld CSettingsDecoder 
@@ -58,11 +60,13 @@ void CSettingsDecoder::Init(CString strWd)
 
 	CMySettingsPage::Init(strWd);
 
+	g_iLang.TranslateDialog(this, IDD_SETTINGS_DECODER);
+
 	if(m_pToolTip != NULL){
 
-		m_pToolTip->AddTool(&m_cCD, IDS_TOOL_DEFAULTCD);
-		m_pToolTip->AddTool(&m_cFile, IDS_TOOL_DEFAULTFILE);
-		m_pToolTip->AddTool(&m_cLastDec, IDS_TOOL_LASTDECODER);
+		m_pToolTip->AddTool(&m_cCD, g_iLang.GetString(IDS_TOOL_DEFAULTCD));
+		m_pToolTip->AddTool(&m_cFile, g_iLang.GetString(IDS_TOOL_DEFAULTFILE));
+		m_pToolTip->AddTool(&m_cLastDec, g_iLang.GetString(IDS_TOOL_LASTDECODER));
 		m_pToolTip->Activate(TRUE);
 	}
 	
@@ -117,7 +121,7 @@ void CSettingsDecoder::OnWinampPath()
 		
 		if(m_strPath != dlg.GetPathName()){
 
-			AfxMessageBox(IDS_RESTARTLAME, MB_OK+MB_ICONINFORMATION);
+			AfxMessageBox(g_iLang.GetString(IDS_RESTARTLAME), MB_OK+MB_ICONINFORMATION);
 			m_strPath = dlg.GetPathName();
 		}
 

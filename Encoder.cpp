@@ -20,12 +20,16 @@
 #include "Settings.h"
 #include "Encoder.h"
 #include "Resource.h"
+#include "I18n.h"
 
 #ifdef _DEBUG
 #undef THIS_FILE
 static char THIS_FILE[]=__FILE__;
 #define new DEBUG_NEW
 #endif
+
+
+extern CI18n g_iLang;
 
 /*
 //[VERSION][LAYER][BITRATE]
@@ -151,7 +155,7 @@ BOOL CEncoder::Init()
 		outModule = outputPlugin->GetOutModule();
 		if(!outModule){
 
-			TRACE("Failed loading outModule fromoutput plugin\n");
+			TRACE("Failed loading outModule from output plugin\n");
 			return FALSE;
 		}
 		return TRUE;
@@ -385,15 +389,15 @@ BOOL CEncoder::PrepareMP3(CString strFilename, int nNumchannels, int nSamplerate
 		case BE_ERR_SUCCESSFUL:
 			break;
 		case -1:
-			AfxMessageBox(IDS_ENCODER_ERROR_SAMPLERATEBITRATEMISMATCH);
+			AfxMessageBox(g_iLang.GetString(IDS_ENCODER_ERROR_SAMPLERATEBITRATEMISMATCH));
 			return FALSE;
 		break;
 		case -2:
-			AfxMessageBox(IDS_ENCODER_ERROR_INVALIDINPUTSTREAM);
+			AfxMessageBox(g_iLang.GetString(IDS_ENCODER_ERROR_INVALIDINPUTSTREAM));
 			return FALSE;
 		break;
 		default:
-			AfxMessageBox(IDS_ENCODER_ERROR_INVALIDINPUTSTREAM);
+			AfxMessageBox(g_iLang.GetString(IDS_ENCODER_ERROR_INVALIDINPUTSTREAM));
 			return FALSE;
 		break;
 	}
@@ -423,55 +427,8 @@ BOOL CEncoder::PrepareMP3(CString strFilename, int nNumchannels, int nSamplerate
 		m_dwInBufferSize /= 2;
 	}
 
-	pFileOut = _tfopen(strFilename, "wb+");
-	
-	if (pFileOut == NULL){
+	pFileOut = fopen(strFilename, "wb+");
 
-		return FALSE;  // We failed to open the output file
-	}
-
-	if(g_sSettings.GetId3v2()){
-
-		// Save initial ID3V2 Tag
-		//pFile = _tfopen( strFileName, _T( "wb+" ) );
-		DWORD dwPadSize = 2048;
-
-
-		if ( dwPadSize > 10 )
-		{
-			DWORD	dwTagSize = dwPadSize - 10;
-			char	strHeader[10] = {'\0',};
-			int		i = 0;
-
-			// Tag identification
-			strHeader[0] = 'I';
-			strHeader[1] = 'D';
-			strHeader[2] = '3';
-		
-			// Version number
-			strHeader[3] = 3;
-			strHeader[4] = 0;
-
-			// Clear Flags byte
-			strHeader[5] = 0;
-
-			// Write tag length
-			strHeader[6] = ((dwTagSize >> 21) & 0x7F );
-			strHeader[7] = ((dwTagSize >> 14) & 0x7F );
-			strHeader[8] = ((dwTagSize >>  7) & 0x7F );
-			strHeader[9] = ((dwTagSize      ) & 0x7F );
-
-			// Write header  
-			fwrite(strHeader, sizeof(strHeader), 1, pFileOut);
-
-			// Write padding data
-			for (i=0;i< dwTagSize; i++){
-
-				strHeader[0] = 0;
-				fwrite(strHeader, 1, 1, pFileOut);
-			}
-		}
-	}
 	TRACE("Leaving CEncoder::PrepareMP3()\n");
 	return TRUE;
 }
@@ -554,7 +511,7 @@ unsigned long CEncoder::GetSamplesToRead()
 
 
 
-__int64 CEncoder::GetEstimatedSize(int nSamplesPerSec, int nChannels, int wBitsPerSample, __int64 nFileSize)
+int CEncoder::GetEstimatedSize(int nSamplesPerSec, int nChannels, int wBitsPerSample, __int64 nFileSize)
 {
 	
 	TRACE("Entering CEncoder::GetEstimatedSize()\n");
@@ -566,7 +523,7 @@ __int64 CEncoder::GetEstimatedSize(int nSamplesPerSec, int nChannels, int wBitsP
 		//The lenght in seconds of the wavefile is
 		__int64 lenght = (nFileSize * 8) / (nSamplesPerSec * nChannels * wBitsPerSample);
 		//The size of the mp3 will be about
-		nEstimatedSize = beConfig.format.LHV1.dwSampleRate / 576 * bytesPerFrame * lenght;
+		nEstimatedSize = (int)beConfig.format.LHV1.dwSampleRate / 576 * bytesPerFrame * lenght;
 	}
 	else{
 

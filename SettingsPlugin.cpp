@@ -25,6 +25,7 @@
 #include "WinampPlugin.h"
 #include "Settings.h"
 #include "OutPlugin.h"
+#include "I18n.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -33,6 +34,8 @@ static char THIS_FILE[] = __FILE__;
 #endif
 
 extern CSettings g_sSettings;
+extern CI18n	 g_iLang;
+
 /////////////////////////////////////////////////////////////////////////////
 // Dialogfeld CSettingsPlugin 
 
@@ -139,6 +142,9 @@ void CSettingsPlugin::Init(CString strWd)
 {
 
 	CMySettingsPage::Init(strWd);
+	
+	g_iLang.TranslateDialog(this, IDD_SETTINGS_PLUGINCODEC);
+
 	m_strPluginDir = g_sSettings.GetWinampPluginPath();
 }
 

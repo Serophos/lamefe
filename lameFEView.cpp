@@ -1,5 +1,5 @@
 /*
-** Copyright (C) 2002 Thees Winkler
+** Copyright (C) 2002-2003 Thees Winkler
 **  
 ** Parts of this code (c) by Albert L. Faber
 **
@@ -37,8 +37,11 @@
 #include "PresetSaveDlg.h"
 #include "MainFrm.h"
 #include "Utils.h"
-#include "PathDialog.h"
 #include <direct.h>
+#include "I18n.h"
+#include "EncoderPlugin.h"
+#include "EncoderLame.h"
+#include "MusicBrainz.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -49,7 +52,10 @@ static char THIS_FILE[] = __FILE__;
 static const UINT UWM_ALBUMINFO_UPDATED = ::RegisterWindowMessage(_T("UWM_RESET_VIEW--{4E7F6EC0-6ADC-11d3-BC36-006067709674}"));
 static const UINT UWM_LISTCTRL_KEYUP	= ::RegisterWindowMessage(_T("UWM_LISTCTRL_KEYUP--{4E7F6EC0-6ADC-11d3-BC36-006067709674}"));
 static const UINT UWM_PRESETSELCHANGED  = ::RegisterWindowMessage(_T("UWM_PRESETSELCHANGED--{4E7F6EC-6ADC-11d3-BC36-006067709674}"));
+static const UINT UWM_TAG_COMMAND = ::RegisterWindowMessage(_T("UWM_TAG_COMMAND--{4E7F6EC0-6ADC-11d3-BC36-006067709674}"));
+
 extern CSettings g_sSettings;
+extern CI18n g_iLang;
 
 #define TIMERID2 25011
 
@@ -72,7 +78,6 @@ BEGIN_MESSAGE_MAP(CLameFEView, CFormView)
 	ON_COMMAND(ID_REMOVE_FILE, OnRemoveFile)
 	ON_COMMAND(ID_FILE_STARTENCODING, OnFileStartencoding)
 	ON_COMMAND(ID_APP_EXIT, OnAppExit)
-	ON_COMMAND(ID_START_TO_SINGLE_FILE, OnFileStartAlbum)
 	ON_COMMAND(ID_VIEW_RELOADCD, OnViewReloadcd)
 	ON_COMMAND(ID_VIEW_SELECTALLTRACKSFILES, OnViewSelectalltracksfiles)
 	ON_COMMAND(ID_ID3TAGS_SAVECUESHEET, OnId3tagsSavecuesheet)
@@ -89,21 +94,26 @@ BEGIN_MESSAGE_MAP(CLameFEView, CFormView)
 	ON_CBN_SELCHANGE(IDC_OUTPUT_DEVICE, OnSelchangeOutputDevice)
 	ON_COMMAND(ID_SAVEPRESET, OnSavepreset)
 	ON_COMMAND(ID_DELETEPRESET, OnDeletepreset)
-	ON_COMMAND(ID_BATCH_ALBUM, OnFileStartBatchAlbum)
-	ON_COMMAND(ID_BATCH_SINGLETRACKS, OnFileStartBatchSingle)
+	ON_NOTIFY(NM_RCLICK, IDC_FILES_TRACKS, OnRclickFilesTracks)
+	ON_COMMAND(ID_AUTO_RIP, OnAutoRip)
+	ON_UPDATE_COMMAND_UI(ID_AUTO_RIP, OnUpdateAutoRip)
+	ON_COMMAND(ID_INVERT_SEL, OnInvertSel)
+	ON_COMMAND(ID_RIP_CD, OnRipCd)
+	ON_COMMAND(ID_CD_ABLUM_RIP, OnCdAblumRip)
 	ON_UPDATE_COMMAND_UI(ID_REMOVE_FILE, OnUpdateToolBar)
+	ON_UPDATE_COMMAND_UI(ID_FILE_STARTENCODING, OnUpdateToolBar)
 	ON_UPDATE_COMMAND_UI(ID_ID3TAGS_READCDPLAYERINI, OnUpdateCDControls)
 	ON_UPDATE_COMMAND_UI(ID_ID3TAGS_READCDTEXT, OnUpdateCDControls)
 	ON_UPDATE_COMMAND_UI(ID_ID3TAGS_SAVECUESHEET, OnUpdateCDControls)
 	ON_UPDATE_COMMAND_UI(ID_ID3TAGS_SAVETOCDPLAYERINI, OnUpdateCDControls)
-	ON_UPDATE_COMMAND_UI(ID_START_TO_SINGLE_FILE, OnUpdateCDControls)
-	ON_UPDATE_COMMAND_UI(ID_BATCH_ALBUM, OnUpdateCDControls)
+	ON_UPDATE_COMMAND_UI(ID_RIP_CD, OnUpdateCDControls)
+	ON_UPDATE_COMMAND_UI(ID_CD_ABLUM_RIP, OnUpdateCDControls)
 	ON_UPDATE_COMMAND_UI(ID_BATCH_SINGLETRACKS, OnUpdateCDControls)
 	ON_UPDATE_COMMAND_UI(ID_VIEW_RELOADCD, OnUpdateCDControls)
-	ON_UPDATE_COMMAND_UI(ID_DATEI_VERZEICHNISHINZUFGEN, OnUpdateToolBar)
-	ON_COMMAND(ID_DATEI_VERZEICHNISHINZUFGEN, OnDateiVerzeichnishinzufgen)
+	ON_COMMAND(ID_ALBUMTAGS_QUERYMUSICBRAINZDATABASE, OnQuerymusicbrainzdatabase)
 	//}}AFX_MSG_MAP
 	ON_REGISTERED_MESSAGE(UWM_ALBUMINFO_UPDATED, OnAlbumInfoUpdated)
+	ON_REGISTERED_MESSAGE(UWM_TAG_COMMAND, OnAlbumTagCommand)
 	ON_REGISTERED_MESSAGE(UWM_LISTCTRL_KEYUP, OnClickFilesTracks)
 	ON_REGISTERED_MESSAGE(UWM_PRESETSELCHANGED, OnPresetSelChanged)
 END_MESSAGE_MAP()
@@ -133,9 +143,20 @@ CLameFEView::CLameFEView()
 	m_pToolTip = NULL;
 	m_bTagEditorVisible = FALSE;
 
-	wd = g_sSettings.GetWorkingDir();
+//	wd = g_sSettings.GetWorkingDir();
 
 	m_strPresetPath = g_sSettings.GetPresetPath();
+	
+	m_bPaused			= FALSE;
+	m_bIsEjected		= FALSE;
+	m_pStatus			= NULL;
+	m_pToolBar			= NULL;
+	m_pToolTip			= NULL;
+	m_wndPresetBar		= NULL;	
+	m_nSelItem			= NULL;
+	m_bCheckCD			= FALSE;
+	m_bTagEditorVisible	= FALSE;
+	m_bAutoRipMode      = FALSE;
 }
 
 CLameFEView::~CLameFEView()
@@ -198,7 +219,7 @@ void CLameFEView::OnAlbumInfoUpdated(WPARAM wParam,LPARAM lParam)
 
 	if(nSelCnt == 0){
 
-		AfxMessageBox(IDS_ID3_CHOOSE_FILE, MB_OK+MB_ICONSTOP);
+		AfxMessageBox(g_iLang.GetString(IDS_ID3_CHOOSE_FILE), MB_OK+MB_ICONSTOP);
 		return;
 	}
 	
@@ -207,23 +228,19 @@ void CLameFEView::OnAlbumInfoUpdated(WPARAM wParam,LPARAM lParam)
 
 	if(IsPluginMode()){
 
-		m_mmFiles[m_nSelItem]->m_id3Info.SetSong(m_aAlbumInfoCtrl.m_strSong);
+		m_mmFiles[m_nSelItem]->m_id3Info.Copy(m_aAlbumInfoCtrl.GetTag());
 	}
 	else{
 
-		m_compactDisc.GetCDTrack(m_nSelItem)->m_id3Info.SetSong(m_aAlbumInfoCtrl.m_strSong);
+		m_cCD.GetCDTrack(m_nSelItem)->m_id3Info.Copy(m_aAlbumInfoCtrl.GetTag());
 	}
 
 	for(int i = 0; i < nSelCnt; i++){
 		
-		CID3Info *tmp = (IsPluginMode() ? &m_mmFiles[pIndex[i]]->m_id3Info : &m_compactDisc.GetCDTrack(pIndex[i])->m_id3Info);
-
-		tmp->SetAlbum(m_aAlbumInfoCtrl.m_strAlbum);
-		tmp->SetArtist(m_aAlbumInfoCtrl.m_strInterpret);
-		tmp->SetComment(m_aAlbumInfoCtrl.m_strComment);
-		tmp->SetGenre(m_aAlbumInfoCtrl.m_strGenre);
-		tmp->SetTrack(m_aAlbumInfoCtrl.m_nTrack);
-		tmp->SetYear(m_aAlbumInfoCtrl.m_nYear);
+		if(IsPluginMode())
+			m_mmFiles[pIndex[i]]->m_id3Info.Copy(m_aAlbumInfoCtrl.GetTag(), FALSE);
+		else
+			m_cCD.GetCDTrack(pIndex[i])->m_id3Info.Copy(m_aAlbumInfoCtrl.GetTag(), FALSE);
 	}
 
 	if(!IsPluginMode()){
@@ -232,12 +249,162 @@ void CLameFEView::OnAlbumInfoUpdated(WPARAM wParam,LPARAM lParam)
 
 		for(i = 0; i < m_ctrlList.GetItemCount(); i++){
 
-			strTmp.Format("%s - %s", m_compactDisc.GetCDTrack(i)->m_id3Info.GetArtist(), m_compactDisc.GetCDTrack(i)->m_id3Info.GetSong());
+			if(!m_cCD.GetCDTrack(i)->IsAudioTrack()) continue;
+
+			strTmp.Format("%s - %s", m_cCD.GetCDTrack(i)->m_id3Info.GetArtist(), m_cCD.GetCDTrack(i)->m_id3Info.GetSong());
 			m_ctrlList.SetItemText(i, 1, strTmp);
 		}
 	}
 	delete pIndex;
 	TRACE("Leaving CLameFEView::OnAlbumInfoUpdated()\n");
+}
+
+void CLameFEView::OnAlbumTagCommand(WPARAM wParam, LPARAM lParam)
+{
+
+/*
+#define AIC_SWAP_ARTISTALBUM	0
+#define AIC_SWAP_TITLEARTIST	1
+#define AIC_CORRECT_CASE		2
+#define AIC_CLEAR_TAG			3
+#define AIC_COPY_V1_V2			4
+#define AIC_COPY_V2_V1			5
+#define AIC_FIX_VARIOUS			6
+#define AIC_CLEANUP				7
+*/
+	int nSelCnt = m_ctrlList.GetSelCount();
+	int i = 0;
+
+	if(nSelCnt == 0){
+
+		AfxMessageBox(g_iLang.GetString(IDS_ID3_CHOOSE_FILE), MB_OK+MB_ICONSTOP);
+		return;
+	}
+	
+	int *pIndex = new int[nSelCnt];
+	m_ctrlList.GetSelItems(nSelCnt, pIndex);
+
+	switch(wParam){
+
+	case AIC_SWAP_ARTISTALBUM:
+
+		for(i = 0; i < nSelCnt; i++){
+			
+			if(IsPluginMode()){
+
+				m_mmFiles[pIndex[i]]->m_id3Info.SwapAlbumInterpret((ID3T_Tag)lParam);
+			}
+			else{
+
+				m_cCD.GetCDTrack(pIndex[i])->m_id3Info.SwapAlbumInterpret((ID3T_Tag)lParam);
+			}
+		}
+		break;
+
+	case AIC_SWAP_TITLEARTIST:
+
+		for(i = 0; i < nSelCnt; i++){
+			
+			if(IsPluginMode()){
+
+				m_mmFiles[pIndex[i]]->m_id3Info.SwapTitleInterpret((ID3T_Tag)lParam);
+			}
+			else{
+
+				m_cCD.GetCDTrack(pIndex[i])->m_id3Info.SwapTitleInterpret((ID3T_Tag)lParam);
+			}
+		}
+		break;
+
+	case AIC_CORRECT_CASE:
+
+		for(i = 0; i < nSelCnt; i++){
+			
+			if(IsPluginMode()){
+
+				m_mmFiles[pIndex[i]]->m_id3Info.Case((ID3T_Tag)lParam);
+			}
+			else{
+
+				m_cCD.GetCDTrack(pIndex[i])->m_id3Info.Case((ID3T_Tag)lParam);
+			}
+		}
+		break;
+
+	case AIC_CLEAR_TAG:
+
+		for(i = 0; i < nSelCnt; i++){
+			
+			if(IsPluginMode()){
+
+				m_mmFiles[pIndex[i]]->m_id3Info.Empty((ID3T_Tag)lParam);
+			}
+			else{
+
+				m_cCD.GetCDTrack(pIndex[i])->m_id3Info.Empty((ID3T_Tag)lParam);
+			}
+		}
+		break;
+
+	case AIC_COPY_V1_V2:
+	case AIC_COPY_V2_V1:
+
+		for(i = 0; i < nSelCnt; i++){
+			
+			if(IsPluginMode()){
+
+				m_mmFiles[pIndex[i]]->m_id3Info.Sync((ID3T_Tag)lParam);
+			}
+			else{
+
+				m_cCD.GetCDTrack(pIndex[i])->m_id3Info.Sync((ID3T_Tag)lParam);
+			}
+		}
+		break;
+
+	case AIC_FIX_VARIOUS:
+
+		for(i = 0; i < nSelCnt; i++){
+			
+			if(IsPluginMode()){
+
+				m_mmFiles[pIndex[i]]->m_id3Info.FixVariousArtistCD((ID3T_Tag)lParam);
+			}
+			else{
+
+				m_cCD.GetCDTrack(pIndex[i])->m_id3Info.FixVariousArtistCD((ID3T_Tag)lParam);
+			}
+		}
+	case AIC_FIX_NAME:
+
+		for(i = 0; i < nSelCnt; i++){
+			
+			if(IsPluginMode()){
+
+				m_mmFiles[pIndex[i]]->m_id3Info.FixArtistName((ID3T_Tag)lParam);
+			}
+			else{
+
+				m_cCD.GetCDTrack(pIndex[i])->m_id3Info.FixArtistName((ID3T_Tag)lParam);
+			}
+		}
+		break;
+	default:
+		ASSERT(FALSE);
+		return;
+	}
+	if(!IsPluginMode()){
+
+		CString strTmp;
+
+		for(i = 0; i < m_ctrlList.GetItemCount(); i++){
+
+			if(!m_cCD.GetCDTrack(i)->IsAudioTrack()) continue;
+			strTmp.Format("%s - %s", m_cCD.GetCDTrack(i)->m_id3Info.GetArtist(), m_cCD.GetCDTrack(i)->m_id3Info.GetSong());
+			m_ctrlList.SetItemText(i, 1, strTmp);
+		}
+	}
+	delete pIndex;
 }
 
 void CLameFEView::OnId3tagsId3tageditor() 
@@ -272,9 +439,9 @@ void CLameFEView::OnId3tagsId3tageditor()
 void CLameFEView::OnId3tagsReadcdplayerini() 
 {
 	
-	if(!m_compactDisc.GetNumAudioTracks()){
+	if(!m_cCD.GetNumAudioTracks()){
 		
-		AfxMessageBox(IDS_MAIN_NOAUDIOCD, MB_OK+MB_ICONSTOP);
+		AfxMessageBox(g_iLang.GetString(IDS_MAIN_NOAUDIOCD), MB_OK+MB_ICONSTOP);
 		return;
 	}
 
@@ -282,10 +449,10 @@ void CLameFEView::OnId3tagsReadcdplayerini()
 	int *pIndex = new int[iCnt];
 	m_ctrlList.GetSelItems(iCnt, pIndex);
 
-	CCDPlayerIni cdPlayerIni(&m_compactDisc);
+	CCDPlayerIni cdPlayerIni(&m_cCD);
 	if(!cdPlayerIni.Read()){
 
-		AfxMessageBox(IDS_CDPINI_NOENTRY, MB_OK+MB_ICONINFORMATION);
+		AfxMessageBox(g_iLang.GetString(IDS_CDPINI_NOENTRY), MB_OK+MB_ICONINFORMATION);
 		return;
 	}
 	
@@ -298,9 +465,9 @@ void CLameFEView::OnId3tagsReadcdplayerini()
 void CLameFEView::OnId3tagsReadcdtext() 
 {
 
-	if(!m_compactDisc.ReadCDText()){
+	if(!m_cCD.ReadCDText()){
 
-		AfxMessageBox(IDS_CDTEXT_ERROR, MB_OK+MB_ICONINFORMATION);
+		AfxMessageBox(g_iLang.GetString(IDS_CDTEXT_ERROR), MB_OK+MB_ICONINFORMATION);
 		return;
 	}
 
@@ -325,15 +492,15 @@ void CLameFEView::OnId3tagsReadfreedbserver()
 	m_ctrlList.GetSelItems(iCnt, pIndex);
 
 
-	if(!m_compactDisc.GetNumAudioTracks()){
+	if(!m_cCD.GetNumAudioTracks()){
 		
-		AfxMessageBox(IDS_MAIN_NOAUDIOCD, MB_OK+MB_ICONSTOP);
+		AfxMessageBox(g_iLang.GetString(IDS_MAIN_NOAUDIOCD), MB_OK+MB_ICONSTOP);
 		delete pIndex;
 		return;
 	}
 	CWaitCursor wc;
 
-	CCDdbQueryDlg cddbDlg(this, &m_compactDisc, CR_GetActiveCDROM(), wd);
+	CCDdbQueryDlg cddbDlg(this, &m_cCD, CR_GetActiveCDROM());
 	int nResult = cddbDlg.DoModal();
 
 	RefreshTrackList();
@@ -344,29 +511,57 @@ void CLameFEView::OnId3tagsReadfreedbserver()
 
 	if(g_sSettings.GetWriteCDPlayerIni() && (nResult == IDOK)){
 
-		CCDPlayerIni cdini(&m_compactDisc);
+		CCDPlayerIni cdini(&m_cCD);
 		cdini.Write();
 	}
 	SetAlbumInfo();
 }
 
+
+void CLameFEView::OnQuerymusicbrainzdatabase() 
+{
+
+	//save current selection
+	int iCnt = m_ctrlList.GetSelCount();
+	int *pIndex = new int[iCnt];
+	m_ctrlList.GetSelItems(iCnt, pIndex);
+
+
+	if(!m_cCD.GetNumAudioTracks()){
+		
+		AfxMessageBox(g_iLang.GetString(IDS_MAIN_NOAUDIOCD), MB_OK+MB_ICONSTOP);
+		delete pIndex;
+		return;
+	}
+	CWaitCursor wc;
+
+	CMusicBrainz mb(&m_cCD);
+	if(mb.QueryDB()){
+
+		RefreshTrackList();
+	}
+
+	m_ctrlList.SetSelItems(iCnt, pIndex);
+	delete pIndex;
+}
+
 void CLameFEView::OnId3tagsSavecuesheet() 
 {
 
-	if(!m_compactDisc.GetNumAudioTracks()){
+	if(!m_cCD.GetNumAudioTracks()){
 		
-		AfxMessageBox(IDS_MAIN_NOAUDIOCD, MB_OK+MB_ICONSTOP);
+		AfxMessageBox(g_iLang.GetString(IDS_MAIN_NOAUDIOCD), MB_OK+MB_ICONSTOP);
 		return;
 	}
 
-	if(!m_compactDisc.WriteCueSheet(wd, ".mp3")){
+	if(!m_cCD.WriteCueSheet(g_sSettings.GetWorkingDir(), ".mp3")){
 
-		AfxMessageBox(IDS_CUESHEETFAILED, MB_OK + MB_ICONSTOP);
+		AfxMessageBox(g_iLang.GetString(IDS_CUESHEETFAILED), MB_OK + MB_ICONSTOP);
 	}
 	else{
 		
 		CString strTmp;
-		strTmp.Format(IDS_CUESHEETSAVED, m_compactDisc.GetAlbumString(wd, ".cue"));
+		strTmp.Format(g_iLang.GetString(IDS_CUESHEETSAVED), m_cCD.GetAlbumString(g_sSettings.GetWorkingDir(), ".cue"));
 		AfxMessageBox(strTmp, MB_OK + MB_ICONINFORMATION);
 	}
 }
@@ -374,45 +569,60 @@ void CLameFEView::OnId3tagsSavecuesheet()
 void CLameFEView::OnId3tagsSavetocdplayerini() 
 {
 	
-	if(!m_compactDisc.GetNumAudioTracks()){
+	if(!m_cCD.GetNumAudioTracks()){
 		
-		AfxMessageBox(IDS_MAIN_NOAUDIOCD, MB_OK+MB_ICONSTOP);
+		AfxMessageBox(g_iLang.GetString(IDS_MAIN_NOAUDIOCD), MB_OK+MB_ICONSTOP);
 		return;
 	}
 
-	CCDPlayerIni cdini(&m_compactDisc);
+	CCDPlayerIni cdini(&m_cCD);
 	int nResult = cdini.Write();
 	if(nResult == -1){
 
-		AfxMessageBox(IDS_CDPINI_ERRORWRITE, MB_OK+MB_ICONEXCLAMATION);
+		AfxMessageBox(g_iLang.GetString(IDS_CDPINI_ERRORWRITE), MB_OK+MB_ICONEXCLAMATION);
 	}
 	else if(nResult == 2){
 
-		AfxMessageBox(IDS_CDPINI_DOUBLEENTRY, MB_OK+MB_ICONINFORMATION);
+		AfxMessageBox(g_iLang.GetString(IDS_CDPINI_DOUBLEENTRY), MB_OK+MB_ICONINFORMATION);
 	}
 	else{
 
-		AfxMessageBox(IDS_CDPINI_WRITE_OK, MB_OK+MB_ICONINFORMATION);
+		AfxMessageBox(g_iLang.GetString(IDS_CDPINI_WRITE_OK), MB_OK+MB_ICONINFORMATION);
 	}
 }
 
 
 
+void CLameFEView::SetLanguage()
+{
+
+	g_iLang.TranslateDialog((CDialog*)this, IDD_TRACKLIST);
+	g_iLang.TranslateMenu(AfxGetApp()->GetMainWnd()->GetMenu(), IDR_MAINFRAME, TRUE);
+	//g_iLang.TranslateDialog(&m_aAlbumInfoCtrl, IDD_ALBUMINFOCTRL);
+	//m_ctrlList
+}
+
+
 void CLameFEView::OnInitialUpdate() 
 {
 	
-	OnUpdate(this, 0, NULL);
+	CFormView::OnInitialUpdate();
 
 	SetTimer(TIMERID2, 5000, NULL);
+	OnUpdate(this, 0, NULL);
 
-	CFormView::OnInitialUpdate();
-	m_ctrlList.InsertColumn(0, "Track", LVCFMT_RIGHT, 80);
-	m_ctrlList.InsertColumn(1, "Title", LVCFMT_LEFT, 300);
+	SetLanguage();
+	
+	m_ctrlList.InsertColumn(0, g_iLang.GetString(IDS_TL_TRACK), LVCFMT_RIGHT, 80);
+	m_ctrlList.InsertColumn(1, g_iLang.GetString(IDS_TL_TITLE), LVCFMT_LEFT, 300);
+	m_ctrlList.InsertColumn(2, g_iLang.GetString(IDS_TL_TIME), LVCFMT_RIGHT, 80);
+	m_ctrlList.InsertColumn(3, g_iLang.GetString(IDS_TL_INSIZE), LVCFMT_RIGHT, 80);
+	m_ctrlList.InsertColumn(4, g_iLang.GetString(IDS_TL_ESTSIZE), LVCFMT_RIGHT, 80);
 	
 	m_listBkImage.LoadBitmap(IDB_LIST_BK); 
 	m_ctrlList.SetBkImage((HBITMAP)m_listBkImage, FALSE, 90, 90);
 	m_ctrlList.SetTextBkColor(CLR_NONE);
-	m_ctrlList.Init();
+	m_ctrlList.Init(FALSE);
 
 	// Create imaglist and attach it to the tracklist
 	// Create 256 color image lists
@@ -435,10 +645,10 @@ void CLameFEView::OnInitialUpdate()
 	}
 	else{
 
-		m_pToolTip->AddTool(&c_configureIn, IDS_TOOL_CONFIGUREIN);
-		m_pToolTip->AddTool(&c_configureOut,IDS_TOOL_CONFIGUREOUT);
-		m_pToolTip->AddTool(&c_inputDevice, IDS_TOOL_INPUTDEVICE);
-		m_pToolTip->AddTool(&c_outputDevice,IDS_TOOL_OUTPUTDEVICE);
+		m_pToolTip->AddTool(&c_configureIn, g_iLang.GetString(IDS_TOOL_CONFIGUREIN));
+		m_pToolTip->AddTool(&c_configureOut,g_iLang.GetString(IDS_TOOL_CONFIGUREOUT));
+		m_pToolTip->AddTool(&c_inputDevice, g_iLang.GetString(IDS_TOOL_INPUTDEVICE));
+		m_pToolTip->AddTool(&c_outputDevice,g_iLang.GetString(IDS_TOOL_OUTPUTDEVICE));
 	}
 
 	// Set Icons to the configure buttons
@@ -467,9 +677,23 @@ void CLameFEView::OnInitialUpdate()
 
 
 	m_pStatus	 = (CStatusBar *)AfxGetApp()->m_pMainWnd->GetDescendantWindow(AFX_IDW_STATUS_BAR);
-	m_pStatus->SetPaneText(1,"LameFE");
 
+	CString strTmp;
+
+	float fDiskSpace = Utils::GetMyFreeDiskSpace(g_sSettings.GetBasePath())/1024.0/1024;
+
+	if(fDiskSpace > 1000){
+
+		strTmp.Format("%.0f GB", fDiskSpace/1000.0);
+	}
+	else{
+
+		strTmp.Format("%.0f MB", fDiskSpace);
+	}
+	m_pStatus->SetPaneText(1,"LameFE");
+	m_pStatus->SetPaneText(3, strTmp);
 	m_pToolBar	 = (CToolBar*)AfxGetApp()->m_pMainWnd->GetDescendantWindow(AFX_IDW_TOOLBAR);
+
 
 	GetInputDevices();
 	GetOutputDevices();
@@ -521,7 +745,7 @@ void CLameFEView::OnSelchangeDevices(BOOL bReset){
 	}
 	else{
 
-		if(nNumCDDrives == 0){
+		if(m_nNumCDDrives == 0){
 
 			return;
 		}
@@ -540,24 +764,53 @@ BOOL CLameFEView::GetOutputDevices()
 {
 
 	TRACE("Entering CLameFEView::GetOutputDevices()\n");
-	// We have always the lame encoder as output device:
-	c_outputDevice.AddString("MPEG I/II Layer 3 (lame_enc.dll)");
 	
-	// check for output plugins
-
 	CFileFind finder;
 	CString	  strTmp;
-	BOOL bResult = finder.FindFile(wd + "\\Plugins\\*_out.dll");
+
+	// We have always the lame encoder as output device:
+	//c_outputDevice.AddString("MPEG I/II Layer 3 (lame_enc.dll)");
+//	auto_ptr <CEncoderLame> pelEncoder(new CEncoderLame());
+	CEncoderLame* pelEncoder = new CEncoderLame();
+
+	if(!pelEncoder->Init()){
+
+		strTmp.Format(g_iLang.GetString(IDS_ENC_PLUG_LOADFAILED), "lame_enc.dll");
+		AfxMessageBox(strTmp, MB_OK+MB_ICONEXCLAMATION);
+	}
+	else{
+
+		c_outputDevice.AddString(pelEncoder->GetEncoderDescription());
+		m_eEncoders.push_back(pelEncoder);
+		//m_eEncoders.Add(elEncoder);
+		
+	}
+
+	// check for output plugins
+
+	BOOL bResult = finder.FindFile(g_sSettings.GetAppDir() + "\\Plugins\\*_out.dll");
+	
 	while(bResult){
 
 		bResult = finder.FindNextFile();
 		
-		TRACE("Added plugin %s.\n", finder.GetFileName());
-		COutPlugin	tmp(finder.GetFilePath(), g_sSettings.GetIniFilename());
-		tmp.Load();
-		strTmp.Format("%s (%s)", tmp.GetInfoString(), finder.GetFileName());
-		c_outputDevice.AddString(strTmp);
-		tmp.Unload();
+		//TRACE("Added plugin %s.\n", finder.GetFileName());
+
+		//auto_ptr <CEncoderPlugin> pepEncoder(new CEncoderPlugin(finder.GetFilePath()));
+		CEncoderPlugin* pepEncoder = new CEncoderPlugin(finder.GetFilePath());
+		if(!pepEncoder->Init()){
+
+			strTmp.Format(g_iLang.GetString(IDS_ENC_PLUG_LOADFAILED), finder.GetFileName());
+			AfxMessageBox(strTmp, MB_OK+MB_ICONEXCLAMATION);
+		}
+		else{
+
+			strTmp = pepEncoder->GetEncoderDescription();
+			c_outputDevice.AddString(strTmp);
+			m_eEncoders.push_back(pepEncoder);
+		}
+
+
 	}
 
 
@@ -594,8 +847,8 @@ BOOL CLameFEView::GetInputDevices()
 	//////////////////////////////////////////////////////////
 	// Check if there are any LameFE input plugins
 	//////////////////////////////////////////////////////////
-	CFileFind finder;
-	BOOL bResult = finder.FindFile(wd + "\\Plugins\\*_in.dll");
+/*	CFileFind finder;
+	BOOL bResult = finder.FindFile(g_sSettings.GetAppDir() + "\\Plugins\\*_in.dll");
 	while(bResult){
 
 		bResult = finder.FindNextFile();
@@ -630,26 +883,22 @@ BOOL CLameFEView::GetInputDevices()
 	if(m_paPlugins.GetSize() > 0){
 		
 		CString strDevice;
-		strDevice.LoadString(IDS_AUDIOFILEPLUGIN);
+		strDevice = g_iLang.GetString(IDS_AUDIOFILEPLUGIN);
 		c_inputDevice.AddString(strDevice);
-/*		if(!g_sSettings.GetDefaultFromCD()){
-
-			c_inputDevice.SetCurSel(0);
-		}*/
 	}
-
+*/
 	//////////////////////////////////////////////////////////////
 	// Check for CD drives if Ripper was initialized correctly
 	//////////////////////////////////////////////////////////////
 
 	if(!((CLameFEApp*)AfxGetApp())->GetRipperStatus()){
 		
-		nNumCDDrives = 0;
+		m_nNumCDDrives = 0;
 	}
 	else{  // Ripper status is OK enumerate drives and load settings...
 
 		CDROMPARAMS cdParams;
-		nNumCDDrives = 0;
+		m_nNumCDDrives = 0;
 
 
 		int nSelCD = CR_GetActiveCDROM();
@@ -662,7 +911,7 @@ BOOL CLameFEView::GetInputDevices()
 			CR_GetCDROMParameters(&cdParams);
 			tmp.Format("CD: %s", cdParams.lpszCDROMID);
 			c_inputDevice.AddString(tmp);
-			nNumCDDrives++;
+			m_nNumCDDrives++;
 		}
 		
 		CR_SetActiveCDROM(nSelCD);
@@ -687,6 +936,12 @@ void CLameFEView::OnViewReloadcd()
 
 }
 
+void CLameFEView::OnInvertSel() 
+{
+
+	m_ctrlList.InvertSelection();
+}
+
 void CLameFEView::OnViewSelectalltracksfiles() 
 {
 
@@ -696,13 +951,14 @@ void CLameFEView::OnViewSelectalltracksfiles()
 void CLameFEView::ReadCDContents()
 {
 
-	if(nNumCDDrives == 0){
+	if(m_nNumCDDrives == 0){
 
 		return;
 	}
 
 	CWaitCursor wCursor;
-//	m_pStatus->SetPaneText(1,"Reading out CD Contents");
+	CString strOldPaneText = m_pStatus->GetPaneText(1);
+	m_pStatus->SetPaneText(1, g_iLang.GetString(IDS_READCDCONTENT));
 	
 	m_ctrlList.DeleteAllItems();
 	
@@ -717,7 +973,7 @@ void CLameFEView::ReadCDContents()
 
 		if(bErr != CDEX_OK){
 
-			track.Format(IDS_DRIVENOTREADY, bErr);
+			track.Format(g_iLang.GetString(IDS_DRIVENOTREADY), bErr);
 			AfxMessageBox(track, MB_OK+MB_ICONSTOP);
 			return;
 		}
@@ -728,16 +984,16 @@ void CLameFEView::ReadCDContents()
 
 			return;
 		}
-		m_compactDisc.Init();
+		m_cCD.Init();
 
 		if(g_sSettings.GetReadCDTex()){
 
-			m_compactDisc.ReadCDText();
+			m_cCD.ReadCDText();
 		}
 
 		if(g_sSettings.GetReadCDPlayerIni()){
 
-			CCDPlayerIni cdini(&m_compactDisc);
+			CCDPlayerIni cdini(&m_cCD);
 			cdini.Read();
 		}
 
@@ -754,9 +1010,9 @@ void CLameFEView::ReadCDContents()
 	else{
 
 		m_ctrlList.DeleteAllItems();
-		m_compactDisc.Eject();
+		m_cCD.Eject();
 	}
-	m_pStatus->SetPaneText(1,"");
+	m_pStatus->SetPaneText(1,strOldPaneText);
 }
 
 void CLameFEView::OnTimer(UINT nIDEvent) 
@@ -764,7 +1020,7 @@ void CLameFEView::OnTimer(UINT nIDEvent)
 
 	OnUpdate(this, 0, NULL);	
 
-	if((nNumCDDrives == 0) || (IsPluginMode()) || ! IsWindowVisible() || !m_bCheckCD){
+	if((m_nNumCDDrives == 0) || IsPluginMode() || !IsWindowVisible() || !m_bCheckCD){
 
 		return;
 	}
@@ -779,7 +1035,7 @@ void CLameFEView::OnTimer(UINT nIDEvent)
 		CCompactDisc cdTmp;
 		cdTmp.Init();
 
-		if(cdTmp.GetDiscID() != m_compactDisc.GetDiscID()){
+		if(cdTmp.GetDiscID() != m_cCD.GetDiscID()){
 			
 			m_ctrlList.DeleteAllItems();
 			ReadCDContents();
@@ -788,7 +1044,7 @@ void CLameFEView::OnTimer(UINT nIDEvent)
 	}
 	else{
 
-		m_compactDisc.Eject();
+		m_cCD.Eject();
 		m_ctrlList.DeleteAllItems();
 	}
 
@@ -814,12 +1070,6 @@ void CLameFEView::OnConfigureIn()
 	dlg.DoModal();
 
 	m_bCheckCD = bOldCDCheck;
-
-/*	if(m_wndPresetBar != 0){
-
-		m_wndPresetBar->OnInitDialogBar();
-	}
-	*/
 }
 
 void CLameFEView::OnConfigureOut()
@@ -827,39 +1077,14 @@ void CLameFEView::OnConfigureOut()
 
 	UpdateData(TRUE);
 	
-	CString dllName = m_strOutputDevice.Mid(m_strOutputDevice.ReverseFind('(') +1, m_strOutputDevice.GetLength() - m_strOutputDevice.ReverseFind('(') - 2);
+	BOOL bOldCDCheck = m_bCheckCD;
+	m_bCheckCD = FALSE;
 	
-	if(dllName == "lame_enc.dll"){
+	m_eEncoders.at(c_outputDevice.GetCurSel())->Configure();
 
+	m_bCheckCD = bOldCDCheck;
 
-		BOOL bOldCDCheck = m_bCheckCD;
-		m_bCheckCD = FALSE;
-
-		CSettingsDlg dlg;
-		dlg.ShowMP3();
-		dlg.DoModal();
-		m_bCheckCD = bOldCDCheck;
-
-/*		if(m_wndPresetBar != 0){
-
-			m_wndPresetBar->OnInitDialogBar();
-		}*/
-	}
-	else{
-
-		COutPlugin tmp(wd + "\\Plugins\\" + dllName, g_sSettings.GetIniFilename());
-		
-		if(!tmp.Load()){
-
-			CString strTmp;
-			strTmp.Format(IDS_ENC_PLUG_LOADFAILED, dllName);
-			AfxMessageBox(strTmp, MB_OK+MB_ICONEXCLAMATION);
-			return;
-		}
-		tmp.Configure();
-		tmp.Unload();
-	}
-	
+	RefreshTrackList();
 }
 
 void CLameFEView::OnFileOpen() 
@@ -878,8 +1103,8 @@ void CLameFEView::OnFileOpen()
 	strAllExt.Replace("*.;", "");
 
 	//All Files (*.abc;*.cde)|*.abc; *.cde
-	szFilter.Format("All supported Audio Files (%s)|%s|", strAllExt, strAllExt);
-	szFilter += tmpSzFilter + "All Files (*.*)|*.*|";
+	szFilter.Format(g_iLang.GetString(IDS_SUPPORTEDFILES), strAllExt, strAllExt);
+	szFilter += tmpSzFilter + g_iLang.GetString(IDS_ALLFILES);
 
 	CMyFileDialog FileOpen(TRUE, 0, 0, OFN_FILEMUSTEXIST|OFN_OVERWRITEPROMPT | OFN_ALLOWMULTISELECT  , szFilter, 0);
 	
@@ -898,18 +1123,49 @@ void CLameFEView::OnFileOpen()
 		POSITION pos = FileOpen.GetStartPosition();
 		CString path;
 		
+		CString strOutputDevice, dllName;
+		c_outputDevice.GetLBText(c_outputDevice.GetCurSel(), strOutputDevice);
+		dllName = strOutputDevice.Mid(strOutputDevice.ReverseFind('(') + 1, strOutputDevice.GetLength() - strOutputDevice.ReverseFind('(') - 2);
+
 		while (pos != NULL){
 		
 			TRACE("Processing files (pos=%d)\n", pos);
 			path = FileOpen.GetNextPathName(pos);
 			
 			int		nItem = m_ctrlList.GetItemCount();
+
+			CMultimediaFile *tmp = new CMultimediaFile(path);
+			
+/*			if(dllName != "lame_enc.dll"){
+
+				COutPlugin out(g_sSettings.GetAppDir() + "\\Plugins\\" + dllName, wd);
+				if(out.Load()){
+
+					LF_OUT *outMod;
+					MMFILE_FORMAT mmf;
+					MMFILE_ALBUMINFO mma;
+
+					outMod = out.GetOutModule();
+
+					mmf.dwSampleRate = tmp->GetWfx()->nSamplesPerSec;
+					mmf.nBitsPerSample = tmp->GetWfx()->wBitsPerSample;
+					mmf.nChannels = tmp->GetWfx()->nChannels;
+
+					outMod->Open(path, &mmf, &mma);
+					tmp->SetEstFileSize(outMod->GetEstFileSize());
+					outMod->Close();
+					out.Unload();
+				}
+			}*/
+
+			m_mmFiles.Add(tmp);	
+
 			CString strTmp;
 			strTmp.Format("%02d", nItem + 1);
 			m_ctrlList.InsertItem(nItem, strTmp, 2);
 			m_ctrlList.SetItemText(nItem, 1, path);
-			CMultimediaFile *tmp = new CMultimediaFile(path);
-			m_mmFiles.Add(tmp);			
+			strTmp.Format("%02 MB", tmp->GetEstFileSize() / 1024);
+			m_ctrlList.SetItemText(nItem, 3, strTmp);
 		}
 	}
 
@@ -923,7 +1179,7 @@ void CLameFEView::OnRemoveFile()
 
 	if(!IsPluginMode()){
 
-		AfxMessageBox(IDS_MAIN_ADDFILECD, MB_OK+MB_ICONEXCLAMATION);
+		AfxMessageBox(g_iLang.GetString(IDS_MAIN_ADDFILECD), MB_OK+MB_ICONEXCLAMATION);
 		return;
 	}
 	
@@ -951,7 +1207,7 @@ void CLameFEView::OnRemoveFile()
 	}
 	else{
 		
-		AfxMessageBox(IDS_EMPTYLIST,MB_OK+MB_ICONINFORMATION,0);
+		AfxMessageBox(g_iLang.GetString(IDS_EMPTYLIST), MB_OK+MB_ICONINFORMATION,0);
 	}
 }
 
@@ -982,7 +1238,18 @@ void CLameFEView::OnDestroy()
 	OnId3tagsId3tageditor();
 	m_ctrlList.DeleteAllItems();
 	ResetFileList();
+	
+	// De-Init all encoders
+	for(int i = m_eEncoders.size() - 1; i >= 0; i--){
 
+		CGenericEncoder *pE = m_eEncoders.at(i);
+		m_eEncoders.pop_back();
+		pE->DeInit();
+
+		delete pE;
+		pE = NULL;
+	}
+	
 	SaveSettings();
 	CFormView::OnDestroy();
 
@@ -992,82 +1259,113 @@ void CLameFEView::OnDestroy()
 void CLameFEView::RefreshTrackList()
 {
 
-	m_pStatus->SetPaneText(1,"Updating tracklist");
+	CString strOldPaneText = m_pStatus->GetPaneText(1);
+	m_pStatus->SetPaneText(1, g_iLang.GetString(IDS_UPDATETRACKLIST));
 	m_ctrlList.DeleteAllItems();
-	CString tmp;
+	CString strTmp;
 
-	for(int i = 0; i < m_compactDisc.GetNumTracks(); i++){
+	for(int i = 0; i < m_cCD.GetNumTracks(); i++){
 
-		tmp.Format("%02d", i+1);
-		if(m_compactDisc.GetCDTrack(i)->IsAudioTrack()){
+		strTmp.Format("%02d", i+1);
+		if(m_cCD.GetCDTrack(i)->IsAudioTrack()){
 
-			m_ctrlList.InsertItem(i, tmp, 0);
-			tmp.Format("%s - %s", m_compactDisc.GetCDTrack(i)->m_id3Info.GetArtist(), m_compactDisc.GetCDTrack(i)->m_id3Info.GetSong());
+			m_ctrlList.InsertItem(i, strTmp, 0);
+			strTmp.Format("%s - %s", m_cCD.GetCDTrack(i)->m_id3Info.GetArtist(), m_cCD.GetCDTrack(i)->m_id3Info.GetSong());
+			
 		}
 		else{
 			
-			m_ctrlList.InsertItem(i, tmp, 1);
-			tmp.Format("%s", m_compactDisc.GetCDTrack(i)->GetTrackname());
+			m_ctrlList.InsertItem(i, strTmp, 1);
+			strTmp.Format("%s", m_cCD.GetCDTrack(i)->GetTrackname());
 		}
 
-		m_ctrlList.SetItemText(i ,1, tmp);
+		m_ctrlList.SetItemText(i ,1, strTmp);
+		m_ctrlList.SetItemText(i, 2, m_cCD.GetTrackDuration(i));
+		
+		strTmp.Format("%02.2f", (float)m_cCD.GetTrackSize(i) / 1024 / 1024);
+		m_ctrlList.SetItemText(i, 3, strTmp);
+		strTmp.Format("%02.2f", (float)m_eEncoders.at(c_outputDevice.GetCurSel())->GetEstimatedSize(m_cCD.GetTrackSize(i), 2, 44100,16) / 1024 / 1024);
+		m_ctrlList.SetItemText(i, 4, strTmp);
+
 	}
-	m_pStatus->SetPaneText(1,"");
+	m_pStatus->SetPaneText(1,strOldPaneText);
+	strTmp.Format("%02d Tracks", m_cCD.GetNumTracks());
+	m_pStatus->SetPaneText(2, strTmp);
 }
 
 
 
-void CLameFEView::OnFileStartAlbum() 
+//DEL void CLameFEView::OnFileStartAlbum() 
+//DEL {
+//DEL 
+//DEL 	OnViewSelectalltracksfiles();
+//DEL //	StartEncoding(ALBUMMODE);
+//DEL }
+
+//DEL void CLameFEView::OnFileStartBatchAlbum()
+//DEL {
+//DEL 
+//DEL 	OnViewSelectalltracksfiles();
+//DEL //	StartEncoding(BATCHALBUMMODE);
+//DEL }
+
+//DEL void CLameFEView::OnFileStartBatchSingle()
+//DEL {
+//DEL 
+//DEL 	OnViewSelectalltracksfiles();
+//DEL //	StartEncoding(BATCHSINGLETRACKMODE);
+//DEL }
+
+void CLameFEView::OnRipCd() 
 {
 
-	OnViewSelectalltracksfiles();
-	StartEncoding(ALBUMMODE);
+	if(m_bAutoRipMode){
+
+		StartEncoding((ENC_MODE)(LFE_RIP_SINGLE | LFE_AUTO_MODE));
+	}
+	else{
+
+		StartEncoding(LFE_RIP_SINGLE);
+	}
 }
 
-void CLameFEView::OnFileStartBatchAlbum()
+void CLameFEView::OnCdAblumRip() 
 {
 
-	OnViewSelectalltracksfiles();
-	StartEncoding(BATCHALBUMMODE);
-}
+	if(m_bAutoRipMode){
 
-void CLameFEView::OnFileStartBatchSingle()
-{
+		StartEncoding((ENC_MODE)(LFE_RIP_ALBUM | LFE_AUTO_MODE));
+	}
+	else{
 
-	OnViewSelectalltracksfiles();
-	StartEncoding(BATCHSINGLETRACKMODE);
+		StartEncoding(LFE_RIP_ALBUM);
+	}
 }
 
 void CLameFEView::OnFileStartencoding() 
 {
 
-	StartEncoding(NORMALMODE);
+	StartEncoding(LFE_FILE_MODE);
 }
 
-void CLameFEView::StartEncoding(modes mEMode)
+void CLameFEView::StartEncoding(ENC_MODE eMode)
 {
 
 	int     nInputDevice    = c_inputDevice.GetCurSel();
 
 	if((IsPluginMode() && !m_mmFiles.GetSize()) ||
-		(!IsPluginMode() && !m_compactDisc.GetNumTracks())
+		(!IsPluginMode() && !m_cCD.GetNumTracks())
 		){
 
-		AfxMessageBox(IDS_EMPTYLIST, MB_OK+MB_ICONEXCLAMATION);
+		AfxMessageBox(g_iLang.GetString(IDS_EMPTYLIST), MB_OK+MB_ICONEXCLAMATION);
 		return;
 	}
 
-	// Get DLL name of output Device...
-	int     nOutputDevice   = c_outputDevice.GetCurSel();
-	CString strOutputDevice, dllName;
-	c_outputDevice.GetLBText(nOutputDevice, strOutputDevice);
-	dllName = strOutputDevice.Mid(strOutputDevice.ReverseFind('(') +1, strOutputDevice.GetLength() - strOutputDevice.ReverseFind('(') - 2);
-
 	
-	CEncodingStatusDlg esdlg(this, wd);
+	CEncodingStatusDlg esdlg(this);
 	
-	if(((m_paPlugins.GetSize() > 0) && (nInputDevice > 0)) || 
-		((m_paPlugins.GetSize() == 0) && (nInputDevice < nNumCDDrives))){  //input cd
+	// If CD Input Do...
+	if(!IsPluginMode()){ 
 
 		UpdateData(TRUE);
 		int iCnt; 
@@ -1076,7 +1374,7 @@ void CLameFEView::StartEncoding(modes mEMode)
 
 		if(!iCnt){
 			
-			AfxMessageBox(IDS_NOTRACKSSELECTED, MB_OK+MB_ICONINFORMATION);
+			AfxMessageBox(g_iLang.GetString(IDS_NOTRACKSSELECTED), MB_OK+MB_ICONINFORMATION);
 			return;
 		}
 
@@ -1090,14 +1388,14 @@ void CLameFEView::StartEncoding(modes mEMode)
 		//verify that all selected tracks are audio tracks
 		for(int i = 0; i < iCnt; i++){
 			
-			if(m_compactDisc.GetCDTrack(pIndex[i])->IsAudioTrack()){
+			if(m_cCD.GetCDTrack(pIndex[i])->IsAudioTrack()){
 
 				iAudioCnt++;
 			}
 			else{
 
 				CString strTmp;
-				strTmp.Format(IDS_DATATRACK, pIndex[i] + 1);
+				strTmp.Format(g_iLang.GetString(IDS_DATATRACK), pIndex[i] + 1);
 				AfxMessageBox(strTmp, MB_OK+MB_ICONINFORMATION);
 			}
 		}
@@ -1105,30 +1403,31 @@ void CLameFEView::StartEncoding(modes mEMode)
 		pAudioVerified = new int[iAudioCnt];
 		for(i = 0; i < iCnt; i++){
 
-			if(m_compactDisc.GetCDTrack(pIndex[i])->IsAudioTrack()){
+			if(m_cCD.GetCDTrack(pIndex[i])->IsAudioTrack()){
 
 				pAudioVerified[j++] = pIndex[i];
 			}
 		}
-		m_compactDisc.SetSelItems(iAudioCnt, pAudioVerified);
+		m_cCD.SetSelItems(iAudioCnt, pAudioVerified);
 		
 		delete pIndex;
 		delete pAudioVerified;
 
-		if(!m_compactDisc.GetNumSelTracks()){
+		if(!m_cCD.GetNumSelTracks()){
 
-			AfxMessageBox(IDS_NOTRACKSSELECTED, MB_OK+MB_ICONINFORMATION);
+			AfxMessageBox(g_iLang.GetString(IDS_NOTRACKSSELECTED), MB_OK+MB_ICONINFORMATION);
 			return;
 		}
 
 
-		esdlg.SetJob(RIP_TO_ENCODER, dllName, mEMode); 
-		esdlg.SetCDROM(&m_compactDisc);
+		//esdlg.SetJob(RIP_TO_ENCODER, dllName, mEMode); 
+		//esdlg.SetCDROM(&m_cCD);
+		esdlg.Init((m_eEncoders.at(c_outputDevice.GetCurSel())), &m_cCD, eMode);
 	}
 	else{  //input from file
 		
-		esdlg.SetJob(ANY_TO_ENCODER, dllName); 
-		esdlg.SetFiles(&m_mmFiles);
+		//esdlg.SetJob(ANY_TO_ENCODER, dllName); 
+		//esdlg.SetFiles(&m_mmFiles);
 	}
 	
 	if(g_sSettings.GetHideMainWnd()){
@@ -1158,9 +1457,11 @@ void CLameFEView::StartEncoding(modes mEMode)
 
 		if(!ShutDown()){
 
-			AfxMessageBox(IDS_ERR_SHUTDOWN, MB_OK+MB_ICONSTOP);
+			AfxMessageBox(g_iLang.GetString(IDS_ERR_SHUTDOWN), MB_OK+MB_ICONSTOP);
 		}
 	}
+
+//	AfxMessageBox("Not implemented");
 }
 
 
@@ -1170,36 +1471,38 @@ BOOL CLameFEView::ShutDown()
 	HANDLE hToken;
 	LUID luid;
 	TOKEN_PRIVILEGES tp, tpPrevious;
-	DWORD cbPrevious = sizeof( TOKEN_PRIVILEGES );
+	DWORD cbPrevious = sizeof(TOKEN_PRIVILEGES);
 	BOOL bSuccess = FALSE;
 
-	if ( ! LookupPrivilegeValue( NULL, static_cast<CString>( SE_SHUTDOWN_NAME), &luid ) )
+	if ( ! LookupPrivilegeValue(NULL, static_cast<CString>( SE_SHUTDOWN_NAME), &luid ))
 		return FALSE;
 
-	if( ! OpenProcessToken( GetCurrentProcess(), TOKEN_QUERY | TOKEN_ADJUST_PRIVILEGES, &hToken ) )
+	if( ! OpenProcessToken(GetCurrentProcess(), TOKEN_QUERY | TOKEN_ADJUST_PRIVILEGES, &hToken ))
 		return FALSE;
 
 	tp.PrivilegeCount = 1;
 	tp.Privileges[0].Luid = luid;
 	tp.Privileges[0].Attributes = 0;
 
-	AdjustTokenPrivileges( hToken, FALSE, &tp, sizeof( TOKEN_PRIVILEGES ), &tpPrevious, &cbPrevious );
+	AdjustTokenPrivileges(hToken, FALSE, &tp, sizeof(TOKEN_PRIVILEGES), &tpPrevious, &cbPrevious);
 
-	if ( GetLastError() == ERROR_SUCCESS )
-	{
+	if (GetLastError() == ERROR_SUCCESS){
+
 		tpPrevious.PrivilegeCount = 1;
 		tpPrevious.Privileges[0].Luid = luid;
 
 
-		tpPrevious.Privileges[0].Attributes |= ( SE_PRIVILEGE_ENABLED );
+		tpPrevious.Privileges[0].Attributes |= (SE_PRIVILEGE_ENABLED);
 
-		AdjustTokenPrivileges( hToken, FALSE, &tpPrevious, cbPrevious, NULL, NULL );
+		AdjustTokenPrivileges(hToken, FALSE, &tpPrevious, cbPrevious, NULL, NULL);
 
-		if ( GetLastError() == ERROR_SUCCESS )
+		if (GetLastError() == ERROR_SUCCESS){
+
 			bSuccess=TRUE;
+		}
 	}
 
-	CloseHandle( hToken );
+	CloseHandle(hToken);
 
 	InitiateSystemShutdown(NULL, "System shutdown", 10, FALSE, FALSE);
 	return TRUE;
@@ -1207,9 +1510,9 @@ BOOL CLameFEView::ShutDown()
 
 void CLameFEView::OnAppExit() 
 {
+
 	TRACE("Entering CLameFEView::OnAppExit()\n");
 
-	//OnDestroy();
 	AfxGetApp()->HideApplication();
 	AfxGetApp()->CloseAllDocuments(FALSE);
 	AfxGetApp()->ExitInstance();
@@ -1250,15 +1553,8 @@ void CLameFEView::OnDropFiles(HDROP hDropInfo)
 
 	if(!IsPluginMode()){
 
-		if(AfxMessageBox(IDS_CDMODENODROP, MB_YESNO+MB_ICONSTOP) == IDNO){
-			
-			return;
-		}
-		else{
-
-			c_inputDevice.SetCurSel(0);
-			OnSelchangeDevices(TRUE);
-		}
+		AfxMessageBox(g_iLang.GetString(IDS_CDMODENODROP), MB_OK+MB_ICONSTOP);
+		return;
 	}
 
 	int nTotalFiles = ::DragQueryFile(hDropInfo, (UINT)-1,NULL, 0);
@@ -1281,16 +1577,8 @@ void CLameFEView::OnDropFiles(HDROP hDropInfo)
 		CString  strFileName;
 		CString  strFileExt;
 		// Get drop file name
-		CFileStatus rStatus;
-		::DragQueryFile( hDropInfo, i, lpszFileName, sizeof( lpszFileName ) );
-		CFile::GetStatus(lpszFileName, rStatus);
+		::DragQueryFile(hDropInfo, i, lpszFileName, sizeof(lpszFileName));
 
-		if(rStatus.m_attribute & 0x10){
-
-			TRACE("%s is directory. Starting directory listing.\n", lpszFileName);
-			AddDirectory(lpszFileName, strAllExt);
-			continue;
-		}
 		strFileName = lpszFileName;
 		strFileExt  = strFileName.Right(3);
 		strFileExt.MakeLower();
@@ -1298,7 +1586,7 @@ void CLameFEView::OnDropFiles(HDROP hDropInfo)
 		if(strAllExt.Find(strFileExt, 0) == -1){
 			
 			CString strTmp;
-			strTmp.Format(IDS_UNSUPPORTEDFILE, strFileName);
+			strTmp.Format(g_iLang.GetString(IDS_UNSUPPORTEDFILE), strFileName);
 
 			AfxMessageBox(strTmp, MB_OK+MB_ICONINFORMATION);
 		}
@@ -1320,7 +1608,6 @@ void CLameFEView::OnClickFilesTracks(NMHDR* pNMHDR, LRESULT* pResult)
 {
 	
 	SetAlbumInfo();
-	//*pResult = 0;
 }
 
 void CLameFEView::ResizeControls()
@@ -1340,12 +1627,12 @@ void CLameFEView::ResizeControls()
 	m_ctrlList.GetWindowRect( rcList );
 
 	// Aha, we need to convert the coordinates (client!!) otherwise there might happen funny stuff :-)
-	ScreenToClient( rcList );
+	ScreenToClient(rcList);
 	
 	// margin...
 	rcList.right = rcParent.right - 10;
-	// if the tag-editor is visible we need some space at under the tracklist for it
-	rcList.bottom = rcParent.bottom - (m_bTagEditorVisible ? 100 : 0);
+	// if the tag-editor is visible we need some space under the tracklist for it
+	rcList.bottom = rcParent.bottom - (m_bTagEditorVisible ? 130 : 0);
 	// adjust the window size
 	m_ctrlList.MoveWindow(rcList);
 
@@ -1358,9 +1645,9 @@ void CLameFEView::ResizeControls()
 
 void CLameFEView::OnSize(UINT nType, int cx, int cy) 
 {
+
 	CFormView::OnSize(nType, cx, cy);
-	ResizeControls();
-		
+	ResizeControls();	
 }
 
 
@@ -1380,9 +1667,9 @@ void CLameFEView::SetAlbumInfo()
 		}
 		else{
 				
-			m_aAlbumInfoCtrl.SetInfo(&m_compactDisc.GetCDTrack(m_nSelItem)->m_id3Info);
+			m_aAlbumInfoCtrl.SetInfo(&m_cCD.GetCDTrack(m_nSelItem)->m_id3Info);
 			
-			if(!m_compactDisc.GetCDTrack(m_nSelItem)->IsAudioTrack()){
+			if(!m_cCD.GetCDTrack(m_nSelItem)->IsAudioTrack()){
 				
 				m_aAlbumInfoCtrl.EnableControls(FALSE);
 			}
@@ -1399,9 +1686,7 @@ void CLameFEView::SetAlbumInfo()
 BOOL CLameFEView::IsPluginMode()
 {
 
-//	return c_inputDevice.GetCurSel() >= nNumCDDrives;
-
-	return ((c_inputDevice.GetCurSel() == 0) && (m_paPlugins.GetSize() > 0));
+	return FALSE;
 }
 
 
@@ -1420,22 +1705,16 @@ void CLameFEView::OnSettings()
 
 	CSettingsDlg dlg;
 	dlg.DoModal();
-	
+	RefreshTrackList();
 	m_bCheckCD = bOldCDCheck;
-
-/*	if(m_wndPresetBar != 0){
-
-		m_wndPresetBar->OnInitDialogBar();
-	}*/
 }
 
 
 void CLameFEView::OnHelpReportabug() 
 {
 
-	CString strFilename = "http://lamefe.sourceforge.net/forums/index.php?s=e239ad0ab3d8bb9161f5ddbb936ad04b&act=SF&f=4";
-	//CString strFilename = "http://lamefe.sourceforge.net/forums/index.php?s=561d5e9a6b4ab3dd3cb8b284df9f2e86&act=SF&f=9";
-	//strFilename += m_strInstallerName;
+
+	CString strFilename = g_iLang.GetString(IDS_BUGREPORTFORUM);
 
 	ShellExecute(GetSafeHwnd(), 
 				"open", 
@@ -1448,6 +1727,10 @@ void CLameFEView::OnHelpReportabug()
 void CLameFEView::OnSelchangeOutputDevice() 
 {
 
+	if(!IsPluginMode()){
+
+		RefreshTrackList();
+	}
 }
 
 void CLameFEView::LoadSettings()
@@ -1584,7 +1867,7 @@ void CLameFEView::OnSavepreset()
 		if(CFile::GetStatus(strSaveAs, rStatus)){
 
 			CString strTmp;
-			strTmp.Format(IDS_ENC_FILEEXISTS, strSaveAs);
+			strTmp.Format(g_iLang.GetString(IDS_ENC_FILEEXISTS), strSaveAs);
 			if(AfxMessageBox(strTmp, MB_YESNO+MB_ICONQUESTION) == IDNO){
 				
 				m_bCheckCD = bCheckCD;
@@ -1624,7 +1907,7 @@ void CLameFEView::OnDeletepreset()
 
 	if((strToDelete == "lamefe") || (strToDelete == "default")){
 
-		AfxMessageBox(IDS_DEFAULTPRESETNOTREMOVABLE, MB_OK+MB_ICONINFORMATION);
+		AfxMessageBox(g_iLang.GetString(IDS_DEFAULTPRESETNOTREMOVABLE), MB_OK+MB_ICONINFORMATION);
 	}
 	else{
 
@@ -1643,7 +1926,7 @@ void CLameFEView::OnDeletepreset()
 		CATCH(CFileException, e)
 		{
 
-			AfxMessageBox(IDS_COULDNOTREMOVEPRESET, MB_OK+MB_ICONINFORMATION);
+			AfxMessageBox(g_iLang.GetString(IDS_COULDNOTREMOVEPRESET), MB_OK+MB_ICONINFORMATION);
 			m_bCheckCD = bCheckCD;
 		}
 		END_CATCH
@@ -1676,106 +1959,66 @@ void CLameFEView::InitProfileBar()
 			continue;
 		}
 		strPreset = strPreset.Left(strPreset.GetLength() - 4);
-		//m_cPresetName.AddString(strPreset);
 		m_wndPresetBar->AddPresetSelection(strPreset);
 	}
 
 	m_wndPresetBar->SetPresetSelection(strActivePreset);
-//	OnPresetSelChanged();
 }
 
 
 void CLameFEView::OnUpdate(CView* pSender, LPARAM lHint, CObject* pHint) 
 {
+	
+	if(IsWindowVisible()){
 
-	TRACE("Entering CLameFEView::OnUpdate()\n");
-	AfxGetApp()->m_pMainWnd->SetWindowText(STR_VERSION);
+		TRACE("Entering CLameFEView::OnUpdate()\n");
+		AfxGetApp()->m_pMainWnd->SetWindowText(STR_VERSION);
 
-	TRACE("Leaving CLameFEView::OnUpdate()\n");
-}
-
-void CLameFEView::OnDateiVerzeichnishinzufgen() 
-{
-
-	CPathDialog dlg("LameFE", NULL, NULL);
-	int nResult = dlg.DoModal();
-	if(nResult == IDOK){
-		
-		// Get all supported filetypes of all input plugins
-		CString strAllExt;
-		
-		for(int i = 0; i < m_paPlugins.GetSize(); i++){
-
-			strAllExt += m_paPlugins[i].GetExtension() + ";";
-		}
-		strAllExt.Replace("*.;", "");
-		strAllExt.MakeLower();
-
-		AddDirectory(dlg.GetPathName(), strAllExt);
+		TRACE("Leaving CLameFEView::OnUpdate()\n");
 	}
 }
 
-BOOL CLameFEView::AddDirectory(CString strPath, CString strExt)
+void CLameFEView::OnRclickFilesTracks(NMHDR* pNMHDR, LRESULT* pResult) 
 {
 
-	CWaitCursor wc;
-	CFileFind finder;
-	CFileStatus rStatus;
-	CString strFile, strFileExt;
-	//CStringArray aDirsToAdd;
+	CMenu mContextMenu;
+	mContextMenu.LoadMenu(IDR_CONTEXTMENU_LIST);
 
-	BOOL bResult = finder.FindFile(strPath + "\\*.*");
-	while(bResult){
+	// translate the menu items
+	g_iLang.TranslateMenu(&mContextMenu, IDR_CONTEXTMENU_LIST, FALSE);
 
-		bResult = finder.FindNextFile();
-		
-		strFile = finder.GetFilePath();
+	POINT point;
+	GetCursorPos(&point);
 
-		CFile::GetStatus(strFile, rStatus);
-		
-		if((finder.GetFileName().Right(1) == ".")){
+	if(m_ctrlList.GetNextItem(-1, LVNI_FOCUSED) >= 0)
+	{
 
-			continue;
-		}
-		
-		if(rStatus.m_attribute & 0x10){
-
-			TRACE("CLameFEView::AddDirectory() -> Recursing into subdirectory %s\n", strFile);
-			AddDirectory(strFile, strExt);
-			//aDirsToAdd.Add(strFile);
-		}
-		else{
-
-			//strFileName = lpszFileName;
-			strFileExt  = strFile.Right(3);
-			strFileExt.MakeLower();
-
-			if(strExt.Find(strFileExt, 0) == -1){
-				
-				CString strTmp;
-				strTmp.Format(IDS_UNSUPPORTEDFILE, strFile);
-
-				//AfxMessageBox(strTmp, MB_OK+MB_ICONINFORMATION);
-				TRACE(strTmp + "\n");
-			}
-			else{
-				
-				CString strTmp;
-				strTmp.Format("%02d", m_ctrlList.GetItemCount()+1);
-				m_ctrlList.InsertItem(m_ctrlList.GetItemCount(), strTmp, 2);
-				m_ctrlList.SetItemText(m_ctrlList.GetItemCount()-1, 1, strFile);
-				CMultimediaFile *tmp = new CMultimediaFile(strFile);
-				m_mmFiles.Add(tmp);
-				//nPos++;
-			}
-		}
-		/*
-		for(int i = 0; i < aDirsToAdd.GetSize(); i++){
-
-			//AddDirectory(aDirsToAdd.GetAt(i), strExt);
-		}*/
-		//TRACE(">> %s\n", strFile);
+		mContextMenu.GetSubMenu(0)->TrackPopupMenu(	TPM_LEFTALIGN|TPM_LEFTBUTTON|TPM_RIGHTBUTTON,
+											point.x,
+											point.y,
+											AfxGetMainWnd() );
 	}
 
-	return TRUE;
+	*pResult = 0;
+}
+
+void CLameFEView::OnAutoRip() 
+{
+
+	m_bAutoRipMode = !m_bAutoRipMode;
+}
+
+void CLameFEView::OnUpdateAutoRip(CCmdUI* pCmdUI) 
+{
+
+	pCmdUI->Enable(!IsPluginMode());
+	if(m_bAutoRipMode){
+
+		pCmdUI->SetCheck(1);
+	}
+	else{
+
+		pCmdUI->SetCheck(0);
+	}
+	
 }

@@ -25,38 +25,48 @@
 #pragma once
 #endif // _MSC_VER > 1000
 
+
+
 #include "TrayDialog.h"
 #include "TimeStatus.h"
 #include "CompactDisk.h"	// Hinzugefügt von der Klassenansicht
 #include "mmfile.h"
 #include "LogFile.h"
 #include "ExtListCtrl.h"
+#include "GenericEncoder.h"
 
-#define  RIP_TO_ENCODER  0
-//#define  RIP_TO_MP3		 1
-#define  ANY_TO_ENCODER  2
+#include <queue>
+//using namespace std;
 
 typedef CArray<CMultimediaFile*, CMultimediaFile*>	CMMFArray;
-extern enum modes {NORMALMODE = 0, ALBUMMODE, BATCHALBUMMODE, BATCHSINGLETRACKMODE};
+//extern enum modes {NORMALMODE = 0, ALBUMMODE, BATCHALBUMMODE, BATCHSINGLETRACKMODE};
+enum ENC_MODE{
+
+	LFE_RIP_SINGLE = 0x0004,
+	LFE_RIP_ALBUM  = 0x0008,
+	LFE_FILE_MODE  = 0x0010,
+	LFE_AUTO_MODE  = 0x0001
+};
 
 class CEncodingStatusDlg : public CTrayDialog
 {
 // Konstruktion
 public:
+	BOOL RipToAny2Phase();
+	void Phase2Ripping();
+	static UINT EncoderFunc2Phase(PVOID pParamas);
+	BOOL Init(CGenericEncoder* pEncoder, CCompactDisc* pCD, ENC_MODE eMode);
 	BOOL m_bBatchAppendDiscID;
 	BOOL RipBatchMode();
 
-	CEncodingStatusDlg(CWnd* pParent = NULL, CString wd = "");   // Standardkonstruktor
+	CEncodingStatusDlg(CWnd* pParent = NULL);   // Standardkonstruktor
 
 	//Encoding Funcs
 	static UINT EncoderFunc(PVOID pParamas);
 
 	//Public Class Access
-	void	SetFiles(CMMFArray *files);
-	void	SetCDROM(CCompactDisc *cd);
-	void	SetJob(int nJob, CString strOutputDevice  = "lame_enc.dll", modes mEMode = NORMALMODE);
-	int		GetJob();
-	int		GetAlbumMode(){ return m_mEMode; }
+	ENC_MODE	GetMode(){ return m_eMode;}
+	//int		GetAlbumMode(){ return m_mEMode; }
 	CImageList	m_cImageList;
 	
 
@@ -65,22 +75,19 @@ public:
 // Dialogfelddaten
 	//{{AFX_DATA(CEncodingStatusDlg)
 	enum { IDD = IDD_STATUS_DIALOG };
+	CProgressCtrl	m_phase2Status;
 	CProgressCtrl	m_jitterPos;
 	CButton			m_closeBtn;
 	CButton			m_saveBtn;
 	CProgressCtrl	m_listStatus;
 	CProgressCtrl	m_fileStatus;
-	CString			m_estSize;
-	CString			m_list_errors;
-	CString			m_inputSize;
-	CString			m_in;
-	CString			m_out;
 	CString			m_strEstTime;
 	CString			m_strElaTime;
 	CString			m_strRemTime;
 	CExtListCtrl	m_logOut;
 	CString			m_strStatusText;
 	CString			m_strDiscardLogMsg;
+	CString	m_strPhase2StatusText;
 	//}}AFX_DATA
 
 // Überschreibungen
@@ -103,27 +110,34 @@ private:
 	BOOL	AnyToEncoder();
 
 	// After encoding stuff
-	BOOL	WriteID3Tag(CMultimediaFile *mFile);
-	BOOL	WriteID3Tag(MMFILE_ALBUMINFO tmpAI);
 	void	FinishedJobs();
 
 	
 	// Private Datamembers
 	// File list
-	CCompactDisc *m_cd;
-	CMMFArray*  m_files;
-	
+	CCompactDisc *m_pCD;
+//	CMMFArray*  m_files;
+	std::queue<CString> m_q2PhaseIn;
+	std::queue<CString> m_q2PhaseOut;
+
+	CRITICAL_SECTION m_csQueueLock;
 	// Job-Details
-	int         m_nJob;
-	modes		m_mEMode;
+	//int         m_nJob;
+	ENC_MODE	m_eMode;
 	CString		m_strInputDevice;
 	CString		m_strOutputDevice;
 	CString		m_strExtension;
-	CString     m_strWd;
+	CGenericEncoder* m_pEncoder;
 
 	// Status Info
+	CString			m_strEstSize;
+	CString			m_strInputSize;
+	CString			m_strIn;
+	CString			m_strOut;
+
 	int         m_nBufferPerc;
 	int         m_nFilePerc;
+	int			m_nPhase2Perc;
 	int			m_nJitterPos;
 	int         m_nErrors;
 	CTimeStatus m_tTimeStatus;
@@ -132,12 +146,18 @@ private:
 
 	// Thread stuff	
 	BOOL        m_bAbortEnc;
+	BOOL		m_bPhase1IsFinished;
+	//CSingleLock* m_slLock;
 	CMutex		m_mLockControls;
 	CEvent		m_eThreadFinished;
 	CWinThread*	m_pThread;
+	
+	CEvent		m_e2PhaseFinished;
+	CWinThread* m_p2PhaseThread;
 
 
 protected:
+	void EnableCDControls(BOOL bEnable);
 
 	// Generierte Nachrichtenzuordnungsfunktionen
 	//{{AFX_MSG(CEncodingStatusDlg)

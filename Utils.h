@@ -42,7 +42,4 @@ public:
 	static BOOL CheckCOMTL32Dll();
 };
 
-INT QueryModuleDebugLevel( const CString& strModule );
-
-
 #endif // !defined(AFX_UTILS_H__0BE13371_986C_416B_AB6F_8BEB0F086CC5__INCLUDED_)

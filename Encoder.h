@@ -35,6 +35,7 @@
 class CEncoder  
 {
 public:
+
 	DWORD ProcessData(SHORT* pbsInSamples, DWORD dwNumSamples);
 	DWORD ReSample(PSHORT psData, DWORD dwNumSamples);
 	DWORD UpMixToStereo( PSHORT psData, PSHORT psOutData,DWORD dwNumSamples);
@@ -50,7 +51,7 @@ public:
 
 	BOOL PrepareEncoding(CString strFilename, int nNumchannels, int nSamplerate, int nBitspersample);
 	BOOL PrepareMP3(CString strFilename, int nNumchannels, int nSamplerate, int nBitspersample);
-	__int64  GetEstimatedSize(int nSamplesPerSec, int nChannels, int wBitsperSample, __int64 nFileSize);
+	int  GetEstimatedSize(int nSamplesPerSec, int nChannels, int wBitsperSample, __int64 nFileSize);
 	unsigned long GetSamplesToRead();
 
 
@@ -59,7 +60,7 @@ public:
 
 private:
 	MMFILE_ALBUMINFO m_albumInfo;
-	__int64 nEstimatedSize;
+	long nEstimatedSize;
 	CString strOutputDLL;
 	CString wd;
 

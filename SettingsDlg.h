@@ -37,6 +37,7 @@
 #include "SettingsLookNFeel.h"
 #include "SettingsMP3.h"
 #include "SettingsPlugin.h"
+#include "SettingsLanguages.h"
 
 class CSettingsDlg : public CDialog
 {
@@ -63,6 +64,7 @@ public:
 
 // Implementierung
 protected:
+	CString m_strLanguage;
 	BOOL bShowDecoders;
 	BOOL bShowMP3;
 	BOOL bShowCDRipper;
@@ -81,6 +83,7 @@ protected:
 	CSettingsLookNFeel	m_dLookNFeel;
 	CSettingsMP3		m_dMP3;
 	CSettingsPlugin		m_dPlugin;
+	CSettingsLanguages	m_dLang;
 
 	//other protected datamembers
 	CImageList	m_cImageList;

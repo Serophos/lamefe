@@ -20,6 +20,7 @@
 #include "lamefe.h"
 #include "CheckNewVersion.h"
 #include <afxinet.h>
+#include "I18n.h"
 
 
 #ifdef _DEBUG
@@ -31,6 +32,7 @@ static char THIS_FILE[] = __FILE__;
 /////////////////////////////////////////////////////////////////////////////
 // Dialogfeld CCheckNewVersion 
 
+extern CI18n	 g_iLang;
 
 CCheckNewVersion::CCheckNewVersion(CWnd* pParent /*=NULL*/)
 	: CDialog(CCheckNewVersion::IDD, pParent)
@@ -60,6 +62,8 @@ void CCheckNewVersion::DoDataExchange(CDataExchange* pDX)
 BEGIN_MESSAGE_MAP(CCheckNewVersion, CDialog)
 	//{{AFX_MSG_MAP(CCheckNewVersion)
 	ON_BN_CLICKED(IDC_DOWNLOAD, OnDownload)
+	ON_BN_CLICKED(ID_CHECKNOW, OnOK)
+	ON_BN_CLICKED(ID_CLOSE, OnCancel)
 	//}}AFX_MSG_MAP
 END_MESSAGE_MAP()
 
@@ -81,7 +85,7 @@ void CCheckNewVersion::OnOK()
 		//some ISPs interfear with a proxy to display adds when the first page is loaded
 		//so we close and opem the file again
 		pFile->Close();
-		pFile = 0;
+		pFile = NULL;
 		pFile = (CHttpFile*) is.OpenURL("http://lamefe.sourceforge.net/version.info");
 		
 		if(pFile != NULL){
@@ -109,21 +113,20 @@ void CCheckNewVersion::OnOK()
 		CString strFormatted;
 
 		pEx->GetErrorMessage(szCause, 255);
-		strFormatted.Format(IDS_UPDATE_ERROR, szCause);
+		strFormatted.Format(g_iLang.GetString(IDS_UPDATE_ERROR), szCause);
 		AfxMessageBox(strFormatted, MB_OK+MB_ICONEXCLAMATION);
 	}
 
 	if(m_strNewVersion != STR_VERSION_DLG){
 		
-		m_strVersionMsg.LoadString(IDS_UPDATE_AVAILABLE);
+		m_strVersionMsg = g_iLang.GetString(IDS_UPDATE_AVAILABLE);
 		m_cDownload.EnableWindow(TRUE);
 	}
 	else{
 
-		m_strVersionMsg.LoadString(IDS_UPDATE_NO);
+		m_strVersionMsg = g_iLang.GetString(IDS_UPDATE_NO);
 	}
 	UpdateData(FALSE);
-	//CDialog::OnOK();
 }
 
 void CCheckNewVersion::OnDownload() 
@@ -150,8 +153,10 @@ BOOL CCheckNewVersion::OnInitDialog()
 
 	CDialog::OnInitDialog();
 
+	g_iLang.TranslateDialog(this, IDD_CHECKNEWVERSION);
+
 	m_strOldVersion = STR_VERSION_DLG;
-	m_strNewVersion.LoadString(IDS_UPDATE_NOTQUERIED);
+	m_strNewVersion = g_iLang.GetString(IDS_UPDATE_NOTQUERIED);
 
 	UpdateData(FALSE);
 

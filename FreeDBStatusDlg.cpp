@@ -19,12 +19,15 @@
 #include "stdafx.h"
 #include "lameFE.h"
 #include "FreeDBStatusDlg.h"
+#include "I18n.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
 #undef THIS_FILE
 static char THIS_FILE[] = __FILE__;
 #endif
+
+extern CI18n	 g_iLang;
 
 /////////////////////////////////////////////////////////////////////////////
 // Dialogfeld FreeDBStatusDlg 
@@ -73,7 +76,7 @@ void FreeDBStatusDlg::SetMessage(UINT nID)
 {
 
 	m_mLock.Lock();
-	m_strStatusMsg.LoadString(nID);
+	m_strStatusMsg = g_iLang.GetString(nID);
 	UpdateData(FALSE);
 	m_mLock.Unlock();
 	Sleep(0);
@@ -85,6 +88,7 @@ BOOL FreeDBStatusDlg::Create(UINT nIDTemplate, CWnd* pParentWnd)
 	int nResult = CDialog::Create(nIDTemplate, pParentWnd);
 
 	//RedrawWindow(0, 0, RDW_ALLCHILDREN|RDW_ERASENOW|RDW_INVALIDATE|RDW_INTERNALPAINT|RDW_UPDATENOW);
+	g_iLang.TranslateDialog(this, IDD_FREEDB_STATUS);
 	SetTimer(32130, 500, 0);
 	
 	return nResult;

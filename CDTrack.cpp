@@ -19,6 +19,7 @@
 #include "stdafx.h"
 #include "CDTrack.h"
 #include "Resource.h"
+#include "I18n.h"
 
 #ifdef _DEBUG
 #undef THIS_FILE
@@ -28,6 +29,8 @@ static char THIS_FILE[]=__FILE__;
 
 #define CDROMDATAFLAG 0x04
 #define AUDIOTRKFLAG 0x10
+
+extern CI18n g_iLang;
 
 //////////////////////////////////////////////////////////////////////
 // Konstruktion/Destruktion
@@ -41,9 +44,20 @@ CCDTrack::CCDTrack()
 	m_dwStartSector = 0;
 	m_strTrackName	= "";
 	m_bExtract		= FALSE;
-	bAlerted		= FALSE;
-	m_bRename		= TRUE;
+	m_bAlerted		= FALSE;
 	
+}
+
+CCDTrack::CCDTrack(CCDTrack &cdTrack)
+{
+
+	m_btFlags		= cdTrack.m_btFlags;
+	m_btTrack		= cdTrack.m_btTrack;
+	m_dwStartSector = cdTrack.m_dwStartSector;
+	m_strTrackName	= cdTrack.m_strTrackName;
+	m_bExtract		= cdTrack.m_bExtract;
+	m_bAlerted		= cdTrack.m_bAlerted;
+	m_id3Info.Copy(&cdTrack.m_id3Info);
 }
 
 CCDTrack::~CCDTrack()
@@ -63,11 +77,11 @@ CString CCDTrack::GetTrackname()
 	
 	if(IsAudioTrack()){
 		
-		m_strTrackName.Format(IDS_MAIN_AUDIOTRACK, m_btTrack);
+		m_strTrackName.Format(g_iLang.GetString(IDS_MAIN_AUDIOTRACK), m_btTrack);
 	}
 	else{
 
-		m_strTrackName.LoadString(IDS_MAIN_DATATRACK);
+		m_strTrackName = g_iLang.GetString(IDS_MAIN_DATATRACK);
 	}
 	return m_strTrackName;
 }
@@ -86,15 +100,21 @@ void CCDTrack::SetExtract(BOOL bExtract)
 	m_bExtract = bExtract;
 }
 
-void CCDTrack::SetRename(BOOL bFlag)
+CCDTrack& CCDTrack::operator=(const CCDTrack &cdTrack )
 {
 
-	m_bRename = bFlag;
+	if(this != &cdTrack){
+
+		m_btFlags		= cdTrack.m_btFlags;
+		m_btTrack		= cdTrack.m_btTrack;
+		m_dwStartSector = cdTrack.m_dwStartSector;
+		m_strTrackName	= cdTrack.m_strTrackName;
+		m_bExtract		= cdTrack.m_bExtract;
+		m_bAlerted		= cdTrack.m_bAlerted;
+		m_id3Info.Copy(&(CID3Info)cdTrack.m_id3Info);
+	}
+
+	return *this;
 }
 
-BOOL CCDTrack::GetRename()
-{
-
-	return m_bRename;
-}
 

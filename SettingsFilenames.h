@@ -46,9 +46,9 @@ public:
 // Dialogfelddaten
 	//{{AFX_DATA(CSettingsFilenames)
 	enum { IDD = IDD_SETTINGS_FILENAMES };
-	CMyEditCtrl	m_ctrlAlbum;
-	CMyEditCtrl	m_ctrlPlaylist;
-	CMyEditCtrl	m_ctrlFilename;
+	CEdit	m_ctrlAlbum;
+	CEdit	m_ctrlPlaylist;
+	CEdit	m_ctrlFilename;
 	CStatic m_ctrlPath;
 	CString	m_strAlbumMode;
 	CString	m_strAlbumPrev;

@@ -1,5 +1,5 @@
 /*
-** Copyright (C) 2002 Thees Winkler
+** Copyright (C) 2002-2003 Thees Winkler
 **  
 ** This program is free software; you can redistribute it and/or modify
 ** it under the terms of the GNU General Public License as published by
@@ -23,7 +23,7 @@
 
 #include "mmfile.h"
 
-#define VERSION 0x002
+#define VERSION 0x203
 
 typedef struct 
 {
@@ -88,14 +88,13 @@ typedef struct
 	void (*Close)(void);		
 
 	////////////////////////////////////////////////////////////////////////
-	// int GetFileSize(...) - Get Size of decompressed file (raw data size)
+	// __int64 GetFileSize(...) - Get Size of decompressed file (raw data size)
 	//    in Kilobyte
 	//
 	// Parameters:
 	//  none
 	////////////////////////////////////////////////////////////////////////
-	int		(*GetFileSize)(void);
-
+	__int64		(*GetFileSize)(void);
 
 	////////////////////////////////////////////////////////////////////////
 	// void GetMMFileFormat(...) - Get the fileformat of the decompressed

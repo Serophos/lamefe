@@ -30,7 +30,6 @@ static char THIS_FILE[]=__FILE__;
 
 typedef BOOL (PASCAL *GFDPEX )(LPCSTR,PULARGE_INTEGER,PULARGE_INTEGER,PULARGE_INTEGER);
 
-//extern CSettings g_sSettings;
 //enum COMCTL32VERSION {COMCTL32_UNKNOWN, COMCTL32_400, COMCTL32_470, COMCTL32_471};
 
 
@@ -460,28 +459,4 @@ BOOL Utils::IsWindowsNT()
 	GetVersionEx(&osVersionInfo);
 
 	return (osVersionInfo.dwPlatformId == VER_PLATFORM_WIN32_NT);
-}
-
-
-INT QueryModuleDebugLevel( const CString& strModule )
-{
-	int nReturn = 0;
-
-	CString strWd;
-	TCHAR	szBuffer[_MAX_PATH]; 
-	VERIFY(::GetModuleFileName(AfxGetInstanceHandle(), szBuffer, _MAX_PATH));
-	
-	strWd = szBuffer;
-	strWd = strWd.Left(strWd.ReverseFind('\\'));
-	
-
-	// Get the debug level for the specified module
-	// from the CDex.ini file in the Debug section
-	nReturn = ::GetPrivateProfileInt("Debug",
-										strModule,
-										0,
-										strWd  + "\\LameFE.ini");
-
-	return nReturn;
-
 }

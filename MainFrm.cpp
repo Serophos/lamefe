@@ -21,6 +21,7 @@
 #include "Settings.h"
 #include "MainFrm.h"
 #include "Utils.h"
+#include "I18n.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -31,7 +32,11 @@ static char THIS_FILE[] = __FILE__;
 #pragma comment(lib, "version")
 
 extern CSettings g_sSettings;
+extern CI18n	g_iLang;
 
+#ifndef _countof
+	#define _countof(array) (sizeof(array)/sizeof(array[0]))
+#endif
 
 /////////////////////////////////////////////////////////////////////////////
 // CMainFrame
@@ -51,10 +56,16 @@ BEGIN_MESSAGE_MAP(CMainFrame, CFrameWnd)
 	ON_WM_MENUCHAR()
 	ON_WM_INITMENUPOPUP()
 	//}}AFX_MSG_MAP
+
+	ON_NOTIFY_EX_RANGE(TTN_NEEDTEXTW, 0, 0xFFFF, OnI18nToolTipText)
+	ON_NOTIFY_EX_RANGE(TTN_NEEDTEXTA, 0, 0xFFFF, OnI18nToolTipText)
+
 END_MESSAGE_MAP()
 
 static UINT indicators[] =
 {
+	ID_SEPARATOR,           // status line indicator
+	ID_SEPARATOR,           // status line indicator
 	ID_SEPARATOR,           // status line indicator
 	ID_SEPARATOR,           // status line indicator
 };
@@ -65,10 +76,16 @@ static UINT indicators[] =
 CMainFrame::CMainFrame()
 {
 
+	m_pLangMenu = NULL;
 }
 
 CMainFrame::~CMainFrame()
 {
+
+	if(m_pLangMenu != NULL){
+
+		delete m_pLangMenu;
+	}
 }
 
 int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
@@ -78,18 +95,42 @@ int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
 		return -1;
 
 
-
-	if (!m_wndToolBar.CreateEx(this, TBSTYLE_FLAT | TBSTYLE_TRANSPARENT ) ||
+	if (!m_wndToolBar.CreateEx(this, TBSTYLE_FLAT) ||
 		!m_wndToolBar.LoadToolBar(IDR_MAINFRAME))
 	{
-		TRACE0("Couldnt create toolbar\n");
-		return -1;      // Fehler bei Erstellung
+
+		TRACE0("Failed to create toolbar\n");
+		return -1;      // fail to create
 	}
-	
-	if(!m_wndPresetBar.Create(this, WS_CHILD | WS_VISIBLE | CBRS_TOP, ID_PRESETBAR))
+
+	if (!m_wndCtrlBar.CreateEx(this, TBSTYLE_FLAT) ||
+		!m_wndCtrlBar.LoadToolBar(IDR_CONTROLBAR))
 	{
 
-		//TRACE0("Couldn't create presetbar\n");
+		TRACE0("Failed to create toolbar\n");
+		return -1;      // fail to create
+	}
+
+	/*	if (!m_wndToolBar.Create(this,WS_CHILD|WS_VISIBLE|CBRS_TOP,AFX_IDW_TOOLBAR) || 
+		!m_wndToolBar.LoadToolBar(IDR_MAINFRAME))
+	{
+
+		TRACE0("Failed to create toolbar\n");
+		return -1;      // fail to create
+	}
+
+	if (!m_wndCtrlBar.Create(this,WS_CHILD|WS_VISIBLE|CBRS_TOP,AFX_IDW_TOOLBAR) || 
+		!m_wndCtrlBar.LoadToolBar(IDR_CONTROLBAR))
+	{
+
+		TRACE0("Failed to create IDR_CONTROLBAR\n");
+		return -1;      // fail to create
+	}*/
+
+	if(!m_wndPresetBar.Create(this, WS_CHILD | WS_VISIBLE | CBRS_TOP | TBSTYLE_FLAT, ID_PRESETBAR))
+	{
+
+		TRACE0("Couldn't create presetbar\n");
 	}
 
 
@@ -100,37 +141,50 @@ int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
 		CImageList	imageList;
 		CBitmap		bitmap;
 
-		// Set up hot bar image lists.
+		// Set up toolbar image lists.
 		// Create and set the normal toolbar image list.
 		bitmap.LoadMappedBitmap( IDB_TOOLBAR_HI );
-		imageList.Create(32, 32, ILC_COLORDDB|ILC_MASK, 9, 1);
-		imageList.Add(&bitmap, RGB(254,2,254));
+		imageList.Create(48, 48, ILC_COLORDDB|ILC_MASK, 4, 1);
+		imageList.Add(&bitmap, RGB(3,3,2));
 		m_wndToolBar.SendMessage(TB_SETIMAGELIST, 0, (LPARAM)imageList.m_hImageList);
 		imageList.Detach();
 		bitmap.Detach();
 
 		// Create and set the disabled toolbar image list.
 		bitmap.LoadMappedBitmap( IDB_TOOLBAR_HI_DEACT );
-		imageList.Create( 32, 32, ILC_COLORDDB|ILC_MASK, 9, 1);
-		imageList.Add(&bitmap, RGB(254,2,254));
+		imageList.Create(48, 48, ILC_COLORDDB|ILC_MASK, 4, 1);
+		imageList.Add(&bitmap, RGB(0,0,0));
 		m_wndToolBar.SendMessage( TB_SETDISABLEDIMAGELIST, 0, (LPARAM)imageList.m_hImageList);
 		imageList.Detach();
 		bitmap.Detach();
-	
+
+		// Set up toolbar image lists.
+		// Create and set the normal toolbar image list.
+		bitmap.LoadMappedBitmap( IDB_TOOLBAR_2_HI );
+		imageList.Create(32, 16, ILC_COLORDDB|ILC_MASK, 4, 1);
+		imageList.Add(&bitmap, RGB(255,0,255));
+		m_wndCtrlBar.SendMessage(TB_SETIMAGELIST, 0, (LPARAM)imageList.m_hImageList);
+		imageList.Detach();
+		bitmap.Detach();
+
+		// Create and set the disabled toolbar image list.
+		bitmap.LoadMappedBitmap( IDB_TOOLBAR_2_HI);
+		imageList.Create(32, 16, ILC_COLORDDB|ILC_MASK, 4, 1);
+		imageList.Add(&bitmap, RGB(255,0,255));
+		m_wndCtrlBar.SendMessage( TB_SETDISABLEDIMAGELIST, 0, (LPARAM)imageList.m_hImageList);
+		imageList.Detach();
+		bitmap.Detach();
 	}
 	
-	m_wndToolBar.SetBarStyle(m_wndToolBar.GetBarStyle() | CBRS_TOOLTIPS | CBRS_FLYBY | CBRS_SIZE_DYNAMIC);
-//	m_wndPlayerBar.SetBarStyle(m_wndPlayerBar.GetBarStyle() | CBRS_TOOLTIPS | CBRS_FLYBY | CBRS_SIZE_DYNAMIC);
+	m_wndToolBar.SetBarStyle(m_wndToolBar.GetBarStyle() | CBRS_TOOLTIPS | CBRS_FLYBY | CBRS_SIZE_DYNAMIC );
+	m_wndCtrlBar.SetBarStyle(m_wndCtrlBar.GetBarStyle() | CBRS_TOOLTIPS | CBRS_FLYBY | CBRS_SIZE_DYNAMIC);
 	m_wndPresetBar.SetBarStyle(m_wndPresetBar.GetBarStyle() | CBRS_TOOLTIPS | CBRS_FLYBY | CBRS_SIZE_DYNAMIC);
 
-	if (!m_wndReBar.Create(this) ||
-		!m_wndReBar.AddBar(&m_wndToolBar) ||
-		!m_wndReBar.AddBar(&m_wndPresetBar)
-		)
-	{
-		TRACE0("Infoleiste konnte nicht erstellt werden\n");
-		return -1;      // Fehler bei Erstellung
-	}
+	// Allow docking everywhere
+	EnableDocking(CBRS_ALIGN_ANY);
+	m_wndToolBar.EnableDocking(CBRS_ALIGN_ANY);
+	DockControlBar(&m_wndToolBar, AFX_IDW_DOCKBAR_LEFT);
+
 
 	if (!m_wndStatusBar.Create(this) ||
 		!m_wndStatusBar.SetIndicators(indicators,
@@ -140,10 +194,13 @@ int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
 		return -1;      // Fehler bei Erstellung
 	}
 
-    m_wndStatusBar.SetPaneInfo(1,ID_SEPARATOR,SBPS_NORMAL,250);
-	m_wndStatusBar.SetPaneInfo(0,ID_SEPARATOR,SBPS_STRETCH,100);
+	m_wndStatusBar.SetPaneInfo(0,ID_SEPARATOR,SBPS_STRETCH,190);
+    m_wndStatusBar.SetPaneInfo(1,ID_SEPARATOR,SBPS_NORMAL,140);
+	m_wndStatusBar.SetPaneInfo(2,ID_SEPARATOR,SBPS_NOBORDERS ,50);
+	m_wndStatusBar.SetPaneInfo(3,ID_SEPARATOR,SBPS_NORMAL,45);
 	
-//	OnShowPlayer();
+	InitLanguages();
+
 	return 0;
 }
 
@@ -246,6 +303,7 @@ void CMainFrame::OnViewShowPresets()
 	ShowControlBar(&m_wndPresetBar, (m_wndPresetBar.GetStyle() & WS_VISIBLE) == 0, FALSE);
 }
 
+/*
 HMENU CMainFrame::NewMenu()
 {
 	// Load the menu from the resources
@@ -326,6 +384,79 @@ void CMainFrame::OnInitMenuPopup(CMenu* pPopupMenu, UINT nIndex, BOOL bSysMenu)
 
 }
 
+*/
+void CMainFrame::InitLanguages()
+{
 
+	g_iLang.TranslateMenu(GetMenu(), IDR_MAINFRAME, TRUE);
+//	ActivateFrame( SW_HIDE );
+//	ActivateFrame( SW_SHOW );
 
+}
 
+BOOL CMainFrame::OnI18nToolTipText(UINT, NMHDR* pNMHDR, LRESULT* pResult)
+{
+	ASSERT(pNMHDR->code == TTN_NEEDTEXTA || pNMHDR->code == TTN_NEEDTEXTW);
+
+	// need to handle both ANSI and UNICODE versions of the message
+	TOOLTIPTEXTA* pTTTA = (TOOLTIPTEXTA*)pNMHDR;
+	TOOLTIPTEXTW* pTTTW = (TOOLTIPTEXTW*)pNMHDR;
+	CString strTipText;
+
+	UINT nID = pNMHDR->idFrom;
+
+	if (pNMHDR->code == TTN_NEEDTEXTA && (pTTTA->uFlags & TTF_IDISHWND) ||
+		pNMHDR->code == TTN_NEEDTEXTW && (pTTTW->uFlags & TTF_IDISHWND))
+	{
+		// idFrom is actually the HWND of the tool
+		nID = ((UINT)(WORD)::GetDlgCtrlID( (HWND)nID ) );
+	}
+
+	if (nID != 0) // will be zero on a separator
+	{
+		// don't handle the message if no string resource found
+		CString strLangTipText = g_iLang.GetString(nID);
+
+		if(strLangTipText.IsEmpty())
+		{
+			return FALSE;
+		}	
+
+		// this is the command id, not the button index
+		AfxExtractSubString(strTipText, strLangTipText, 1, '\n');
+	}
+
+#ifndef _UNICODE
+	if (pNMHDR->code == TTN_NEEDTEXTA)
+		lstrcpyn(pTTTA->szText, strTipText, _countof(pTTTA->szText) );
+	else
+		_mbstowcsz(pTTTW->szText, strTipText, _countof(pTTTW->szText) );
+#else
+	if (pNMHDR->code == TTN_NEEDTEXTA)
+		_wcstombsz(pTTTA->szText, strTipText, _countof(pTTTA->szText));
+	else
+		lstrcpyn(pTTTW->szText, strTipText, _countof(pTTTW->szText));
+#endif
+	*pResult = 0;
+
+	// bring the tooltip window above other popup windows
+	::SetWindowPos(pNMHDR->hwndFrom, HWND_TOP, 0, 0, 0, 0,
+		SWP_NOACTIVATE|SWP_NOSIZE|SWP_NOMOVE|SWP_NOOWNERZORDER);
+
+	return TRUE;    // message was handled
+}
+
+void CMainFrame::GetMessageString(UINT nID, CString& rMessage) const
+{
+	// load appropriate string
+	CString strLang = g_iLang.GetString(nID);
+
+	// extract first portion of string
+	AfxExtractSubString(rMessage, strLang, 0, '\n');
+
+	if ( rMessage.IsEmpty() )
+	{
+		// not found
+		TRACE1("Warning: no message line prompt for ID 0x%04X.\n", nID);
+	}
+}

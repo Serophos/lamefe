@@ -25,6 +25,7 @@
 #include "Settings.h"
 #include "Utils.h"
 #include "mfccddb.h"
+#include "I18n.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -33,6 +34,7 @@ static char THIS_FILE[] = __FILE__;
 #endif
 
 extern CSettings g_sSettings;
+extern CI18n	 g_iLang;
 
 /////////////////////////////////////////////////////////////////////////////
 // Dialogfeld CSettingsFreeDB 
@@ -109,7 +111,9 @@ void CSettingsFreeDB::Init(CString strWd)
 	CMySettingsPage::Init(strWd);
 	ReadServerList();
 
-	c_remoteServer.SetCurSel(g_sSettings.GetFreeDBServer());
+	g_iLang.TranslateDialog(this, IDD_SETTINGS_FREEDB);
+
+    c_remoteServer.SetCurSel(g_sSettings.GetFreeDBServer());
 	c_useProxy.SetCheck(g_sSettings.GetUseProxy());
 
 	m_eMail			 = g_sSettings.GetEmail();
@@ -126,15 +130,15 @@ void CSettingsFreeDB::Init(CString strWd)
 
 	if(m_pToolTip != NULL){
 
-		m_pToolTip->AddTool(&c_authentication, IDS_TOOL_FDBAUTH);
-		m_pToolTip->AddTool(&c_password, IDS_TOOL_FDBPASS);
-		m_pToolTip->AddTool(&c_proxyAddress, IDS_TOOL_FDBPROXYADD);
-		m_pToolTip->AddTool(&c_proxyPort, IDS_TOOL_FDBPROXYPORT);
-		m_pToolTip->AddTool(&c_remoteServer, IDS_TOOL_FDBSERVER);
-		m_pToolTip->AddTool(&c_useProxy, IDS_TOOL_FDBUSEPROXY);
-		m_pToolTip->AddTool(&c_userName, IDS_TOOL_FDBUSER);
-		m_pToolTip->AddTool(&m_cEMail, IDS_TOOL_FDBMAIL);
-		m_pToolTip->AddTool(&m_cTimeOut, IDS_TOOL_FDBTIMEOUT);
+		m_pToolTip->AddTool(&c_authentication, g_iLang.GetString(IDS_TOOL_FDBAUTH));
+		m_pToolTip->AddTool(&c_password, g_iLang.GetString(IDS_TOOL_FDBPASS));
+		m_pToolTip->AddTool(&c_proxyAddress, g_iLang.GetString(IDS_TOOL_FDBPROXYADD));
+		m_pToolTip->AddTool(&c_proxyPort, g_iLang.GetString(IDS_TOOL_FDBPROXYPORT));
+		m_pToolTip->AddTool(&c_remoteServer, g_iLang.GetString(IDS_TOOL_FDBSERVER));
+		m_pToolTip->AddTool(&c_useProxy, g_iLang.GetString(IDS_TOOL_FDBUSEPROXY));
+		m_pToolTip->AddTool(&c_userName, g_iLang.GetString(IDS_TOOL_FDBUSER));
+		m_pToolTip->AddTool(&m_cEMail, g_iLang.GetString(IDS_TOOL_FDBMAIL));
+		m_pToolTip->AddTool(&m_cTimeOut, g_iLang.GetString(IDS_TOOL_FDBTIMEOUT));
 		m_pToolTip->Activate(TRUE);
 	}
 }
@@ -224,7 +228,7 @@ void CSettingsFreeDB::OnUpdate()
 
 	if (!AfxSocketInit()){
 
-		AfxMessageBox(IDS_CDDB_ERR_WINSOCK, MB_OK+MB_ICONSTOP);
+		AfxMessageBox(g_iLang.GetString(IDS_CDDB_ERR_WINSOCK), MB_OK+MB_ICONSTOP);
 		return;
 	}
 
@@ -237,7 +241,7 @@ void CSettingsFreeDB::OnUpdate()
 	{
 
 		CString sBuf;
-		sBuf.Format(IDS_CDDB_ERR, cddb.GetLastError(), cddb.GetLastCommandResponse());
+		sBuf.Format(g_iLang.GetString(IDS_CDDB_ERR), cddb.GetLastError(), cddb.GetLastCommandResponse());
 		AfxMessageBox(sBuf, MB_OK+MB_ICONSTOP);
 		return;
 	}
@@ -261,11 +265,11 @@ void CSettingsFreeDB::OnUpdate()
 		c_remoteServer.SetCurSel(0);
 		OnSelendokRemoteServer();
 		WriteServerList();
-		AfxMessageBox(IDS_CDDB_UPDATEDSERVERS, MB_OK+MB_ICONINFORMATION);
+		AfxMessageBox(g_iLang.GetString(IDS_CDDB_UPDATEDSERVERS), MB_OK+MB_ICONINFORMATION);
 	}
 	else{
 
-		AfxMessageBox(IDS_CDDB_UPDATEFAILED, MB_OK+MB_ICONINFORMATION);
+		AfxMessageBox(g_iLang.GetString(IDS_CDDB_UPDATEFAILED), MB_OK+MB_ICONINFORMATION);
 	}
 }
 
@@ -289,7 +293,7 @@ BOOL CSettingsFreeDB::WriteServerList()
 	}
 	CATCH(CFileException, e){
 
-		AfxMessageBox(IDS_CDDB_ERR_CFGWRITE, MB_OK+MB_ICONSTOP);
+		AfxMessageBox(g_iLang.GetString(IDS_CDDB_ERR_CFGWRITE), MB_OK+MB_ICONSTOP);
 		return FALSE;
 	}
 	END_CATCH;
@@ -319,7 +323,7 @@ BOOL CSettingsFreeDB::ReadServerList()
 	}
 	CATCH(CFileException, e){
 
-		AfxMessageBox(IDS_CDDB_ERR_CFGREAD, MB_OK+MB_ICONSTOP);
+		AfxMessageBox(g_iLang.GetString(IDS_CDDB_ERR_CFGREAD), MB_OK+MB_ICONSTOP);
 		return FALSE;
 	}
 	END_CATCH;

@@ -30,6 +30,8 @@
 class CLogFile  
 {
 public:
+	void SetInformationMsg(CString strMessage);
+	void SetDebugMessage(CString strMessage);
 	void SetNotificationMessage(CString strMsg);
 	void SetNotificationMessage(UINT nID);
 	int nLog;
@@ -69,26 +71,10 @@ private:
 	int			 m_nCurrentEntry;
 	// Entries
 	time_t		m_tTmpStartTime;
-	// %s = sourcefile
-	//CStringArray m_staInFiles;
-	// %o = outfile
-	//CStringArray m_staOutFiles;
-	// %f = sourceformat
-	//CStringArray m_staInFormat;
-	// %F = outformat
-	//CStringArray m_staOutFormat;
-	// %m = = inMod;
-	//CStringArray m_staInModule;
-	// %c = compressionratio
-	//CStringArray m_staCompression;
-	// %t = systemtime
-	//CStringArray m_staSystemTime;
-	// % T = Time Used
-	//CStringArray m_staTimeUsed;
-	// %e = errormessages
+
 	CStringArray m_staErrors;
-	//
 	CExtListCtrl *m_msgOut;
+
 };
 
 #endif // !defined(AFX_LOGFILE_H__4EA41BE4_5B73_442E_8E15_5214A377C9AD__INCLUDED_)

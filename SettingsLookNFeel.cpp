@@ -22,6 +22,7 @@
 #include "SettingsLookNFeel.h"
 #include "Settings.h"
 #include "Utils.h"
+#include "I18n.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -31,6 +32,7 @@ static char THIS_FILE[] = __FILE__;
 
 
 extern CSettings g_sSettings;
+extern CI18n	 g_iLang;
 
 /////////////////////////////////////////////////////////////////////////////
 // Dialogfeld CSettingsLookNFeel 
@@ -79,6 +81,8 @@ void CSettingsLookNFeel::Init(CString strWd)
 
 	CMySettingsPage::Init(strWd);
 
+	g_iLang.TranslateDialog(this, IDD_SETTINGS_LOOKNFEEL);
+
 	c_silent.SetCheck(g_sSettings.GetSilentMode());
 	c_readCDPlayerIni.SetCheck(g_sSettings.GetReadCDPlayerIni());
 	c_writeCDPlayerIni.SetCheck(g_sSettings.GetWriteCDPlayerIni());
@@ -92,17 +96,17 @@ void CSettingsLookNFeel::Init(CString strWd)
 	c_rememberEncoder.SetCheck(g_sSettings.GetRememberEncoder());
 	if(m_pToolTip != NULL){
 
-		m_pToolTip->AddTool(&c_readCDPlayerIni, IDS_TOOL_READCDPINI);
-		m_pToolTip->AddTool(&c_writeCDPlayerIni, IDS_TOOL_WRITECDPINI);
-		m_pToolTip->AddTool(&c_silent, IDS_TOOL_SILENT);
-		m_pToolTip->AddTool(&c_cdTextRead, IDS_TOOL_CDTEXTREAD);
-		m_pToolTip->AddTool(&c_saveWinPos, IDS_TOOL_SAVEWINPOS);
-		m_pToolTip->AddTool(&c_highColBar, IDS_TOOL_HIGHCOLOR);
-		m_pToolTip->AddTool(&c_showSplash, IDS_TOOL_SHOWSPLASH);
-		m_pToolTip->AddTool(&c_showAlbumEditor, IDS_TOOL_ALWAYSTAGEDIT);
-		m_pToolTip->AddTool(&c_hideMainWnd, IDS_TOOL_HIDEMAINWND);
-		m_pToolTip->AddTool(&c_rememberEncoder, IDS_TOOL_LASTENCODER);
-		m_pToolTip->AddTool(&c_teditOnFile, IDS_TOOL_SHOWID3FILE);
+		m_pToolTip->AddTool(&c_readCDPlayerIni, g_iLang.GetString(IDS_TOOL_READCDPINI));
+		m_pToolTip->AddTool(&c_writeCDPlayerIni, g_iLang.GetString(IDS_TOOL_WRITECDPINI));
+		m_pToolTip->AddTool(&c_silent, g_iLang.GetString(IDS_TOOL_SILENT));
+		m_pToolTip->AddTool(&c_cdTextRead, g_iLang.GetString(IDS_TOOL_CDTEXTREAD));
+		m_pToolTip->AddTool(&c_saveWinPos, g_iLang.GetString(IDS_TOOL_SAVEWINPOS));
+		m_pToolTip->AddTool(&c_highColBar, g_iLang.GetString(IDS_TOOL_HIGHCOLOR));
+		m_pToolTip->AddTool(&c_showSplash, g_iLang.GetString(IDS_TOOL_SHOWSPLASH));
+		m_pToolTip->AddTool(&c_showAlbumEditor, g_iLang.GetString(IDS_TOOL_ALWAYSTAGEDIT));
+		m_pToolTip->AddTool(&c_hideMainWnd, g_iLang.GetString(IDS_TOOL_HIDEMAINWND));
+		m_pToolTip->AddTool(&c_rememberEncoder, g_iLang.GetString(IDS_TOOL_LASTENCODER));
+		m_pToolTip->AddTool(&c_teditOnFile, g_iLang.GetString(IDS_TOOL_SHOWID3FILE));
 		m_pToolTip->Activate(TRUE);
 	}
 	UpdateData(FALSE);
@@ -132,10 +136,10 @@ void CSettingsLookNFeel::OnHighColorIcons()
 
 	if(!Utils::CheckCOMTL32Dll()){
 
-		AfxMessageBox(IDS_OLDCOMTL32DLL, MB_OK+MB_ICONEXCLAMATION);
+		AfxMessageBox(g_iLang.GetString(IDS_OLDCOMTL32DLL), MB_OK+MB_ICONEXCLAMATION);
 		c_highColBar.SetCheck(FALSE);
 		return;
 	}
 
-	AfxMessageBox(IDS_RESTARTLAME, MB_OK+MB_ICONINFORMATION);
+	AfxMessageBox(g_iLang.GetString(IDS_RESTARTLAME), MB_OK+MB_ICONINFORMATION);
 }

@@ -47,22 +47,22 @@ public:
 // Dialogfelddaten
 	//{{AFX_DATA(CSettingsMP3)
 	enum { IDD = IDD_SETTINGS_MP3 };
-	CMyComboBox	c_OutSampleRate;
-	CMyComboBox	m_cThreadPriority;
-	CMyEditCtrl	c_abr;
-	CMyComboBox	c_maxBitrate;
-	CMyComboBox	m_qualityPreset;
-	CMyComboBox	c_vbrQuality;
-	CMyComboBox	c_vbrMethod;
-	CMyComboBox	c_MPEG;
+	CComboBox	c_OutSampleRate;
+	CComboBox	m_cThreadPriority;
+	CEdit	c_abr;
+	CComboBox	c_maxBitrate;
+	CComboBox	m_qualityPreset;
+	CComboBox	c_vbrQuality;
+	CComboBox	c_vbrMethod;
+	CComboBox	c_MPEG;
 	CButton	c_private;
 	CButton	c_original;
 	CButton	c_writeId3v1;
 	CButton c_writeId3v2;
 	CButton	c_copyright;
 	CButton	c_checkSum;
-	CMyComboBox	c_channels;
-	CMyComboBox	c_bitsPerSample;
+	CComboBox	c_channels;
+	CComboBox	c_bitsPerSample;
 	CString	m_encoderVersion;
 	int		m_abr;
 	int		m_nMode;
@@ -88,8 +88,8 @@ protected:
 	virtual void FillOutSampleRateCtrl();
 	virtual int  GetMinBitrate();
 	virtual int  GetMaxBitrate();
-	virtual void SetMinBitrate(unsigned int nBitrate);
-	virtual void SetMaxBitrate(unsigned int nBitrate);
+	virtual void SetMinBitrate(int nBitrate);
+	virtual void SetMaxBitrate(int nBitrate);
 	CMFECToolTip	m_mToolTip;
 	BEVERSION beVersion;
 

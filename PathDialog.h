@@ -37,8 +37,8 @@ class CPathDialog
 	friend CPathDialogSub;
 // Construction
 public:
-	CPathDialog(LPCTSTR lpszCaption=NULL,
-		LPCTSTR lpszTitle=NULL,
+	CPathDialog(CString lpszCaption,
+		CString lpszTitle,
 		LPCTSTR lpszInitialPath=NULL, 
 		CWnd* pParent = NULL);
 

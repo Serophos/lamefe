@@ -35,6 +35,7 @@ class CSettingsCDRipper : public CMySettingsPage
 {
 // Konstruktion
 public:
+	void SetControls();
 	BOOL Save();
 	void Init(CString strWd);
 	CSettingsCDRipper(CWnd* pParent = NULL);   // Standardkonstruktor
@@ -42,26 +43,34 @@ public:
 // Dialogfelddaten
 	//{{AFX_DATA(CSettingsCDRipper)
 	enum { IDD = IDD_SETTINGS_CDRIPPER };
+	CButton	m_cUse2Phase;
 	CButton	c_appendDiscID;
 	CButton	c_checkNewCD;
-	CMyEditCtrl	c_spinUpTime;
+	CEdit	c_spinUpTime;
 	CButton	c_nativeSCSI;
-	CMyEditCtrl	c_cdSpeed;
+	CEdit	c_cdSpeed;
 	CButton	c_select;
 	CButton	c_swapChannels;
-	CMyComboBox	c_rippingMethod;
+	CComboBox	c_rippingMethod;
 	CButton	c_lockDrive;
 	CButton	c_ejectWhenFinished;
-	CMyComboBox	c_cdromType;
-	CMyComboBox	c_cdDrive;
+	CComboBox	c_cdromType;
+	CComboBox	c_cdDrive;
 	CString	m_cdRipInfo;
 	int		m_cdSpeed;
 	int		m_spinUpTime;
 	BOOL	m_nativeSCSI;
 	CButton c_cue;
-	CMyComboBox	c_numBuffers;
-	int		m_numBuffers;
-		// HINWEIS: Der Klassen-Assistent fügt hier Datenelemente ein
+	int		m_nBlockCompare;
+	int		m_nEndOffset;
+	int		m_nReadOverlap;
+	int		m_nReadSectors;
+	int		m_nStartOffset;
+	BOOL	m_bJitter;
+	BOOL	m_bLockDuringRead;
+	BOOL	m_bSwapChannels;
+	int		m_nRetries;
+	BOOL	m_bUse2Phase;
 	//}}AFX_DATA
 
 
@@ -76,12 +85,18 @@ public:
 protected:
 	void InitControls();
 	BOOL m_bRipperPresent;
-
+	BOOL m_bAspiPosting;
+	BOOL m_bUseCDText;
+	BOOL m_bFirstBlockOnly;
+	BOOL m_bMultipleRead;
+	int m_nMultipleReadCount;
 	// Generierte Nachrichtenzuordnungsfunktionen
 	//{{AFX_MSG(CSettingsCDRipper)
-		// HINWEIS: Der Klassen-Assistent fügt hier Member-Funktionen ein
 	afx_msg void OnNative();
 	afx_msg void OnSelchangeCdDrive();
+	afx_msg void OnAutodetect();
+	afx_msg void OnSelchangeRippingMethod();
+	afx_msg void OnEnablejittercorrection();
 	//}}AFX_MSG
 	DECLARE_MESSAGE_MAP()
 };

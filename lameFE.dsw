@@ -42,6 +42,18 @@ Package=<4>
 
 ###############################################################################
 
+Project: "OGG_out"=.\OGG_out\OGG_out.dsp - Package Owner=<4>
+
+Package=<5>
+{{{
+}}}
+
+Package=<4>
+{{{
+}}}
+
+###############################################################################
+
 Project: "id3lib"=.\ID3Lib\libprj\id3lib.dsp - Package Owner=<4>
 
 Package=<5>
@@ -71,6 +83,9 @@ Package=<4>
     Begin Project Dependency
     Project_Dep_Name zlib
     End Project Dependency
+    Begin Project Dependency
+    Project_Dep_Name musicbrainz
+    End Project Dependency
 }}}
 
 ###############################################################################
@@ -88,6 +103,18 @@ Package=<4>
 ###############################################################################
 
 Project: "logging"=.\logging\logging.dsp - Package Owner=<4>
+
+Package=<5>
+{{{
+}}}
+
+Package=<4>
+{{{
+}}}
+
+###############################################################################
+
+Project: "musicbrainz"=".\libmusicbrainz-2.0.1\win32\musicbrainz.dsp" - Package Owner=<4>
 
 Package=<5>
 {{{

@@ -6,12 +6,16 @@
 #include "stdafx.h"
 #include "MFECToolTip.h"
 //#include "Util.h"
+#include "I18n.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
 #undef THIS_FILE
 static char THIS_FILE[] = __FILE__;
 #endif
+
+
+extern CI18n g_iLang;
 
 /////////////////////////////////////////////////////////////////////////////
 // CMFECToolTip
@@ -345,7 +349,7 @@ BOOL CMFECToolTip::AddControlInfo( UINT contolID, UINT infoID, COLORREF back, CO
 	int nStrPos = 0;
 
 
-	strLang.LoadString(infoID); // = g_language.GetString( infoID );
+	strLang = g_iLang.GetString(infoID); // = g_language.GetString( infoID );
 
 	// Split language string into separate strings
 	for ( nStrPos = 0; nStrPos < strLang.GetLength(); nStrPos++ )

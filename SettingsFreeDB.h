@@ -43,19 +43,19 @@ public:
 // Dialogfelddaten
 	//{{AFX_DATA(CSettingsFreeDB)
 	enum { IDD = IDD_SETTINGS_FREEDB };
-	CMyEditCtrl	c_port;
-	CMyEditCtrl	c_address;
-	CMyEditCtrl	c_path;
-	CMyEditCtrl	c_location;
-	CMyEditCtrl	m_cEMail;
-	CMyEditCtrl	m_cTimeOut;
+	CEdit	c_port;
+	CEdit	c_address;
+	CEdit	c_path;
+	CEdit	c_location;
+	CEdit	m_cEMail;
+	CEdit	m_cTimeOut;
 	CButton	c_authentication;
-	CMyEditCtrl	c_userName;
-	CMyEditCtrl	c_password;
-	CMyEditCtrl	c_proxyPort;
-	CMyEditCtrl	c_proxyAddress;
+	CEdit	c_userName;
+	CEdit	c_password;
+	CEdit	c_proxyPort;
+	CEdit	c_proxyAddress;
 	CButton	c_useProxy;
-	CMyComboBox	c_remoteServer;
+	CComboBox	c_remoteServer;
 	CString	m_address;
 	CString	m_eMail;
 	CString	m_location;

@@ -22,6 +22,7 @@
 #include "Settings.h"
 #include "resource.h"
 #include "Utils.h"
+#include "I18n.h"
 
 #ifdef _DEBUG
 #undef THIS_FILE
@@ -30,7 +31,7 @@ static char THIS_FILE[]=__FILE__;
 #endif
 
 extern CSettings g_sSettings;
-
+extern CI18n	 g_iLang;
 //////////////////////////////////////////////////////////////////////
 // Konstruktion/Destruktion
 //////////////////////////////////////////////////////////////////////
@@ -254,7 +255,7 @@ BOOL CPlayList::WriteToDisc(CString wd, CString strExtension, BOOL bInternal, BO
  		if(!m_bAlerted){
  
  			CString msg;
- 			msg.Format(IDS_ERR_LONGFILENAME, tmp, "LameFE.m3u");
+ 			msg.Format(g_iLang.GetString(IDS_ERR_LONGFILENAME), tmp, "LameFE.m3u");
  			AfxMessageBox(msg, MB_OK+MB_ICONEXCLAMATION);
  			m_bAlerted = TRUE;
  		}

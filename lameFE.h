@@ -38,6 +38,7 @@
 class CLameFEApp : public CWinApp
 {
 public:
+	void SetAutoPlay(BOOL bEnable);
 	BOOL GetRipperStatus();
 	BOOL InitCDRipper();
 	CLameFEApp();
@@ -59,9 +60,13 @@ public:
 	DECLARE_MESSAGE_MAP()
 
 protected:
-	BOOL CheckVersion(CString strDll, CString& strVersion);
-	BOOL		m_bAutoPlayState;
-	CMutex		m_mtInitializing;
+
+#ifdef _DUMPTABLE
+	CString ConvertString(CString strText, BOOL bBack);
+	void DumpStringTable();
+#endif
+
+	BOOL m_bAutoPlayState;
 	BOOL		m_bRipperOK;
 	HINSTANCE	m_hCDRipDll;
 };

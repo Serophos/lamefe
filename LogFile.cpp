@@ -17,15 +17,18 @@
 */
 
 #include "stdafx.h"
-#include "stdafx.h"
 #include "LogFile.h"
 #include "resource.h"
+#include "I18n.h"
 
 #ifdef _DEBUG
 #undef THIS_FILE
 static char THIS_FILE[]=__FILE__;
 #define new DEBUG_NEW
 #endif
+
+
+extern CI18n g_iLang;
 
 //////////////////////////////////////////////////////////////////////
 // Konstruktion/Destruktion
@@ -43,6 +46,7 @@ CLogFile::CLogFile()
 	m_strWd				= "";
 	m_strStartTime		= "";
 	m_strElapsedTime	= "";
+
 }
 
 CLogFile::~CLogFile()
@@ -62,7 +66,7 @@ void CLogFile::StartSession(int numEntries, CString outModule)
 	tLocalTime = localtime(&m_tStartTime);
 
 	CString	strTmp;
-	strTmp.Format(IDS_LOG_STARTSESSION, tLocalTime->tm_hour, tLocalTime->tm_min, tLocalTime->tm_sec, numEntries, outModule);
+	strTmp.Format(g_iLang.GetString(IDS_LOG_STARTSESSION), tLocalTime->tm_hour, tLocalTime->tm_min, tLocalTime->tm_sec, numEntries, outModule);
 	
 	m_msgOut->InsertItem(nLog, strTmp, 0);
 	m_msgOut->EnsureVisible(nLog++, FALSE);
@@ -84,7 +88,7 @@ void CLogFile::FinalizeSession()
 
 	tLocalTime = localtime(&m_tEndTime);
 	CString strTmp;
-	strTmp.Format(IDS_LOG_FINISHEDSESSION, tLocalTime->tm_hour, tLocalTime->tm_min, tLocalTime->tm_sec);
+	strTmp.Format(g_iLang.GetString(IDS_LOG_FINISHEDSESSION), tLocalTime->tm_hour, tLocalTime->tm_min, tLocalTime->tm_sec);
 	m_msgOut->InsertItem(nLog, strTmp, 0);
 	m_msgOut->EnsureVisible(nLog++, FALSE);
 
@@ -121,10 +125,10 @@ void CLogFile::StartEntry(CString strInFile, CString strOutFile, CString inModul
 	tLocalTime = localtime(&m_tTmpStartTime);
 
 	CString	strTmp;
-	strTmp.Format(IDS_LOG_STARTFILE, tLocalTime->tm_hour, tLocalTime->tm_min, tLocalTime->tm_sec, m_nCurrentEntry + 1, m_nNumEntries, strInFile, inModule);
+	strTmp.Format(g_iLang.GetString(IDS_LOG_STARTFILE), tLocalTime->tm_hour, tLocalTime->tm_min, tLocalTime->tm_sec, m_nCurrentEntry + 1, m_nNumEntries, strInFile, inModule);
 	
 	m_msgOut->InsertItem(nLog++, strTmp, 0);
-	strTmp.Format(IDS_LOG_SAVEAS, strOutFile);
+	strTmp.Format(g_iLang.GetString(IDS_LOG_SAVEAS), strOutFile);
 	m_msgOut->InsertItem(nLog, strTmp, 2);
 	m_msgOut->EnsureVisible(nLog++, FALSE);
 	m_msgOut->SetColumnWidth(0, LVSCW_AUTOSIZE);
@@ -140,7 +144,7 @@ void CLogFile::SetInFormat(WAVEFORMATEX *wfx)
 				  );
 //	m_staInFormat.Add(strTmp);
 
-	strTmp.Format(IDS_LOG_FILEFORMAT, wfx->nSamplesPerSec, wfx->wBitsPerSample, wfx->nChannels);
+	strTmp.Format(g_iLang.GetString(IDS_LOG_FILEFORMAT), wfx->nSamplesPerSec, wfx->wBitsPerSample, wfx->nChannels);
 	m_msgOut->InsertItem(nLog, strTmp, (wfx->wBitsPerSample == 16 ? 0 : 1));
 	m_msgOut->EnsureVisible(nLog++, FALSE);
 }
@@ -160,7 +164,7 @@ void CLogFile::FinalizeEntry()
 	//strTmp.Format("%02d:%02d:%02d", tLocalTime->tm_hour, tLocalTime->tm_min, tLocalTime->tm_sec);
 	
 	tLocalTime = localtime(&tTmpEndTime);
-	strTmp.Format(IDS_LOG_FINISHEDFILE, tLocalTime->tm_hour, tLocalTime->tm_min, tLocalTime->tm_sec);
+	strTmp.Format(g_iLang.GetString(IDS_LOG_FINISHEDFILE), tLocalTime->tm_hour, tLocalTime->tm_min, tLocalTime->tm_sec);
 	m_msgOut->InsertItem(nLog, strTmp, 0);
 	m_msgOut->EnsureVisible(nLog++, FALSE);
 
@@ -174,7 +178,7 @@ void CLogFile::SetErrorMsg(int nEntry, CString strMessage)
 	m_nNumErrors++;
 	
 	CString strTmp;
-	strTmp.LoadString(IDS_ENC_SUCCESS);
+	strTmp = g_iLang.GetString(IDS_ENC_SUCCESS);
 	m_msgOut->InsertItem(nLog, strMessage, (strMessage == strTmp ? 0 : 1));
 	m_msgOut->EnsureVisible(nLog++, FALSE);
 }
@@ -183,7 +187,7 @@ void CLogFile::SetErrorMsg(int nEntry, UINT nID)
 {
 
 	CString strTmp;
-	strTmp.LoadString(nID);
+	strTmp = g_iLang.GetString(nID);
 	SetErrorMsg(nEntry, strTmp);
 }
 
@@ -198,8 +202,28 @@ void CLogFile::SetNotificationMessage(UINT nID)
 {
 
 	CString strTmp;
-	strTmp.LoadString(nID);
+	strTmp = g_iLang.GetString(nID);
 	SetNotificationMessage(strTmp);
+}
+
+
+void CLogFile::SetInformationMsg(CString strMessage)
+{
+
+	m_msgOut->InsertItem(nLog, strMessage, 0);
+	m_msgOut->EnsureVisible(nLog++, FALSE);
+}
+
+void CLogFile::SetDebugMessage(CString strMessage)
+{
+
+#if defined _DEBUG || defined _RELEASE_DEBUG
+
+	m_msgOut->InsertItem(nLog, strMessage, 4);
+	m_msgOut->EnsureVisible(nLog++, FALSE);
+
+#endif
+
 }
 
 void CLogFile::SetWd(CString wd)
@@ -267,5 +291,3 @@ BOOL CLogFile::SaveLogAs(LPCSTR strFilename)
 
 	return WriteLog(strFilename);
 }
-
-

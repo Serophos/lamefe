@@ -36,7 +36,9 @@ static char THIS_FILE[]=__FILE__;
 CCDPlayerIni::CCDPlayerIni(CCompactDisc *pFiles)
 {
 
-	m_pFiles = pFiles;
+	m_pFiles  = pFiles;
+	m_strMCDI = "";
+
 }
 
 CCDPlayerIni::~CCDPlayerIni()

@@ -32,7 +32,7 @@ static char THIS_FILE[]=__FILE__;
 //////////////////////////////////////////////////////////////////////
 extern CSettings g_sSettings;
 
-COutPlugin::COutPlugin(CString path2plugin /* = "" */, CString wd /*= "" */)
+COutPlugin::COutPlugin(CString path2plugin , CString wd)
 {
 
 	m_strFilename = path2plugin;
@@ -76,7 +76,7 @@ BOOL COutPlugin::Load(HWND hWnd)
 	outModule->GetProfileString = GetProfileString;
 	outModule->SetProfileString = SetProfileString;
 	outModule->Init();
-	m_strExt = outModule->FileExtensions;
+	m_strExt = outModule->cFileExtensions;
 	return TRUE;
 }
 
@@ -134,7 +134,7 @@ CString COutPlugin::GetInfoString(void) const
 		return "";
 	}
 
-	return outModule->description;
+	return outModule->cDescription;
 }
 
 

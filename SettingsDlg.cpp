@@ -21,10 +21,8 @@
 #include "lamefe.h"
 #include "SettingsDlg.h"
 #include "Settings.h"
-
-#include "SettingsLookNFeel.h"
-#include "SettingsLameFE.h"
 #include "WinampPlugin.h"
+#include "I18n.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -33,6 +31,8 @@ static char THIS_FILE[] = __FILE__;
 #endif
 
 extern CSettings g_sSettings;
+extern CI18n	 g_iLang;
+
 /////////////////////////////////////////////////////////////////////////////
 // Dialogfeld CSettingsDlg 
 
@@ -52,6 +52,7 @@ CSettingsDlg::CSettingsDlg(CWnd* pParent /*=NULL*/)
 	m_strBatchMode	= "";
 	m_strFilenames	= "";
 	m_strLookNFeel  = "";
+	m_strLanguage   = "";
 }
 
 
@@ -83,15 +84,17 @@ BOOL CSettingsDlg::OnInitDialog()
 	TCHAR	szBuffer[_MAX_PATH]; 
 	VERIFY(::GetModuleFileName(AfxGetInstanceHandle(), szBuffer, _MAX_PATH));
 	
+	g_iLang.TranslateDialog(this, IDD_SETTINGSDIALOG);
 	m_strWd = szBuffer;
 	m_strWd = m_strWd.Left(m_strWd.ReverseFind('\\'));
 
-	m_strDecoder.LoadString(IDS_DECODER);
-	m_strEncoder.LoadString(IDS_ENCODER);
-	m_strAlbumInfo.LoadString(IDS_ALBUMINFO);
-	m_strBatchMode.LoadString(IDS_BATCHMODE);
-	m_strFilenames.LoadString(IDS_FILENAMES);
-	m_strLookNFeel.LoadString(IDS_LOOKNFEEL);
+	m_strDecoder = g_iLang.GetString(IDS_DECODER);
+	m_strEncoder = g_iLang.GetString(IDS_ENCODER);
+	m_strAlbumInfo = g_iLang.GetString(IDS_ALBUMINFO);
+	m_strBatchMode = g_iLang.GetString(IDS_BATCHMODE);
+	m_strFilenames = g_iLang.GetString(IDS_FILENAMES);
+	m_strLookNFeel = g_iLang.GetString(IDS_LOOKNFEEL);
+	m_strLanguage = g_iLang.GetString(IDS_LANGUAGE);
 
 	HIMAGELIST hList = ImageList_Create(16,16, ILC_COLOR8 |ILC_MASK , 4, 1);
 	m_cImageList.Attach(hList);
@@ -105,10 +108,10 @@ BOOL CSettingsDlg::OnInitDialog()
 	m_ctrlModules.SetImageList(&m_cImageList, TVSIL_NORMAL);
 
 	HTREEITEM hLameFE  = m_ctrlModules.InsertItem("LameFE", 0, 1, TVI_ROOT, TVI_LAST);
-	HTREEITEM hDecoder = m_ctrlModules.InsertItem(m_strDecoder, 0, 1, TVI_ROOT, TVI_LAST);
-	HTREEITEM hEncoder = m_ctrlModules.InsertItem(m_strEncoder, 0, 1, TVI_ROOT, TVI_LAST);
+	HTREEITEM hDecoder = m_ctrlModules.InsertItem(m_strDecoder, 4, 1, TVI_ROOT, TVI_LAST);
+	HTREEITEM hEncoder = m_ctrlModules.InsertItem(m_strEncoder, 4, 1, TVI_ROOT, TVI_LAST);
 	HTREEITEM hAlbum   = m_ctrlModules.InsertItem(m_strAlbumInfo, 0, 1, TVI_ROOT, TVI_LAST);
-
+	
 	if(!hLameFE || !hDecoder || !hEncoder || !hAlbum){
 
 		TRACE("Error, item handle is zero\n");
@@ -117,9 +120,10 @@ BOOL CSettingsDlg::OnInitDialog()
 	
 	m_ctrlModules.InsertItem(m_strLookNFeel, 0, 1, hLameFE);
 	m_ctrlModules.InsertItem(m_strFilenames, 0, 1, hLameFE);
+	m_ctrlModules.InsertItem(m_strLanguage, 2, 1, hLameFE);
 
-	HTREEITEM hCDRip = m_ctrlModules.InsertItem("CD Digital Audio", 0, 1, hDecoder);
-	m_ctrlModules.InsertItem(m_strBatchMode, 0, 1, hCDRip);
+	HTREEITEM hCDRip = m_ctrlModules.InsertItem("CD Digital Audio", 3, 1, hDecoder);
+	m_ctrlModules.InsertItem(m_strBatchMode, 3, 1, hCDRip);
 	
 	m_ctrlModules.InsertItem("MP3 (L.A.M.E.)", 0, 1, hEncoder);
 	m_ctrlModules.InsertItem("FreeDB", 0, 1, hAlbum);
@@ -167,6 +171,7 @@ BOOL CSettingsDlg::InitSubDlgs()
 	m_dFilenames.Create(IDD_SETTINGS_FILENAMES, this);
 	m_dFreeDB.Create(IDD_SETTINGS_FREEDB, this);
 	m_dLameFE.Create(IDD_SETTINGS_LAMEFE, this);
+	m_dLang.Create(IDD_SETTINGS_I18N, this);
 	m_dLookNFeel.Create(IDD_SETTINGS_LOOKNFEEL, this);
 	m_dMP3.Create(IDD_SETTINGS_MP3, this);
 	m_dPlugin.Create(IDD_SETTINGS_PLUGINCODEC, this);
@@ -177,6 +182,7 @@ BOOL CSettingsDlg::InitSubDlgs()
 	m_dFilenames.SetWindowPos(NULL, rcSheet.left, rcSheet.top, 0, 0, SWP_NOZORDER | SWP_NOSIZE | SWP_NOACTIVATE);
 	m_dFreeDB.SetWindowPos(NULL, rcSheet.left, rcSheet.top, 0, 0, SWP_NOZORDER | SWP_NOSIZE | SWP_NOACTIVATE);
 	m_dLameFE.SetWindowPos(NULL, rcSheet.left, rcSheet.top, 0, 0, SWP_NOZORDER | SWP_NOSIZE | SWP_NOACTIVATE);
+	m_dLang.SetWindowPos(NULL, rcSheet.left, rcSheet.top, 0,0, SWP_NOZORDER | SWP_NOSIZE | SWP_NOACTIVATE);
 	m_dLookNFeel.SetWindowPos(NULL, rcSheet.left, rcSheet.top, 0, 0, SWP_NOZORDER | SWP_NOSIZE | SWP_NOACTIVATE);
 	m_dMP3.SetWindowPos(NULL, rcSheet.left, rcSheet.top, 0, 0, SWP_NOZORDER | SWP_NOSIZE | SWP_NOACTIVATE);
 	m_dPlugin.SetWindowPos(NULL, rcSheet.left, rcSheet.top, 0, 0, SWP_NOZORDER | SWP_NOSIZE | SWP_NOACTIVATE);
@@ -190,9 +196,7 @@ BOOL CSettingsDlg::InitSubDlgs()
 	m_dLookNFeel.Init(m_strWd);
 	m_dMP3.Init(m_strWd);
 	m_dPlugin.Init(m_strWd);
-
-
-	//m_strActiveDlg = "LameFE";
+	m_dLang.Init(m_strWd);
 
 	return TRUE;
 }
@@ -212,6 +216,7 @@ void CSettingsDlg::OnSelchangedModules(NMHDR* pNMHDR, LRESULT* pResult)
 	m_dLookNFeel.ShowWindow(SW_HIDE);
 	m_dMP3.ShowWindow(SW_HIDE);
 	m_dPlugin.ShowWindow(SW_HIDE);
+	m_dLang.ShowWindow(SW_HIDE);
 
 	if(strActivate == "LameFE"){
 
@@ -245,6 +250,10 @@ void CSettingsDlg::OnSelchangedModules(NMHDR* pNMHDR, LRESULT* pResult)
 
 		m_dFreeDB.ShowWindow(SW_SHOW);
 	}
+	else if(strActivate == m_strLanguage){
+
+		m_dLang.ShowWindow(SW_SHOW);
+	}
 	else{
 
 		HTREEITEM hTmp = m_ctrlModules.GetParentItem(m_ctrlModules.GetSelectedItem());
@@ -269,7 +278,7 @@ void CSettingsDlg::OnSelchangedModules(NMHDR* pNMHDR, LRESULT* pResult)
 		}
 		else{
 			
-			strActivate.LoadString(IDS_NONESELECTED);
+			strActivate = g_iLang.GetString(IDS_NONESELECTED);
 		}
 	}
 
@@ -284,7 +293,7 @@ void CSettingsDlg::OnOK()
 	
 	if(m_dBatchmode.Save() && m_dCDRipper.Save() &&	m_dFilenames.Save()
 		&& 	m_dFreeDB.Save() &&	m_dLameFE.Save() &&	m_dLookNFeel.Save()
-		&&	m_dMP3.Save() && m_dDecoder.Save())
+		&&	m_dMP3.Save() && m_dDecoder.Save() && m_dLang.Save())
 	{
 
 		CDialog::OnOK();
@@ -302,6 +311,7 @@ void CSettingsDlg::OnApply()
 	m_dLookNFeel.Save();
 	m_dMP3.Save();
 	m_dDecoder.Save();
+	m_dLang.Save();
 }
 
 

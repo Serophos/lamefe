@@ -25,6 +25,7 @@
 #include "ID3Info.h"
 #include "Utils.h"
 #include "FreeDBStatusDlg.h"
+#include "I18n.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -36,20 +37,22 @@ static char THIS_FILE[] = __FILE__;
 #define CB_CDDASECTOR 2352
 
 extern CSettings g_sSettings;
+extern CI18n	 g_iLang;
 
 /////////////////////////////////////////////////////////////////////////////
 // Dialogfeld CCDdbQueryDlg 
 
 
-CCDdbQueryDlg::CCDdbQueryDlg(CWnd* pParent /*=NULL*/, CCompactDisc *cd, int activeCD, CString wdir, BOOL bAutoSelect /* = FALSE */)
+CCDdbQueryDlg::CCDdbQueryDlg(CWnd* pParent /*=NULL*/, CCompactDisc *cd, int activeCD, BOOL bAutoSelect /* = FALSE */)
 	: CDialog(CCDdbQueryDlg::IDD, pParent)
 {
 	//{{AFX_DATA_INIT(CCDdbQueryDlg)
 	//}}AFX_DATA_INIT
-	m_cd = cd;
-	nActiveCD = activeCD;
+	m_cd          = cd;
+	m_nActiveCD	  = activeCD;
 	m_bAutoSelect = bAutoSelect;
-	wd = wdir;
+	m_dwDiscID	  = 0;
+
 }
 
 
@@ -59,7 +62,7 @@ void CCDdbQueryDlg::DoDataExchange(CDataExchange* pDX)
 	//{{AFX_DATA_MAP(CCDdbQueryDlg)
 	DDX_Control(pDX, IDC_START, m_Start);
 	DDX_Control(pDX, IDC_PROTOCOLL, m_Protocoll);
-	DDX_Control(pDX, IDCANCEL, m_Cancel);
+	DDX_Control(pDX, ID_CLOSE, m_Cancel);
 	//}}AFX_DATA_MAP
 }
 
@@ -85,10 +88,15 @@ BOOL CCDdbQueryDlg::OnInitDialog()
 
 	CDialog::OnInitDialog();
 
+	CString strMsg = "";
+
+	g_iLang.TranslateDialog(this, IDD_CDDB_QUERY);
+
 	FreeDBStatusDlg statusDlg;
-	//statusDlg.CreateIndirect(IDD_FREEDB_STATUS, NULL);
+	
 	statusDlg.ShowWindow(SW_SHOWNORMAL);
-	statusDlg.SetMessage("Initializing...");
+	statusDlg.SetMessage(IDS_FDB_INITWINSOCK);
+	
 	//Initialise the Winsock stack
     if (!AfxSocketInit()){
 
@@ -99,9 +107,8 @@ BOOL CCDdbQueryDlg::OnInitDialog()
 		return FALSE;
 	}
 
-	CString msg;
 
-	discID = m_cd->GetDiscID();
+	m_dwDiscID = m_cd->GetDiscID();
 	
 
     if(g_sSettings.GetUseProxy()){
@@ -168,7 +175,7 @@ BOOL CCDdbQueryDlg::OnInitDialog()
 	}
 
 	statusDlg.SetMessage(IDS_FDB_GETENTRIES);
-	bSuccess = cddb.Query(site, discID, tracks, results);
+	bSuccess = cddb.Query(site, m_dwDiscID, tracks, results);
 	statusDlg.ShowWindow(FALSE);
 	if (bSuccess)
 	{
@@ -178,8 +185,8 @@ BOOL CCDdbQueryDlg::OnInitDialog()
 		
 			CCDDBQueryResult& result = results.ElementAt(i);
 			
-			msg.Format("%s / %s;\tGenre: %s\t(Disc-ID: %08x)", result.m_sArtist, result.m_sTitle, result.m_sCategory, result.m_dwDiscID);
-			AddLine(msg);
+			strMsg.Format("%s / %s;\tGenre: %s\t(Disc-ID: %08x)", result.m_sArtist, result.m_sTitle, result.m_sCategory, result.m_dwDiscID);
+			AddLine(strMsg);
 		}
 	}
 	else
@@ -191,7 +198,7 @@ BOOL CCDdbQueryDlg::OnInitDialog()
 		TRACE(_T("\n"));
 #endif
 		CString out;
-		out.Format(IDS_FDB_NOENTRY, discID);
+		out.Format(g_iLang.GetString(IDS_FDB_NOENTRY), m_dwDiscID);
 		ErrMessageBox(out, MB_OK+MB_ICONINFORMATION );
 		CDialog::OnCancel();
 		return FALSE;
@@ -310,7 +317,7 @@ CString CCDdbQueryDlg::GetServerString(int i)
 
 	TRY{
 
-		server.Open(wd + "\\cddb.cfg", CFile::modeCreate | CFile::modeNoTruncate | CFile::modeRead | CFile::typeText, &e);
+		server.Open(g_sSettings.GetAppDir() + "\\cddb.cfg", CFile::modeCreate | CFile::modeNoTruncate | CFile::modeRead | CFile::typeText, &e);
 
 		while(server.GetPosition() != server.GetLength()){
 
@@ -368,7 +375,7 @@ void CCDdbQueryDlg::ErrMessageBox(UINT nID, UINT nType)
 
 	if(!m_bAutoSelect){
 
-		AfxMessageBox(nID, nType);
+		AfxMessageBox(g_iLang.GetString(nID), nType);
 	}
 }
 

@@ -53,8 +53,8 @@ void CPathDialogSub::OnChangeEditPath()
 // CPathDialog dialog
 
 
-CPathDialog::CPathDialog(LPCTSTR lpszCaption, 
-						 LPCTSTR lpszTitle, 
+CPathDialog::CPathDialog(CString  lpszCaption, 
+						 CString  lpszTitle, 
 						 LPCTSTR lpszInitialPath, 
 						 CWnd* pParent)
 {
@@ -65,7 +65,7 @@ CPathDialog::CPathDialog(LPCTSTR lpszCaption,
     // Get the true parent of the dialog
     m_pParentWnd = CWnd::GetSafeOwner(pParent);
 
-	m_lpszCaption = lpszCaption;
+	m_lpszCaption = lpszCaption.GetBuffer(10);
 	m_lpszInitialPath = lpszInitialPath;
 
 	memset(&m_bi, 0, sizeof(BROWSEINFO) );
@@ -74,7 +74,9 @@ CPathDialog::CPathDialog(LPCTSTR lpszCaption,
 	m_bi.pidlRoot = 0;
 	m_bi.ulFlags = BIF_RETURNONLYFSDIRS | BIF_STATUSTEXT;
 	m_bi.lpfn = BrowseCallbackProc;
-	m_bi.lpszTitle = lpszTitle;
+	m_bi.lpszTitle = lpszTitle.GetBuffer(10);
+	lpszTitle.ReleaseBuffer();
+	lpszCaption.ReleaseBuffer();
 }
 
 

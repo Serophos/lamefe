@@ -32,11 +32,20 @@
 /////////////////////////////////////////////////////////////////////////////
 // Dialogfeld CAlbumInfoCtrl 
 
+#define AIC_SWAP_ARTISTALBUM	0
+#define AIC_SWAP_TITLEARTIST	1
+#define AIC_CORRECT_CASE		2
+#define AIC_CLEAR_TAG			3
+#define AIC_COPY_V1_V2			4
+#define AIC_COPY_V2_V1			5
+#define AIC_FIX_VARIOUS			6
+#define AIC_FIX_NAME			7
 
 class CAlbumInfoCtrl : public CDialog
 {
 // Konstruktion
 public:
+	CID3Info* GetTag();
 	void OnOK();
 	void OnCancel();
 	void Clear();
@@ -47,13 +56,13 @@ public:
 // Dialogfelddaten
 	//{{AFX_DATA(CAlbumInfoCtrl)
 	enum { IDD = IDD_ALBUMINFOCTRL };
-	CMyEditCtrl	m_cYear;
-	CMyEditCtrl	m_cTrackNumber;
-	CMyEditCtrl	m_cSongTitle;
-	CMyEditCtrl	m_cSongInterpret;
-	CMyEditCtrl	m_cComment;
-	CMyEditCtrl	m_cAlbumInfo;
-	CMyComboBox	m_ctrlGenre;
+	CEdit	m_cYear;
+	CEdit	m_cTrackNumber;
+	CEdit	m_cSongTitle;
+	CEdit	m_cSongInterpret;
+	CEdit	m_cComment;
+	CEdit	m_cAlbumInfo;
+	CComboBox	m_ctrlGenre;
 	CString	m_strAlbum;
 	CString	m_strComment;
 	CString	m_strGenre;
@@ -61,6 +70,7 @@ public:
 	CString	m_strSong;
 	int		m_nTrack;
 	int		m_nYear;
+	CString	m_strEncodedBy;
 	//}}AFX_DATA
 
 
@@ -69,20 +79,35 @@ public:
 	//{{AFX_VIRTUAL(CAlbumInfoCtrl)
 	protected:
 	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV-Unterstützung
+	virtual BOOL OnCommand(WPARAM wParam, LPARAM lParam);
 	//}}AFX_VIRTUAL
 
 // Implementierung
 protected:
+	ID3T_Tag SendModifyCommand(int nCmd);
+	void DisplayTag();
 	virtual BOOL OnInitDialog();
 
 	// Generierte Nachrichtenzuordnungsfunktionen
 	//{{AFX_MSG(CAlbumInfoCtrl)
 	afx_msg void OnChangeAlbumname();
 	afx_msg void OnChangeAlbumInfo();
+	afx_msg void OnSelId3v1();
+	afx_msg void OnSelId3v2();
+	afx_msg void OnCase();
+	afx_msg void OnModify();
+	afx_msg void OnSwapArtistalbum();
+	afx_msg void OnId3Cleanuptags();
+	afx_msg void OnSwapTitleartist();
+	afx_msg void OnId3Copyid3v2id3v1();
+	afx_msg void OnId3Copyid3v1id3v2();
+	afx_msg void OnId3Fixvariousartistag();
+	afx_msg void OnId3FixName();
 	//}}AFX_MSG
 	DECLARE_MESSAGE_MAP()
 
 	BOOL	m_bDataChanged;
+	CID3Info m_id3;
 };
 
 //{{AFX_INSERT_LOCATION}}

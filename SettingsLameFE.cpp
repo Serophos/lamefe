@@ -7,6 +7,7 @@
 #include "PathDialog.h"
 #include "Settings.h"
 #include "Utils.h"
+#include "I18n.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -17,6 +18,7 @@ static char THIS_FILE[] = __FILE__;
 /////////////////////////////////////////////////////////////////////////////
 // Dialogfeld CSettingsLameFE 
 extern CSettings g_sSettings;
+extern CI18n	 g_iLang;
 
 
 CSettingsLameFE::CSettingsLameFE(CWnd* pParent /*=NULL*/)
@@ -25,6 +27,7 @@ CSettingsLameFE::CSettingsLameFE(CWnd* pParent /*=NULL*/)
 	//{{AFX_DATA_INIT(CSettingsLameFE)
 	m_playerPath = _T("[System default]");
 	m_presetPath = _T("");
+	m_strTempPath = _T("");
 	//}}AFX_DATA_INIT
 }
 
@@ -34,7 +37,6 @@ void CSettingsLameFE::DoDataExchange(CDataExchange* pDX)
 	CMySettingsPage::DoDataExchange(pDX);
 	//{{AFX_DATA_MAP(CSettingsLameFE)
 	DDX_Control(pDX, IDC_ENQUEUE_FILES, c_enqueueFiles);
-	DDX_Control(pDX, IDC_PLAYER_PATH, c_playerPath);
 	DDX_Control(pDX, IDC_SHUTDOWN, c_shutdownOnFinished);
 	DDX_Control(pDX, IDC_PLAY_FILES, c_playFiles);
 	DDX_Control(pDX, IDC_M3U, c_m3u);
@@ -45,6 +47,7 @@ void CSettingsLameFE::DoDataExchange(CDataExchange* pDX)
 	DDX_Control(pDX, IDC_PLAY_SOUND, c_playSound);
 	DDX_Text(pDX, IDC_PLAYER_PATH, m_playerPath);
 	DDX_Text(pDX, IDC_PRESET_PATH_DISPLAY, m_presetPath);
+	DDX_Text(pDX, IDC_TEMPPATH_DISPLAY, m_strTempPath);
 	//}}AFX_DATA_MAP
 }
 
@@ -54,6 +57,7 @@ BEGIN_MESSAGE_MAP(CSettingsLameFE, CMySettingsPage)
 	ON_BN_CLICKED(IDC_PLAYER, OnPlayer)
 	ON_BN_CLICKED(IDC_PLAY_FILES, OnPlayFiles)
 	ON_BN_CLICKED(IDC_PRESETPATH, OnPresetpath)
+	ON_BN_CLICKED(IDC_TEMPPATH, OnTemppath)
 	//}}AFX_MSG_MAP
 END_MESSAGE_MAP()
 
@@ -64,6 +68,8 @@ void CSettingsLameFE::Init(CString strWd)
 {
 
 	CMySettingsPage::Init(strWd);
+
+	g_iLang.TranslateDialog(this, IDD_SETTINGS_LAMEFE);
 
 	c_beep.SetCheck(g_sSettings.GetBeep());
 	c_finishedDialog.SetCheck(g_sSettings.GetDialog());
@@ -76,6 +82,7 @@ void CSettingsLameFE::Init(CString strWd)
 	c_getfocus.SetCheck(g_sSettings.GetFocus());
 	c_playSound.SetCheck(g_sSettings.GetPlaySound());
 	m_presetPath = g_sSettings.GetPresetPath();
+	m_strTempPath = g_sSettings.GetTempPath();
 
 	UpdateData(FALSE);
 	
@@ -83,16 +90,15 @@ void CSettingsLameFE::Init(CString strWd)
 
 	if(m_pToolTip != NULL){
 
-		m_pToolTip->AddTool(&c_beep, IDS_TOOL_BEEP);
-		m_pToolTip->AddTool(&c_playSound, IDS_TOOL_PLAYSOUND);
-		m_pToolTip->AddTool(&c_finishedDialog, IDS_TOOL_NOTIFICATION);
-		m_pToolTip->AddTool(&c_m3u, IDS_TOOL_M3U);
-		m_pToolTip->AddTool(&c_playFiles, IDS_TOOL_PLAYFILES);
-		m_pToolTip->AddTool(&c_quitOnFinished, IDS_TOOL_QUIT);
-		m_pToolTip->AddTool(&c_shutdownOnFinished, IDS_TOOL_SHUTDOWN);
-		m_pToolTip->AddTool(&c_playerPath, IDS_TOOL_EXTPLAYER);
-		m_pToolTip->AddTool(&c_getfocus, IDS_TOOL_GETFOCUS);
-		m_pToolTip->AddTool(&c_enqueueFiles, IDS_TOOL_ENQUEUE);
+		m_pToolTip->AddTool(&c_beep, g_iLang.GetString(IDS_TOOL_BEEP));
+		m_pToolTip->AddTool(&c_playSound, g_iLang.GetString(IDS_TOOL_PLAYSOUND));
+		m_pToolTip->AddTool(&c_finishedDialog, g_iLang.GetString(IDS_TOOL_NOTIFICATION));
+		m_pToolTip->AddTool(&c_m3u, g_iLang.GetString(IDS_TOOL_M3U));
+		m_pToolTip->AddTool(&c_playFiles, g_iLang.GetString(IDS_TOOL_PLAYFILES));
+		m_pToolTip->AddTool(&c_quitOnFinished, g_iLang.GetString(IDS_TOOL_QUIT));
+		m_pToolTip->AddTool(&c_shutdownOnFinished, g_iLang.GetString(IDS_TOOL_SHUTDOWN));
+		m_pToolTip->AddTool(&c_getfocus, g_iLang.GetString(IDS_TOOL_GETFOCUS));
+		m_pToolTip->AddTool(&c_enqueueFiles, g_iLang.GetString(IDS_TOOL_ENQUEUE));
 		m_pToolTip->Activate(TRUE);
 	}
 
@@ -100,7 +106,7 @@ void CSettingsLameFE::Init(CString strWd)
 
 BOOL CSettingsLameFE::Save()
 {
-
+	UpdateData(TRUE);
 	g_sSettings.SetBeep(c_beep.GetCheck());
 	g_sSettings.SetDialog(c_finishedDialog.GetCheck());
 	g_sSettings.SetM3U(c_m3u.GetCheck());
@@ -112,6 +118,7 @@ BOOL CSettingsLameFE::Save()
 	g_sSettings.SetFocus(c_getfocus.GetCheck());
 	g_sSettings.SetPlaySound(c_playSound.GetCheck());
 	g_sSettings.SetPresetPath(m_presetPath);
+	g_sSettings.SetTempPath(m_strTempPath);
 	g_sSettings.Save();
 
 	return TRUE;
@@ -146,16 +153,32 @@ void CSettingsLameFE::OnPresetpath()
 
 	UpdateData(TRUE);
 
-	CPathDialog dlg("Select preset folder", "Select directory where LameFE stores the presets.", m_presetPath);
+	CPathDialog dlg(g_iLang.GetString(IDS_SELECTPRESETPATHTITLE), g_iLang.GetString(IDS_SELECTPRESETPATH), m_presetPath);
 	int nResult = dlg.DoModal();
 	if(nResult == IDOK){
 
 		if(m_presetPath != dlg.GetPathName()){
 
 			m_presetPath = dlg.GetPathName();
-			AfxMessageBox(IDS_RESTARTLAME, MB_OK+MB_ICONINFORMATION);
+			AfxMessageBox(g_iLang.GetString(IDS_RESTARTLAME), MB_OK+MB_ICONINFORMATION);
 		}
 		UpdateData(FALSE);
 	}
 }
 
+void CSettingsLameFE::OnTemppath() 
+{
+	
+	UpdateData(TRUE);
+
+	CPathDialog dlg(g_iLang.GetString(IDS_SELECTTEMPPATHTITLE), g_iLang.GetString(IDS_SELECTTEMPPATH), m_presetPath);
+	int nResult = dlg.DoModal();
+	if(nResult == IDOK){
+
+		if(m_presetPath != dlg.GetPathName()){
+
+			m_strTempPath = dlg.GetPathName();
+		}
+		UpdateData(FALSE);
+	}
+}

@@ -41,14 +41,15 @@ public:
 // Dialogfelddaten
 	//{{AFX_DATA(CSettingsBatchMode)
 	enum { IDD = IDD_SETTINGS_BATCHMODE };
+	CListBox	m_lAvailable;
+	CListBox	m_lActive;
 	CButton	c_appendDiscID;
-	CMyEditCtrl	c_nBatchTimeOut;
-	CButton	c_batchBeep;
+	CEdit	c_nBatchTimeOut;
 	CButton	c_batchTimeOut;
 	CButton	c_batchAllDrives;
-	CButton	c_batchFreeDB;
 	int		m_nTimeOut;
-		// HINWEIS: Der Klassen-Assistent fügt hier Datenelemente ein
+	CString	m_strActive;
+	CString	m_strAvailable;
 	//}}AFX_DATA
 
 
@@ -64,8 +65,11 @@ protected:
 
 	// Generierte Nachrichtenzuordnungsfunktionen
 	//{{AFX_MSG(CSettingsBatchMode)
-		// HINWEIS: Der Klassen-Assistent fügt hier Member-Funktionen ein
 	afx_msg void OnBatchtimeout();
+	afx_msg void OnAddCommand();
+	afx_msg void OnRemoveCommand();
+	afx_msg void OnCommandUp();
+	afx_msg void OnCommandDown();
 	//}}AFX_MSG
 	DECLARE_MESSAGE_MAP()
 };

@@ -22,19 +22,20 @@
 
 #include "mmfile.h"
 
-#define VERSION 0x002
+#define VERSION 0x203
 
 typedef struct 
 {
 
 	// data membmers of the API
-	int version;				// which api vertsion?
-	char *description;			// description of plugin, with version string
+	int  nVersion;				// which api vertsion?
+	int  nID;					// unique ID of the plugin
+	char *cDescription;			// description of plugin, with version string
 
 	HWND hMainWindow;			// lameFE's main window (filled in by lameFE)
 	HINSTANCE hDllInstance;		// DLL instance handle (filled in by lameFE)
 
-	char *FileExtensions;		//".wav" //this is the fileextension the output file will have
+	char *cFileExtensions;		//".wav" //this is the fileextension the output file will have
 								// multiple extions are not allow. leading "dot" required!!
 
 
@@ -56,7 +57,7 @@ typedef struct
 	// Parameters:
 	//  none
 	////////////////////////////////////////////////////////////////////////
-	void (*Quit)(void);
+	int (*Quit)(void);
 
 
 	////////////////////////////////////////////////////////////////////////
@@ -82,20 +83,30 @@ typedef struct
 	//      So you might need it.
 	////////////////////////////////////////////////////////////////////////
 	int		(*Open)(const char *path, MMFILE_FORMAT *pInputFormat, MMFILE_ALBUMINFO *pAlbumInfo);	
+	
 
 
 	////////////////////////////////////////////////////////////////////////
-	// size_t Write(...) - Reads from file and writes given number of items of
-	//    raw wave data to the buffer. returns the number of items read.
+	// __int64 GetEstFileSize(...) - Get Estimated size of compressed file 
+	//                           in Kilobyte
 	//
 	// Parameters:
-	//  short *ptr
+	//  none
+	////////////////////////////////////////////////////////////////////////
+	__int64		(*GetEstFileSize)(__int64 nSizeInBytes, DWORD dwNumChannels, DWORD dwSamplerate, DWORD dwBitrate);
+
+	////////////////////////////////////////////////////////////////////////
+	// size_t Write(...) - Writes given numbers of items to the plugins 
+	//                     internal encoding buffer
+	//
+	// Parameters:
+	//  SHORT *psBuffer
 	//      Pointer to the buffer with raw wave data to be written
-	//  size_t items
+	//  DWORD dwNumSamples
 	//      Items (samples) to write. Is integer product of the number
 	//      of channels or an error will occur.
 	////////////////////////////////////////////////////////////////////////
-	size_t  (*Write)(short *ptr, size_t items); 
+	DWORD  (*Write)(SHORT *psBuffer, DWORD dwNumSamples); 
 
 
 	////////////////////////////////////////////////////////////////////////
@@ -104,7 +115,7 @@ typedef struct
 	// Parameters:
 	//  none
 	////////////////////////////////////////////////////////////////////////
-	void (*Close)(void);		
+	int (*Close)(void);		
 
 
 	////////////////////////////////////////////////////////////////////////
@@ -153,6 +164,19 @@ typedef struct
 	//     value of the entry (e.g. "192")   [written is bitrate=192 in that case]
 	////////////////////////////////////////////////////////////////////////
 	int (*SetProfileString)(const char* entry, const char* value);
+
+
+	////////////////////////////////////////////////////////////////////////
+	// void TranslateDialog(...) - Translates dialog using the LameFE I18N routines
+	//                              returns TRUE on success
+	//                              Filled in by LameFE. Not implemented in the plugin
+	// Parameters:
+	//  CDialog *wnd
+	//     Dialog to translate
+	//  UINT nID
+	//     Ressource ID of the dialog
+	////////////////////////////////////////////////////////////////////////
+	int (*TranslateDialog)(CWnd* wnd, UINT nID);
 
 } LF_OUT, *PLF_OUT;
 

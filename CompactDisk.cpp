@@ -26,6 +26,7 @@
 #include "Utils.h"
 #include "Settings.h"
 #include <math.h>
+#include "I18n.h"
 
 #ifdef _DEBUG
 #undef THIS_FILE
@@ -37,6 +38,7 @@ static char THIS_FILE[]=__FILE__;
 
 
 extern CSettings g_sSettings;
+extern CI18n	g_iLang;
 
 enum CDTEXT_PACK_TYPE
 {
@@ -136,14 +138,15 @@ void CCompactDisc::Init()
 		}
 
 		CString tmp;
-		tmp.Format((track.IsAudioTrack() ? IDS_MAIN_AUDIOTRACK : IDS_MAIN_DATATRACK), track.m_btTrack);
+		tmp.Format((track.IsAudioTrack() ? g_iLang.GetString(IDS_MAIN_AUDIOTRACK) : g_iLang.GetString(IDS_MAIN_DATATRACK)), track.m_btTrack);
 		track.m_id3Info.SetSong(tmp);
 		m_cdTracks.Add(track);
 
 	}
+
 	m_nVolID = CalculateVolID();
 	m_strVolID.Format("%X", m_nVolID);
-	
+
 	m_nDiscID = CalculateDiscID();
 }
 
@@ -283,7 +286,6 @@ int CCompactDisc::CalculateDiscID()
 	for (int i = 0; i < m_nTocEntries; i++) 
 	{
 		
-		//TRACE("i=%d, size=%d\n", i, m_pFiles->GetSize());
 		//Keep in mind the two seconds offset
 		DWORD dwSectors = m_cdTracks[i].m_dwStartSector + dwTwoSecOffset;
 
@@ -296,8 +298,6 @@ int CCompactDisc::CalculateDiscID()
 
 	dwRet=( (n % 0xff) << 24 | t << 8 | (DWORD)(m_nTocEntries));
 
-	//Get total playing time
-	//m_dwTotalSecs=(GetEndSector(m_nNumTracks)+1+150)/75;
 
 	return dwRet;
 }
@@ -310,8 +310,10 @@ int CCompactDisc::cddb_sum(int n)
 
 	// For backward compatibility this algorithm must not change
 	sprintf(buf, "%lu", n);
-	for (p = buf; *p != '\0'; p++)
+	for (p = buf; *p != '\0'; p++){
+
 		ret += (*p - '0');
+	}
 
 	return ret;
 }
@@ -343,6 +345,8 @@ void CCompactDisc::SetSelItems(int iCnt, LPINT pIndex)
 
 		m_pSel[i]	 = pIndex[i];
 	}
+
+	//delete m_pSel;
 }
 
 void CCompactDisc::GetSelItems(int iCnt, LPINT pIndex)
@@ -523,11 +527,11 @@ CString CCompactDisc::GetAlbumString(CString wdir, CString ext, BOOL bAppendDisc
 		if(!m_bAlerted){
 
 			CString msg;
-			msg.Format(IDS_ERR_LONGFILENAME, tmp,tmp2);
+			msg.Format(g_iLang.GetString(IDS_ERR_LONGFILENAME), tmp,tmp2);
 			AfxMessageBox(msg, MB_OK+MB_ICONEXCLAMATION);
 			m_bAlerted = TRUE;
 		}
-		strSaveAs = strPath + "\\" + tmp2 + ext;
+		strSaveAs = strPath + "\\" + tmp2  + "." + ext;
 
 		if(strSaveAs.GetLength() > _MAX_FNAME){
 
@@ -541,7 +545,7 @@ CString CCompactDisc::GetAlbumString(CString wdir, CString ext, BOOL bAppendDisc
 	if(!strFormat.IsEmpty()){
 		
 		strSaveAs.Empty();
-		strSaveAs = strPath + "\\" + strFormat + ext;
+		strSaveAs = strPath + "\\" + strFormat + "." + ext;
 	}	
 
 	return strSaveAs;
@@ -559,9 +563,9 @@ CString CCompactDisc::GetSaveAs(int nTrack, CString wd, CString ext, BOOL bAppen
 
 		strPath = wd;
 	}
-	if(!GetCDTrack(nTrack)->GetRename() && !g_sSettings.GetRenameFiles()){
+	if(!g_sSettings.GetRenameFiles()){
 		
-		strSaveAs = strPath + "\\" + GetCDTrack(nTrack)->GetTrackname() + ext;
+		strSaveAs = strPath + "\\" + GetCDTrack(nTrack)->GetTrackname() + "." + ext;
 		return strSaveAs;
 	}
 
@@ -581,11 +585,11 @@ CString CCompactDisc::GetSaveAs(int nTrack, CString wd, CString ext, BOOL bAppen
 		if(!GetCDTrack(nTrack)->GetAlerted()){
 
 			CString tmp, msg;
-			msg.Format(IDS_ERR_LONGFILENAME, tmp, GetCDTrack(nTrack)->GetTrackname());
+			msg.Format(g_iLang.GetString(IDS_ERR_LONGFILENAME), tmp, GetCDTrack(nTrack)->GetTrackname());
 			AfxMessageBox(msg, MB_OK+MB_ICONEXCLAMATION);
 			GetCDTrack(nTrack)->SetAlerted();
 		}
-		strSaveAs = strPath + "\\" + GetCDTrack(nTrack)->GetTrackname()+ ext;
+		strSaveAs = strPath + "\\" + GetCDTrack(nTrack)->GetTrackname()  + "." + ext;
 
 		if(strSaveAs.GetLength() > _MAX_FNAME){
 
@@ -598,7 +602,7 @@ CString CCompactDisc::GetSaveAs(int nTrack, CString wd, CString ext, BOOL bAppen
 	if(!strFormat.IsEmpty()){
 		
 		strSaveAs.Empty();
-		strSaveAs = strPath + "\\" + strFormat + ext;
+		strSaveAs = strPath + "\\" + strFormat  + "." + ext;
 	}	
 
 	return strSaveAs;
@@ -698,6 +702,14 @@ CString CCompactDisc::GetTrackDurationMS(int nTrack)
 	return nMillisecs;	
 }
 
+__int64 CCompactDisc::GetTrackSize(int nTrack)
+{
+
+	__int64 nSize = (GetCDTrack(nTrack+1)->m_dwStartSector - GetCDTrack(nTrack)->m_dwStartSector) * 2352;
+
+	return nSize;
+}
+
 int CCompactDisc::GetLastAudioTrack()
 {
 
@@ -709,6 +721,28 @@ int CCompactDisc::GetLastAudioTrack()
 	}
 
 	return nResult;
+}
+
+
+
+DWORD CCompactDisc::GetStartSector(int nTrack)
+{
+
+	int lReturn = -1;
+	int i;
+
+	// Loop through the available tracks
+	for ( i = 0; i < m_nTocEntries; i++ ) 
+	{
+		if (m_cdTracks[i].m_btTrack == nTrack) 
+		{
+			// Return next track start record -1
+			lReturn = m_cdTracks[i].m_dwStartSector;
+			break;
+		}
+	}
+
+	return lReturn;
 }
 
 DWORD CCompactDisc::GetEndSector(int nTrack)
@@ -748,4 +782,21 @@ DWORD CCompactDisc::GetEndSector(int nTrack)
 // end (c) A.L. Faber
 /////////////////
 	return dwEndSector;
+}
+
+CString CCompactDisc::GetTrackDuration(int nTrack)
+{
+
+	int		nMins;
+	int		nSecs;
+	CString strReturn;
+
+	DWORD dwSectors = GetCDTrack(nTrack + 1)->m_dwStartSector - GetCDTrack(nTrack)->m_dwStartSector;
+
+	nMins	= dwSectors / (TRACKSPERSEC*60L);
+	nSecs	= (int)(fmod(dwSectors, 60*TRACKSPERSEC) / TRACKSPERSEC);
+
+	strReturn.Format("%02d:%02d", nMins, nSecs);
+
+	return strReturn;
 }

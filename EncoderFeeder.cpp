@@ -30,7 +30,7 @@ static char THIS_FILE[]=__FILE__;
 // Konstruktion/Destruktion
 //////////////////////////////////////////////////////////////////////
 
-CEncoderFeeder::CEncoderFeeder(CEncoder *syncEncoder, int nBufferSize, int nBuffers, BOOL &bAbortEnc)
+CEncoderFeeder::CEncoderFeeder(CGenericEncoder *syncEncoder, int nBufferSize, int nBuffers, BOOL &bAbortEnc)
 	: m_bAbortEnc(bAbortEnc)
 {
 	m_pEncoder      = syncEncoder;  //Encoder
@@ -107,6 +107,7 @@ void CEncoderFeeder::EncProc(void)
 
 			if (nSize)
 			{
+			
 				m_pEncoder->PassBuffer(pData, nSize);
 			}
 		}
@@ -118,8 +119,6 @@ void CEncoderFeeder::EncProc(void)
 			Sleep(50);
 
 		}
-
-
 	}
 
 	delete [] pData;

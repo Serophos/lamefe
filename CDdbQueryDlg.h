@@ -35,10 +35,7 @@ class CCDdbQueryDlg : public CDialog
 {
 // Konstruktion
 public:
-	void ErrMessageBox(CString strMsg, UINT nType);
-	void ErrMessageBox(UINT nID, UINT nType);
-	BOOL QueryCDDB();
-	CCDdbQueryDlg(CWnd* pParent = NULL, CCompactDisc *cd = NULL, int nActiveCD = 0, CString wd = "", BOOL bAutoSelect = FALSE);   // Standardkonstruktor
+	CCDdbQueryDlg(CWnd* pParent = NULL, CCompactDisc *cd = NULL, int nActiveCD = 0, BOOL bAutoSelect = FALSE);   // Standardkonstruktor
 
 // Dialogfelddaten
 	//{{AFX_DATA(CCDdbQueryDlg)
@@ -59,6 +56,12 @@ public:
 // Implementierung
 protected:
 	virtual BOOL OnInitDialog();
+	void	ErrMessageBox(CString strMsg, UINT nType);
+	void	ErrMessageBox(UINT nID, UINT nType);
+	BOOL	QueryCDDB();
+	BOOL	GetTrackPositions(CArray<CCDDBTrackPosition, CCDDBTrackPosition&>& tracks);
+	CString	GetServerString(int i);
+	void	AddLine(CString msg);
 
 	// Generierte Nachrichtenzuordnungsfunktionen
 	//{{AFX_MSG(CCDdbQueryDlg)
@@ -67,18 +70,14 @@ protected:
 	//}}AFX_MSG
 	DECLARE_MESSAGE_MAP()
 private:
-	CCompactDisc* m_cd;
-	BOOL		GetTrackPositions(CArray<CCDDBTrackPosition, CCDDBTrackPosition&>& tracks);
-	CString		GetServerString(int i);
-	void		AddLine(CString msg);
 
-	CString		wd;
-	int			nActiveCD;
-	CCDDB		cddb;
-	BOOL		m_bAutoSelect;
-	//CStringArray drives;
-	DWORD discID;
-	CCDDBSite site;
+	int				m_nActiveCD;
+	CCompactDisc*	m_cd;
+	BOOL			m_bAutoSelect;
+
+	CCDDB			cddb;
+	CCDDBSite		site;
+	DWORD			m_dwDiscID;
 	CArray<CCDDBQueryResult, CCDDBQueryResult&> results;
 };
 

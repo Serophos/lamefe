@@ -26,30 +26,31 @@
 
 #include "MultimediaFile.h"
 
-class CCDTrack //: public CMultimediaFile  
+class CCDTrack  : public CObject//: public CMultimediaFile  
 {
 public:
-	BOOL GetRename();
-	void SetRename(BOOL bFlag);
-	void SetExtract(BOOL bExtract);
-	BOOL IsSelected();
-	CString GetTrackname();
-	BOOL IsAudioTrack();
 	CCDTrack();
+	CCDTrack(CCDTrack &cdTrack); // Copyconstructor
 	virtual ~CCDTrack();
-	BOOL  GetAlerted(){ return bAlerted; }
-	void  SetAlerted(){ bAlerted = TRUE; }
 
-	DWORD	m_dwStartSector;
-	BYTE	m_btFlags;
-	BYTE	m_btTrack;
-	CString	m_strTrackName;
+	void	SetExtract(BOOL bExtract);
+	BOOL	IsSelected();
+	CString GetTrackname();
+	BOOL	IsAudioTrack();
+
+	BOOL	GetAlerted(){ return m_bAlerted; }
+	void	SetAlerted(BOOL bFlag = TRUE){ m_bAlerted = bFlag; }
+	
+	DWORD	 m_dwStartSector;
+	BYTE	 m_btFlags;
+	BYTE	 m_btTrack;
+	CString	 m_strTrackName;
 	CID3Info m_id3Info;
+
+	CCDTrack& operator=(const CCDTrack &cdTrack);
 private:
-	BOOL bAlerted;
 	BOOL m_bExtract;
-	BOOL m_bRename;
-//	CString m_strError;
+	BOOL m_bAlerted;
 };
 
 #endif // !defined(AFX_CDTRACK_H__BD7B46E6_D8BF_46E2_A5F0_BAD330A886E4__INCLUDED_)

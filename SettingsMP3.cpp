@@ -5,7 +5,7 @@
 #include "lamefe.h"
 #include "SettingsMP3.h"
 #include "Settings.h"
-#include "Utils.h"
+#include "I18n.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -14,34 +14,10 @@ static char THIS_FILE[] = __FILE__;
 #endif
 
 extern CSettings g_sSettings;
+extern CI18n	 g_iLang;
 
-
-DWORD MPEGBitrates[3][3][15] = 
-{
-	{
-		{0,32,64,96,128,160,192,224,256,288,320,352,384,416,448},
-		{0,32,48,56,64 ,80 ,96 ,112,128,160,192,224,256,320,384},
-		{0,32,40,48,56 ,64 ,80 ,96 ,112,128,160,192,224,256,320}
-	},
-	{
-		{0,32,48,56,64,80,96,112,128,144,160,176,192,224,256},
-		{0, 8,16,24,32,40,48,56 , 64, 80, 96,112,128,144,160},
-		{0, 8,16,24,32,40,48,56 , 64, 80, 96,112,128,144,160}
-	},
-	{
-		{0, 8,16,24,32,40,48,56 , 64, 80, 96,112,128,144,160},
-		{0, 8,16,24,32,40,48,56 , 64, 80, 96,112,128,144,160},
-		{0, 8,16,24,32,40,48,56 , 64, 80, 96,112,128,144,160},
-	}
-};
-
-
-DWORD MP3SampleRates[3][3] =
-{
-	{ 48000, 44100, 32000 },
-	{ 24000, 22050, 16000 },
-	{  8000, 11025, 11025 } 
-};
+extern DWORD MP3SampleRates[3][3];
+extern DWORD MPEGBitrates[3][3][15];
 
 /////////////////////////////////////////////////////////////////////////////
 // Dialogfeld CSettingsMP3 
@@ -105,6 +81,8 @@ void CSettingsMP3::Init(CString strWd)
 
 	CMySettingsPage::Init(strWd);
 
+	g_iLang.TranslateDialog(this, IDD_SETTINGS_MP3);
+
 	HINSTANCE	lameDLL			= NULL;
 	BE_VERSION	Version			= {0,};
 	
@@ -142,22 +120,22 @@ void CSettingsMP3::Init(CString strWd)
 
 	if(m_pToolTip != NULL){
 
-		m_pToolTip->AddTool(&c_copyright, IDS_TOOL_CP);
-		m_pToolTip->AddTool(&c_checkSum, IDS_TOOL_CRC);
-		m_pToolTip->AddTool(&c_original, IDS_TOOL_ORIG);
-		m_pToolTip->AddTool(&c_private, IDS_TOOL_PRIVATE);
-		m_pToolTip->AddTool(&c_channels, IDS_TOOL_CHANNELS);
-		m_pToolTip->AddTool(&c_bitsPerSample, IDS_TOOL_MINBITRATE);
-		m_pToolTip->AddTool(&c_abr, IDS_TOOL_ABR);
-		m_pToolTip->AddTool(&c_vbrMethod, IDS_TOOL_VBRMETHOD);
-		m_pToolTip->AddTool(&c_vbrQuality, IDS_TOOL_VBRQUALITY);
-		m_pToolTip->AddTool(&c_maxBitrate, IDS_TOOL_MAXBITRATE);
-		m_pToolTip->AddTool(&c_MPEG, IDS_TOOL_MPEGVER);
-		m_pToolTip->AddTool(&c_writeId3v2, IDS_TOOL_WRITEID3);
-		m_pToolTip->AddTool(&m_qualityPreset, IDS_TOOL_QUALPRESET);
-		m_pToolTip->AddTool(&m_cThreadPriority, IDS_TOOL_ENCTHREADP);
-		m_pToolTip->AddTool(&c_OutSampleRate, IDS_TOOL_MP3OUTSAMPLE);
-		m_pToolTip->AddTool(&c_writeId3v1, IDS_TOOL_ID3V1);
+		m_pToolTip->AddTool(&c_copyright, g_iLang.GetString(IDS_TOOL_CP));
+		m_pToolTip->AddTool(&c_checkSum, g_iLang.GetString(IDS_TOOL_CRC));
+		m_pToolTip->AddTool(&c_original, g_iLang.GetString(IDS_TOOL_ORIG));
+		m_pToolTip->AddTool(&c_private, g_iLang.GetString(IDS_TOOL_PRIVATE));
+		m_pToolTip->AddTool(&c_channels, g_iLang.GetString(IDS_TOOL_CHANNELS));
+		m_pToolTip->AddTool(&c_bitsPerSample, g_iLang.GetString(IDS_TOOL_MINBITRATE));
+		m_pToolTip->AddTool(&c_abr, g_iLang.GetString(IDS_TOOL_ABR));
+		m_pToolTip->AddTool(&c_vbrMethod, g_iLang.GetString(IDS_TOOL_VBRMETHOD));
+		m_pToolTip->AddTool(&c_vbrQuality, g_iLang.GetString(IDS_TOOL_VBRQUALITY));
+		m_pToolTip->AddTool(&c_maxBitrate, g_iLang.GetString(IDS_TOOL_MAXBITRATE));
+		m_pToolTip->AddTool(&c_MPEG, g_iLang.GetString(IDS_TOOL_MPEGVER));
+		m_pToolTip->AddTool(&c_writeId3v2, g_iLang.GetString(IDS_TOOL_WRITEID3));
+		m_pToolTip->AddTool(&m_qualityPreset, g_iLang.GetString(IDS_TOOL_QUALPRESET));
+		m_pToolTip->AddTool(&m_cThreadPriority, g_iLang.GetString(IDS_TOOL_ENCTHREADP));
+		m_pToolTip->AddTool(&c_OutSampleRate, g_iLang.GetString(IDS_TOOL_MP3OUTSAMPLE));
+		m_pToolTip->AddTool(&c_writeId3v1, g_iLang.GetString(IDS_TOOL_ID3V1));
 		m_pToolTip->Activate(TRUE);
 	}
 
@@ -181,23 +159,12 @@ void CSettingsMP3::Init(CString strWd)
 	c_vbrMethod.SetCurSel(g_sSettings.GetVbrMethod());
 	m_abr = g_sSettings.GetAbr();
 	c_writeId3v1.SetCheck(g_sSettings.GetId3v1());
+	m_cThreadPriority.SetCurSel(g_sSettings.GetThreadPriority());
 	m_nMode = g_sSettings.GetChannels();
 	c_vbrQuality.SetCurSel(g_sSettings.GetVbrMethod());
 
 	OnSelchangeVbrMethod();
 	OnSelchangeQuality();
-
-	if(Utils::IsWindowsNT()){
-
-		m_cThreadPriority.SetCurSel(g_sSettings.GetThreadPriority());
-	}
-	else{
-
-		m_cThreadPriority.SetCurSel(2);
-		g_sSettings.SetThreadPriority(2);
-		m_cThreadPriority.EnableWindow(FALSE);
-	}
-	
 	UpdateData(FALSE);
 }
 
@@ -513,7 +480,7 @@ int CSettingsMP3::GetMaxBitrate()
 }
 
 
-void CSettingsMP3::SetMaxBitrate(unsigned int nBitrate)
+void CSettingsMP3::SetMaxBitrate(int nBitrate)
 {
 	int nItems=sizeof(MPEGBitrates[m_nVersion][m_nLayer])/sizeof(MPEGBitrates[m_nVersion][m_nLayer][0]);
 	
@@ -532,7 +499,7 @@ void CSettingsMP3::SetMaxBitrate(unsigned int nBitrate)
 	c_maxBitrate.SetCurSel(9);
 }
 
-void CSettingsMP3::SetMinBitrate(unsigned int nBitrate)
+void CSettingsMP3::SetMinBitrate(int nBitrate)
 {
 	int nItems=sizeof(MPEGBitrates[m_nVersion][m_nLayer])/sizeof(MPEGBitrates[m_nVersion][m_nLayer][0]);
 	

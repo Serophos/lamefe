@@ -43,18 +43,18 @@ RSC=rc.exe
 # PROP Ignore_Export_Lib 0
 # PROP Target_Dir ""
 # ADD BASE CPP /nologo /MD /W3 /GX /O2 /D "WIN32" /D "NDEBUG" /D "_WINDOWS" /D "_AFXDLL" /Yu"stdafx.h" /FD /c
-# ADD CPP /nologo /MD /W3 /GX /O2 /Ob2 /I "ID3Lib\include" /D "WIN32" /D "NDEBUG" /D "_WINDOWS" /D "_AFXDLL" /D "_MBCS" /Yu"stdafx.h" /FD /O /O /O /c
+# ADD CPP /nologo /MD /W3 /GX /Zd /O2 /I "LibSndFile\src" /D "WIN32" /D "NDEBUG" /D "_WINDOWS" /D "_AFXDLL" /D "_MBCS" /FR /Yu"stdafx.h" /FD /c
 # ADD BASE MTL /nologo /D "NDEBUG" /mktyplib203 /win32
 # ADD MTL /nologo /D "NDEBUG" /mktyplib203 /win32
 # ADD BASE RSC /l 0x407 /d "NDEBUG" /d "_AFXDLL"
-# ADD RSC /l 0x407 /d "NDEBUG" /d "_AFXDLL"
+# ADD RSC /l 0x407 /d "NDEBUG" /d "_AFXDLL" /d "_ENGLISH"
 BSC32=bscmake.exe
 # ADD BASE BSC32 /nologo
 # ADD BSC32 /nologo
 LINK32=link.exe
 # ADD BASE LINK32 /nologo /subsystem:windows /machine:I386
-# ADD LINK32 htmlhelp.lib delayimp.lib wsock32.lib winmm.lib /nologo /subsystem:windows /map /machine:I386 /nodefaultlib:"LIBCMT.lib" /libpath:"ID3Lib\include"
-# SUBTRACT LINK32 /incremental:yes /debug
+# ADD LINK32 comctl32.lib winmm.lib htmlhelp.lib id3lib.lib zlib.lib delayimp.lib /nologo /subsystem:windows /machine:I386 /nodefaultlib:"libcmt.lib" /libpath:"ID3Lib\libprj\Release" /libpath:"ID3Lib/zlib" /MAPINFO:LINES /MAPINFO:EXPORTS
+# SUBTRACT LINK32 /pdb:none
 
 !ELSEIF  "$(CFG)" == "lameFE - Win32 Debug"
 
@@ -70,7 +70,7 @@ LINK32=link.exe
 # PROP Ignore_Export_Lib 0
 # PROP Target_Dir ""
 # ADD BASE CPP /nologo /MDd /W3 /Gm /GX /ZI /Od /D "WIN32" /D "_DEBUG" /D "_WINDOWS" /D "_AFXDLL" /Yu"stdafx.h" /FD /GZ /c
-# ADD CPP /nologo /MTd /W3 /Gm /Gi /GX /ZI /Od /I "ID3Lib\include" /D "WIN32" /D "_DEBUG" /D "_WINDOWS" /D "_MBCS" /D "_ATL_NO_COM" /FAcs /FR /Yu"stdafx.h" /FD /GZ /c
+# ADD CPP /nologo /MDd /W3 /Gm /Gi /GX /ZI /Od /I "LibSndFile\src" /I "llibmusicbrainz-2.0.1\lib" /D "WIN32" /D "_DEBUG" /D "_WINDOWS" /D "_AFXDLL" /D "_MBCS" /D "_ATL_NO_COM" /FAcs /FR /Yu"stdafx.h" /FD /GZ /c
 # ADD BASE MTL /nologo /D "_DEBUG" /mktyplib203 /win32
 # ADD MTL /nologo /D "_DEBUG" /mktyplib203 /win32
 # ADD BASE RSC /l 0x407 /d "_DEBUG" /d "_AFXDLL"
@@ -80,7 +80,7 @@ BSC32=bscmake.exe
 # ADD BSC32 /nologo
 LINK32=link.exe
 # ADD BASE LINK32 /nologo /subsystem:windows /debug /machine:I386 /pdbtype:sept
-# ADD LINK32 kernel32.lib user32.lib gdi32.lib shell32.lib comdlg32.lib comctl32.lib winmm.lib htmlhelp.lib id3libD.lib zlibD.lib delayimp.lib /nologo /subsystem:windows /pdb:none /map /debug /machine:I386 /libpath:"ID3Lib\libprj\Debug" /libpath:"ID3Lib/zlib"
+# ADD LINK32 kernel32.lib user32.lib gdi32.lib shell32.lib comdlg32.lib comctl32.lib winmm.lib htmlhelp.lib id3libD.lib zlibD.lib delayimp.lib /nologo /subsystem:windows /pdb:none /map /debug /machine:I386 /nodefaultlib:"LIBCMTD.lib" /libpath:"ID3Lib\libprj\Debug" /libpath:"ID3Lib/zlib"
 
 !ENDIF 
 
@@ -94,6 +94,10 @@ LINK32=link.exe
 # Begin Source File
 
 SOURCE=.\AlbumInfoCtrl.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\AutoDetect.cpp
 # End Source File
 # Begin Source File
 
@@ -137,6 +141,14 @@ SOURCE=.\EncoderFeeder.cpp
 # End Source File
 # Begin Source File
 
+SOURCE=.\EncoderLame.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\EncoderPlugin.cpp
+# End Source File
+# Begin Source File
+
 SOURCE=.\EncodingStatusDlg.cpp
 # End Source File
 # Begin Source File
@@ -150,6 +162,18 @@ SOURCE=.\FolderDialog.cpp
 # Begin Source File
 
 SOURCE=.\FreeDBStatusDlg.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\GenericDecoder.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\GenericEncoder.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\I18n.cpp
 # End Source File
 # Begin Source File
 
@@ -206,6 +230,10 @@ SOURCE=.\MFECToolTip.cpp
 # Begin Source File
 
 SOURCE=.\MultimediaFile.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\MusicBrainz.cpp
 # End Source File
 # Begin Source File
 
@@ -277,6 +305,10 @@ SOURCE=.\SettingsLameFE.cpp
 # End Source File
 # Begin Source File
 
+SOURCE=.\SettingsLanguages.cpp
+# End Source File
+# Begin Source File
+
 SOURCE=.\SettingsLookNFeel.cpp
 # End Source File
 # Begin Source File
@@ -315,6 +347,10 @@ SOURCE=.\WinampPlugin.cpp
 # Begin Source File
 
 SOURCE=.\AlbumInfoCtrl.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\AutoDetect.h
 # End Source File
 # Begin Source File
 
@@ -366,6 +402,14 @@ SOURCE=.\EncoderFeeder.h
 # End Source File
 # Begin Source File
 
+SOURCE=.\EncoderLame.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\EncoderPlugin.h
+# End Source File
+# Begin Source File
+
 SOURCE=.\EncodingStatusDlg.h
 # End Source File
 # Begin Source File
@@ -387,6 +431,18 @@ SOURCE=.\FolderDialog.h
 # Begin Source File
 
 SOURCE=.\FreeDBStatusDlg.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\GenericDecoder.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\GenericEncoder.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\I18n.h
 # End Source File
 # Begin Source File
 
@@ -447,6 +503,10 @@ SOURCE=.\mmfile.h
 # Begin Source File
 
 SOURCE=.\MultimediaFile.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\MusicBrainz.h
 # End Source File
 # Begin Source File
 
@@ -534,6 +594,10 @@ SOURCE=.\SettingsLameFE.h
 # End Source File
 # Begin Source File
 
+SOURCE=.\SettingsLanguages.h
+# End Source File
+# Begin Source File
+
 SOURCE=.\SettingsLookNFeel.h
 # End Source File
 # Begin Source File
@@ -578,6 +642,10 @@ SOURCE=.\res\bitmap3.bmp
 # End Source File
 # Begin Source File
 
+SOURCE=.\res\bmp00001.bmp
+# End Source File
+# Begin Source File
+
 SOURCE=.\res\bmp00002.bmp
 # End Source File
 # Begin Source File
@@ -598,11 +666,19 @@ SOURCE=.\res\config_o.ico
 # End Source File
 # Begin Source File
 
+SOURCE=.\res\controlb.bmp
+# End Source File
+# Begin Source File
+
 SOURCE=.\res\decoder.ico
 # End Source File
 # Begin Source File
 
 SOURCE=.\res\encoder.ico
+# End Source File
+# Begin Source File
+
+SOURCE=.\res\freedb.bmp
 # End Source File
 # Begin Source File
 
@@ -630,7 +706,15 @@ SOURCE=.\res\list_bk.bmp
 # End Source File
 # Begin Source File
 
+SOURCE=.\res\list_images.bmp
+# End Source File
+# Begin Source File
+
 SOURCE=.\res\log_images.bmp
+# End Source File
+# Begin Source File
+
+SOURCE=.\res\menuitems.bmp
 # End Source File
 # Begin Source File
 
@@ -639,6 +723,10 @@ SOURCE=.\res\next.ico
 # Begin Source File
 
 SOURCE=.\res\presetba.bmp
+# End Source File
+# Begin Source File
+
+SOURCE=.\res\settings.bmp
 # End Source File
 # Begin Source File
 
@@ -651,6 +739,10 @@ SOURCE=.\res\stop.ico
 # Begin Source File
 
 SOURCE=.\res\Toolbar.bmp
+# End Source File
+# Begin Source File
+
+SOURCE=.\res\toolbar_deact.bmp
 # End Source File
 # Begin Source File
 

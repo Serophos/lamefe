@@ -22,6 +22,7 @@
 #include "SettingsFilenames.h"
 #include "Settings.h"
 #include "PathDialog.h"
+#include "I18n.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -33,6 +34,7 @@ static char THIS_FILE[] = __FILE__;
 // Dialogfeld CSettingsFilenames 
 
 extern CSettings g_sSettings;
+extern CI18n	 g_iLang;
 
 CSettingsFilenames::CSettingsFilenames(CWnd* pParent /*=NULL*/)
 	: CMySettingsPage(CSettingsFilenames::IDD, pParent)
@@ -129,13 +131,13 @@ void CSettingsFilenames::CreatePreview(CString &in, CString &out)
 		in.Replace('?', '-') || in.Replace('\"', '\'') ||	in.Replace('<', '(') ||
 		in.Replace('>', ')') || in.Replace('|', '-') || in.Replace(':', '-')){
 
-		AfxMessageBox(IDS_ID3SETT_INV_FSTR, MB_OK+MB_ICONINFORMATION);
+		AfxMessageBox(g_iLang.GetString(IDS_ID3SETT_INV_FSTR), MB_OK+MB_ICONINFORMATION);
 	}
 
 	if(in.GetAt(0) == '\\'){
 
 		in = in.Right(in.GetLength() - 1);
-		AfxMessageBox(IDS_BKSLHWARN, MB_OK+MB_ICONINFORMATION);
+		AfxMessageBox(g_iLang.GetString(IDS_BKSLHWARN), MB_OK+MB_ICONINFORMATION);
 	}
 
 	for(int i = 0; i < in.GetLength(); i++){
@@ -147,7 +149,7 @@ void CSettingsFilenames::CreatePreview(CString &in, CString &out)
 				CString tmp = in.Left(i);
 				tmp += in.Right(in.GetLength() - i - 1);
 				in = tmp;
-				AfxMessageBox(IDS_DBLBACKSLASH, MB_OK+MB_ICONINFORMATION);
+				AfxMessageBox(g_iLang.GetString(IDS_DBLBACKSLASH), MB_OK+MB_ICONINFORMATION);
 			}
 		}
 	}
@@ -209,6 +211,7 @@ void CSettingsFilenames::Init(CString strWd)
 	
 	CMySettingsPage::Init(strWd);
 
+	g_iLang.TranslateDialog(this, IDD_SETTINGS_FILENAMES);
 
 	m_strFilename	= g_sSettings.GetFilename();
 	m_strAlbumMode	= g_sSettings.GetAlbumFilename();
@@ -228,9 +231,9 @@ void CSettingsFilenames::Init(CString strWd)
 
 	if(m_pToolTip != NULL){
 
-		m_pToolTip->AddTool(&m_ctrlFilename, IDS_TOOL_IDENTCOMB);
-		m_pToolTip->AddTool(&m_ctrlPlaylist, IDS_TOOL_IDENTCOMB);
-		m_pToolTip->AddTool(&m_ctrlAlbum, IDS_TOOL_IDENTCOMB);
+		m_pToolTip->AddTool(&m_ctrlFilename, g_iLang.GetString(IDS_TOOL_IDENTCOMB));
+		m_pToolTip->AddTool(&m_ctrlPlaylist, g_iLang.GetString(IDS_TOOL_IDENTCOMB));
+		m_pToolTip->AddTool(&m_ctrlAlbum, g_iLang.GetString(IDS_TOOL_IDENTCOMB));
 	}
 
 	UpdateData(FALSE);

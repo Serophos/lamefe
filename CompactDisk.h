@@ -35,9 +35,12 @@
 
 typedef CArray<CCDTrack, CCDTrack>	CCDTrackArray;
 
-class CCompactDisc  
+class CCompactDisc   : public CObject
 {
 public:
+	DWORD GetStartSector(int nTrack);
+	__int64 GetTrackSize(int nTrack);
+	CString GetTrackDuration(int nTrack);
 	DWORD GetEndSector(int nTrack);
 	int GetLastAudioTrack();
 	CString GetTrackDurationMS(int track);
