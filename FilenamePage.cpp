@@ -145,18 +145,34 @@ void CFilenamePage::OnChangePlaylistFilename()
 void CFilenamePage::CreatePreview(CString &in, CString &out)
 {
 
-	in.Replace('/', '-');
-	in.Remove('*');
-	in.Remove('?');
-	in.Replace('\"', '\'');
-	in.Replace('<', '(');
-	in.Replace('>', ')');
-	in.Replace('|', '-');
-	in.Remove(':');
+	if(in.Replace('/', '-')	|| in.Replace('*', '-') ||
+		in.Replace('?', '-') || in.Replace('\"', '\'') ||	in.Replace('<', '(') ||
+		in.Replace('>', ')') || in.Replace('|', '-') || in.Replace(':', '-')){
+
+		AfxMessageBox(IDS_ID3SETT_INV_FSTR, MB_OK+MB_ICONINFORMATION);
+	}
+
 	if(in.GetAt(0) == '\\'){
 
 		in = in.Right(in.GetLength() - 1);
+		AfxMessageBox(IDS_BKSLHWARN, MB_OK+MB_ICONINFORMATION);
 	}
+
+	for(int i = 0; i < in.GetLength(); i++){
+
+		if((in.GetAt(i) == '\\') && ((i+1) < in.GetLength())){
+			
+			if((in.GetAt(i) == '\\') && (in.GetAt(i + 1) == '\\')){
+
+				CString tmp = in.Left(i);
+				tmp += in.Right(in.GetLength() - i - 1);
+				in = tmp;
+				AfxMessageBox(IDS_DBLBACKSLASH, MB_OK+MB_ICONINFORMATION);
+			}
+		}
+	}
+
+
 	out = in;
 	out.Replace("%1", "<Artist>");
 	out.Replace("%2", "<Song>");
@@ -195,6 +211,11 @@ void CFilenamePage::OnOK()
 		AfxMessageBox("Playlist Filename Format String is empty!", MB_ICONSTOP+MB_OK);
 		return;
 	}
+
+	
+	CreatePreview(m_strPlaylist, m_strPlaylistPrev);
+	CreatePreview(m_strFilename, m_strFilenamePrev);
+	CreatePreview(m_strAlbumMode, m_strAlbumPrev);
 
 	cfg.SetStringValue("formatstr", m_strFilename);
 	cfg.SetStringValue("playliststr", m_strPlaylist);
