@@ -233,7 +233,6 @@ void CCDDBPage::OnUpdate()
 
 		c_remoteServer.ResetContent();
 	}
-//	TRACE(_T("Retrieved the following CDDB sites from the CDDB server\n"));
 	for (int i = 0; i < sites.GetSize(); i++)
 	{
 		CCDDBSite s = sites.ElementAt(i);
@@ -243,7 +242,6 @@ void CCDDBPage::OnUpdate()
 		sLong.Format(_T("%c%03d.%02d"), s.m_bEasting ? _T('E') : _T('W'), s.m_nLongitudeMinutes / 60, s.m_nLongitudeMinutes % 60);
 		CString sBuf;
 		sBuf.Format(_T("%s, %d, %s, %s, %s, %s"), s.m_sSite, s.m_nPort, s.m_sAddress, sLat, sLong, s.m_sDescription);
-//		TRACE(sBuf + "\n");
 		c_remoteServer.AddString(sBuf);
 	}
 	if(sites.GetSize()){
@@ -251,6 +249,11 @@ void CCDDBPage::OnUpdate()
 		c_remoteServer.SetCurSel(0);
 		OnSelendokRemoteServer();
 		WriteServerList();
+		AfxMessageBox(IDS_CDDB_UPDATEDSERVERS, MB_OK+MB_ICONINFORMATION);
+	}
+	else{
+
+		AfxMessageBox(IDS_CDDB_UPDATEFAILED, MB_OK+MB_ICONINFORMATION);
 	}
 }
 
