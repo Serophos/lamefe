@@ -92,6 +92,10 @@ LINK32=link.exe
 # PROP Default_Filter "cpp;c;cxx;rc;def;r;odl;idl;hpj;bat"
 # Begin Source File
 
+SOURCE=.\AboutDlg.cpp
+# End Source File
+# Begin Source File
+
 SOURCE=.\APE_out.cpp
 # End Source File
 # Begin Source File
@@ -117,11 +121,15 @@ SOURCE=.\StdAfx.cpp
 # PROP Default_Filter "h;hpp;hxx;hm;inl"
 # Begin Source File
 
+SOURCE=.\AboutDlg.h
+# End Source File
+# Begin Source File
+
 SOURCE=.\ConfigDlg.h
 # End Source File
 # Begin Source File
 
-SOURCE=.\outPlugin.h
+SOURCE=.\mmfile.h
 # End Source File
 # Begin Source File
 

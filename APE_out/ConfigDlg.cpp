@@ -15,12 +15,13 @@ static char THIS_FILE[] = __FILE__;
 // Dialogfeld CConfigDlg 
 
 
-CConfigDlg::CConfigDlg(CWnd* pParent /*=NULL*/)
+CConfigDlg::CConfigDlg(CWnd* pParent /*=NULL*/, LF_OUT *plf)
 	: CDialog(CConfigDlg::IDD, pParent)
 {
 	//{{AFX_DATA_INIT(CConfigDlg)
 	m_nCompressionLevel = -1;
 	//}}AFX_DATA_INIT
+	m_plfOut = plf;
 }
 
 
@@ -46,7 +47,7 @@ BOOL CConfigDlg::OnInitDialog()
 {
 
 	CDialog::OnInitDialog();
-	
+	m_plfOut->TranslateDialog(this, IDD_CONFIG);
 	UpdateData(FALSE);
 	return TRUE;
 }

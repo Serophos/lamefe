@@ -8,6 +8,8 @@
 //
 
 #include "resource.h"
+#include "../out_plugin.h"
+
 /////////////////////////////////////////////////////////////////////////////
 // Dialogfeld CConfigDlg 
 
@@ -16,7 +18,7 @@ class CConfigDlg : public CDialog
 // Konstruktion
 public:
 	virtual BOOL OnInitDialog();
-	CConfigDlg(CWnd* pParent = NULL);   // Standardkonstruktor
+	CConfigDlg(CWnd* pParent = NULL, LF_OUT* plf = NULL);   // Standardkonstruktor
 
 // Dialogfelddaten
 	//{{AFX_DATA(CConfigDlg)
@@ -40,6 +42,7 @@ protected:
 	virtual void OnOK();
 	//}}AFX_MSG
 	DECLARE_MESSAGE_MAP()
+	LF_OUT *m_plfOut;
 };
 
 //{{AFX_INSERT_LOCATION}}

@@ -107,22 +107,33 @@ END
 // Dialog
 //
 
-IDD_CONFIG DIALOG DISCARDABLE  0, 0, 332, 130
+IDD_CONFIG DIALOG DISCARDABLE  0, 0, 230, 78
 STYLE DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
 CAPTION "Monkeys Lossless Audio Encoder Plugin"
 FONT 8, "MS Sans Serif"
 BEGIN
-    DEFPUSHBUTTON   "OK",IDOK,178,109,50,14
-    PUSHBUTTON      "Cancel",IDCANCEL,104,109,50,14
-    CONTROL         4001,IDC_STATIC,"Static",SS_BITMAP,7,7,43,39
-    CONTROL         4001,IDC_STATIC,"Static",SS_BITMAP,282,7,43,39
-    CTEXT           "Monkey's Lossless Audio Encoder\nUsing MACLib.lib version 3.97\nhttp://www.monkeysaudio.com",
-                    IDC_STATIC,56,12,220,29
-    GROUPBOX        "Setup Monkey's Audio Encoder",IDC_STATIC,7,52,318,50
-    COMBOBOX        IDC_COMPRESSION_LEVEL,135,70,122,46,CBS_DROPDOWNLIST | 
+    DEFPUSHBUTTON   "OK",IDOK,125,57,50,14
+    PUSHBUTTON      "Cancel",IDCANCEL,55,57,50,14
+    CONTROL         4001,IDC_STATIC,"Static",SS_BITMAP,7,13,43,39
+    GROUPBOX        "Compression Level",IDC_STATIC_COMPRESSION,56,7,167,45
+    COMBOBOX        IDC_COMPRESSION_LEVEL,64,26,149,46,CBS_DROPDOWNLIST | 
                     WS_VSCROLL | WS_TABSTOP
-    RTEXT           "Compression Level:",IDC_STATIC,30,70,71,12,
-                    SS_CENTERIMAGE
+END
+
+IDD_ABOUTDLG DIALOG DISCARDABLE  0, 0, 235, 129
+STYLE DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "About Monkeys Audio for LameFE"
+FONT 8, "MS Sans Serif"
+BEGIN
+    DEFPUSHBUTTON   "OK",IDOK,93,108,50,14
+    CONTROL         4001,IDC_STATIC,"Static",SS_BITMAP,97,7,43,39
+    LTEXT           "Monkeys Audio Encoder Plugin  for LameFE 2.2",
+                    IDC_STATIC,42,48,152,8
+    LTEXT           "Plugin version 1.0",IDC_STATIC,90,57,57,8
+    LTEXT           "(c) 2002 - 2003 by Thees Winkler",IDC_STATIC,65,66,106,
+                    8
+    CTEXT           "Monkey's Lossless Audio Encoder\nUsing MACLib.lib version 3.97\nhttp://www.monkeysaudio.com",
+                    IDC_STATIC,7,77,220,29,SS_SUNKEN
 END
 
 
@@ -137,23 +148,25 @@ BEGIN
     IDD_CONFIG, DIALOG
     BEGIN
         LEFTMARGIN, 7
-        RIGHTMARGIN, 325
+        RIGHTMARGIN, 223
         VERTGUIDE, 50
         VERTGUIDE, 56
-        VERTGUIDE, 154
-        VERTGUIDE, 166
-        VERTGUIDE, 178
-        VERTGUIDE, 276
-        VERTGUIDE, 282
+        VERTGUIDE, 105
+        VERTGUIDE, 125
         TOPMARGIN, 7
-        BOTTOMMARGIN, 123
+        BOTTOMMARGIN, 71
         HORZGUIDE, 26
         HORZGUIDE, 46
         HORZGUIDE, 52
-        HORZGUIDE, 70
-        HORZGUIDE, 82
-        HORZGUIDE, 102
-        HORZGUIDE, 109
+    END
+
+    IDD_ABOUTDLG, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 228
+        VERTGUIDE, 118
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 122
     END
 END
 #endif    // APSTUDIO_INVOKED

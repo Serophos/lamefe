@@ -5,6 +5,7 @@
 #include <afxdllx.h>
 #include "./MACLib/MACLib.h"
 #include "../out_plugin.h"
+#include "AboutDlg.h"
 #include "ConfigDlg.h"
 
 #ifdef _DEBUG
@@ -53,25 +54,28 @@ DllMain(HINSTANCE hInstance, DWORD dwReason, LPVOID lpReserved)
 	return 1;   // OK
 }
 
-void  init();
-void  quit(void);
-int   open(const char* path, MMFILE_FORMAT *pInputFormat, MMFILE_ALBUMINFO *pAlbumInfo);
-unsigned int  write(short *ptr, size_t items);
-void  close(void);
-void  configure();
-void  about();
+void   init();
+int    quit(void);
+int    open(const char* path, MMFILE_FORMAT *pInputFormat, MMFILE_ALBUMINFO *pAlbumInfo);
+DWORD  write(short *ptr, DWORD items);
+__int64 get_est_size(__int64 nSizeInBytes, DWORD dwNumChannels, DWORD dwSamplerate, DWORD dwBitrate);
+int    close(void);
+void   configure();
+void   about();
 
 // LF_OUT Structure of this Plugin
 LF_OUT lameFEOutModule = {
 
 	VERSION,
-	"Monkey Audio Encoder",
+	6029,
+	"Monkeys Audio Encoder",
 	NULL,	 // MainWindow Filled in by lameFE
 	NULL, 	 //  HINSTANCE  Filled in by lameFE
-	".APE",   
+	".ape",   
 	init,		
 	quit,		
-	open,	
+	open,
+	get_est_size,
 	write,   
 	close,
 	configure,
@@ -105,16 +109,32 @@ void  init(){
 // Parameters:
 //  none
 ////////////////////////////////////////////////////////////////////////
-void quit(void){
+int quit(void){
 
+	return 0;
 }
 
 ////////////////////////////////////////////////////////////////////////
-// int Open(...) - Open file for read. Returns -1 on fail and 0 on success
+// int Open(...) - Open file for write. 
+//
+//     Following return values if an error occurs:
+//     -1 : File could not be created
+//     -2 : Invalid file format
+//     -3 : Other error
+//     On success this function returns the number off samples (items) to pass
+//     to write [some encoders expect a certain number of samples]
+//
 //
 // Parameters:
 //  const char * path
 //      The path of the file to open
+// MMFILE_FORMAT * pInputFormat
+//      Pointer to a MMFILE_FORMAT structure containing the format of 
+//		the input file
+// MMFILE_ALBUMINFO * pAlbumInfo
+//      Pointer to a MMFILE_FORMAT structure containing the album infos for
+//      this tracks. Some fileformats support ID3 Tags or something similar.
+//      So you might need it.
 ////////////////////////////////////////////////////////////////////////
 int open(const char* path, MMFILE_FORMAT *pInputFormat, MMFILE_ALBUMINFO *pAlbumInfo){
 	
@@ -123,7 +143,7 @@ int open(const char* path, MMFILE_FORMAT *pInputFormat, MMFILE_ALBUMINFO *pAlbum
 	if(!pAPECompress){
 
 		TRACE("APE_out.dll :  CreatIAPECompress failed.\n");
-		return -1;
+		return -2;
 	}
 
 	//memcpy(mmfAlbumInfo, pAlbumInfo, sizeof(pAlbumInfo));
@@ -146,13 +166,18 @@ int open(const char* path, MMFILE_FORMAT *pInputFormat, MMFILE_ALBUMINFO *pAlbum
 		//SAFE_DELETE(pAPECompress)
 		TRACE("APE_out.dll :  Error starting encoder.\n");
 
-		return -1;
+		return -2;
 	}
 
 	
 	return 8192;
 }
 
+__int64 get_est_size(__int64 nSizeInBytes, DWORD dwNumCzhannels, DWORD dwSamplerate, DWORD dwBitrate)
+{
+
+	return 1024;
+}
 
 ////////////////////////////////////////////////////////////////////////
 // size_t Read(...) - Reads from file and writes given number of items of
@@ -165,7 +190,7 @@ int open(const char* path, MMFILE_FORMAT *pInputFormat, MMFILE_ALBUMINFO *pAlbum
 //      Items (samples) to read. Must be an integer product of the number
 //      of channels or an error will occur.
 ////////////////////////////////////////////////////////////////////////
-unsigned int  write(short *ptr, size_t items){
+DWORD write(SHORT *ptr, DWORD items){
 
 
 	if(!pAPECompress){
@@ -185,18 +210,21 @@ unsigned int  write(short *ptr, size_t items){
 // Parameters:
 //  none
 ////////////////////////////////////////////////////////////////////////
-void  close(void){
+int close(void)
+{
 
 	if(!pAPECompress){
 
 		TRACE("APE_out.dll :  Interface not present!!\n");
-		return;
+		return -1;
 	}
 
 	if (pAPECompress->Finish(NULL, 0, 0) != 0){
 
 		TRACE("APE_out.dll :  Error finishing encoder.\n");
 	}
+
+	return 0;
 
 	//SAFE_DELETE(pAPECompress)
 }
@@ -208,9 +236,10 @@ void  close(void){
 // Parameters:
 //  none
 ////////////////////////////////////////////////////////////////////////
-void configure(){
+void configure()
+{
 
-	CConfigDlg dlg;
+	CConfigDlg dlg(0, &lameFEOutModule);
 
 	char *buffer = new char[20];
 	lameFEOutModule.GetProfileString("APE_out.dll_compression_level", buffer, sizeof(buffer), FALSE);
@@ -231,12 +260,9 @@ void configure(){
 ////////////////////////////////////////////////////////////////////////
 void about(){
 
-	MessageBox(lameFEOutModule.hMainWindow, 
-			"Monkeys Lossless Audio Encoder. Copyright 2002 by Thees Ch. Winkler. Distributed under GPL\n",
-			"APE Encoder (using MACLib 3.92)", MB_OK+MB_ICONINFORMATION);
-
+	CAboutDlg dlg;
+	dlg.DoModal();
 }
-
 
 
 
