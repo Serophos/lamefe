@@ -54,7 +54,7 @@ protected:
 	afx_msg void OnSysColorChange();
 	afx_msg void OnTimer(UINT nIDEvent);
 	afx_msg void OnSetFocus();
-	afx_msg void OnKillFocus();
+	afx_msg BOOL OnKillFocus();
 	//}}AFX_MSG
 
 	DECLARE_MESSAGE_MAP()

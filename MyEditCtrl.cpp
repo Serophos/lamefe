@@ -45,7 +45,7 @@ BEGIN_MESSAGE_MAP(CMyEditCtrl, CEdit)
 	ON_WM_SYSCOLORCHANGE()
 	ON_WM_TIMER()
 	ON_CONTROL_REFLECT(EN_SETFOCUS,   OnSetFocus)
-	ON_CONTROL_REFLECT(EN_KILLFOCUS,  OnKillFocus)
+	ON_CONTROL_REFLECT_EX(EN_KILLFOCUS,  OnKillFocus)
 	//}}AFX_MSG_MAP
 END_MESSAGE_MAP()
 
@@ -81,11 +81,13 @@ void CMyEditCtrl::OnSetFocus()
 	CEdit::OnSetFocus(0);
 }
 
-void CMyEditCtrl::OnKillFocus() 
+BOOL CMyEditCtrl::OnKillFocus() 
 {
 
 	m_bHasFocus = FALSE;
 	CEdit::OnKillFocus(0);
+	
+	return FALSE;
 }
 
 void CMyEditCtrl::OnTimer(UINT nIDEvent) 
