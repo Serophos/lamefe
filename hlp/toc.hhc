@@ -1,0 +1,114 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<HTML>
+<HEAD>
+<meta name="GENERATOR" content="Microsoft&reg; HTML Help Workshop 4.1">
+<!-- Sitemap 1.0 -->
+</HEAD><BODY>
+<UL>
+	<LI> <OBJECT type="text/sitemap">
+		<param name="Name" value="1. Introduction">
+		<param name="Local" value="Manual.htm#1">
+		</OBJECT>
+	<UL>
+		<LI> <OBJECT type="text/sitemap">
+			<param name="Name" value="1.1 What Is lameFE">
+			<param name="Local" value="Manual.htm#1.1">
+			</OBJECT>
+		<LI> <OBJECT type="text/sitemap">
+			<param name="Name" value="1.2 System Requirements">
+			<param name="Local" value="Manual.htm#1.2">
+			</OBJECT>
+		<LI> <OBJECT type="text/sitemap">
+			<param name="Name" value="1.3 Installation">
+			<param name="Local" value="Manual.htm#1.3">
+			</OBJECT>
+	</UL>
+	<LI> <OBJECT type="text/sitemap">
+		<param name="Name" value="2 Using lameFE">
+		<param name="Local" value="Manual.htm#2">
+		<param name="URL" value="Manual.htm#2">
+		</OBJECT>
+	<UL>
+		<LI> <OBJECT type="text/sitemap">
+			<param name="Name" value="2.1 Encoder Settings">
+			<param name="Local" value="Manual.htm#2.1">
+			</OBJECT>
+		<LI> <OBJECT type="text/sitemap">
+			<param name="Name" value="2.2 Ripping Audio CDs">
+			<param name="Local" value="Manual.htm#2.2">
+			</OBJECT>
+		<UL>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="2.2.1 Select CD drive">
+				<param name="Local" value="Manual.htm#2.2.1">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="2.2.2 CD Drive / Reader settings">
+				<param name="Local" value="Manual.htm#2.2.2">
+				<param name="URL" value="Manual.htm#2.2.2">
+				</OBJECT>
+		</UL>
+		<LI> <OBJECT type="text/sitemap">
+			<param name="Name" value="2.3 Converting multimedia files to MP3">
+			<param name="Local" value="Manual.htm#2.3">
+			</OBJECT>
+		<UL>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="2.3.1 Add files to list">
+				<param name="Local" value="Manual.htm#2.3.1">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="2.3.2 Remove files from list">
+				<param name="Local" value="Manual.htm#2.3.2">
+				</OBJECT>
+		</UL>
+		<LI> <OBJECT type="text/sitemap">
+			<param name="Name" value="2.4 Id3 Tags">
+			<param name="Local" value="Manual.htm#2.4">
+			<param name="URL" value="Manual.htm#2.4">
+			</OBJECT>
+		<UL>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="2.4.1 Query freeDB Servers">
+				<param name="Local" value="Manual.htm#2.4.1">
+				<param name="URL" value="Manual.htm#2.4.1">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="2.4.2 Manual Editing of Id3 Ttags">
+				<param name="Local" value="Manual.htm#2.4.2">
+				<param name="URL" value="Manual.htm#2.4.2">
+				</OBJECT>
+		</UL>
+		<LI> <OBJECT type="text/sitemap">
+			<param name="Name" value="2.5 Customizing lameFE">
+			<param name="Local" value="Manual.htm#2.5">
+			<param name="URL" value="Manual.htm#2.5">
+			</OBJECT>
+		<UL>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="2.5.1 Basic lameFE settings">
+				<param name="Local" value="Manual.htm#2.5.1">
+				<param name="URL" value="Manual.htm#2.5.1">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="2.5.2 User defined filename format">
+				<param name="Local" value="Manual.htm#2.5.2">
+				</OBJECT>
+		</UL>
+	</UL>
+	<LI> <OBJECT type="text/sitemap">
+		<param name="Name" value="3. Frequently Asked Questions">
+		<param name="Local" value="Manual.htm#3">
+		<param name="URL" value="Manual.htm#3">
+		</OBJECT>
+	<LI> <OBJECT type="text/sitemap">
+		<param name="Name" value="4. Reporting Bugs / Participate in Development">
+		<param name="Local" value="Manual.htm#4">
+		</OBJECT>
+	<LI> <OBJECT type="text/sitemap">
+		<param name="Name" value="5. Warranty / License / Legal Notice">
+		<param name="Local" value="Manual.htm#5">
+		<param name="URL" value="Manual.htm#5">
+		</OBJECT>
+</UL>
+</BODY></HTML>
