@@ -28,6 +28,7 @@ BEGIN_MESSAGE_MAP(CMainFrame, CFrameWnd)
 	ON_COMMAND(ID_HELP_LICENSE, OnHelpLicense)
 	ON_COMMAND(ID_VIEW_SHOWTOOLBAR, OnViewShowtoolbar)
 	ON_COMMAND(ID_VIEW_SHOWSTATUSLINE, OnViewShowstatusline)
+	ON_COMMAND(IDS_SHOW_PLAYER, OnShowPlayer)
 	//}}AFX_MSG_MAP
 END_MESSAGE_MAP()
 
@@ -42,7 +43,7 @@ static UINT indicators[] =
 
 CMainFrame::CMainFrame()
 {
-	// ZU ERLEDIGEN: Hier Code zur Member-Initialisierung einfügen
+
 }
 
 CMainFrame::~CMainFrame()
@@ -64,6 +65,12 @@ int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
 		return -1;      // Fehler bei Erstellung
 	}
 	
+	if(!m_wndPlayerBar.CreateEx(this, TBSTYLE_FLAT | TBSTYLE_TRANSPARENT) ||
+		!m_wndPlayerBar.LoadToolBar(IDR_INT_PLAYER)){
+
+		TRACE0("Couldn't create playerbar\n");
+	}
+
 	cfgFile cfg;
 
 	if(!Utils::CheckCOMTL32Dll()){  // Version of Common Controls library is too old
@@ -99,9 +106,11 @@ int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	}
 	
 	m_wndToolBar.SetBarStyle(m_wndToolBar.GetBarStyle() | CBRS_TOOLTIPS | CBRS_FLYBY | CBRS_SIZE_DYNAMIC);
+	m_wndPlayerBar.SetBarStyle(m_wndToolBar.GetBarStyle() | CBRS_TOOLTIPS | CBRS_FLYBY | CBRS_SIZE_DYNAMIC);
 
 	if (!m_wndReBar.Create(this) ||
-		!m_wndReBar.AddBar(&m_wndToolBar)
+		!m_wndReBar.AddBar(&m_wndToolBar) ||
+		!m_wndReBar.AddBar(&m_wndPlayerBar)
 		)
 	{
 		TRACE0("Infoleiste konnte nicht erstellt werden\n");
@@ -117,13 +126,13 @@ int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	}
 
 	// ZU ERLEDIGEN: Entfernen, wenn Sie keine QuickInfos wünschen
-	m_wndToolBar.SetBarStyle(m_wndToolBar.GetBarStyle() |
+	/*m_wndToolBar.SetBarStyle(m_wndToolBar.GetBarStyle() |
 		CBRS_TOOLTIPS | CBRS_FLYBY);
-
+*/
 	m_wndStatusBar.SetPaneInfo(1,ID_SEPARATOR,SBPS_NORMAL,250);
 	m_wndStatusBar.SetPaneInfo(0,ID_SEPARATOR,SBPS_STRETCH,100);
 	
-	//OnViewAlbumTagEditor();
+	OnShowPlayer();
 	return 0;
 }
 
@@ -219,74 +228,8 @@ void CMainFrame::OnViewShowstatusline()
 	ShowControlBar(&m_wndStatusBar, (m_wndStatusBar.GetStyle() & WS_VISIBLE) == 0,FALSE);
 }
 
+void CMainFrame::OnShowPlayer() 
+{
 
-//DEL BOOL CMainFrame::CheckCOMCTL32DLL()
-//DEL {
-//DEL 
-//DEL 	BOOL bReturn = FALSE;
-//DEL     LPBYTE  lpVersionData; 
-//DEL     DWORD   dwLangCharset; 
-//DEL 
-//DEL  	TCHAR lpszModuleName[ MAX_PATH + 1 ] = { '\0',};
-//DEL 	
-//DEL 	// Get Comctl32.dll product version
-//DEL 	GetSystemDirectory( lpszModuleName,	MAX_PATH );
-//DEL 	
-//DEL 	strcat(lpszModuleName, "\\COMCTL32.DLL");
-//DEL 
-//DEL 	DWORD dwHandle;     
-//DEL     DWORD dwDataSize = ::GetFileVersionInfoSize(lpszModuleName, &dwHandle); 
-//DEL     if ( dwDataSize == 0 ){
-//DEL 
-//DEL         return FALSE;
-//DEL 	}
-//DEL 
-//DEL     lpVersionData = new BYTE[dwDataSize]; 
-//DEL     if(!::GetFileVersionInfo((LPTSTR)lpszModuleName, dwHandle, dwDataSize, (void**)lpVersionData)){
-//DEL 
-//DEL 		delete[] lpVersionData; 
-//DEL 		lpVersionData = NULL;
-//DEL 		dwLangCharset = 0;
-//DEL 
-//DEL         return FALSE;
-//DEL     }
-//DEL 
-//DEL     UINT nQuerySize;
-//DEL     DWORD* pTransTable;
-//DEL     if (!::VerQueryValue(lpVersionData, "\\VarFileInfo\\Translation",
-//DEL                          (void **)&pTransTable, &nQuerySize)){
-//DEL 
-//DEL 		delete[] lpVersionData; 
-//DEL 		lpVersionData = NULL;
-//DEL 		dwLangCharset = 0;
-//DEL 
-//DEL         return FALSE;
-//DEL     }
-//DEL 
-//DEL     // Swap the words to have lang-charset in the correct format
-//DEL     dwLangCharset = MAKELONG(HIWORD(pTransTable[0]), LOWORD(pTransTable[0]));
-//DEL 
-//DEL     // Query version information value
-//DEL     LPVOID lpData;
-//DEL     CString strVersion, strBlockName;
-//DEL 
-//DEL     strBlockName.Format(_T("\\StringFileInfo\\%08lx\\%s"), dwLangCharset, "FileVersion");
-//DEL 
-//DEL     if(::VerQueryValue((void **)lpVersionData, strBlockName.GetBuffer(0), &lpData, &nQuerySize)){
-//DEL 
-//DEL         strVersion = (LPCTSTR)lpData;
-//DEL 	}
-//DEL 
-//DEL     strBlockName.ReleaseBuffer();
-//DEL 
-//DEL 	float fVersion = 0.0f;
-//DEL 	_stscanf(strVersion, "%f", & fVersion);
-//DEL 
-//DEL 	bReturn = (fVersion >= 4.70);
-//DEL 
-//DEL 	delete[] lpVersionData; 
-//DEL 	lpVersionData = NULL;
-//DEL 	dwLangCharset = 0;
-//DEL 
-//DEL 	return bReturn;
-//DEL }
+	ShowControlBar(&m_wndPlayerBar, (m_wndPlayerBar.GetStyle() & WS_VISIBLE) == 0,FALSE);
+}

@@ -44,6 +44,7 @@
 #define IDI_ICON1                       168
 #define IDR_SYSTRAY_MENU                171
 #define IDD_CDDB_QUERY                  172
+#define IDR_INT_PLAYER                  172
 #define IDD_PLUGINPAGE                  185
 #define SPLASH                          190
 #define IDD_SETUPWIZARD                 192
@@ -260,6 +261,13 @@
 #define ID_VIEW_SELECTALLTRACKSFILES    32798
 #define ID_ID3TAGS_SAVECUESHEET         32799
 #define ID_SETTINGS_LOGGING             32800
+#define ID_PLAY                         32802
+#define ID_STOP                         32803
+#define ID_NEXT                         32804
+#define ID_PREVIOUS                     32805
+#define ID_PAUSE                        32806
+#define IDS_SHOW_PLAYER                 32807
+#define ID_OPENEJECT                    32808
 #define ID_ADD_FILE                     40001
 #define ID_EXIT                         40003
 #define ID_TAGEDIT                      40004
@@ -449,18 +457,19 @@
 #define IDS_TOOL_INPUTDEVICE            40170
 #define IDS_TOOL_OUTPUTDEVICE           40171
 #define IDS_TOOL_ALWAYSTAGEDIT          40172
-#define IDS_BKSLHWARN					40173
-#define IDS_DBLBACKSLASH				40174
-#define IDS_CDDB_UPDATEDSERVERS			40175
-#define IDS_CDDB_UPDATEFAILED			40176
-#define IDS_OLDCOMTL32DLL				40177
+#define IDS_BKSLHWARN                   40173
+#define IDS_DBLBACKSLASH                40174
+#define IDS_CDDB_UPDATEDSERVERS         40175
+#define IDS_CDDB_UPDATEFAILED           40176
+#define IDS_OLDCOMTL32DLL               40177
+
 // Next default values for new objects
 // 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_3D_CONTROLS                     1
-#define _APS_NEXT_RESOURCE_VALUE        170
-#define _APS_NEXT_COMMAND_VALUE         32802
+#define _APS_NEXT_RESOURCE_VALUE        174
+#define _APS_NEXT_COMMAND_VALUE         32809
 #define _APS_NEXT_CONTROL_VALUE         1087
 #define _APS_NEXT_SYMED_VALUE           101
 #endif

@@ -39,6 +39,7 @@ public:
 protected:  // Eingebundene Elemente der Steuerleiste
 	CStatusBar  m_wndStatusBar;
 	CToolBar    m_wndToolBar;
+	CToolBar	m_wndPlayerBar;
 	CReBar      m_wndReBar;
 	CBitmap     m_bmToolbarHi; 
 
@@ -51,6 +52,7 @@ protected:
 	afx_msg void OnHelpLicense();
 	afx_msg void OnViewShowtoolbar();
 	afx_msg void OnViewShowstatusline();
+	afx_msg void OnShowPlayer();
 	//}}AFX_MSG
 	DECLARE_MESSAGE_MAP()
 };
