@@ -701,18 +701,14 @@ BOOL CEncodingStatusDlg::LameFEPlugin2MP3(CString plugin, CMultimediaFile *mFile
 	DWORD sampleToRead = e.GetSamplesToRead();
 	pWAVBuffer = new SHORT[sampleToRead];
 	
-	while (((dwRead = inModule->Read(pWAVBuffer, sampleToRead)) > 0) && !m_bAbortEnc)
+
+	while(((dwRead = inModule->Read(pWAVBuffer, sampleToRead)) > 0) && !m_bAbortEnc)
 	{
 
 		e.PassBuffer((LPVOID)pWAVBuffer, dwRead);
-
 		dwDone += dwRead * sizeof(SHORT);
 		m_nFilePerc = (float)dwDone / (float)in_sizeKB * 100;
-		
-		
 	} //File is done:-)
-
-
 
 	e.DeInit();
 
