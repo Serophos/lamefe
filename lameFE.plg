@@ -1,0 +1,58 @@
+<html>
+<body>
+<pre>
+<h1>Erstellungsprotokoll</h1>
+<h3>
+--------------------Konfiguration: lameFE - Win32 Debug--------------------
+</h3>
+<h3>Befehlszeilen</h3>
+Erstellen der temporären Datei  "C:\DOKUME~1\tw\LOKALE~1\Temp\RSPC7.tmp" mit Inhalten
+[
+/nologo /MDd /W3 /Gm /GX /ZI /Od /D "WIN32" /D "_DEBUG" /D "_WINDOWS" /D "_AFXDLL" /D "_MBCS" /FR"Debug/" /Fp"Debug/lameFE.pch" /Yu"stdafx.h" /Fo"Debug/" /Fd"Debug/" /FD /GZ /c 
+"D:\cpp\lameFE\EncodingStatusDlg.cpp"
+]
+Creating command line "cl.exe @C:\DOKUME~1\tw\LOKALE~1\Temp\RSPC7.tmp" 
+Erstellen der temporären Datei  "C:\DOKUME~1\tw\LOKALE~1\Temp\RSPC8.tmp" mit Inhalten
+[
+winmm.lib htmlhelp.lib /nologo /subsystem:windows /incremental:yes /pdb:"Debug/lameFE.pdb" /map:"Debug/lameFE.map" /debug /machine:I386 /out:"Debug/lameFE.exe" /pdbtype:sept 
+.\Debug\Buffer.obj
+.\Debug\CDDBPage.obj
+.\Debug\CDdbQueryDlg.obj
+.\Debug\CDROMPage.obj
+.\Debug\cfgFile.obj
+.\Debug\Encoder.obj
+.\Debug\EncoderFeeder.obj
+.\Debug\EncoderSheet.obj
+.\Debug\EncodingStatusDlg.obj
+.\Debug\FolderDialog.obj
+.\Debug\ID3Info.obj
+.\Debug\ID3TagEditor.obj
+.\Debug\InternalPlayer.obj
+.\Debug\lameFE.obj
+.\Debug\lameFEDlg.obj
+.\Debug\LameFESplash.obj
+.\Debug\MainSettingsPage.obj
+.\Debug\Mfccddb.obj
+.\Debug\MP3File.obj
+.\Debug\PluginPage.obj
+.\Debug\SettingsSheet.obj
+.\Debug\StdAfx.obj
+.\Debug\TimeStatus.obj
+.\Debug\TrayDialog.obj
+.\Debug\lameFE.res
+.\CDRip\Debug\CDRip.lib
+.\tagWriter\Debug\tagWriter.lib
+]
+Erstellen der Befehlzeile "link.exe @C:\DOKUME~1\tw\LOKALE~1\Temp\RSPC8.tmp"
+<h3>Ausgabefenster</h3>
+Kompilierung läuft...
+EncodingStatusDlg.cpp
+Linker-Vorgang läuft...
+
+
+
+<h3>Ergebnisse</h3>
+lameFE.exe - 0 Fehler, 0 Warnung(en)
+</pre>
+</body>
+</html>

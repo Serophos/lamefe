@@ -1,0 +1,1837 @@
+//Microsoft Developer Studio generated resource script.
+//
+#include "resource.h"
+
+#define APSTUDIO_READONLY_SYMBOLS
+/////////////////////////////////////////////////////////////////////////////
+//
+// Generated from the TEXTINCLUDE 2 resource.
+//
+#include "afxres.h"
+
+/////////////////////////////////////////////////////////////////////////////
+#undef APSTUDIO_READONLY_SYMBOLS
+
+/////////////////////////////////////////////////////////////////////////////
+// Neutral resources
+
+#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_NEU)
+#ifdef _WIN32
+LANGUAGE LANG_NEUTRAL, SUBLANG_NEUTRAL
+#pragma code_page(1252)
+#endif //_WIN32
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Icon
+//
+
+// Icon with lowest ID value placed first to ensure application icon
+// remains consistent on all systems.
+IDR_MAINFRAME           ICON    DISCARDABLE     "res\\lameFE.ico"
+IDI_NEXT                ICON    DISCARDABLE     "res\\next.ico"
+IDI_STOP                ICON    DISCARDABLE     "res\\stop.ico"
+IDI_PREV                ICON    DISCARDABLE     "res\\icon2.ico"
+IDI_PLAY                ICON    DISCARDABLE     "res\\icon3.ico"
+IDI_PAUSE               ICON    DISCARDABLE     "res\\icon4.ico"
+IDI_CD_WAV              ICON    DISCARDABLE     "res\\cd_wav.ico"
+IDI_CD_MP3              ICON    DISCARDABLE     "res\\cd_mp3.ico"
+IDI_WAV_MP3             ICON    DISCARDABLE     "res\\icon1.ico"
+IDI_EJECT               ICON    DISCARDABLE     "res\\eject.ico"
+IDI_REFRESH             ICON    DISCARDABLE     "res\\refresh.ico"
+IDI_START               ICON    DISCARDABLE     "res\\start.ico"
+IDI_ENCODER             ICON    DISCARDABLE     "res\\encoder.ico"
+IDI_CDDB                ICON    DISCARDABLE     "res\\cddb.ico"
+IDI_ID3                 ICON    DISCARDABLE     "res\\id3.ico"
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Dialog
+//
+
+IDD_ABOUTBOX DIALOG DISCARDABLE  0, 0, 316, 190
+STYLE DS_MODALFRAME | WS_POPUP | WS_VISIBLE | WS_CAPTION | WS_SYSMENU
+CAPTION "About lameFE"
+FONT 8, "MS Sans Serif"
+BEGIN
+    DEFPUSHBUTTON   "OK",IDOK,259,7,50,14,WS_GROUP
+    LTEXT           "",IDC_DISPLAY_STATIC,7,7,246,176,WS_BORDER
+END
+
+IDD_SETTINGS DIALOG DISCARDABLE  0, 0, 388, 166
+STYLE DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Dialog"
+FONT 8, "MS Sans Serif"
+BEGIN
+    DEFPUSHBUTTON   "OK",IDOK,331,7,50,14
+    PUSHBUTTON      "Cancel",IDCANCEL,331,24,50,14
+END
+
+
+#ifndef _MAC
+/////////////////////////////////////////////////////////////////////////////
+//
+// Version
+//
+
+VS_VERSION_INFO VERSIONINFO
+ FILEVERSION 1,0,0,1
+ PRODUCTVERSION 1,0,0,1
+ FILEFLAGSMASK 0x3fL
+#ifdef _DEBUG
+ FILEFLAGS 0x21L
+#else
+ FILEFLAGS 0x20L
+#endif
+ FILEOS 0x4L
+ FILETYPE 0x1L
+ FILESUBTYPE 0x0L
+BEGIN
+    BLOCK "StringFileInfo"
+    BEGIN
+        BLOCK "040904b0"
+        BEGIN
+            VALUE "Comments", "\0"
+            VALUE "CompanyName", "Nauta Clarus Software\0"
+            VALUE "FileDescription", "lameFE 2.0 Convert CDs to MP3s :)\0"
+            VALUE "FileVersion", "2.00.20020415\0"
+            VALUE "InternalName", "lameFE\0"
+            VALUE "LegalCopyright", "(C) 2002 by Thees Christian Winkler\0"
+            VALUE "LegalTrademarks", "\0"
+            VALUE "OriginalFilename", "lameFE.EXE\0"
+            VALUE "PrivateBuild", "\0"
+            VALUE "ProductName", "lameFE 2.0\0"
+            VALUE "ProductVersion", "2.00\0"
+            VALUE "SpecialBuild", "972\0"
+        END
+    END
+    BLOCK "VarFileInfo"
+    BEGIN
+        VALUE "Translation", 0x409, 1200
+    END
+END
+
+#endif    // !_MAC
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// DESIGNINFO
+//
+
+#ifdef APSTUDIO_INVOKED
+GUIDELINES DESIGNINFO DISCARDABLE 
+BEGIN
+    IDD_ABOUTBOX, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 309
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 183
+    END
+
+    IDD_SETTINGS, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 381
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 159
+    END
+END
+#endif    // APSTUDIO_INVOKED
+
+#endif    // Neutral resources
+/////////////////////////////////////////////////////////////////////////////
+
+
+/////////////////////////////////////////////////////////////////////////////
+// Deutsch (Deutschland) resources
+
+#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_DEU)
+#ifdef _WIN32
+LANGUAGE LANG_GERMAN, SUBLANG_GERMAN
+#pragma code_page(1252)
+#endif //_WIN32
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Dialog
+//
+
+#if defined(APSTUDIO_INVOKED) || defined(_GERMAN)
+#if defined(APSTUDIO_INVOKED)
+IDD_ID3EDIT$(_GERMAN) DIALOGEX 0, 0, 407, 222
+#else
+IDD_ID3EDIT DIALOGEX 0, 0, 407, 222
+#endif
+STYLE DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
+EXSTYLE WS_EX_TOOLWINDOW
+CAPTION "id3-tag-editor"
+FONT 8, "MS Sans Serif"
+BEGIN
+    LISTBOX         IDC_FILES,12,16,99,154,LBS_NOINTEGRALHEIGHT | WS_VSCROLL | 
+                    WS_HSCROLL | WS_TABSTOP
+    CONTROL         "&Song",IDC_SONG_A,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,
+                    124,43,62,14
+    EDITTEXT        IDC_SONG,191,43,119,14,ES_AUTOHSCROLL
+    CONTROL         "&Künstler",IDC_ARTIST_A,"Button",BS_AUTOCHECKBOX | 
+                    WS_TABSTOP,124,61,62,14
+    EDITTEXT        IDC_ARTIST,191,61,119,14,ES_AUTOHSCROLL
+    CONTROL         "A&lbum",IDC_ALBUM_A,"Button",BS_AUTOCHECKBOX | 
+                    WS_TABSTOP,124,79,62,14
+    EDITTEXT        IDC_ALBUM,191,79,119,14,ES_AUTOHSCROLL
+    CONTROL         "&Genre",IDC_GENRE_A,"Button",BS_AUTOCHECKBOX | 
+                    WS_TABSTOP,124,97,62,14
+    COMBOBOX        IDC_GENRE,191,97,119,95,CBS_DROPDOWNLIST | CBS_SORT | 
+                    WS_VSCROLL | WS_TABSTOP
+    CONTROL         "&Jahr",IDC_YEAR_A,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,
+                    124,116,62,14
+    EDITTEXT        IDC_YEAR,191,116,119,14,ES_AUTOHSCROLL
+    CONTROL         "&Nummer",IDC_TRACK_A,"Button",BS_AUTOCHECKBOX | 
+                    WS_TABSTOP,124,134,62,14
+    EDITTEXT        IDC_TRACK,191,134,119,14,ES_AUTOHSCROLL
+    CONTROL         "Kommenta&r",IDC_COMMENT_A,"Button",BS_AUTOCHECKBOX | 
+                    WS_TABSTOP,124,151,62,14
+    EDITTEXT        IDC_COMMENT,191,151,119,14,ES_AUTOHSCROLL
+    CONTROL         "Album &Modus",IDC_ALBUM_MODE,"Button",BS_AUTO3STATE | 
+                    WS_TABSTOP,316,24,78,14
+    CONTROL         "Alle Dateien",IDC_AM_ARTIST,"Button",BS_AUTOCHECKBOX | 
+                    WS_TABSTOP,316,61,78,14
+    CONTROL         "Alle Dateien",IDC_AM_ALBUM,"Button",BS_AUTOCHECKBOX | 
+                    WS_TABSTOP,316,79,78,14
+    CONTROL         "Alle Dateien",IDC_AM_GENRE,"Button",BS_AUTOCHECKBOX | 
+                    WS_TABSTOP,316,97,78,14
+    CONTROL         "Alle Dateien",IDC_AM_YEAR,"Button",BS_AUTOCHECKBOX | 
+                    WS_TABSTOP,316,116,78,14
+    CONTROL         "Alle Dateien",IDC_AM_COMMENT,"Button",BS_AUTOCHECKBOX | 
+                    WS_TABSTOP,316,151,78,14
+    CONTROL         "&Benutze Formatstring für diese Datei",IDC_RENAME,
+                    "Button",BS_AUTOCHECKBOX | WS_TABSTOP,124,177,148,13
+    PUSHBUTTON      "Abbrechen",IDCANCEL,277,177,54,14
+    DEFPUSHBUTTON   "&Fertig",IDOK,339,177,55,14
+    CONTROL         "&id3 tag",IDC_ID3TAG,"Button",BS_AUTO3STATE | 
+                    WS_TABSTOP,124,24,62,14
+    GROUPBOX        "&Dateien / Stücke",IDC_STATIC,7,7,107,167
+    CTEXT           "",IDC_STATUS,60,200,340,15
+    GROUPBOX        "ID3 Information",IDC_FILE_NAME,119,7,281,167
+    CTEXT           "Wert",IDC_STATIC,191,24,119,14,SS_CENTERIMAGE
+    ICON            IDR_MAINFRAME,IDC_STATIC,12,195,20,20
+END
+#endif
+
+#if defined(APSTUDIO_INVOKED) || defined(_GERMAN)
+#if defined(APSTUDIO_INVOKED)
+IDD_CDDB_QUERY$(_GERMAN) DIALOG DISCARDABLE  0, 0, 260, 166
+#else
+IDD_CDDB_QUERY DIALOG DISCARDABLE  0, 0, 260, 166
+#endif
+STYLE DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "freeDB Abfage"
+FONT 8, "MS Sans Serif"
+BEGIN
+    LISTBOX         IDC_PROTOCOLL,7,28,246,102,LBS_NOINTEGRALHEIGHT | 
+                    WS_VSCROLL | WS_TABSTOP
+    PUSHBUTTON      "&Fortfahren",IDC_START,74,134,50,14
+    PUSHBUTTON      "&Schließen",IDCANCEL,136,134,50,14,WS_DISABLED
+    CTEXT           "http://www.freedb.org",IDC_STATIC,7,151,246,8
+    LTEXT           "Der freeDB Server hat folgende Einträge zurückgeliefert. Bitte wählen Sie den korrekten Eintrag und klicken Sie auf ""Fortfahren"".",
+                    IDC_STATIC,7,7,246,16
+END
+#endif
+
+#if defined(APSTUDIO_INVOKED) || defined(_GERMAN)
+#if defined(APSTUDIO_INVOKED)
+IDD_ENCODER_PAGE$(_GERMAN) DIALOG DISCARDABLE  0, 0, 405, 214
+#else
+IDD_ENCODER_PAGE DIALOG DISCARDABLE  0, 0, 405, 214
+#endif
+STYLE WS_CHILD | WS_DISABLED | WS_CAPTION
+CAPTION "Encoder && id3 Tags"
+FONT 8, "MS Sans Serif"
+BEGIN
+    LTEXT           "&Bits pro Sample",IDC_STATIC,24,33,68,13,SS_CENTERIMAGE
+    COMBOBOX        IDC_BITSPERSAMPLE,97,34,120,61,CBS_DROPDOWNLIST | 
+                    WS_VSCROLL | WS_TABSTOP
+    LTEXT           "&Kanäle",IDC_STATIC,221,34,64,12,SS_CENTERIMAGE
+    COMBOBOX        IDC_CHANNELS,290,34,90,52,CBS_DROPDOWNLIST | WS_VSCROLL | 
+                    WS_TABSTOP
+    CONTROL         "Copyright",IDC_COPYRIGHT,"Button",BS_AUTOCHECKBOX | 
+                    WS_TABSTOP,24,50,68,13
+    CONTROL         "Pri&vat",IDC_PRIVATE,"Button",BS_AUTOCHECKBOX | 
+                    WS_TABSTOP,97,50,64,13
+    CONTROL         "&Original",IDC_ORIGINAL,"Button",BS_AUTOCHECKBOX | 
+                    WS_TABSTOP,24,67,52,13
+    CONTROL         "Prüf&summe",IDC_CHECKSUM,"Button",BS_AUTOCHECKBOX | 
+                    WS_TABSTOP,97,67,63,13
+    CONTROL         "Schreibe ID&3 v.2 Tag",IDC_ID3_2,"Button",
+                    BS_AUTOCHECKBOX | WS_TABSTOP,24,148,136,16
+    CONTROL         "Speichere Dateien im &Format:",IDC_RENAME,"Button",
+                    BS_AUTOCHECKBOX | BS_MULTILINE | WS_TABSTOP,24,164,85,18
+    EDITTEXT        IDC_FORMAT,113,168,260,14,ES_AUTOHSCROLL
+    LTEXT           "lame_enc.dll",IDC_ENCODER_VERSION,24,100,356,29
+    GROUPBOX        "Encoder Versionsinformation",IDC_STATIC,20,88,365,44
+    GROUPBOX        "Ausgabe Format && Qualität (lame_enc.dll)",IDC_STATIC,
+                    20,20,365,64
+    GROUPBOX        "id3Tags (tagWriter.dll)",IDC_STATIC,20,137,365,57
+    LTEXT           "&MPEG Version",IDC_STATIC,221,50,64,13,SS_CENTERIMAGE | 
+                    WS_DISABLED
+    COMBOBOX        IDC_MPEG,290,50,90,13,CBS_DROPDOWNLIST | WS_DISABLED | 
+                    WS_VSCROLL | WS_TABSTOP
+    CTEXT           "%t = Titel, %a = Künstler, %m = Album, %n = Nummer, %y = Jahr;\nStandard: %a\\%m\\%a - %t [Verzeichnisse werden erstellt]",
+                    IDC_STATIC,165,148,208,16
+END
+#endif
+
+#if defined(APSTUDIO_INVOKED) || defined(_GERMAN)
+#if defined(APSTUDIO_INVOKED)
+IDD_CDDB_SETUP$(_GERMAN) DIALOG DISCARDABLE  0, 0, 418, 214
+#else
+IDD_CDDB_SETUP DIALOG DISCARDABLE  0, 0, 418, 214
+#endif
+STYLE WS_CHILD | WS_DISABLED | WS_CAPTION
+CAPTION "CDDB(tm) Setup"
+FONT 8, "MS Sans Serif"
+BEGIN
+    LTEXT           "&Server",IDC_STATIC,27,35,65,12,SS_CENTERIMAGE
+    COMBOBOX        IDC_REMOTE_SERVER,96,35,297,81,CBS_DROPDOWNLIST | 
+                    CBS_SORT | WS_VSCROLL | WS_TABSTOP
+    PUSHBUTTON      "Server&liste abfragen",IDC_UPDATE,328,52,65,14
+    LTEXT           "&E-Mail",IDC_STATIC,27,106,65,14,SS_CENTERIMAGE
+    EDITTEXT        IDC_EMAIL,96,106,130,14,ES_AUTOHSCROLL
+    LTEXT           "Time&out",IDC_STATIC,230,106,46,14,SS_CENTERIMAGE
+    EDITTEXT        IDC_TIMEOUT,281,106,112,14,ES_AUTOHSCROLL
+    CONTROL         "&Benutze Proxy",IDC_USE_PROXY,"Button",BS_AUTOCHECKBOX | 
+                    WS_TABSTOP,27,142,65,14
+    EDITTEXT        IDC_PROXY,96,142,130,14,ES_AUTOHSCROLL | WS_DISABLED
+    LTEXT           "Proxy&port",IDC_STATIC,230,142,46,14,SS_CENTERIMAGE
+    EDITTEXT        IDC_PROXY_PORT,281,142,112,14,ES_AUTOHSCROLL | ES_NUMBER | 
+                    WS_DISABLED
+    CONTROL         "Proxy erfordert &Anmeldung",IDC_AUTHENTICATION,"Button",
+                    BS_AUTOCHECKBOX | WS_TABSTOP,27,160,199,10
+    LTEXT           "Benutzer&name",IDC_STATIC,27,174,65,14,SS_CENTERIMAGE
+    EDITTEXT        IDC_USERNAME,96,174,130,14,ES_AUTOHSCROLL | WS_DISABLED
+    LTEXT           "Pass&wort",IDC_STATIC,230,174,46,14,SS_CENTERIMAGE
+    EDITTEXT        IDC_PASSWORD,281,174,112,14,ES_PASSWORD | ES_AUTOHSCROLL | 
+                    WS_DISABLED
+    LTEXT           "Standort",IDC_STATIC,27,52,65,14,SS_CENTERIMAGE
+    GROUPBOX        "Server Setup",IDC_STATIC,20,20,378,106
+    EDITTEXT        IDC_LOCATION,96,52,225,14,ES_AUTOHSCROLL | ES_READONLY
+    LTEXT           "Addresse",IDC_STATIC,27,71,65,14,SS_CENTERIMAGE
+    EDITTEXT        IDC_ADDRESS,96,71,297,14,ES_AUTOHSCROLL | ES_READONLY
+    LTEXT           "Pfad",IDC_STATIC,27,89,65,12,SS_CENTERIMAGE
+    EDITTEXT        IDC_PATH,96,89,130,12,ES_AUTOHSCROLL | ES_READONLY
+    LTEXT           "Port",IDC_STATIC,230,89,46,12,SS_CENTERIMAGE
+    EDITTEXT        IDC_REMOTE_PORT,281,89,112,12,ES_AUTOHSCROLL | 
+                    ES_READONLY | ES_NUMBER
+    GROUPBOX        "Http Proxy Einstellungen",IDC_STATIC,20,131,378,63
+END
+#endif
+
+#if defined(APSTUDIO_INVOKED) || defined(_GERMAN)
+#if defined(APSTUDIO_INVOKED)
+IDD_CDRIP_PAGE$(_GERMAN) DIALOG DISCARDABLE  0, 0, 421, 217
+#else
+IDD_CDRIP_PAGE DIALOG DISCARDABLE  0, 0, 421, 217
+#endif
+STYLE WS_CHILD | WS_DISABLED | WS_CAPTION
+CAPTION "CD ROM && Ripper"
+FONT 8, "MS Sans Serif"
+BEGIN
+    LTEXT           "&CD ROM",IDC_STATIC,28,32,52,12,SS_CENTERIMAGE
+    COMBOBOX        IDC_CD_DRIVE,85,32,309,68,CBS_DROPDOWNLIST | WS_VSCROLL | 
+                    WS_TABSTOP
+    LTEXT           "CD &ROM Typ",IDC_STATIC,28,51,52,13,SS_CENTERIMAGE
+    COMBOBOX        IDC_CDROM_TYPE,85,51,90,69,CBS_DROPDOWNLIST | WS_VSCROLL | 
+                    WS_TABSTOP
+    LTEXT           "Lese &Methode",IDC_STATIC,184,51,58,13,SS_CENTERIMAGE
+    COMBOBOX        IDC_RIPPING_METHOD,248,51,146,69,CBS_DROPDOWNLIST | 
+                    WS_VSCROLL | WS_TABSTOP
+    CONTROL         "CD nach Beenden &auswerfen",IDC_EJECT,"Button",
+                    BS_AUTOCHECKBOX | WS_TABSTOP,28,70,147,13
+    LTEXT           "&Geschindigkeit",IDC_STATIC,184,70,58,13,SS_CENTERIMAGE
+    EDITTEXT        IDC_CD_SPEED,248,70,44,13,ES_AUTOHSCROLL | ES_NUMBER
+    CONTROL         "Laufwerk beim Lesen &sperren ",IDC_LOCK,"Button",
+                    BS_AUTOCHECKBOX | WS_TABSTOP,28,88,147,13
+    LTEXT           "Spin &up Zeit (sec)",IDC_STATIC,184,88,58,12
+    EDITTEXT        IDC_CD_SPIN_UP,248,88,44,12,ES_AUTOHSCROLL | ES_NUMBER
+    CONTROL         "Rechts / Links vertauschen",IDC_SWAP,"Button",
+                    BS_AUTOCHECKBOX | WS_TABSTOP,28,104,115,12
+    CONTROL         "Benutze native &NT SCSI Bibliothek",IDC_NATIVE,"Button",
+                    BS_AUTOCHECKBOX | WS_TABSTOP,28,120,147,12
+    CONTROL         "Standardmäßig alle Stücke auswählen",IDC_SELECT_ALL,
+                    "Button",BS_AUTOCHECKBOX | WS_TABSTOP,184,120,168,11
+    GROUPBOX        "CD ROM (CDRip.dll)",IDC_STATIC,20,20,381,122
+    GROUPBOX        "CDRip.dll Version",IDC_STATIC,20,147,381,50
+    LTEXT           "Version",IDC_Version,28,160,366,30
+END
+#endif
+
+#if defined(APSTUDIO_INVOKED) || defined(_GERMAN)
+#if defined(APSTUDIO_INVOKED)
+IDD_LAMEFE_DIALOG$(_GERMAN) DIALOGEX 0, 0, 450, 239
+#else
+IDD_LAMEFE_DIALOG DIALOGEX 0, 0, 450, 239
+#endif
+STYLE DS_MODALFRAME | WS_MINIMIZEBOX | WS_POPUP | WS_VISIBLE | WS_CAPTION | 
+    WS_SYSMENU
+EXSTYLE WS_EX_APPWINDOW
+CAPTION "lameFE 2.0"
+MENU IDR_MAIN_MENU
+FONT 8, "MS Sans Serif"
+BEGIN
+    LISTBOX         IDC_LIST,12,17,373,175,LBS_USETABSTOPS | 
+                    LBS_NOINTEGRALHEIGHT | LBS_WANTKEYBOARDINPUT | 
+                    LBS_EXTENDEDSEL | WS_VSCROLL | WS_TABSTOP,
+                    WS_EX_ACCEPTFILES
+    PUSHBUTTON      "&Start",IDC_ENCODE,403,200,40,32,BS_MULTILINE
+    PUSHBUTTON      "Ausgabe &Qualität",IDC_PRESETS,354,200,40,32,
+                    BS_MULTILINE
+    PUSHBUTTON      "&freeDB",IDC_CDDB,284,200,40,32,BS_ICON
+    PUSHBUTTON      "id&3-Tags bearbeiten",IDC_ID3_TAG,235,200,40,32,
+                    BS_MULTILINE
+    CONTROL         "CD ->\n&MP3",IDC_CD_MP3,"Button",BS_AUTOCHECKBOX | 
+                    BS_PUSHLIKE | BS_MULTILINE | WS_TABSTOP,403,17,40,32
+    CONTROL         "CD -> &WAV",IDC_CD_WAV,"Button",BS_AUTOCHECKBOX | 
+                    BS_PUSHLIKE | BS_MULTILINE | WS_TABSTOP,403,54,40,32
+    CONTROL         "WA&V ->\nMP3",IDC_WAV_MP3,"Button",BS_AUTOCHECKBOX | 
+                    BS_PUSHLIKE | BS_MULTILINE | WS_TABSTOP,403,91,40,32
+    PUSHBUTTON      "&Neu Laden",IDC_REFRESH,403,128,40,14,BS_ICON
+    PUSHBUTTON      "",IDC_PLAY,12,213,17,14,BS_ICON
+    PUSHBUTTON      "",IDC_PAUSE,33,213,17,14,BS_ICON
+    PUSHBUTTON      "",IDC_STOP,54,213,17,14,BS_ICON
+    PUSHBUTTON      "",IDC_PREV,75,213,16,14,BS_ICON
+    PUSHBUTTON      "",IDC_NEXT,95,213,17,14,BS_ICON
+    PUSHBUTTON      "",IDC_EJECT_CD,117,213,16,14,BS_ICON
+    GROUPBOX        "Dateien / Stücke",IDC_LIST_TITLE,7,7,387,190
+    ICON            IDR_MAINFRAME,IDC_STATIC,176,210,20,20
+    GROUPBOX        "Wiedergabe",IDC_STATIC,7,200,131,32
+END
+#endif
+
+#if defined(APSTUDIO_INVOKED) || defined(_GERMAN)
+#if defined(APSTUDIO_INVOKED)
+IDD_LAMEFE_PAGE$(_GERMAN) DIALOGEX 0, 0, 421, 206
+#else
+IDD_LAMEFE_PAGE DIALOGEX 0, 0, 421, 206
+#endif
+STYLE WS_CHILD | WS_DISABLED | WS_CAPTION
+CAPTION "Globale Einstellungen"
+FONT 8, "MS Sans Serif"
+BEGIN
+    PUSHBUTTON      "&Ausgabe Pfad",IDC_OUTPUT,30,35,56,14
+    PUSHBUTTON      "Plug-Ins",IDC_PLUGINS,30,53,56,14,WS_DISABLED
+    PUSHBUTTON      "&Externer Player",IDC_PLAYER,30,72,56,14
+    CONTROL         "Dateien immer über&schreiben",IDC_SILENT,"Button",
+                    BS_AUTOCHECKBOX | WS_TABSTOP,30,109,170,10
+    CONTROL         "Dialog anzeigen",IDC_FINISH_DLG,"Button",
+                    BS_AUTOCHECKBOX | WS_TABSTOP,30,139,170,13
+    CONTROL         "&Piepen (Systemlautsprecher)",IDC_BEEP,"Button",
+                    BS_AUTOCHECKBOX | WS_TABSTOP,208,139,186,13
+    CONTROL         "Dateien &wiedergeben [externer Player benötigt]",
+                    IDC_PLAY_FILES,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,30,
+                    156,170,12
+    CONTROL         "M&3U Wiedergabeliste schreiben",IDC_M3U,"Button",
+                    BS_AUTOCHECKBOX | WS_TABSTOP,208,156,186,12
+    CONTROL         "lameFE &beenden",IDC_EXIT_FINISHED,"Button",
+                    BS_AUTOCHECKBOX | WS_TABSTOP,30,172,170,10
+    CONTROL         "Windows &runterfahren",IDC_SHUTDOWN,"Button",
+                    BS_AUTOCHECKBOX | WS_TABSTOP,208,172,186,12
+    GROUPBOX        "Verzeichnisse",IDC_STATIC,20,20,380,73
+    GROUPBOX        "Nach Encodierung / CD-Rippen folgende Jobs ausführen",
+                    IDC_STATIC,20,128,380,61
+    GROUPBOX        "Verschiedenes",IDC_STATIC,20,98,374,28
+    LTEXT           "noch nicht implementiert",IDC_PLUGINPATH,94,53,300,14,
+                    SS_CENTERIMAGE | WS_DISABLED,WS_EX_STATICEDGE
+    LTEXT           "not set",IDC_OUTPUT_PATH,94,36,300,13,SS_CENTERIMAGE,
+                    WS_EX_STATICEDGE
+    LTEXT           "not set",IDC_PLAYER_PATH,94,72,300,14,SS_CENTERIMAGE,
+                    WS_EX_STATICEDGE
+END
+#endif
+
+#if defined(APSTUDIO_INVOKED) || defined(_GERMAN)
+#if defined(APSTUDIO_INVOKED)
+IDD_STATUS_DIALOG$(_GERMAN) DIALOGEX 0, 0, 403, 201
+#else
+IDD_STATUS_DIALOG DIALOGEX 0, 0, 403, 201
+#endif
+STYLE DS_MODALFRAME | DS_3DLOOK | DS_CENTER | WS_MINIMIZEBOX | WS_POPUP | 
+    WS_VISIBLE | WS_CAPTION | WS_SYSMENU
+EXSTYLE WS_EX_CONTROLPARENT
+CAPTION "Kopieren und Enkodieren"
+FONT 8, "MS Sans Serif"
+BEGIN
+    DEFPUSHBUTTON   "&Abbrechen",IDCANCEL,175,180,50,14
+    GROUPBOX        "Status",IDC_STATIC,7,7,389,170
+    LTEXT           "Original Datei:",IDC_STATIC,14,22,69,8
+    LTEXT           "in.wav",IDC_IN,83,22,200,8
+    LTEXT           "Größe (KB)",IDC_STATIC,290,22,38,8
+    LTEXT           "0",IDC_IN_SIZE,333,22,55,8
+    LTEXT           "Ausgabe Datei:",IDC_STATIC,14,35,63,8
+    LTEXT           "out.mp3",IDC_OUT,83,35,200,8
+    LTEXT           "Größe (KB)",IDC_STATIC,290,35,38,8
+    LTEXT           "0",IDC_EST_SIZE,333,35,54,8
+    LTEXT           "Status:",IDC_STATIC,14,49,23,8
+    LTEXT           "",IDC_FILE_MSG,83,49,200,8
+    LTEXT           "0%",IDC_STATIC,14,63,10,14,SS_CENTERIMAGE
+    CONTROL         "Progress3",IDC_FILE_STATUS_BAR,"msctls_progress32",0x0,
+                    33,63,250,14
+    LTEXT           "100%",IDC_STATIC,290,63,18,14,SS_CENTERIMAGE
+    LTEXT           "Geschätzte Zeit:",IDC_STATIC,14,92,63,8
+    LTEXT           "0:00:00",IDC_EST_TIME,83,92,30,8
+    LTEXT           "Abgelaufene Zeit:",IDC_STATIC,14,105,63,8
+    LTEXT           "0:00:00",IDC_ELA_TIME,83,105,28,8
+    LTEXT           "Verbleibende Zeit:",IDC_STATIC,14,118,63,8
+    LTEXT           "0:00:00",IDC_REM_TIME,83,118,42,8
+    LTEXT           "Gesamt Status:",IDC_STATIC,14,131,63,8
+    LTEXT           "Datei",IDC_FILE_X_OF_Y,83,132,167,8
+    LTEXT           "",IDC_LIST_MSG,83,142,167,8
+    LTEXT           "Letzter Fehler:",IDC_STATIC,14,155,63,8
+    LTEXT           "Keine Fehler aufgetreten",IDC_ERRORS,83,155,167,8
+    LTEXT           "Lesepuffer",IDC_STATIC,328,166,38,8
+    CONTROL         "Progress2",IDC_LIST_STATUS_BAR,"msctls_progress32",
+                    PBS_VERTICAL,333,87,18,76
+    LTEXT           "Voll",IDC_STATIC,356,87,32,8
+    LTEXT           "Leer",IDC_STATIC,356,155,32,8
+    CONTROL         "Progress1",IDC_JITTERSTATUS,"msctls_progress32",
+                    PBS_VERTICAL,290,87,18,76
+    LTEXT           "Jitter Status",IDC_STATIC,283,166,38,8
+    LTEXT           "Min",IDC_STATIC,271,155,12,8
+    LTEXT           "Nominal",IDC_STATIC,257,122,26,8
+    LTEXT           "Max",IDC_STATIC,269,87,14,8
+END
+#endif
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// DESIGNINFO
+//
+
+#ifdef APSTUDIO_INVOKED
+GUIDELINES DESIGNINFO DISCARDABLE 
+BEGIN
+    "IDD_ID3EDIT$(_GERMAN)", DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 400
+        VERTGUIDE, 12
+        VERTGUIDE, 111
+        VERTGUIDE, 114
+        VERTGUIDE, 119
+        VERTGUIDE, 124
+        VERTGUIDE, 186
+        VERTGUIDE, 191
+        VERTGUIDE, 310
+        VERTGUIDE, 316
+        VERTGUIDE, 394
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 215
+        HORZGUIDE, 16
+        HORZGUIDE, 24
+        HORZGUIDE, 38
+        HORZGUIDE, 43
+        HORZGUIDE, 57
+        HORZGUIDE, 61
+        HORZGUIDE, 75
+        HORZGUIDE, 79
+        HORZGUIDE, 93
+        HORZGUIDE, 97
+        HORZGUIDE, 111
+        HORZGUIDE, 116
+        HORZGUIDE, 130
+        HORZGUIDE, 134
+        HORZGUIDE, 148
+        HORZGUIDE, 151
+        HORZGUIDE, 170
+        HORZGUIDE, 174
+        HORZGUIDE, 177
+    END
+
+    "IDD_CDDB_QUERY$(_GERMAN)", DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 253
+        VERTGUIDE, 124
+        VERTGUIDE, 130
+        VERTGUIDE, 136
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 159
+        HORZGUIDE, 23
+        HORZGUIDE, 130
+        HORZGUIDE, 148
+    END
+
+    "IDD_ENCODER_PAGE$(_GERMAN)", DIALOG
+    BEGIN
+        VERTGUIDE, 20
+        VERTGUIDE, 24
+        VERTGUIDE, 92
+        VERTGUIDE, 97
+        VERTGUIDE, 160
+        VERTGUIDE, 165
+        VERTGUIDE, 168
+        VERTGUIDE, 173
+        VERTGUIDE, 217
+        VERTGUIDE, 221
+        VERTGUIDE, 285
+        VERTGUIDE, 290
+        VERTGUIDE, 373
+        VERTGUIDE, 380
+        VERTGUIDE, 385
+        HORZGUIDE, 20
+        HORZGUIDE, 32
+        HORZGUIDE, 46
+        HORZGUIDE, 50
+        HORZGUIDE, 63
+        HORZGUIDE, 67
+        HORZGUIDE, 80
+        HORZGUIDE, 84
+        HORZGUIDE, 88
+        HORZGUIDE, 100
+        HORZGUIDE, 129
+        HORZGUIDE, 132
+        HORZGUIDE, 137
+        HORZGUIDE, 148
+        HORZGUIDE, 164
+        HORZGUIDE, 182
+        HORZGUIDE, 190
+        HORZGUIDE, 194
+    END
+
+    "IDD_CDDB_SETUP$(_GERMAN)", DIALOG
+    BEGIN
+        LEFTMARGIN, 20
+        RIGHTMARGIN, 398
+        VERTGUIDE, 27
+        VERTGUIDE, 92
+        VERTGUIDE, 96
+        VERTGUIDE, 226
+        VERTGUIDE, 230
+        VERTGUIDE, 276
+        VERTGUIDE, 281
+        VERTGUIDE, 393
+        TOPMARGIN, 20
+        BOTTOMMARGIN, 194
+        HORZGUIDE, 25
+        HORZGUIDE, 35
+        HORZGUIDE, 47
+        HORZGUIDE, 52
+        HORZGUIDE, 66
+        HORZGUIDE, 71
+        HORZGUIDE, 85
+        HORZGUIDE, 89
+        HORZGUIDE, 101
+        HORZGUIDE, 106
+        HORZGUIDE, 120
+        HORZGUIDE, 126
+        HORZGUIDE, 131
+        HORZGUIDE, 142
+        HORZGUIDE, 156
+        HORZGUIDE, 160
+        HORZGUIDE, 174
+    END
+
+    "IDD_CDRIP_PAGE$(_GERMAN)", DIALOG
+    BEGIN
+        LEFTMARGIN, 20
+        RIGHTMARGIN, 401
+        VERTGUIDE, 28
+        VERTGUIDE, 80
+        VERTGUIDE, 85
+        VERTGUIDE, 175
+        VERTGUIDE, 184
+        VERTGUIDE, 242
+        VERTGUIDE, 248
+        VERTGUIDE, 292
+        VERTGUIDE, 394
+        TOPMARGIN, 20
+        BOTTOMMARGIN, 197
+        HORZGUIDE, 32
+        HORZGUIDE, 44
+        HORZGUIDE, 51
+        HORZGUIDE, 64
+        HORZGUIDE, 70
+        HORZGUIDE, 83
+        HORZGUIDE, 88
+        HORZGUIDE, 100
+        HORZGUIDE, 104
+        HORZGUIDE, 116
+        HORZGUIDE, 120
+        HORZGUIDE, 142
+        HORZGUIDE, 147
+        HORZGUIDE, 160
+        HORZGUIDE, 190
+    END
+
+    "IDD_LAMEFE_DIALOG$(_GERMAN)", DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 443
+        VERTGUIDE, 12
+        VERTGUIDE, 29
+        VERTGUIDE, 41
+        VERTGUIDE, 62
+        VERTGUIDE, 83
+        VERTGUIDE, 103
+        VERTGUIDE, 139
+        VERTGUIDE, 186
+        VERTGUIDE, 235
+        VERTGUIDE, 275
+        VERTGUIDE, 284
+        VERTGUIDE, 324
+        VERTGUIDE, 354
+        VERTGUIDE, 394
+        VERTGUIDE, 403
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 232
+        HORZGUIDE, 17
+        HORZGUIDE, 49
+        HORZGUIDE, 54
+        HORZGUIDE, 86
+        HORZGUIDE, 91
+        HORZGUIDE, 123
+        HORZGUIDE, 128
+        HORZGUIDE, 197
+        HORZGUIDE, 200
+        HORZGUIDE, 220
+    END
+
+    "IDD_LAMEFE_PAGE$(_GERMAN)", DIALOG
+    BEGIN
+        RIGHTMARGIN, 417
+        VERTGUIDE, 20
+        VERTGUIDE, 30
+        VERTGUIDE, 86
+        VERTGUIDE, 94
+        VERTGUIDE, 200
+        VERTGUIDE, 208
+        VERTGUIDE, 394
+        VERTGUIDE, 400
+        BOTTOMMARGIN, 200
+        HORZGUIDE, 20
+        HORZGUIDE, 36
+        HORZGUIDE, 49
+        HORZGUIDE, 53
+        HORZGUIDE, 67
+        HORZGUIDE, 72
+        HORZGUIDE, 86
+        HORZGUIDE, 93
+        HORZGUIDE, 98
+        HORZGUIDE, 126
+        HORZGUIDE, 128
+        HORZGUIDE, 139
+        HORZGUIDE, 152
+        HORZGUIDE, 156
+        HORZGUIDE, 168
+        HORZGUIDE, 172
+        HORZGUIDE, 184
+        HORZGUIDE, 189
+    END
+
+    "IDD_STATUS_DIALOG$(_GERMAN)", DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 396
+        VERTGUIDE, 14
+        VERTGUIDE, 77
+        VERTGUIDE, 83
+        VERTGUIDE, 250
+        VERTGUIDE, 257
+        VERTGUIDE, 283
+        VERTGUIDE, 290
+        VERTGUIDE, 328
+        VERTGUIDE, 333
+        VERTGUIDE, 351
+        VERTGUIDE, 356
+        VERTGUIDE, 388
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 194
+        HORZGUIDE, 22
+        HORZGUIDE, 30
+        HORZGUIDE, 43
+        HORZGUIDE, 57
+        HORZGUIDE, 63
+        HORZGUIDE, 77
+        HORZGUIDE, 87
+        HORZGUIDE, 100
+        HORZGUIDE, 113
+        HORZGUIDE, 126
+        HORZGUIDE, 132
+        HORZGUIDE, 139
+        HORZGUIDE, 150
+        HORZGUIDE, 163
+        HORZGUIDE, 174
+    END
+END
+#endif    // APSTUDIO_INVOKED
+
+
+#ifdef APSTUDIO_INVOKED
+/////////////////////////////////////////////////////////////////////////////
+//
+// TEXTINCLUDE
+//
+
+1 TEXTINCLUDE DISCARDABLE 
+BEGIN
+    "resource.h\0"
+END
+
+2 TEXTINCLUDE DISCARDABLE 
+BEGIN
+    "#include ""afxres.h""\r\n"
+    "\0"
+END
+
+3 TEXTINCLUDE DISCARDABLE 
+BEGIN
+    "#define _AFX_NO_SPLITTER_RESOURCES\r\n"
+    "#define _AFX_NO_OLE_RESOURCES\r\n"
+    "#define _AFX_NO_TRACKER_RESOURCES\r\n"
+    "#define _AFX_NO_PROPERTY_RESOURCES\r\n"
+    "\r\n"
+    "#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_ENU)\r\n"
+    "#ifdef _WIN32\r\n"
+    "LANGUAGE 9, 1\r\n"
+    "#pragma code_page(1252)\r\n"
+    "#endif //_WIN32\r\n"
+    "#include ""res\\lameFE.rc2""  // Nicht mit Microsoft Visual C++ bearbeitete Ressourcen\r\n"
+    "#include ""afxres.rc""         // Standardkomponenten\r\n"
+    "#endif\r\n"
+    "\0"
+END
+
+#endif    // APSTUDIO_INVOKED
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Accelerator
+//
+
+#if defined(APSTUDIO_INVOKED) || defined(_GERMAN)
+#if defined(APSTUDIO_INVOKED)
+IDR_ACCELERATOR$(_GERMAN) ACCELERATORS DISCARDABLE 
+#else
+IDR_ACCELERATOR ACCELERATORS DISCARDABLE 
+#endif
+BEGIN
+    "O",            ID_ADD,                 VIRTKEY, CONTROL, NOINVERT
+    "R",            ID_REMOVE,              VIRTKEY, CONTROL, NOINVERT
+    VK_F1,          ID_HELP,                VIRTKEY, NOINVERT
+    VK_F3,          ID_EDIT_ID3,            VIRTKEY, NOINVERT
+    VK_F5,          ID_SETTINGS,            VIRTKEY, NOINVERT
+END
+#endif
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Menu
+//
+
+#if defined(APSTUDIO_INVOKED) || defined(_GERMAN)
+#if defined(APSTUDIO_INVOKED)
+IDR_MAIN_MENU$(_GERMAN) MENU DISCARDABLE 
+#else
+IDR_MAIN_MENU MENU DISCARDABLE 
+#endif
+BEGIN
+    POPUP "&Datei"
+    BEGIN
+        MENUITEM "Datei(en)& hinzufügen \tCtrl+O", ID_ADD_FILE
+        MENUITEM "Datei(en) &entfernen\tCtrl+R", ID_REMOVE_FILE
+        MENUITEM SEPARATOR
+        MENUITEM "&Beenden",                    ID_EXIT
+    END
+    POPUP "&CDDB && id3Tags"
+    BEGIN
+        MENUITEM "CDDB Server abfragen",        ID_CDDB_READFROMREMOTECDDBSERVER
+
+        MENUITEM SEPARATOR
+        MENUITEM "Id&3 Tags bearbeiten\tF3",    ID_TOOLS_EDITID3TAG
+    END
+    POPUP "&Einstellungen"
+    BEGIN
+        MENUITEM "CD-&Laufwerk",                ID_PREFERENCES_CDREADERSETTINGS
+
+        MENUITEM SEPARATOR
+        MENUITEM "&Plug-Ins",                   ID_PREFERENCES_PLUGINS
+        MENUITEM "&Encoder",                    ID_PRESET
+        MENUITEM "&CDDB",                       ICD_CDDB_SETTINGS
+        MENUITEM "id3 &Tags",                   ID_PREFERENCES_TAGWRITERSETTINGS
+
+        MENUITEM SEPARATOR
+        MENUITEM "&lameFE\tF5",                 ID_SETTINGS
+    END
+    POPUP "&Hilfe"
+    BEGIN
+        MENUITEM "Hilfe &Übersicht... \tF1",    ID_HELP
+        MENUITEM "Hilfe &Index",                ID_HELP_HELPINDEX
+        MENUITEM SEPARATOR
+        MENUITEM "Lizenz",                      ID_HELP_LICENSE
+        MENUITEM "&Über...",                    ID_ABOUT
+    END
+END
+#endif
+
+#if defined(APSTUDIO_INVOKED) || defined(_GERMAN)
+#if defined(APSTUDIO_INVOKED)
+IDR_SYSTRAY_MENU$(_GERMAN) MENU DISCARDABLE 
+#else
+IDR_SYSTRAY_MENU MENU DISCARDABLE 
+#endif
+BEGIN
+    POPUP "POPUP"
+    BEGIN
+        MENUITEM "Fenster &Wiederherstellen",   IDC_ST_RESTORE
+        MENUITEM "&Encodieren abbrechen",       IDC_ST_EXIT
+    END
+END
+#endif
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Dialog Info
+//
+
+#if defined(APSTUDIO_INVOKED) || defined(_GERMAN)
+#if defined(APSTUDIO_INVOKED)
+IDD_ENCODER_PAGE$(_GERMAN) DLGINIT
+#else
+IDD_ENCODER_PAGE DLGINIT
+#endif
+BEGIN
+    IDC_BITSPERSAMPLE, 0x403, 9, 0
+0x2020, 0x2038, 0x7062, 0x2073, "\000" 
+    IDC_BITSPERSAMPLE, 0x403, 7, 0
+0x3631, 0x6220, 0x7370, "\000" 
+    IDC_BITSPERSAMPLE, 0x403, 7, 0
+0x3432, 0x6220, 0x7370, "\000" 
+    IDC_BITSPERSAMPLE, 0x403, 7, 0
+0x3233, 0x6220, 0x7370, "\000" 
+    IDC_BITSPERSAMPLE, 0x403, 7, 0
+0x3034, 0x6220, 0x7370, "\000" 
+    IDC_BITSPERSAMPLE, 0x403, 7, 0
+0x3834, 0x6220, 0x7370, "\000" 
+    IDC_BITSPERSAMPLE, 0x403, 7, 0
+0x3635, 0x6220, 0x7370, "\000" 
+    IDC_BITSPERSAMPLE, 0x403, 7, 0
+0x3436, 0x6220, 0x7370, "\000" 
+    IDC_BITSPERSAMPLE, 0x403, 7, 0
+0x3038, 0x6220, 0x7370, "\000" 
+    IDC_BITSPERSAMPLE, 0x403, 8, 0
+0x3639, 0x2020, 0x7062, 0x0073, 
+    IDC_BITSPERSAMPLE, 0x403, 8, 0
+0x3131, 0x2032, 0x7062, 0x0073, 
+    IDC_BITSPERSAMPLE, 0x403, 8, 0
+0x3231, 0x2038, 0x7062, 0x0073, 
+    IDC_BITSPERSAMPLE, 0x403, 8, 0
+0x3431, 0x2034, 0x7062, 0x0073, 
+    IDC_BITSPERSAMPLE, 0x403, 8, 0
+0x3631, 0x2030, 0x7062, 0x0073, 
+    IDC_BITSPERSAMPLE, 0x403, 20, 0
+0x3931, 0x2032, 0x7062, 0x2073, 0x5328, 0x6174, 0x646e, 0x7261, 0x2964, 
+0x0020, 
+    IDC_BITSPERSAMPLE, 0x403, 8, 0
+0x3232, 0x2034, 0x7062, 0x0073, 
+    IDC_BITSPERSAMPLE, 0x403, 8, 0
+0x3532, 0x2036, 0x7062, 0x0073, 
+    IDC_BITSPERSAMPLE, 0x403, 8, 0
+0x3233, 0x2030, 0x7062, 0x0073, 
+    IDC_CHANNELS, 0x403, 18, 0
+0x7453, 0x7265, 0x6f65, 0x2820, 0x7453, 0x6e61, 0x6164, 0x6472, 0x0029, 
+
+    IDC_CHANNELS, 0x403, 13, 0
+0x7544, 0x6c61, 0x4320, 0x6168, 0x6e6e, 0x6c65, "\000" 
+    IDC_CHANNELS, 0x403, 13, 0
+0x6f4a, 0x6e69, 0x2074, 0x7453, 0x7265, 0x6f65, "\000" 
+    IDC_CHANNELS, 0x403, 5, 0
+0x6f4d, 0x6f6e, "\000" 
+    IDC_MPEG, 0x403, 18, 0
+0x504d, 0x4745, 0x4920, 0x2820, 0x7453, 0x6e61, 0x6164, 0x6472, 0x0029, 
+
+    IDC_MPEG, 0x403, 8, 0
+0x504d, 0x4745, 0x4920, 0x0049, 
+    0
+END
+#endif
+
+#if defined(APSTUDIO_INVOKED) || defined(_GERMAN)
+#if defined(APSTUDIO_INVOKED)
+IDD_CDRIP_PAGE$(_GERMAN) DLGINIT
+#else
+IDD_CDRIP_PAGE DLGINIT
+#endif
+BEGIN
+    IDC_CDROM_TYPE, 0x403, 8, 0
+0x6547, 0x656e, 0x6972, 0x0063, 
+    IDC_CDROM_TYPE, 0x403, 8, 0
+0x6f54, 0x6873, 0x6269, 0x0061, 
+    IDC_CDROM_TYPE, 0x403, 14, 0
+0x6f54, 0x6873, 0x6269, 0x2061, 0x6e28, 0x7765, 0x0029, 
+    IDC_CDROM_TYPE, 0x403, 4, 0
+0x4249, 0x004d, 
+    IDC_CDROM_TYPE, 0x403, 4, 0
+0x454e, 0x0043, 
+    IDC_CDROM_TYPE, 0x403, 4, 0
+0x4544, 0x0043, 
+    IDC_CDROM_TYPE, 0x403, 4, 0
+0x4d49, 0x0053, 
+    IDC_CDROM_TYPE, 0x403, 6, 0
+0x6f4b, 0x6164, 0x006b, 
+    IDC_CDROM_TYPE, 0x403, 6, 0
+0x6952, 0x6f63, 0x0068, 
+    IDC_CDROM_TYPE, 0x403, 3, 0
+0x5048, "\000" 
+    IDC_CDROM_TYPE, 0x403, 8, 0
+0x6850, 0x6c69, 0x7069, 0x0073, 
+    IDC_CDROM_TYPE, 0x403, 8, 0
+0x6c50, 0x7361, 0x6f6d, 0x006e, 
+    IDC_CDROM_TYPE, 0x403, 12, 0
+0x7247, 0x6e75, 0x6964, 0x2067, 0x4443, 0x0052, 
+    IDC_CDROM_TYPE, 0x403, 12, 0
+0x694d, 0x7374, 0x6d75, 0x2069, 0x4443, 0x0052, 
+    IDC_CDROM_TYPE, 0x403, 8, 0
+0x6c50, 0x7865, 0x6f74, 0x0072, 
+    IDC_CDROM_TYPE, 0x403, 5, 0
+0x6f53, 0x796e, "\000" 
+    IDC_CDROM_TYPE, 0x403, 7, 0
+0x6159, 0x616d, 0x6168, "\000" 
+    IDC_CDROM_TYPE, 0x403, 4, 0
+0x524e, 0x0043, 
+    IDC_CDROM_TYPE, 0x403, 10, 0
+0x4d49, 0x2053, 0x4443, 0x2d44, 0x0035, 
+    IDC_CDROM_TYPE, 0x403, 25, 0
+0x7543, 0x7473, 0x6d6f, 0x2820, 0x6e75, 0x7573, 0x7070, 0x726f, 0x6574, 
+0x2064, 0x6579, 0x2974, "\000" 
+    IDC_RIPPING_METHOD, 0x403, 9, 0
+0x7453, 0x6e61, 0x6164, 0x6472, "\000" 
+    IDC_RIPPING_METHOD, 0x403, 24, 0
+0x6150, 0x6172, 0x6f6e, 0x6169, 0x202c, 0x4f20, 0x6576, 0x6c72, 0x7061, 
+0x6f20, 0x6c6e, 0x0079, 
+    IDC_RIPPING_METHOD, 0x403, 20, 0
+0x6150, 0x6172, 0x6f6e, 0x6169, 0x202c, 0x6f4e, 0x5620, 0x7265, 0x6669, 
+0x0079, 
+    IDC_RIPPING_METHOD, 0x403, 28, 0
+0x6150, 0x6172, 0x6f6e, 0x6169, 0x202c, 0x6f4e, 0x5320, 0x7263, 0x7461, 
+0x6863, 0x5220, 0x7065, 0x6961, 0x0072, 
+    IDC_RIPPING_METHOD, 0x403, 15, 0
+0x6150, 0x6172, 0x6f6e, 0x6169, 0x202c, 0x7546, 0x6c6c, "\000" 
+    0
+END
+#endif
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// 24
+//
+
+1                       24      DISCARDABLE     "res\\default1.bin"
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Bitmap
+//
+
+LAMEFE                  BITMAP  DISCARDABLE     "res\\bmp00001.bmp"
+#endif    // Deutsch (Deutschland) resources
+/////////////////////////////////////////////////////////////////////////////
+
+
+/////////////////////////////////////////////////////////////////////////////
+// Englisch (USA) resources
+
+#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_ENU)
+#ifdef _WIN32
+LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_US
+#pragma code_page(1252)
+#endif //_WIN32
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Dialog
+//
+
+#if defined(APSTUDIO_INVOKED) || defined(_ENGLISH)
+#if defined(APSTUDIO_INVOKED)
+IDD_LAMEFE_DIALOG$(_ENGLISH) DIALOGEX 0, 0, 450, 239
+#else
+IDD_LAMEFE_DIALOG DIALOGEX 0, 0, 450, 239
+#endif
+STYLE DS_MODALFRAME | WS_MINIMIZEBOX | WS_POPUP | WS_VISIBLE | WS_CAPTION | 
+    WS_SYSMENU
+EXSTYLE WS_EX_APPWINDOW
+CAPTION "lameFE 2.0"
+MENU IDR_MAIN_MENU
+FONT 8, "MS Sans Serif"
+BEGIN
+    LISTBOX         IDC_LIST,12,17,373,175,LBS_USETABSTOPS | 
+                    LBS_NOINTEGRALHEIGHT | LBS_EXTENDEDSEL | WS_VSCROLL | 
+                    WS_TABSTOP,WS_EX_ACCEPTFILES
+    PUSHBUTTON      "Start &encoding",IDC_ENCODE,403,200,40,32,BS_MULTILINE
+    PUSHBUTTON      "Encoder &setting",IDC_PRESETS,354,200,40,32,
+                    BS_MULTILINE
+    PUSHBUTTON      "&freeDB",IDC_CDDB,284,200,40,32,BS_ICON
+    PUSHBUTTON      "Edit id&3-Tags",IDC_ID3_TAG,235,200,40,32,BS_MULTILINE
+    CONTROL         "CD -> MP3",IDC_CD_MP3,"Button",BS_AUTOCHECKBOX | 
+                    BS_ICON | BS_PUSHLIKE | WS_TABSTOP,403,17,40,32
+    CONTROL         "CD ->WAV",IDC_CD_WAV,"Button",BS_AUTOCHECKBOX | BS_ICON | 
+                    BS_PUSHLIKE | WS_TABSTOP,403,54,40,32
+    CONTROL         "WAV -> MP3",IDC_WAV_MP3,"Button",BS_AUTOCHECKBOX | 
+                    BS_ICON | BS_PUSHLIKE | BS_MULTILINE | WS_TABSTOP,403,91,
+                    40,32
+    PUSHBUTTON      "&Refresh",IDC_REFRESH,403,128,40,14
+    PUSHBUTTON      "",IDC_PLAY,12,213,17,14,BS_ICON
+    PUSHBUTTON      "",IDC_PAUSE,33,213,17,14,BS_ICON
+    PUSHBUTTON      "",IDC_STOP,54,213,17,14,BS_ICON
+    PUSHBUTTON      "",IDC_PREV,75,213,16,14,BS_ICON
+    PUSHBUTTON      "",IDC_NEXT,95,213,17,14,BS_ICON
+    PUSHBUTTON      "",IDC_EJECT_CD,117,213,16,14,BS_ICON
+    GROUPBOX        "Files / Tracks",IDC_LIST_TITLE,7,7,387,190
+    ICON            IDR_MAINFRAME,IDC_STATIC,176,210,20,20
+    GROUPBOX        "Playback",IDC_STATIC,7,200,131,32
+END
+#endif
+
+#if defined(APSTUDIO_INVOKED) || defined(_ENGLISH)
+#if defined(APSTUDIO_INVOKED)
+IDD_ENCODER_PAGE$(_ENGLISH) DIALOG DISCARDABLE  0, 0, 405, 214
+#else
+IDD_ENCODER_PAGE DIALOG DISCARDABLE  0, 0, 405, 214
+#endif
+STYLE WS_CHILD | WS_DISABLED | WS_CAPTION
+CAPTION "Encoder && id3 Tags"
+FONT 8, "MS Sans Serif"
+BEGIN
+    LTEXT           "&Bits per sample",IDC_STATIC,24,33,68,13,SS_CENTERIMAGE
+    COMBOBOX        IDC_BITSPERSAMPLE,97,34,120,61,CBS_DROPDOWNLIST | 
+                    WS_VSCROLL | WS_TABSTOP
+    LTEXT           "&Channels",IDC_STATIC,221,34,64,12,SS_CENTERIMAGE
+    COMBOBOX        IDC_CHANNELS,290,34,90,52,CBS_DROPDOWNLIST | WS_VSCROLL | 
+                    WS_TABSTOP
+    CONTROL         "Copyright",IDC_COPYRIGHT,"Button",BS_AUTOCHECKBOX | 
+                    WS_TABSTOP,24,50,68,13
+    CONTROL         "Pri&vate",IDC_PRIVATE,"Button",BS_AUTOCHECKBOX | 
+                    WS_TABSTOP,96,50,64,13
+    CONTROL         "&Original",IDC_ORIGINAL,"Button",BS_AUTOCHECKBOX | 
+                    WS_TABSTOP,24,67,52,13
+    CONTROL         "Check&sum",IDC_CHECKSUM,"Button",BS_AUTOCHECKBOX | 
+                    WS_TABSTOP,97,67,63,13
+    CONTROL         "Render ID&3 v.2 Tag to files",IDC_ID3_2,"Button",
+                    BS_AUTOCHECKBOX | WS_TABSTOP,24,148,136,16
+    CONTROL         "&Rename files to format:",IDC_RENAME,"Button",
+                    BS_AUTOCHECKBOX | BS_MULTILINE | WS_TABSTOP,24,164,85,18
+    EDITTEXT        IDC_FORMAT,113,168,260,14,ES_AUTOHSCROLL
+    LTEXT           "lame_enc.dll",IDC_ENCODER_VERSION,24,100,356,29
+    GROUPBOX        "Encoder version information",IDC_STATIC,20,88,365,44
+    GROUPBOX        "Output Format && Quality (lame_enc.dll)",IDC_STATIC,20,
+                    20,365,64
+    GROUPBOX        "id3Tags (tagWriter.dll)",IDC_STATIC,20,137,365,57
+    LTEXT           "&MPEG Version",IDC_STATIC,221,50,64,13,SS_CENTERIMAGE | 
+                    WS_DISABLED
+    COMBOBOX        IDC_MPEG,290,50,90,13,CBS_DROPDOWNLIST | WS_DISABLED | 
+                    WS_VSCROLL | WS_TABSTOP
+    CTEXT           "%t = title, %a = artist, %m = album, %n = track number, %y = year;\nDefault: %a\\%m\\%a - %t  [Direcories will be created]",
+                    IDC_STATIC,165,148,208,16
+END
+#endif
+
+#if defined(APSTUDIO_INVOKED) || defined(_ENGLISH)
+#if defined(APSTUDIO_INVOKED)
+IDD_LAMEFE_PAGE$(_ENGLISH) DIALOGEX 0, 0, 421, 206
+#else
+IDD_LAMEFE_PAGE DIALOGEX 0, 0, 421, 206
+#endif
+STYLE WS_CHILD | WS_DISABLED | WS_CAPTION
+CAPTION "Main Settings"
+FONT 8, "MS Sans Serif", 0, 0, 0x1
+BEGIN
+    PUSHBUTTON      "&Output path",IDC_OUTPUT,30,35,56,14
+    PUSHBUTTON      "&Plug-Ins",IDC_PLUGINS,30,53,56,14,WS_DISABLED
+    PUSHBUTTON      "&External Player",IDC_PLAYER,30,72,56,14
+    CONTROL         "Always over&write existing files",IDC_SILENT,"Button",
+                    BS_AUTOCHECKBOX | WS_TABSTOP,30,109,170,10
+    CONTROL         "Show Finished &Dialog",IDC_FINISH_DLG,"Button",
+                    BS_AUTOCHECKBOX | WS_TABSTOP,30,139,170,13
+    CONTROL         "&Beep (Systemspeaker)",IDC_BEEP,"Button",
+                    BS_AUTOCHECKBOX | WS_TABSTOP,208,139,186,13
+    CONTROL         "&Play file(s) [external player required]",
+                    IDC_PLAY_FILES,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,30,
+                    156,170,12
+    CONTROL         "Generate M&3U Playlist",IDC_M3U,"Button",
+                    BS_AUTOCHECKBOX | WS_TABSTOP,208,156,186,12
+    CONTROL         "E&xit lameFE",IDC_EXIT_FINISHED,"Button",
+                    BS_AUTOCHECKBOX | WS_TABSTOP,30,172,170,10
+    CONTROL         "&Shutdown Windows*",IDC_SHUTDOWN,"Button",
+                    BS_AUTOCHECKBOX | WS_TABSTOP,208,172,186,12
+    LTEXT           "not set",IDC_OUTPUT_PATH,94,36,300,13,SS_CENTERIMAGE,
+                    WS_EX_STATICEDGE
+    LTEXT           "not set",IDC_PLAYER_PATH,94,72,300,14,SS_CENTERIMAGE,
+                    WS_EX_STATICEDGE
+    GROUPBOX        "Path && External Player",IDC_STATIC,20,20,380,73
+    GROUPBOX        "TO-DO when finished Encoding / Ripping",IDC_STATIC,20,
+                    128,380,61
+    GROUPBOX        "Miscellaneous",IDC_STATIC,20,98,374,28
+    LTEXT           "not set",IDC_PLUGINPATH,94,53,300,14,SS_CENTERIMAGE | 
+                    WS_DISABLED,WS_EX_STATICEDGE
+END
+#endif
+
+#if defined(APSTUDIO_INVOKED) || defined(_ENGLISH)
+#if defined(APSTUDIO_INVOKED)
+IDD_CDRIP_PAGE$(_ENGLISH) DIALOG DISCARDABLE  0, 0, 421, 217
+#else
+IDD_CDRIP_PAGE DIALOG DISCARDABLE  0, 0, 421, 217
+#endif
+STYLE WS_CHILD | WS_DISABLED | WS_CAPTION
+CAPTION "CD ROM && Ripper"
+FONT 8, "MS Sans Serif"
+BEGIN
+    LTEXT           "&CD ROM",IDC_STATIC,28,32,52,12,SS_CENTERIMAGE
+    COMBOBOX        IDC_CD_DRIVE,85,32,309,68,CBS_DROPDOWNLIST | WS_VSCROLL | 
+                    WS_TABSTOP
+    LTEXT           "CD &ROM Type",IDC_STATIC,28,51,52,13,SS_CENTERIMAGE
+    COMBOBOX        IDC_CDROM_TYPE,85,51,90,69,CBS_DROPDOWNLIST | WS_VSCROLL | 
+                    WS_TABSTOP
+    LTEXT           "Ripping &Method",IDC_STATIC,184,51,58,13,SS_CENTERIMAGE
+    COMBOBOX        IDC_RIPPING_METHOD,248,51,146,69,CBS_DROPDOWNLIST | 
+                    WS_VSCROLL | WS_TABSTOP
+    CONTROL         "&Eject CD when done",IDC_EJECT,"Button",BS_AUTOCHECKBOX | 
+                    WS_TABSTOP,28,70,80,13
+    LTEXT           "CD &Speed",IDC_STATIC,184,70,58,13,SS_CENTERIMAGE
+    EDITTEXT        IDC_CD_SPEED,248,70,44,13,ES_AUTOHSCROLL | ES_NUMBER
+    CONTROL         "&Lock CD Drive during extraction",IDC_LOCK,"Button",
+                    BS_AUTOCHECKBOX | WS_TABSTOP,28,88,147,13
+    LTEXT           "Spin &up time (sec)",IDC_STATIC,184,88,58,12
+    EDITTEXT        IDC_CD_SPIN_UP,248,88,44,12,ES_AUTOHSCROLL | ES_NUMBER
+    CONTROL         "Swap channels",IDC_SWAP,"Button",BS_AUTOCHECKBOX | 
+                    WS_TABSTOP,28,104,115,12
+    CONTROL         "Use native &NT SCSI Library",IDC_NATIVE,"Button",
+                    BS_AUTOCHECKBOX | WS_TABSTOP,28,120,147,12
+    CONTROL         "Select all &tracks by default",IDC_SELECT_ALL,"Button",
+                    BS_AUTOCHECKBOX | WS_TABSTOP,184,120,108,11
+    GROUPBOX        "CD ROM (CDRip.dll)",IDC_STATIC,20,20,381,122
+    GROUPBOX        "CDRip.dll version",IDC_STATIC,20,147,381,50
+    LTEXT           "Version",IDC_Version,28,160,366,30
+END
+#endif
+
+#if defined(APSTUDIO_INVOKED) || defined(_ENGLISH)
+#if defined(APSTUDIO_INVOKED)
+IDD_CDDB_SETUP$(_ENGLISH) DIALOG DISCARDABLE  0, 0, 418, 214
+#else
+IDD_CDDB_SETUP DIALOG DISCARDABLE  0, 0, 418, 214
+#endif
+STYLE WS_CHILD | WS_DISABLED | WS_CAPTION
+CAPTION "CDDB(tm) Setup"
+FONT 8, "MS Sans Serif"
+BEGIN
+    LTEXT           "Remote &Server",IDC_STATIC,27,35,65,12,SS_CENTERIMAGE
+    COMBOBOX        IDC_REMOTE_SERVER,96,35,297,81,CBS_DROPDOWNLIST | 
+                    CBS_SORT | WS_VSCROLL | WS_TABSTOP
+    PUSHBUTTON      "Update server &list",IDC_UPDATE,328,52,65,14
+    LTEXT           "&E-Mail",IDC_STATIC,27,106,65,14,SS_CENTERIMAGE
+    EDITTEXT        IDC_EMAIL,96,106,130,14,ES_AUTOHSCROLL
+    LTEXT           "Time&out",IDC_STATIC,230,106,46,14,SS_CENTERIMAGE
+    EDITTEXT        IDC_TIMEOUT,281,106,112,14,ES_AUTOHSCROLL
+    CONTROL         "&Use Proxy",IDC_USE_PROXY,"Button",BS_AUTOCHECKBOX | 
+                    WS_TABSTOP,27,142,65,14
+    EDITTEXT        IDC_PROXY,96,142,130,14,ES_AUTOHSCROLL | WS_DISABLED
+    LTEXT           "Proxy&port",IDC_STATIC,230,142,46,14,SS_CENTERIMAGE
+    EDITTEXT        IDC_PROXY_PORT,281,142,112,14,ES_AUTOHSCROLL | ES_NUMBER | 
+                    WS_DISABLED
+    LTEXT           "User&name",IDC_STATIC,27,174,65,14,SS_CENTERIMAGE
+    EDITTEXT        IDC_USERNAME,96,174,130,14,ES_AUTOHSCROLL | WS_DISABLED
+    LTEXT           "Pass&word",IDC_STATIC,230,174,46,14,SS_CENTERIMAGE
+    EDITTEXT        IDC_PASSWORD,281,174,112,14,ES_PASSWORD | ES_AUTOHSCROLL | 
+                    WS_DISABLED
+    GROUPBOX        "Server Setup",IDC_STATIC,20,20,378,106
+    EDITTEXT        IDC_LOCATION,96,52,225,14,ES_AUTOHSCROLL | ES_READONLY
+    LTEXT           "Location",IDC_STATIC,27,52,65,14,SS_CENTERIMAGE
+    LTEXT           "Address",IDC_STATIC,27,71,65,14,SS_CENTERIMAGE
+    EDITTEXT        IDC_ADDRESS,96,71,297,14,ES_AUTOHSCROLL | ES_READONLY
+    LTEXT           "Path",IDC_STATIC,27,89,65,12,SS_CENTERIMAGE
+    EDITTEXT        IDC_PATH,96,89,130,12,ES_AUTOHSCROLL | ES_READONLY
+    LTEXT           "Port",IDC_STATIC,230,89,46,12,SS_CENTERIMAGE
+    EDITTEXT        IDC_REMOTE_PORT,281,89,112,12,ES_AUTOHSCROLL | 
+                    ES_READONLY | ES_NUMBER
+    GROUPBOX        "Http Proxy Settings",IDC_STATIC,20,131,378,63
+    CONTROL         "Proxy requires &authentication",IDC_AUTHENTICATION,
+                    "Button",BS_AUTOCHECKBOX | WS_TABSTOP,27,160,199,10
+END
+#endif
+
+#if defined(APSTUDIO_INVOKED) || defined(_ENGLISH)
+#if defined(APSTUDIO_INVOKED)
+IDD_CDDB_QUERY$(_ENGLISH) DIALOG DISCARDABLE  0, 0, 260, 166
+#else
+IDD_CDDB_QUERY DIALOG DISCARDABLE  0, 0, 260, 166
+#endif
+STYLE DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "freeDB Query"
+FONT 8, "MS Sans Serif"
+BEGIN
+    LISTBOX         IDC_PROTOCOLL,7,28,246,102,LBS_NOINTEGRALHEIGHT | 
+                    WS_VSCROLL | WS_TABSTOP
+    PUSHBUTTON      "Contin&ue",IDC_START,74,134,50,14
+    PUSHBUTTON      "&Close",IDCANCEL,136,134,50,14,WS_DISABLED
+    CTEXT           "http://www.freedb.org",IDC_STATIC,7,151,246,8
+    LTEXT           "The freeDB Server returned following entries. (If multiple entries are listed select the correct entrie). Press ""Continue"".",
+                    IDC_STATIC,7,7,246,16
+END
+#endif
+
+#if defined(APSTUDIO_INVOKED) || defined(_ENGLISH)
+#if defined(APSTUDIO_INVOKED)
+IDD_ID3EDIT$(_ENGLISH) DIALOGEX 0, 0, 407, 222
+#else
+IDD_ID3EDIT DIALOGEX 0, 0, 407, 222
+#endif
+STYLE DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
+EXSTYLE WS_EX_TOOLWINDOW
+CAPTION "id3-tag-editor"
+FONT 8, "MS Sans Serif"
+BEGIN
+    LISTBOX         IDC_FILES,12,16,99,154,LBS_NOINTEGRALHEIGHT | WS_VSCROLL | 
+                    WS_HSCROLL | WS_TABSTOP
+    CONTROL         "&Song",IDC_SONG_A,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,
+                    124,43,62,14
+    EDITTEXT        IDC_SONG,191,43,119,14,ES_AUTOHSCROLL
+    CONTROL         "&Artist",IDC_ARTIST_A,"Button",BS_AUTOCHECKBOX | 
+                    WS_TABSTOP,124,61,62,14
+    EDITTEXT        IDC_ARTIST,191,61,119,14,ES_AUTOHSCROLL
+    CONTROL         "A&lbum",IDC_ALBUM_A,"Button",BS_AUTOCHECKBOX | 
+                    WS_TABSTOP,124,79,62,14
+    EDITTEXT        IDC_ALBUM,191,79,119,14,ES_AUTOHSCROLL
+    CONTROL         "&Genre",IDC_GENRE_A,"Button",BS_AUTOCHECKBOX | 
+                    WS_TABSTOP,124,97,62,14
+    COMBOBOX        IDC_GENRE,191,97,119,95,CBS_DROPDOWNLIST | CBS_SORT | 
+                    WS_VSCROLL | WS_TABSTOP
+    CONTROL         "&Year",IDC_YEAR_A,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,
+                    124,116,62,14
+    EDITTEXT        IDC_YEAR,191,116,119,14,ES_AUTOHSCROLL
+    CONTROL         "&Track",IDC_TRACK_A,"Button",BS_AUTOCHECKBOX | 
+                    WS_TABSTOP,124,134,62,14
+    EDITTEXT        IDC_TRACK,191,134,119,14,ES_AUTOHSCROLL
+    CONTROL         "&Comment",IDC_COMMENT_A,"Button",BS_AUTOCHECKBOX | 
+                    WS_TABSTOP,124,151,62,14
+    EDITTEXT        IDC_COMMENT,191,151,119,14,ES_AUTOHSCROLL
+    CONTROL         "Album &mode",IDC_ALBUM_MODE,"Button",BS_AUTO3STATE | 
+                    WS_TABSTOP,316,24,78,14
+    CONTROL         "all files",IDC_AM_ARTIST,"Button",BS_AUTOCHECKBOX | 
+                    WS_TABSTOP,316,61,78,14
+    CONTROL         "all files",IDC_AM_ALBUM,"Button",BS_AUTOCHECKBOX | 
+                    WS_TABSTOP,316,79,78,14
+    CONTROL         "all files",IDC_AM_GENRE,"Button",BS_AUTOCHECKBOX | 
+                    WS_TABSTOP,316,97,78,14
+    CONTROL         "all files",IDC_AM_YEAR,"Button",BS_AUTOCHECKBOX | 
+                    WS_TABSTOP,316,116,78,14
+    CONTROL         "&Use format string for this file",IDC_RENAME,"Button",
+                    BS_AUTOCHECKBOX | WS_TABSTOP,124,177,148,13
+    PUSHBUTTON      "Cancel",IDCANCEL,277,177,54,14
+    DEFPUSHBUTTON   "&Done",IDOK,339,177,55,14
+    GROUPBOX        "&Files / Tracks",IDC_STATIC,7,7,107,167
+    CONTROL         "all files",IDC_AM_COMMENT,"Button",BS_AUTOCHECKBOX | 
+                    WS_TABSTOP,316,151,78,14
+    CTEXT           "",IDC_STATUS,60,200,340,15
+    GROUPBOX        "ID3 Information",IDC_FILE_NAME,119,7,281,167
+    CTEXT           "Value",IDC_STATIC,191,24,119,14,SS_CENTERIMAGE
+    ICON            IDR_MAINFRAME,IDC_STATIC,12,195,20,20
+    CONTROL         "&id3 tag",IDC_ID3TAG,"Button",BS_AUTO3STATE | 
+                    WS_TABSTOP,124,24,62,14
+END
+#endif
+
+IDD_PLUGINPAGE DIALOG DISCARDABLE  0, 0, 421, 206
+STYLE WS_CHILD | WS_DISABLED | WS_CAPTION
+CAPTION "Plug-Ins"
+FONT 8, "MS Sans Serif"
+BEGIN
+    GROUPBOX        "Installed Plug-Ins",IDC_STATIC,20,20,380,87,WS_DISABLED
+    LISTBOX         IDC_INSTALLED_PLUGINS,26,32,369,72,LBS_SORT | 
+                    LBS_NOINTEGRALHEIGHT | WS_DISABLED | WS_VSCROLL | 
+                    WS_TABSTOP
+    PUSHBUTTON      "&Configure selected Plug-In",IDC_CONFIGURE,48,125,106,
+                    14,WS_DISABLED
+    PUSHBUTTON      "&Add Plug-In",IDC_INSTALL,167,125,92,14,WS_DISABLED
+    PUSHBUTTON      "&Uninstall Plug-In",IDC_UNINSTALL,277,125,92,14,
+                    WS_DISABLED
+    GROUPBOX        "Plug-In Details",IDC_STATIC,20,113,375,76,WS_DISABLED
+    LTEXT           "Here will the plug-in version and format details be displayed.",
+                    IDC_STATIC,26,151,369,33,WS_DISABLED
+END
+
+#if defined(APSTUDIO_INVOKED) || defined(_ENGLISH)
+#if defined(APSTUDIO_INVOKED)
+IDD_STATUS_DIALOG$(_ENGLISH) DIALOGEX 0, 0, 403, 201
+#else
+IDD_STATUS_DIALOG DIALOGEX 0, 0, 403, 201
+#endif
+STYLE DS_MODALFRAME | DS_3DLOOK | DS_CENTER | WS_MINIMIZEBOX | WS_POPUP | 
+    WS_VISIBLE | WS_CAPTION | WS_SYSMENU
+EXSTYLE WS_EX_CONTROLPARENT
+CAPTION "Copying and Encoding"
+FONT 8, "MS Sans Serif"
+BEGIN
+    DEFPUSHBUTTON   "&Cancel",IDCANCEL,175,180,50,14
+    GROUPBOX        "Status",IDC_STATIC,7,7,389,170
+    CONTROL         "Progress2",IDC_LIST_STATUS_BAR,"msctls_progress32",
+                    PBS_VERTICAL,333,87,18,76
+    LTEXT           "in.wav",IDC_IN,83,22,200,8
+    LTEXT           "out.mp3",IDC_OUT,83,35,200,8
+    LTEXT           "0",IDC_IN_SIZE,333,22,55,8
+    LTEXT           "0",IDC_EST_SIZE,333,35,54,8
+    LTEXT           "0%",IDC_STATIC,14,63,10,14,SS_CENTERIMAGE
+    LTEXT           "100%",IDC_STATIC,290,63,18,14,SS_CENTERIMAGE
+    CONTROL         "Progress3",IDC_FILE_STATUS_BAR,"msctls_progress32",0x0,
+                    33,63,250,14
+    LTEXT           "",IDC_FILE_MSG,83,49,200,8
+    LTEXT           "Datei",IDC_FILE_X_OF_Y,83,132,167,8
+    LTEXT           "No error(s) occured.",IDC_ERRORS,83,155,167,8
+    LTEXT           "Main status:",IDC_STATIC,14,131,63,8
+    LTEXT           "",IDC_LIST_MSG,83,142,167,8
+    LTEXT           "0:00:00",IDC_EST_TIME,83,92,30,8
+    LTEXT           "0:00:00",IDC_ELA_TIME,83,105,28,8
+    LTEXT           "0:00:00",IDC_REM_TIME,83,118,42,8
+    LTEXT           "Original File:",IDC_STATIC,14,22,69,8
+    LTEXT           "Output File:",IDC_STATIC,14,35,63,8
+    LTEXT           "Size (KB)",IDC_STATIC,290,22,38,8
+    LTEXT           "Size (KB)",IDC_STATIC,290,35,38,8
+    LTEXT           "Status:",IDC_STATIC,14,49,23,8
+    LTEXT           "Estimated time:",IDC_STATIC,14,92,63,8
+    LTEXT           "Elapsed time:",IDC_STATIC,14,105,63,8
+    LTEXT           "Remaining time:",IDC_STATIC,14,118,63,8
+    LTEXT           "Last error:",IDC_STATIC,14,155,63,8
+    LTEXT           "Full",IDC_STATIC,356,87,32,8
+    LTEXT           "Empty",IDC_STATIC,356,155,32,8
+    LTEXT           "Read Buffer",IDC_STATIC,328,166,38,8
+    CONTROL         "Progress2",IDC_LIST_STATUS_BAR2,"msctls_progress32",
+                    PBS_VERTICAL,333,87,18,76
+    CONTROL         "Progress1",IDC_JITTERSTATUS,"msctls_progress32",
+                    PBS_VERTICAL,290,87,18,76
+    LTEXT           "Jitter Status",IDC_STATIC,283,166,38,8
+    LTEXT           "Min",IDC_STATIC,271,155,12,8
+    LTEXT           "Nominal",IDC_STATIC,257,122,26,8
+    LTEXT           "Max",IDC_STATIC,269,87,14,8
+END
+#endif
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// DESIGNINFO
+//
+
+#ifdef APSTUDIO_INVOKED
+GUIDELINES DESIGNINFO DISCARDABLE 
+BEGIN
+    "IDD_ENCODER_PAGE$(_ENGLISH)", DIALOG
+    BEGIN
+        VERTGUIDE, 20
+        VERTGUIDE, 24
+        VERTGUIDE, 92
+        VERTGUIDE, 97
+        VERTGUIDE, 160
+        VERTGUIDE, 165
+        VERTGUIDE, 168
+        VERTGUIDE, 173
+        VERTGUIDE, 217
+        VERTGUIDE, 221
+        VERTGUIDE, 285
+        VERTGUIDE, 290
+        VERTGUIDE, 373
+        VERTGUIDE, 380
+        VERTGUIDE, 385
+        HORZGUIDE, 20
+        HORZGUIDE, 32
+        HORZGUIDE, 46
+        HORZGUIDE, 50
+        HORZGUIDE, 63
+        HORZGUIDE, 67
+        HORZGUIDE, 80
+        HORZGUIDE, 84
+        HORZGUIDE, 88
+        HORZGUIDE, 100
+        HORZGUIDE, 129
+        HORZGUIDE, 132
+        HORZGUIDE, 137
+        HORZGUIDE, 148
+        HORZGUIDE, 164
+        HORZGUIDE, 182
+        HORZGUIDE, 190
+        HORZGUIDE, 194
+    END
+
+    "IDD_LAMEFE_PAGE$(_ENGLISH)", DIALOG
+    BEGIN
+        VERTGUIDE, 30
+        VERTGUIDE, 86
+        VERTGUIDE, 94
+        VERTGUIDE, 394
+        HORZGUIDE, 53
+        HORZGUIDE, 67
+    END
+
+    "IDD_CDDB_SETUP$(_ENGLISH)", DIALOG
+    BEGIN
+        LEFTMARGIN, 20
+        RIGHTMARGIN, 398
+        VERTGUIDE, 27
+        VERTGUIDE, 92
+        VERTGUIDE, 96
+        VERTGUIDE, 226
+        VERTGUIDE, 230
+        VERTGUIDE, 276
+        VERTGUIDE, 281
+        VERTGUIDE, 393
+        TOPMARGIN, 20
+        BOTTOMMARGIN, 194
+        HORZGUIDE, 25
+        HORZGUIDE, 35
+        HORZGUIDE, 47
+        HORZGUIDE, 52
+        HORZGUIDE, 66
+        HORZGUIDE, 71
+        HORZGUIDE, 85
+        HORZGUIDE, 89
+        HORZGUIDE, 101
+        HORZGUIDE, 106
+        HORZGUIDE, 120
+        HORZGUIDE, 126
+        HORZGUIDE, 131
+        HORZGUIDE, 142
+        HORZGUIDE, 156
+        HORZGUIDE, 160
+        HORZGUIDE, 174
+    END
+
+    "IDD_CDDB_QUERY$(_ENGLISH)", DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 253
+        VERTGUIDE, 124
+        VERTGUIDE, 130
+        VERTGUIDE, 136
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 159
+        HORZGUIDE, 23
+        HORZGUIDE, 130
+        HORZGUIDE, 148
+    END
+
+    IDD_PLUGINPAGE, DIALOG
+    BEGIN
+        VERTGUIDE, 20
+        VERTGUIDE, 26
+        VERTGUIDE, 48
+        VERTGUIDE, 154
+        VERTGUIDE, 167
+        VERTGUIDE, 259
+        VERTGUIDE, 277
+        VERTGUIDE, 369
+        VERTGUIDE, 395
+        VERTGUIDE, 400
+        HORZGUIDE, 20
+        HORZGUIDE, 32
+        HORZGUIDE, 104
+        HORZGUIDE, 113
+        HORZGUIDE, 125
+        HORZGUIDE, 139
+        HORZGUIDE, 151
+        HORZGUIDE, 184
+        HORZGUIDE, 189
+    END
+
+    "IDD_STATUS_DIALOG$(_ENGLISH)", DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 396
+        VERTGUIDE, 14
+        VERTGUIDE, 77
+        VERTGUIDE, 83
+        VERTGUIDE, 250
+        VERTGUIDE, 257
+        VERTGUIDE, 283
+        VERTGUIDE, 290
+        VERTGUIDE, 328
+        VERTGUIDE, 333
+        VERTGUIDE, 351
+        VERTGUIDE, 356
+        VERTGUIDE, 388
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 194
+        HORZGUIDE, 22
+        HORZGUIDE, 30
+        HORZGUIDE, 43
+        HORZGUIDE, 57
+        HORZGUIDE, 63
+        HORZGUIDE, 77
+        HORZGUIDE, 87
+        HORZGUIDE, 100
+        HORZGUIDE, 113
+        HORZGUIDE, 126
+        HORZGUIDE, 132
+        HORZGUIDE, 139
+        HORZGUIDE, 150
+        HORZGUIDE, 163
+    END
+END
+#endif    // APSTUDIO_INVOKED
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Accelerator
+//
+
+#if defined(APSTUDIO_INVOKED) || defined(_ENGLISH)
+#if defined(APSTUDIO_INVOKED)
+IDR_ACCELERATOR$(_ENGLISH) ACCELERATORS DISCARDABLE 
+#else
+IDR_ACCELERATOR ACCELERATORS DISCARDABLE 
+#endif
+BEGIN
+    "O",            ID_ADD,                 VIRTKEY, CONTROL, NOINVERT
+    "R",            ID_REMOVE,              VIRTKEY, CONTROL, NOINVERT
+    VK_F1,          ID_HELP,                VIRTKEY, NOINVERT
+    VK_F3,          ID_EDIT_ID3,            VIRTKEY, NOINVERT
+    VK_F5,          ID_SETTINGS,            VIRTKEY, NOINVERT
+END
+#endif
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Menu
+//
+
+#if defined(APSTUDIO_INVOKED) || defined(_ENGLISH)
+#if defined(APSTUDIO_INVOKED)
+IDR_SYSTRAY_MENU$(_ENGLISH) MENU DISCARDABLE 
+#else
+IDR_SYSTRAY_MENU MENU DISCARDABLE 
+#endif
+BEGIN
+    POPUP "POPUP"
+    BEGIN
+        MENUITEM "&Restore Window",             IDC_ST_RESTORE
+        MENUITEM "&Abort Encoding",             IDC_ST_EXIT
+    END
+END
+#endif
+
+#if defined(APSTUDIO_INVOKED) || defined(_ENGLISH)
+#if defined(APSTUDIO_INVOKED)
+IDR_MAIN_MENU$(_ENGLISH) MENU DISCARDABLE 
+#else
+IDR_MAIN_MENU MENU DISCARDABLE 
+#endif
+BEGIN
+    POPUP "&File"
+    BEGIN
+        MENUITEM "&Add File(s) \tCtrl+O",       ID_ADD_FILE
+        MENUITEM "&Remove File(s) \tCtrl+R",    ID_REMOVE_FILE
+        MENUITEM SEPARATOR
+        MENUITEM "&Exit",                       ID_EXIT
+    END
+    POPUP "&CDDB && id3Tags"
+    BEGIN
+        MENUITEM "Read &Remote CDDB",           ID_CDDB_READFROMREMOTECDDBSERVER
+
+        MENUITEM SEPARATOR
+        MENUITEM "Edit Id&3-Tag\tF3",           ID_TOOLS_EDITID3TAG
+    END
+    POPUP "&Preferences"
+    BEGIN
+        MENUITEM "CD-&Reader Settings",         ID_PREFERENCES_CDREADERSETTINGS
+
+        MENUITEM SEPARATOR
+        MENUITEM "&Plug-Ins",                   ID_PREFERENCES_PLUGINS
+        MENUITEM "&Encoder Settings",           ID_PRESET
+        MENUITEM "&CDDB Settings",              ICD_CDDB_SETTINGS
+        MENUITEM "&tagWriter Settings",         ID_PREFERENCES_TAGWRITERSETTINGS
+
+        MENUITEM SEPARATOR
+        MENUITEM "&lameFE settings\tF5",        ID_SETTINGS
+    END
+    POPUP "&Help"
+    BEGIN
+        MENUITEM "Help &Contents... \tF1",      ID_HELP
+        MENUITEM "Help &Index ",                ID_HELP_HELPINDEX
+        MENUITEM SEPARATOR
+        MENUITEM "&License",                    ID_HELP_LICENSE
+        MENUITEM "&About",                      ID_ABOUT
+    END
+END
+#endif
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Dialog Info
+//
+
+#if defined(APSTUDIO_INVOKED) || defined(_ENGLISH)
+#if defined(APSTUDIO_INVOKED)
+IDD_ENCODER_PAGE$(_ENGLISH) DLGINIT
+#else
+IDD_ENCODER_PAGE DLGINIT
+#endif
+BEGIN
+    IDC_BITSPERSAMPLE, 0x403, 9, 0
+0x2020, 0x2038, 0x7062, 0x2073, "\000" 
+    IDC_BITSPERSAMPLE, 0x403, 7, 0
+0x3631, 0x6220, 0x7370, "\000" 
+    IDC_BITSPERSAMPLE, 0x403, 7, 0
+0x3432, 0x6220, 0x7370, "\000" 
+    IDC_BITSPERSAMPLE, 0x403, 7, 0
+0x3233, 0x6220, 0x7370, "\000" 
+    IDC_BITSPERSAMPLE, 0x403, 7, 0
+0x3034, 0x6220, 0x7370, "\000" 
+    IDC_BITSPERSAMPLE, 0x403, 7, 0
+0x3834, 0x6220, 0x7370, "\000" 
+    IDC_BITSPERSAMPLE, 0x403, 7, 0
+0x3635, 0x6220, 0x7370, "\000" 
+    IDC_BITSPERSAMPLE, 0x403, 7, 0
+0x3436, 0x6220, 0x7370, "\000" 
+    IDC_BITSPERSAMPLE, 0x403, 7, 0
+0x3038, 0x6220, 0x7370, "\000" 
+    IDC_BITSPERSAMPLE, 0x403, 8, 0
+0x3639, 0x2020, 0x7062, 0x0073, 
+    IDC_BITSPERSAMPLE, 0x403, 8, 0
+0x3131, 0x2032, 0x7062, 0x0073, 
+    IDC_BITSPERSAMPLE, 0x403, 8, 0
+0x3231, 0x2038, 0x7062, 0x0073, 
+    IDC_BITSPERSAMPLE, 0x403, 8, 0
+0x3431, 0x2034, 0x7062, 0x0073, 
+    IDC_BITSPERSAMPLE, 0x403, 8, 0
+0x3631, 0x2030, 0x7062, 0x0073, 
+    IDC_BITSPERSAMPLE, 0x403, 19, 0
+0x3931, 0x2032, 0x7062, 0x2073, 0x6428, 0x6665, 0x7561, 0x746c, 0x2029, 
+"\000" 
+    IDC_BITSPERSAMPLE, 0x403, 8, 0
+0x3232, 0x2034, 0x7062, 0x0073, 
+    IDC_BITSPERSAMPLE, 0x403, 8, 0
+0x3532, 0x2036, 0x7062, 0x0073, 
+    IDC_BITSPERSAMPLE, 0x403, 8, 0
+0x3233, 0x2030, 0x7062, 0x0073, 
+    IDC_CHANNELS, 0x403, 17, 0
+0x7453, 0x7265, 0x6f65, 0x2820, 0x6564, 0x6166, 0x6c75, 0x2974, "\000" 
+    IDC_CHANNELS, 0x403, 13, 0
+0x7544, 0x6c61, 0x4320, 0x6168, 0x6e6e, 0x6c65, "\000" 
+    IDC_CHANNELS, 0x403, 13, 0
+0x6f4a, 0x6e69, 0x2074, 0x7453, 0x7265, 0x6f65, "\000" 
+    IDC_CHANNELS, 0x403, 5, 0
+0x6f4d, 0x6f6e, "\000" 
+    IDC_MPEG, 0x403, 18, 0
+0x504d, 0x4745, 0x4920, 0x2820, 0x7453, 0x6e61, 0x6164, 0x6472, 0x0029, 
+
+    IDC_MPEG, 0x403, 8, 0
+0x504d, 0x4745, 0x4920, 0x0049, 
+    0
+END
+#endif
+
+#if defined(APSTUDIO_INVOKED) || defined(_ENGLISH)
+#if defined(APSTUDIO_INVOKED)
+IDD_CDRIP_PAGE$(_ENGLISH) DLGINIT
+#else
+IDD_CDRIP_PAGE DLGINIT
+#endif
+BEGIN
+    IDC_CDROM_TYPE, 0x403, 8, 0
+0x6547, 0x656e, 0x6972, 0x0063, 
+    IDC_CDROM_TYPE, 0x403, 8, 0
+0x6f54, 0x6873, 0x6269, 0x0061, 
+    IDC_CDROM_TYPE, 0x403, 14, 0
+0x6f54, 0x6873, 0x6269, 0x2061, 0x6e28, 0x7765, 0x0029, 
+    IDC_CDROM_TYPE, 0x403, 4, 0
+0x4249, 0x004d, 
+    IDC_CDROM_TYPE, 0x403, 4, 0
+0x454e, 0x0043, 
+    IDC_CDROM_TYPE, 0x403, 4, 0
+0x4544, 0x0043, 
+    IDC_CDROM_TYPE, 0x403, 4, 0
+0x4d49, 0x0053, 
+    IDC_CDROM_TYPE, 0x403, 6, 0
+0x6f4b, 0x6164, 0x006b, 
+    IDC_CDROM_TYPE, 0x403, 6, 0
+0x6952, 0x6f63, 0x0068, 
+    IDC_CDROM_TYPE, 0x403, 3, 0
+0x5048, "\000" 
+    IDC_CDROM_TYPE, 0x403, 8, 0
+0x6850, 0x6c69, 0x7069, 0x0073, 
+    IDC_CDROM_TYPE, 0x403, 8, 0
+0x6c50, 0x7361, 0x6f6d, 0x006e, 
+    IDC_CDROM_TYPE, 0x403, 12, 0
+0x7247, 0x6e75, 0x6964, 0x2067, 0x4443, 0x0052, 
+    IDC_CDROM_TYPE, 0x403, 12, 0
+0x694d, 0x7374, 0x6d75, 0x2069, 0x4443, 0x0052, 
+    IDC_CDROM_TYPE, 0x403, 8, 0
+0x6c50, 0x7865, 0x6f74, 0x0072, 
+    IDC_CDROM_TYPE, 0x403, 5, 0
+0x6f53, 0x796e, "\000" 
+    IDC_CDROM_TYPE, 0x403, 7, 0
+0x6159, 0x616d, 0x6168, "\000" 
+    IDC_CDROM_TYPE, 0x403, 4, 0
+0x524e, 0x0043, 
+    IDC_CDROM_TYPE, 0x403, 10, 0
+0x4d49, 0x2053, 0x4443, 0x2d44, 0x0035, 
+    IDC_CDROM_TYPE, 0x403, 25, 0
+0x7543, 0x7473, 0x6d6f, 0x2820, 0x6e75, 0x7573, 0x7070, 0x726f, 0x6574, 
+0x2064, 0x6579, 0x2974, "\000" 
+    IDC_RIPPING_METHOD, 0x403, 9, 0
+0x7453, 0x6e61, 0x6164, 0x6472, "\000" 
+    IDC_RIPPING_METHOD, 0x403, 24, 0
+0x6150, 0x6172, 0x6f6e, 0x6169, 0x202c, 0x4f20, 0x6576, 0x6c72, 0x7061, 
+0x6f20, 0x6c6e, 0x0079, 
+    IDC_RIPPING_METHOD, 0x403, 20, 0
+0x6150, 0x6172, 0x6f6e, 0x6169, 0x202c, 0x6f4e, 0x5620, 0x7265, 0x6669, 
+0x0079, 
+    IDC_RIPPING_METHOD, 0x403, 28, 0
+0x6150, 0x6172, 0x6f6e, 0x6169, 0x202c, 0x6f4e, 0x5320, 0x7263, 0x7461, 
+0x6863, 0x5220, 0x7065, 0x6961, 0x0072, 
+    IDC_RIPPING_METHOD, 0x403, 15, 0
+0x6150, 0x6172, 0x6f6e, 0x6169, 0x202c, 0x7546, 0x6c6c, "\000" 
+    0
+END
+#endif
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Bitmap
+//
+
+SPLASH                  BITMAP  DISCARDABLE     "res\\bitmap1.bmp"
+#endif    // Englisch (USA) resources
+/////////////////////////////////////////////////////////////////////////////
+
+
+
+#ifndef APSTUDIO_INVOKED
+/////////////////////////////////////////////////////////////////////////////
+//
+// Generated from the TEXTINCLUDE 3 resource.
+//
+#define _AFX_NO_SPLITTER_RESOURCES
+#define _AFX_NO_OLE_RESOURCES
+#define _AFX_NO_TRACKER_RESOURCES
+#define _AFX_NO_PROPERTY_RESOURCES
+
+#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_ENU)
+#ifdef _WIN32
+LANGUAGE 9, 1
+#pragma code_page(1252)
+#endif //_WIN32
+#include "res\lameFE.rc2"  // Nicht mit Microsoft Visual C++ bearbeitete Ressourcen
+#include "afxres.rc"         // Standardkomponenten
+#endif
+
+/////////////////////////////////////////////////////////////////////////////
+#endif    // not APSTUDIO_INVOKED
+
