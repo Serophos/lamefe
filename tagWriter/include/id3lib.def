@@ -1,0 +1,64 @@
+LIBRARY id3lib
+
+
+EXPORTS 
+
+  ID3Tag_New                  @1
+  ID3Tag_Delete               @2
+  ID3Tag_Clear                @3
+  ID3Tag_HasChanged           @4
+  ID3Tag_SetUnsync            @5
+  ID3Tag_SetExtendedHeader    @6
+  ID3Tag_SetPadding           @7
+  ID3Tag_AddFrame             @8
+  ID3Tag_AttachFrame          @9
+  ID3Tag_AddFrames            @10
+  ID3Tag_RemoveFrame          @11
+  ID3Tag_Parse                @12
+  ID3Tag_Link                 @13
+  ID3Tag_Update               @14
+  ID3Tag_UpdateByTagType      @15
+  ID3Tag_Strip                @16
+  ID3Tag_FindFrameWithID      @17
+  ID3Tag_FindFrameWithINT     @18
+  ID3Tag_FindFrameWithASCII   @19
+  ID3Tag_FindFrameWithUNICODE @20
+  ID3Tag_NumFrames            @21
+  ID3Tag_HasTagType           @22
+  ID3Tag_CreateIterator       @23
+  ID3Tag_CreateConstIterator  @24
+  ID3TagIterator_Delete       @25
+  ID3TagIterator_GetNext      @26
+  ID3TagConstIterator_Delete  @27
+  ID3TagConstIterator_GetNext @28
+
+
+  ID3Frame_New                @29
+  ID3Frame_NewID              @30
+  ID3Frame_Delete             @31
+  ID3Frame_Clear              @32
+  ID3Frame_SetID              @33
+  ID3Frame_GetID              @34
+  ID3Frame_GetField           @35
+  ID3Frame_SetCompression     @36
+  ID3Frame_GetCompression     @37
+
+
+  ID3Field_Clear              @38
+  ID3Field_Size               @39
+  ID3Field_GetNumTextItems    @40
+  ID3Field_SetINT             @41
+  ID3Field_GetINT             @42
+  ID3Field_SetUNICODE         @43
+  ID3Field_GetUNICODE         @44
+  ID3Field_GetUNICODEItem     @45
+  ID3Field_AddUNICODE         @46
+  ID3Field_SetASCII           @47
+  ID3Field_GetASCII           @48
+  ID3Field_GetASCIIItem       @49
+  ID3Field_AddASCII           @50
+  ID3Field_SetBINARY          @51
+  ID3Field_GetBINARY          @52
+  ID3Field_FromFile           @53
+  ID3Field_ToFile             @54
+

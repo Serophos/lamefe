@@ -1,0 +1,6 @@
+LIBRARY  TAGWRITER.DLL
+
+EXPORTS
+	TW_GetVersion				@	1
+	TW_InitTagRenderer			@	2
+	TW_RenderTags				@	3
