@@ -43,7 +43,7 @@ RSC=rc.exe
 # PROP Ignore_Export_Lib 0
 # PROP Target_Dir ""
 # ADD BASE CPP /nologo /MD /W3 /GX /O2 /D "WIN32" /D "NDEBUG" /D "_WINDOWS" /D "_WINDLL" /D "_AFXDLL" /Yu"stdafx.h" /FD /c
-# ADD CPP /nologo /MD /W3 /GX /O2 /I "../vorbis/include" /I "./libutf8" /D "WIN32" /D "NDEBUG" /D "_WINDOWS" /D "_WINDLL" /D "_AFXDLL" /D "_MBCS" /D "_AFXEXT" /Yu"stdafx.h" /FD /c
+# ADD CPP /nologo /MD /W3 /GX /O2 /I "include" /D "WIN32" /D "NDEBUG" /D "_WINDOWS" /D "_WINDLL" /D "_AFXDLL" /D "_MBCS" /D "_AFXEXT" /FR /Yu"stdafx.h" /FD /c
 # ADD BASE MTL /nologo /D "NDEBUG" /mktyplib203 /win32
 # ADD MTL /nologo /D "NDEBUG" /mktyplib203 /win32
 # ADD BASE RSC /l 0x407 /d "NDEBUG" /d "_AFXDLL"
@@ -53,7 +53,7 @@ BSC32=bscmake.exe
 # ADD BSC32 /nologo
 LINK32=link.exe
 # ADD BASE LINK32 /nologo /subsystem:windows /dll /machine:I386
-# ADD LINK32 ./libutf8/Release/libutf8.lib /nologo /subsystem:windows /dll /machine:I386 /out:"../Release/Plugins/OGG_out.dll"
+# ADD LINK32 vorbis_static.lib vorbisenc_static.lib vorbisfile_static.lib ogg_static.lib /nologo /subsystem:windows /dll /machine:I386 /nodefaultlib:"libcmt.lib" /out:"../Release/OGG_out.dll" /libpath:"lib"
 
 !ELSEIF  "$(CFG)" == "OGG_out - Win32 Debug"
 
@@ -69,7 +69,7 @@ LINK32=link.exe
 # PROP Ignore_Export_Lib 0
 # PROP Target_Dir ""
 # ADD BASE CPP /nologo /MDd /W3 /Gm /GX /ZI /Od /D "WIN32" /D "_DEBUG" /D "_WINDOWS" /D "_WINDLL" /D "_AFXDLL" /Yu"stdafx.h" /FD /GZ /c
-# ADD CPP /nologo /MDd /W3 /Gm /GX /ZI /Od /I "../vorbis/include" /I "./libutf8" /D "WIN32" /D "_DEBUG" /D "_WINDOWS" /D "_WINDLL" /D "_AFXDLL" /D "_MBCS" /D "_AFXEXT" /FR /Yu"stdafx.h" /FD /GZ /c
+# ADD CPP /nologo /MDd /W3 /Gm /GX /ZI /Od /I "include" /D "WIN32" /D "_DEBUG" /D "_WINDOWS" /D "_WINDLL" /D "_AFXDLL" /D "_MBCS" /D "_AFXEXT" /FAcs /FR /Yu"stdafx.h" /FD /GZ /c
 # ADD BASE MTL /nologo /D "_DEBUG" /mktyplib203 /win32
 # ADD MTL /nologo /D "_DEBUG" /mktyplib203 /win32
 # ADD BASE RSC /l 0x407 /d "_DEBUG" /d "_AFXDLL"
@@ -79,7 +79,7 @@ BSC32=bscmake.exe
 # ADD BSC32 /nologo
 LINK32=link.exe
 # ADD BASE LINK32 /nologo /subsystem:windows /dll /debug /machine:I386 /pdbtype:sept
-# ADD LINK32 ./libutf8/Debug/libutf8.lib /nologo /subsystem:windows /dll /map /debug /machine:I386 /out:"../Debug/Plugins/OGG_out.dll" /pdbtype:sept
+# ADD LINK32 vorbis_static.lib vorbisenc_static.lib vorbisfile_static.lib ogg_static.lib /nologo /subsystem:windows /dll /map /debug /machine:I386 /nodefaultlib:"libcmt.lib" /out:"../Debug/Plugins/OGG_out.dll" /pdbtype:sept /libpath:"lib"
 
 !ENDIF 
 
@@ -90,6 +90,10 @@ LINK32=link.exe
 # Begin Group "Quellcodedateien"
 
 # PROP Default_Filter "cpp;c;cxx;rc;def;r;odl;idl;hpj;bat"
+# Begin Source File
+
+SOURCE=.\AboutDlg.cpp
+# End Source File
 # Begin Source File
 
 SOURCE=.\ConfigDlg.cpp
@@ -117,11 +121,19 @@ SOURCE=.\StdAfx.cpp
 # PROP Default_Filter "h;hpp;hxx;hm;inl"
 # Begin Source File
 
+SOURCE=.\AboutDlg.h
+# End Source File
+# Begin Source File
+
 SOURCE=.\ConfigDlg.h
 # End Source File
 # Begin Source File
 
-SOURCE=.\outPlugin.h
+SOURCE=.\mmfile.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\out_plugin.h
 # End Source File
 # Begin Source File
 
@@ -138,6 +150,10 @@ SOURCE=.\StdAfx.h
 # Begin Source File
 
 SOURCE=.\res\OGG_out.rc2
+# End Source File
+# Begin Source File
+
+SOURCE=.\res\oggvorbis_logo_small.BMP
 # End Source File
 # End Group
 # Begin Source File

@@ -1,13 +1,28 @@
-// OGG_out.cpp : Legt die Initialisierungsroutinen für die DLL fest.
-//
+/*
+** Copyright (C) 2002 - 2003 Thees Winkler
+**  
+** This program is free software; you can redistribute it and/or modify
+** it under the terms of the GNU General Public License as published by
+** the Free Software Foundation; either version 2 of the License, or
+** (at your option) any later version.
+** 
+** This program is distributed in the hope that it will be useful,
+** but WITHOUT ANY WARRANTY; without even the implied warranty of
+** MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+** GNU General Public License for more details.
+** 
+** You should have received a copy of the GNU General Public License
+** along with this program; if not, write to the Free Software 
+** Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+*/
+
 
 #include "stdafx.h"
 #include <afxdllx.h>
-#include "../BladeMP3EncDLL.h"
-#include "vorbis/vorbisenc.h"
-#include "../out_plugin.h"
-#include "utf8.h"
 #include "ConfigDlg.h"
+#include "AboutDlg.h"
+#include "../out_plugin.h"
+#include <vorbis/vorbisenc.h>
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -15,12 +30,7 @@
 static char THIS_FILE[] = __FILE__;
 #endif
 
-#ifndef _UNICODE
-#undef W2A
-#define W2A(a) (LPSTR)(LPCSTR)(a)
-#undef A2W
-#define A2W(a) a
-#endif
+
 
 static AFX_EXTENSION_MODULE OGG_outDLL = { NULL, NULL };
 
@@ -61,83 +71,14 @@ DllMain(HINSTANCE hInstance, DWORD dwReason, LPVOID lpReserved)
 	return 1;   // OK
 }
 
-void  init();
-void  quit(void);
-int   open(const char* path, MMFILE_FORMAT *pInputFormat, MMFILE_ALBUMINFO *pAlbumInfo);
-unsigned int  write(short *ptr, size_t items);
-void  close(void);
-void  configure();
-void  about();
-
-HINSTANCE		m_hLibVorbisDLL;
-HINSTANCE		m_hOggDLL;
-HINSTANCE		m_hVorbisEncDLL;
-
-CString			m_strStreamFileName;
-const char*		m_lasterror;
-int				m_brmode;
-float			m_base_quality;
-bool			m_eos;
-ogg_stream_state m_os;
-ogg_page         m_og;
-ogg_packet       m_op;
-vorbis_info      m_vi;
-vorbis_comment   m_vc;
-vorbis_dsp_state m_vd;
-vorbis_block     m_vb;
-INT				m_nBitrate;
-INT				m_nMaxBitrate;
-INT				m_nMinBitrate;
-INT				m_nSampleRate;
-INT				m_nOutSampleRate;
-INT				m_nInputChannels;
-INT				m_nMode;
-DOUBLE			m_dResampleRatio;
-BOOL			m_bDownMixToMono;
-BOOL			m_bUpMixToStereo;
-BYTE*			m_pbOutputStream;				// OUTPUT BYTE BUFFER
-FILE*			m_fpOut;
-DWORD			m_dwOutBufferSize;				// IN BYTES !
-SHORT*			m_psInputStream;
-DWORD			m_dwInBufferSize;				// IN SHORTS !
-
-
-	// vorbisenc.dll function pointer
-int (*vorbis_encode_init_func)(vorbis_info *vi,long channels,long rate,
-	long max_bitrate,long nominal_bitrate,long min_bitrate);
-int (*vorbis_encode_init_vbr_func)(vorbis_info *vi,long channels,
-	long rate,float base_quality);
-
-// vorbis.dll function pointer
-void (*vorbis_info_init_func)(vorbis_info *vi);
-void (*vorbis_info_clear_func)(vorbis_info *vi);
-void (*vorbis_dsp_clear_func)(vorbis_dsp_state *v);
-int  (*vorbis_block_init_func)(vorbis_dsp_state *v, vorbis_block *vb);
-int  (*vorbis_block_clear_func)(vorbis_block *vb);
-
-void (*vorbis_comment_init_func)(vorbis_comment *vc);
-void (*vorbis_comment_add_func)(vorbis_comment *vc, char *comment);
-void (*vorbis_comment_add_tag_func)(vorbis_comment *vc, char *tag, char *contents);
-void (*vorbis_comment_clear_func)(vorbis_comment *vc);
-
-int (*vorbis_analysis_init_func)(vorbis_dsp_state *v,vorbis_info *vi);
-int (*vorbis_analysis_func)(vorbis_block *vb,ogg_packet *op);
-int (*vorbis_analysis_headerout_func)(vorbis_dsp_state *v,vorbis_comment *vc,
-	ogg_packet *op,ogg_packet *op_comm,ogg_packet *op_code);
-float **(*vorbis_analysis_buffer_func)(vorbis_dsp_state *v,int vals);
-int (*vorbis_analysis_wrote_func)(vorbis_dsp_state *v,int vals);
-int (*vorbis_analysis_blockout_func)(vorbis_dsp_state *v,vorbis_block *vb);
-int (*vorbis_synthesis_headerin_func)(vorbis_info *vi,vorbis_comment *vc,ogg_packet *op);
-int (*vorbis_bitrate_addblock_func)(vorbis_block *vb);
-int (*vorbis_bitrate_flushpacket_func)(vorbis_dsp_state *vd,ogg_packet *op);
-
-// ogg.dll function pointer
-int (*ogg_stream_init_func)(ogg_stream_state *os,int serialno);
-int (*ogg_stream_packetin_func)(ogg_stream_state *os, ogg_packet *op);
-int (*ogg_stream_flush_func)(ogg_stream_state *os, ogg_page *og);
-int (*ogg_stream_pageout_func)(ogg_stream_state *os, ogg_page *og);
-int (*ogg_page_eos_func)(ogg_page *og);
-int (*ogg_stream_clear_func)(ogg_stream_state *os);
+void   init();
+int    quit(void);
+int    open(const char* path, MMFILE_FORMAT *pInputFormat, MMFILE_ALBUMINFO *pAlbumInfo);
+DWORD  write(short *ptr, DWORD items);
+__int64 get_est_size(__int64 nSizeInBytes, DWORD dwNumChannels, DWORD dwSamplerate, DWORD dwBitrate);
+int    close(void);
+void   configure();
+void   about();
 
 
 
@@ -145,6 +86,7 @@ int (*ogg_stream_clear_func)(ogg_stream_state *os);
 LF_OUT lameFEOutModule = {
 
 	VERSION,
+	45678,
 	"Ogg/Vorbis Encoder",
 	NULL,	 // MainWindow Filled in by lameFE
 	NULL, 	 //  HINSTANCE  Filled in by lameFE
@@ -152,6 +94,7 @@ LF_OUT lameFEOutModule = {
 	init,		
 	quit,		
 	open,	
+	get_est_size,
 	write,   
 	close,
 	configure,
@@ -160,116 +103,37 @@ LF_OUT lameFEOutModule = {
 	NULL
 };
 
-BOOL AddUtfTag( vorbis_comment *vc, const CString& strField, const CString& strFieldValue )
-{
-	CHAR*			lpszValue = NULL;
-	wchar_t*		lpwszValue = NULL;
-	unsigned int	nLen = 0;
-	unsigned int	i =0;
-	
-	UINT uiActiveCodePage = GetACP();
+// File information
+DWORD g_dwSamplerate	= -1;
+int   g_nBitrate		= -1;
+int   g_nNumChannels	= -1;
 
-	// first convert to wide character 
-	lpwszValue = new wchar_t[ strFieldValue.GetLength() + 1 ];
+// Encoder settings
+int g_nMode			= -1;
+int g_nMinBitrate	= -1;
+float g_nNomBitrate	= -1;
+int g_nMaxBitrate	= -1;
+int g_nQuality		= -1;
 
-#ifndef _UNICODE
-	// convert ASCII string to WideCharacter string based on active code page
-	MultiByteToWideChar( uiActiveCodePage , 0, strFieldValue, -1 ,lpwszValue, strFieldValue.GetLength() + 1  );
+#define READ_SIZE	1024
 
-	// get the length
-	nLen = WideCharToUTF8( NULL, lpwszValue );
+ogg_stream_state os; /* take physical pages, weld into a logical
+			  stream of packets */
+ogg_page         og; /* one Ogg bitstream page.  Vorbis packets are inside */
+ogg_packet       op; /* one raw packet of data for decode */
+ 
+vorbis_info      vi; /* struct that stores all the static vorbis bitstream
+			  settings */
+vorbis_comment   vc; /* struct that stores all the user comments */
 
-	// allocate string
-	lpszValue = new CHAR[ nLen ];
+vorbis_dsp_state vd; /* central working state for the packet->PCM decoder */
+vorbis_block     vb; /* local working space for packet->PCM decode */
 
-	// do conversion to UTF string
-	WideCharToUTF8( lpszValue, lpwszValue );
+int eos	= 0;
 
-#else
-	// string is already in UNICODE, so no conversion needed
-	lpszValue = (CHAR*)( (LPCTSTR)strFieldValue );
-#endif
-
-	// add comment
-	vorbis_comment_add_tag_func( vc, W2A( strField ), lpszValue );
-
-	// cleanup
-
-	delete [] lpwszValue;
-	delete [] lpszValue;
-
-	return TRUE;
-}
-
-BOOL WriteVorbisFrame()
-{
-	BOOL bReturn = TRUE;
-
-	ASSERT( m_fpOut );
-
-	// write header to output file
-	if ( 1 != fwrite( m_og.header, m_og.header_len, 1, m_fpOut ) )
-	{
-		ASSERT( FALSE );
-		bReturn = FALSE;
-		m_eos = true;
-	}
-
-	// write body to output file
-	if ( 1 != fwrite( m_og.body, m_og.body_len, 1, m_fpOut ) )
-	{
-		ASSERT( FALSE );
-		bReturn = FALSE;
-		m_eos = true;
-	}
-
-	return bReturn;
-}
+FILE*	g_pFileOut		= NULL;
 
 
-DWORD DownMixToMono( SHORT* psData,DWORD dwNumSamples )
-{
-	DWORD dwSample;
-	for (dwSample=0;dwSample<dwNumSamples/2;dwSample++)
-	{
-		psData[dwSample]=psData[ 2 * dwSample ] / 2 + psData[ 2 * dwSample + 1 ] / 2;
-	}
-
-	return dwNumSamples / 2;
-}
-
-
-DWORD UpMixToStereo( SHORT* psData, SHORT* psOutData, DWORD dwNumSamples )
-{
-	int dwSample;
-	for ( dwSample = dwNumSamples - 1; dwSample >= 0; dwSample-- )
-	{
-		psOutData[ 2 * dwSample + 0 ] = psData[ dwSample ];
-		psOutData[ 2 * dwSample + 1 ] = psData[ dwSample ];
-	}
-	return dwNumSamples * 2;
-}
-DWORD ProcessData( SHORT* pbsInSamples, DWORD dwNumSamples )
-{
-	DWORD	dwSample = 0;
-	PSHORT 	psData = pbsInSamples;
-	BOOL	bSilence = FALSE;
-	PSHORT	pFifoBuffer = NULL;
-
-
-	// Downmix to mono?
-	if ( m_bDownMixToMono )
-	{
-		dwNumSamples = DownMixToMono( pbsInSamples, dwNumSamples );
-	} else if ( m_bUpMixToStereo )
-	{
-		dwNumSamples = UpMixToStereo( pbsInSamples, m_psInputStream, dwNumSamples );
-		psData = m_psInputStream;
-	}
-
-
-	return dwNumSamples;
-}
 
 ////////////////////////////////////////////////////////////////////////
 // void Init(void) - will be called after loading the plugin and after
@@ -288,8 +152,9 @@ void  init(){
 // Parameters:
 //  none
 ////////////////////////////////////////////////////////////////////////
-void quit(void){
+int quit(void){
 
+	return 0;
 }
 
 
@@ -335,439 +200,196 @@ int getformatedvalue(int n){
 
 	return nResult;
 }
+
+
+
 ////////////////////////////////////////////////////////////////////////
-// int Open(...) - Open file for read. Returns -1 on fail and 0 on success
+// int Open(...) - Open file for write. 
+//     Following return values if an error occurs:
+//     -1 : File could not be created
+//     -2 : Invalid file format
+//     -3 : Other error
+//     On success this function returns the number off samples (items) to pass
+//     to write [some encoders expect a certain number of samples]
+//     
 //
 // Parameters:
 //  const char * path
 //      The path of the file to open
+// MMFILE_FORMAT * pInputFormat
+//      Pointer to a MMFILE_FORMAT structure containing the format of 
+//		the input file
+// MMFILE_ALBUMINFO * pAlbumInfo
+//      Pointer to a MMFILE_FORMAT structure containing the album infos for
+//      this tracks. Some fileformats support ID3 Tags or something similar.
+//      So you might need it.
 ////////////////////////////////////////////////////////////////////////
 int open(const char* path, MMFILE_FORMAT *pInputFormat, MMFILE_ALBUMINFO *pAlbumInfo){
 	
-	TCHAR	szBuffer[_MAX_PATH]; 
-	VERIFY(::GetModuleFileName(AfxGetInstanceHandle(), szBuffer, _MAX_PATH));
-		
-	CString	strWd = szBuffer;
-	strWd = strWd.Left(strWd.ReverseFind('\\'));
-	strWd += "\\Plugins\\";
+	g_dwSamplerate = pInputFormat->dwSampleRate;
+	g_nBitrate     = pInputFormat->nBitsPerSample;
+	g_nNumChannels = pInputFormat->nChannels;
 
-	m_hOggDLL		= LoadLibrary(strWd + "ogg.dll");
-	m_hLibVorbisDLL = LoadLibrary(strWd + "vorbis.dll");
-	m_hVorbisEncDLL = LoadLibrary(strWd + "vorbisend.dll");
+	if(g_nBitrate != 16){
 
-	if (!m_hOggDLL  || !m_hLibVorbisDLL || !m_hVorbisEncDLL)
-	{
-		TRACE("Error Inititalising OGG_out.dll: couldn't load Vorbis DLLs\n");
-
-	}
-	else
-	{
-
-		// Get the function pointers of the vorbisenc DLL
-		vorbis_encode_init_func = (int (*)(vorbis_info *vi,long channels,long rate,long max_bitrate,long nominal_bitrate,long min_bitrate))
-			::GetProcAddress( m_hVorbisEncDLL, "vorbis_encode_init" );
-		vorbis_encode_init_vbr_func = (int (*)(vorbis_info *vi,long channels,long rate,float base_quality))
-			::GetProcAddress( m_hVorbisEncDLL, "vorbis_encode_init_vbr" );
-
-
-		// Get the function pointers of the vorbis DLL
-		vorbis_info_init_func = (void (*)(vorbis_info *vi))
-			::GetProcAddress( m_hLibVorbisDLL,  "vorbis_info_init" );
-
-		vorbis_info_clear_func = (void (*)(vorbis_info *vi))
-			::GetProcAddress( m_hLibVorbisDLL,  "vorbis_info_clear" );
-
-		vorbis_dsp_clear_func = (void (*)(vorbis_dsp_state *v))
-			::GetProcAddress( m_hLibVorbisDLL,  "vorbis_dsp_clear" );
-
-		vorbis_block_init_func = (int  (*)(vorbis_dsp_state *v, vorbis_block *vb))
-			::GetProcAddress( m_hLibVorbisDLL,  "vorbis_block_init" );
-
-		vorbis_block_clear_func = (int  (*)(vorbis_block *vb))
-			::GetProcAddress( m_hLibVorbisDLL,  "vorbis_block_clear" );
-
-		vorbis_comment_init_func = (void (*)(vorbis_comment *vc))
-			::GetProcAddress( m_hLibVorbisDLL,  "vorbis_comment_init" );
-
-		vorbis_comment_add_func = (void (*)(vorbis_comment *vc, char *comment))
-			::GetProcAddress( m_hLibVorbisDLL,  "vorbis_comment_add" );
-
-		vorbis_comment_add_tag_func = (void (*)(vorbis_comment *vc, char *tag, char *contents))
-			::GetProcAddress( m_hLibVorbisDLL,  "vorbis_comment_add_tag" );
-
-		vorbis_comment_clear_func = (void (*)(vorbis_comment *vc))
-			::GetProcAddress( m_hLibVorbisDLL,  "vorbis_comment_clear" );
-
-		vorbis_analysis_init_func = (int (*)(vorbis_dsp_state *v,vorbis_info *vi))
-			::GetProcAddress( m_hLibVorbisDLL,  "vorbis_analysis_init" );
-
-		vorbis_analysis_func = (int (*)(vorbis_block *vb,ogg_packet *op))
-			::GetProcAddress( m_hLibVorbisDLL,  "vorbis_analysis" );
-
-		vorbis_analysis_headerout_func = (int (*)(vorbis_dsp_state *v,vorbis_comment *vc,ogg_packet *op,ogg_packet *op_comm,ogg_packet *op_code))
-			::GetProcAddress(m_hLibVorbisDLL, "vorbis_analysis_headerout" );
-
-		vorbis_analysis_buffer_func = (float **(*)(vorbis_dsp_state *v,int vals))
-			::GetProcAddress( m_hLibVorbisDLL,  "vorbis_analysis_buffer" );
-
-		vorbis_analysis_wrote_func = (int (*)(vorbis_dsp_state *v,int vals))
-			::GetProcAddress( m_hLibVorbisDLL,  "vorbis_analysis_wrote" );
-
-		vorbis_analysis_blockout_func = (int (*)(vorbis_dsp_state *v,vorbis_block *vb))
-			::GetProcAddress( m_hLibVorbisDLL,  "vorbis_analysis_blockout" );
-
-		vorbis_synthesis_headerin_func = (int (*)(vorbis_info *vi,vorbis_comment *vc,ogg_packet *op))
-			::GetProcAddress( m_hLibVorbisDLL,  "vorbis_synthesis_headerin" );
-
-		vorbis_bitrate_addblock_func = (int (*)(vorbis_block *vb))
-			::GetProcAddress( m_hLibVorbisDLL,  "vorbis_bitrate_addblock" );
-
-		vorbis_bitrate_flushpacket_func = (int (*)(vorbis_dsp_state *vd,ogg_packet *op))
-			::GetProcAddress( m_hLibVorbisDLL,  "vorbis_bitrate_flushpacket" );
-
-		// Get the function pointers of the ogg DLL
-		ogg_stream_init_func = (int (*)(ogg_stream_state *os,int serialno))
-			::GetProcAddress( m_hOggDLL,  "ogg_stream_init" );
-		ogg_stream_packetin_func = (int (*)(ogg_stream_state *os, ogg_packet *op))
-			::GetProcAddress( m_hOggDLL,  "ogg_stream_packetin" );
-		ogg_stream_flush_func = (int (*)(ogg_stream_state *os, ogg_page *og))
-			::GetProcAddress( m_hOggDLL,  "ogg_stream_flush" );
-		ogg_stream_pageout_func = (int (*)(ogg_stream_state *os, ogg_page *og))
-			::GetProcAddress(m_hOggDLL,  "ogg_stream_pageout" );
-		ogg_page_eos_func = (int (*)(ogg_page *og))
-			::GetProcAddress( m_hOggDLL, "ogg_page_eos" );
-		ogg_stream_clear_func = (int (*)(ogg_stream_state *os))
-			::GetProcAddress( m_hOggDLL, "ogg_stream_clear" );
-
-
-		if ( !(
-			vorbis_encode_init_func != NULL && 
-			vorbis_encode_init_vbr_func != NULL && 
-			vorbis_info_init_func  != NULL && 
-			vorbis_block_init_func != NULL &&
-			vorbis_block_clear_func != NULL &&
-			vorbis_comment_init_func != NULL &&
-			vorbis_comment_add_func != NULL && 
-			vorbis_comment_add_tag_func != NULL &&
-			vorbis_comment_clear_func != NULL && 
-			vorbis_analysis_init_func != NULL &&
-			vorbis_analysis_func != NULL && 
-			vorbis_analysis_headerout_func != NULL &&
-			vorbis_analysis_buffer_func != NULL && 
-			vorbis_analysis_wrote_func != NULL &&
-			vorbis_analysis_blockout_func != NULL && 
-			vorbis_synthesis_headerin_func != NULL &&
-			vorbis_dsp_clear_func != NULL && 
-			vorbis_info_clear_func != NULL &&
-			ogg_stream_init_func != NULL && 
-			ogg_stream_packetin_func != NULL &&
-			ogg_stream_flush_func != NULL && 
-			ogg_stream_pageout_func != NULL &&
-			ogg_page_eos_func != NULL && 
-			ogg_stream_clear_func != NULL ) )
-		{
-				ASSERT( FALSE );
-		}
-
+		//AfxMessageBox("Invalid Samplerate or Bitrate. Ogg/Vobis supports only 44.100 Hz with 16 bit!", MB_OK+MB_ICONSTOP);
+		TRACE("Invalid bitrate\n");
+		return -2;
 	}
 
-	BOOL		bReturn		= TRUE;
-	DWORD		dwInfoMode	= 0;
-	bool		bStereo		= true;
-	float		fQuality	= 1.0f;
-	int			nReturn     = 0;
-
-
+	// Get Settings from inifile
 	char *buffer = new char[256];
-	lameFEOutModule.GetProfileString("OGG_out.dll_minbitrate", buffer, sizeof(buffer), FALSE);
-	LONG	lMinBitRate	= getformatedvalue(atoi(buffer)) * 1000;
-
-	lameFEOutModule.GetProfileString("OGG_out.dll_nombitrate", buffer, sizeof(buffer), FALSE);
-	LONG	lNomBitRate	= getformatedvalue(atoi(buffer)) * 1000;
+	lameFEOutModule.GetProfileString("OGG_out.dll_nMinBitrate", buffer, sizeof(buffer), FALSE);
+	g_nMinBitrate	= getformatedvalue(atoi(buffer));
+	lameFEOutModule.GetProfileString("OGG_out.dll_nNomBitrate", buffer, sizeof(buffer), FALSE);
+	g_nNomBitrate	= getformatedvalue(atoi(buffer));
+	lameFEOutModule.GetProfileString("OGG_out.dll_nMaxBitrate", buffer, sizeof(buffer), FALSE);
+	g_nMaxBitrate	= getformatedvalue(atoi(buffer));
+	lameFEOutModule.GetProfileString("Ogg_out.dll_nQuality", buffer, sizeof(buffer), FALSE);
+	g_nQuality = atoi(buffer);
+	lameFEOutModule.GetProfileString("Ogg_out.dll_nMode", buffer, sizeof(buffer), FALSE);
+	g_nMode = atoi(buffer);
 	
-	lameFEOutModule.GetProfileString("OGG_out.dll_maxbitrate", buffer, sizeof(buffer), FALSE);
-	LONG	lMaxBitRate		= getformatedvalue(atoi(buffer)) * 1000;
+	delete buffer;
+
+	float fQuality = g_nQuality / 1000.f;
+
+
+	/********** Encode setup ************/
+	int nResult  = 1;
+
+	vorbis_info_init(&vi);
+
+	/* choose an encoding mode.  A few possibilities commented out, one
+	 actually used: */
+
+	switch(g_nMode){
+
+	/* Encode using a qulity mode, but select that quality mode by asking for
+	an approximate bitrate.  This is not ABR, it is true VBR, but selected
+	using the bitrate interface, and then turning bitrate management off: */
+
+	case 0:
+		nResult = vorbis_encode_setup_vbr(&vi, g_nNumChannels, g_dwSamplerate,
+			               fQuality);
+		break;
 	
-//	USES_CONVERSION;
+	/*********************************************************************
+	Encoding using a VBR mode */
+	case 1:
+		nResult = vorbis_encode_init(&vi, g_nNumChannels, g_dwSamplerate,
+			               g_nMaxBitrate*1000, -1, g_nMinBitrate*1000);
+		break;
 
-	// clear end of stream flag
-	m_eos = false;
+	/*********************************************************************
+	Encoding using an average bitrate mode (ABR).
+	example: 44kHz stereo coupled, average 128kbps VBR */
+	case 2:
 
-	// setup bitrates
-	if ( lMaxBitRate <= 0 ) 
-	{
-		lMaxBitRate = -1;
-	}
+		nResult = vorbis_encode_init(&vi,g_nNumChannels, g_dwSamplerate,
+			               -1,g_nNomBitrate*1000,-1);
+		break;
 
-	if ( lMinBitRate <= 0 ) 
-	{
-		lMinBitRate = -1;
-	}
+	/*********************************************************************
+	Encoding using a CBR quality mode.  Emulated by using same bitrates for VBR
+	*/
+	case 3:
+		nResult = vorbis_encode_init(&vi,g_nNumChannels, g_dwSamplerate,
+			               g_nNomBitrate*1000, g_nNomBitrate*1000, g_nNomBitrate*1000);
+		break;
 	
-	if ( lNomBitRate <= 0 ) 
-	{
-		lNomBitRate = -1;
 	}
 
-	if ( -1 == lNomBitRate && -1 == lMinBitRate && -1 == lMaxBitRate )
-	{
-		lNomBitRate = 160000;
+	/* do not continue if setup failed; this can happen if we ask for a
+	 mode that libVorbis does not support (eg, too low a bitrate, etc,
+	 will return 'OV_EIMPL') */
+
+	if(nResult){
+
+		TRACE("Ogg Encoder could not be initialized. nResult = %d\n", nResult);
+		return -3;
 	}
+	vorbis_encode_setup_init(&vi);
 
-	// setup number of input channels
-	m_nInputChannels = pInputFormat->nChannels;
+	/* add a comment */
+	vorbis_comment_init(&vc);
+	vorbis_comment_add_tag(&vc,"ENCODER","OGG/Vorbis Encoder for LameFE");
 
-	// setup number of output channels
-	if ( ( m_nMode & 0xFFFF ) == BE_MP3_MODE_MONO )
-	{
-		bStereo = false;
-	}
+	vorbis_comment_add_tag(&vc, "TITLE", (char*)pAlbumInfo->song);
+	vorbis_comment_add_tag(&vc, "ARTIST",(char*)pAlbumInfo->artist);
+	vorbis_comment_add_tag(&vc, "ALBUM", (char*)pAlbumInfo->album);
+	//vorbis_comment_add_tag(&vc, "DATE", ); // have to work on that
 
+	vorbis_comment_add_tag(&vc, "COMMENT", (char*)pAlbumInfo->comment); // should be DESCRIPTION?
+	char * cTrack = new char[3];
+	itoa(pAlbumInfo->track, cTrack, 10);
+	vorbis_comment_add_tag(&vc, "TRACKNUMBER", cTrack);
 
-	// mixer setup
-	if ( ( false == bStereo ) && ( 2 == pInputFormat->nChannels ) )
-	{
-		m_bDownMixToMono  = TRUE;
-	}
-	else
-	{
-		m_bDownMixToMono = FALSE;
-	}
-
-	if (  ( true == bStereo ) && ( 1 == pInputFormat->nChannels ) )
-	{
-		m_bUpMixToStereo = TRUE;
-	}
-	else
-	{
-		m_bUpMixToStereo = FALSE;
-	}
-
-	// setup quality
-/*	fQuality = ( (float) ((SHORT)LOWORD( GetUserN1() ) ) / 1000.0f );
-
-	if ( fQuality < -0.1f )
-	{
-		fQuality = -0.1f;
-	}
-
-	if (  fQuality > 1.0f ) 
-	{*/
-		fQuality = 1.0f;
-	//}
-
-	// Have vorbisenc choose a mode for us
-	vorbis_info_init_func( &m_vi );
-
-	// choose proper encoder, based on user settings
-	if ( 0 == HIWORD( 500 ) )
-	{
-		TRACE( _T( "OGG_out.dll: managed bit rate, %d %d %d\n" ),
-				lMinBitRate, lNomBitRate, lMaxBitRate );
-
-		/* setup the encoder parameters */
-		nReturn = vorbis_encode_init_func(	&m_vi,
-											(bStereo == true )? 2 : 1,
-											pInputFormat->dwSampleRate,
-											lMaxBitRate,
-											lNomBitRate,
-											lMinBitRate );
-
-	}
-	else
-	{
-		TRACE( _T( "OGG_out.dll open:, using quality option %f\n" ),
-				fQuality );
-
-		/* setup the encoder parameters for VBR encoding using quality parameter */
-		nReturn = vorbis_encode_init_vbr_func(	&m_vi,
-												(bStereo == true )? 2 : 1,
-												pInputFormat->dwSampleRate,
-												fQuality );
-	}
+    //vorbis_comment_add_tag(&vc,"GENRE",buffer);  // gotta work on that one
 
 
-	if ( nReturn != 0 )
-	{
-		
+	/* set up the analysis state and auxiliary encoding storage */
+	vorbis_analysis_init(&vd, &vi);
+	vorbis_block_init(&vd,&vb);
+
+	/* set up our packet->stream encoder */
+	/* pick a random serial number; that way we can more likely build
+	 chained streams just by concatenation */
+	srand(time(NULL));
+	ogg_stream_init(&os,rand());
+
+	g_pFileOut = fopen(path, "wb+´");
+
+	if(g_pFileOut == NULL){
+
 		return -1;
 	}
-	else
+
+
+	/* Vorbis streams begin with three headers; the initial header (with
+	  most of the codec setup parameters) which is mandated by the Ogg
+	  bitstream spec.  The second header holds any comment fields.  The
+	  third header holds the bitstream codebook.  We merely need to
+	  make the headers, then pass them to libvorbis one at a time;
+	  libvorbis handles the additional Ogg bitstream constraints */
+
 	{
+		ogg_packet header;
+		ogg_packet header_comm;
+		ogg_packet header_code;
 
-		// add a comment
-	   vorbis_comment_init_func( &m_vc );
+		vorbis_analysis_headerout(&vd, &vc, &header, &header_comm, &header_code);
+		/* automatically placed in its own page */
+		ogg_stream_packetin(&os, &header); 
 
-		// Add tag info
-		if ( pAlbumInfo )
-		{
-			CString strArtist;
-			CString strAlbum;
-			CString strTitle;
-			CString strComment;
-			CString strEncodedBy;
-			CString	strYear;
-			CString	strGenre;
-			CString	strLang;
-			CString strMCDI;
+		ogg_stream_packetin(&os, &header_comm);
+		ogg_stream_packetin(&os, &header_code);
 
-			DWORD	dwTrackNumber = pAlbumInfo->track;
-			DWORD	dwTotalTracks = 0;
+	  /* We don't have to write out here, but doing so makes streaming 
+		 much easier, so we do, flushing ALL pages. This ensures the actual
+		 audio data will start on a new page */
+		while(!eos){
 
-			strArtist	 = pAlbumInfo->artist;
-			strAlbum	 = pAlbumInfo->album;
-			strTitle	 = pAlbumInfo->song;
-			strComment	 = pAlbumInfo->comment;
-			strEncodedBy = "LameFE Ogg_out.dll"; // Hydra
-			strMCDI		 = ""; // NOT USED YET
-
-			strYear  = pAlbumInfo->year;
-			strGenre = pAlbumInfo->genre;
-
-			if ( strComment.IsEmpty() )
-			{
-				strComment = strEncodedBy;
-			}
-
-			AddUtfTag(&m_vc, _T( "COMMENT" ), strComment );
-
-			if ( !strTitle.IsEmpty() )
-			{
-				AddUtfTag(&m_vc, _T( "TITLE" ), strTitle );
-			}
-
-			if ( !strArtist.IsEmpty() )
-			{
-				AddUtfTag(&m_vc, _T( "ARTIST" ), strArtist );
-			}
-
-			if ( !strAlbum.IsEmpty() )
-			{
-				AddUtfTag(&m_vc, _T( "ALBUM" ), strAlbum );
-			}
-
-			if ( dwTrackNumber > 0 )
-			{
-					CString strTrackNumber;
-
-					strTrackNumber.Format( _T( "%02d"), dwTrackNumber );
-
-					AddUtfTag( &m_vc, _T( "TRACKNUMBER" ), strTrackNumber );		
-			}
-
-			if ( !strEncodedBy.IsEmpty() ) 
-			{
-				AddUtfTag(&m_vc, _T( "ENCODEDBY" ), strEncodedBy );
-			}
-
-
-			if ( !strGenre.IsEmpty() ) 
-			{
-				AddUtfTag(&m_vc, _T( "GENRE" ), strGenre );
-			}
-
-			if ( !strYear.IsEmpty() ) 
-			{
-				AddUtfTag(&m_vc, _T( "DATE" ), strYear );
-			}
-		}
-
-		// set up the analysis state and auxiliary encoding storage
-		vorbis_analysis_init_func( &m_vd, &m_vi );
-		vorbis_block_init_func( &m_vd, &m_vb );
-
-
-		// set up our packet->stream encoder 
-		// pick a random serial number; that way we can more likely build
-		// chained streams just by concatenation
-
-		srand( time( NULL ) );
-
-		ogg_stream_init_func( &m_os, GetTickCount() );
-
-		// Open output stream
-		m_fpOut = _tfopen( path, _T( "wb+" ) );
-
-		if ( NULL == m_fpOut )
-		{
+			int result = ogg_stream_flush(&os, &og);
 			
-			return -1;
-		}
+			if(result == 0){
 
-
-		// Vorbis streams begin with three headers; the initial header (with
-		// most of the codec setup parameters) which is mandated by the Ogg
-		// bitstream spec.  The second header holds any comment fields.  The
-		// third header holds the bitstream codebook.  We merely need to
-		// make the headers, then pass them to libvorbis one at a time;
-		// libvorbis handles the additional Ogg bitstream constraints */
-		if (bReturn  = TRUE)
-		{
-
-			ogg_packet header;
-			ogg_packet header_comm;
-			ogg_packet header_code;
-
-			// build packets
-			vorbis_analysis_headerout_func( &m_vd,&m_vc,&header,&header_comm,&header_code );
-
-			// stream them out
-			ogg_stream_packetin_func(&m_os,&header ); 
-			ogg_stream_packetin_func( &m_os, &header_comm );
-			ogg_stream_packetin_func( &m_os, &header_code );
-
-			// We don't have to write out here, but doing so makes streaming 
-			// much easier, so we do, flushing ALL pages. This ensures the actual
-			// audio data will start on a new page
-
-			while( !m_eos && (bReturn = TRUE) )
-			{
-				int result = ogg_stream_flush_func( &m_os, &m_og );
-
-				if( 0 == result )
-					break;
-
-				bReturn = WriteVorbisFrame();
+				break;
 			}
+
+			fwrite(og.header, 1, og.header_len, g_pFileOut);
+			fwrite(og.body, 1, og.body_len, g_pFileOut);
 		}
-
-
-		m_dwInBufferSize = 1024 * pInputFormat->nChannels;
-
-		if ( m_bDownMixToMono )
-		{
-			m_dwInBufferSize *= 2;
-		}
-	}
-
-	// Set output buffer size, no output buffer needed, write directly to file
-	m_dwOutBufferSize = 0;
-
-	if (bReturn == TRUE)
-	{
-		// Initialize input stream
-
-		// allocate input stream
-		m_psInputStream = new SHORT[ m_dwInBufferSize ];
-
-		if ( m_bUpMixToStereo )
-		{
-			m_dwInBufferSize /= 2;
-		}
-		if ( NULL == m_psInputStream )
-		{
-			bReturn = FALSE;
-		}
-	}
-
-	if(bReturn == FALSE){
-
-		return -1;
 	}
 	
-	return 0;
+	
+	return READ_SIZE;
 }
 
+__int64 get_est_size(__int64 nSizeInBytes, DWORD dwNumChannels, DWORD dwSamplerate, DWORD dwBitrate){
+
+	return 2048;
+}
 
 ////////////////////////////////////////////////////////////////////////
 // size_t write(...) - Reads from file and writes given number of items of
@@ -780,97 +402,88 @@ int open(const char* path, MMFILE_FORMAT *pInputFormat, MMFILE_ALBUMINFO *pAlbum
 //      Items (samples) to read. Must be an integer product of the number
 //      of channels or an error will occur.
 ////////////////////////////////////////////////////////////////////////
-unsigned int  write(short *ptr, size_t items){
-
-	BOOL bReturn = TRUE;
-	DWORD nBytesToWrite=0;
-	DWORD dwNumSamples = items;
-
-	TRACE( _T( "Entering CEncoderVorbisDll::EncodeChunk(), dwNumSamples = %d \n" ),
-					dwNumSamples );
-
-	// Check the size of the input buffer
-	ASSERT( dwNumSamples <= m_dwInBufferSize );
+DWORD  write(short *ptr, DWORD items){
 
 
-	// end of stream?
-	if ( m_eos )
+	BOOL	bReturn		  = TRUE;
+	FLOAT**	pfInputbuffer = NULL;
+	DWORD	dwSample = 0;
+	PSHORT	pSamples = ptr;
+
+	// expose the buffer to submit data
+	pfInputbuffer = vorbis_analysis_buffer(&vd, items / g_nNumChannels); 
+
+	// get samples
+	// uninterleave and copy the samples
+	for(dwSample = 0; dwSample < items / g_nNumChannels; dwSample++)
 	{
-		bReturn = FALSE;
+		pfInputbuffer[0][dwSample] = (float)(*pSamples++)/32768.0f;
+
+		if(g_nNumChannels == 2)
+		{
+			pfInputbuffer[1][dwSample] = (float)(*pSamples++)/32768.0f;
+		}
 	}
-	else
-	{
-		dwNumSamples = ProcessData( ptr, dwNumSamples );
+
+	// tell the library how much we actually submitted
+	vorbis_analysis_wrote(&vd, items / g_nNumChannels );
+
+	// vorbis does some data preanalysis, then divvies up blocks for
+	// more involved (potentially parallel) processing.  Get a single
+	// block for encoding now
+	while(vorbis_analysis_blockout(&vd, &vb) == 1){
+
+		// analysis
+		vorbis_analysis(&vb, NULL);
+
+		vorbis_bitrate_addblock(&vb);
+
+		// EXTRA LOOP ADDED 20011225 FOR RC3 BITRATE MANAGEMENT
+		while(vorbis_bitrate_flushpacket(&vd, &op)){
+
+			// weld the packet into the bitstream
+			ogg_stream_packetin(&os, &op);
+
+			// write out pages (if any)
+			do{
+
+				int nResult = 0;
+
+				nResult = ogg_stream_pageout(&os, &og);
+				if (nResult == 0){
+
+					break;
+				}
 	
-		FLOAT**	pfInputbuffer = NULL;
-		DWORD	dwSample = 0;
-		PSHORT	pSamples = m_psInputStream;
+				// write the data
+				//bReturn = WriteVorbisFrame();
+				// write header to output file
+				if(fwrite(og.header, og.header_len, 1, g_pFileOut) != 1){
 
-		// expose the buffer to submit data
-		pfInputbuffer = vorbis_analysis_buffer_func( &m_vd, dwNumSamples/ (m_nMode == BE_MP3_MODE_MONO ? 1 : 2) ); 
+					ASSERT(FALSE);
+					bReturn = FALSE;
+					items = -1;
+					eos = true;
+				}
 
-		// get samples
-		// uninterleave and copy the samples
-		for( dwSample = 0; dwSample < dwNumSamples / (m_nMode == BE_MP3_MODE_MONO ? 1 : 2); dwSample++ )
-		{
-			pfInputbuffer[0][dwSample] = (float)(*pSamples++)/32768.0f;
+				// write body to output file
+				if (fwrite(og.body, og.body_len, 1, g_pFileOut) != 1){
 
-			if ( 2 == (m_nMode == BE_MP3_MODE_MONO ? 1 : 2) )
-			{
-				pfInputbuffer[1][dwSample] = (float)(*pSamples++)/32768.0f;
-			}
-		}
+					ASSERT(FALSE);
+					bReturn = FALSE;
+					items = -1;
+					eos = true;
+				}
 
-		// tell the library how much we actually submitted
-		vorbis_analysis_wrote_func( &m_vd, dwNumSamples / (m_nMode == BE_MP3_MODE_MONO ? 1 : 2) );
+				if(ogg_page_eos(&og)){
 
-		TRACE( _T( "Fed Encoder %d samples\n" ),
-				dwNumSamples );
+					eos = true;
+				}
 
-
-		// vorbis does some data preanalysis, then divvies up blocks for
-		// more involved (potentially parallel) processing.  Get a single
-		// block for encoding now
-		while( 1 == vorbis_analysis_blockout_func( &m_vd, &m_vb ) )
-		{
-			// analysis
-			vorbis_analysis_func( &m_vb, NULL );
-
-			vorbis_bitrate_addblock_func( &m_vb);
-
-			// EXTRA LOOP ADDED 20011225 FOR RC3 BITRATE MANAGEMENT
-			while( vorbis_bitrate_flushpacket_func( &m_vd, &m_op ) )
-			{
-				// weld the packet into the bitstream
-				ogg_stream_packetin_func( &m_os, &m_op );
-    
-				// write out pages (if any)
-				do
-				{
-					int nResult = 0;
-
-					nResult = ogg_stream_pageout_func( &m_os, &m_og );
-					if ( 0 == nResult ) 
-					{
-						break;
-					}
-		
-					// write the data
-					bReturn = WriteVorbisFrame();
-
-					if( ogg_page_eos_func( &m_og ) )
-					{
-						m_eos = true;;
-					}
-
-				} while( bReturn == TRUE );
-			}
+			} while(bReturn);
 		}
 	}
-
-	TRACE( _T( "Leaving write, return status %d" ),
-					bReturn );
-
+	
 	return items;
 }
 
@@ -880,47 +493,20 @@ unsigned int  write(short *ptr, size_t items){
 // Parameters:
 //  none
 ////////////////////////////////////////////////////////////////////////
-void  close(void){
+int close(void){
 
 
+  /* clean up and exit.  vorbis_info_clear() must be called last */
+  write(0,0);
 
-	// get the last samples out of the encoder
-	// feed the encoder with zero samples, otherwhise we don't get 
-	// the last frame
-	write( NULL, 0 );
+  ogg_stream_clear(&os);
+  vorbis_block_clear(&vb);
+  vorbis_dsp_clear(&vd);
+  vorbis_comment_clear(&vc);
+  vorbis_info_clear(&vi);
+  fclose(g_pFileOut);
 
-
-   /* clean up and exit.  vorbis_info_clear() must be called last */
-	ogg_stream_clear_func( &m_os );
-	vorbis_block_clear_func( &m_vb );
-	vorbis_dsp_clear_func( &m_vd );
-	vorbis_comment_clear_func( &m_vc );
-	vorbis_info_clear_func( &m_vi );
-
-	if ( m_fpOut )
-	{
-		fclose( m_fpOut );
-		m_fpOut = NULL;
-	}
-
-
-	if ( m_hLibVorbisDLL )
-	{
-		::FreeLibrary( m_hLibVorbisDLL );
-		m_hLibVorbisDLL = NULL;
-	}
-	if ( m_hVorbisEncDLL )
-	{
-		::FreeLibrary( m_hVorbisEncDLL );
-		m_hVorbisEncDLL = NULL;
-	}
-	if ( m_hOggDLL )
-	{
-		::FreeLibrary( m_hOggDLL );
-		m_hOggDLL = NULL;
-	}
-	TRACE( _T( "Leaving close" ) );
-
+  return 0;
 }
 
 
@@ -932,27 +518,38 @@ void  close(void){
 ////////////////////////////////////////////////////////////////////////
 void configure(){
 
-	CConfigDlg dlg(NULL);
+	CConfigDlg dlg(NULL, &lameFEOutModule);
 
 	char *buffer = new char[256];
-	lameFEOutModule.GetProfileString("OGG_out.dll_minbitrate", buffer, sizeof(buffer), FALSE);
+	lameFEOutModule.GetProfileString("OGG_out.dll_nMinBitrate", buffer, sizeof(buffer), FALSE);
 	dlg.m_nMinBitrate	= atoi(buffer);
-	lameFEOutModule.GetProfileString("OGG_out.dll_nombitrate", buffer, sizeof(buffer), FALSE);
+	lameFEOutModule.GetProfileString("OGG_out.dll_nNomBitrate", buffer, sizeof(buffer), FALSE);
 	dlg.m_nNomBitrate	= atoi(buffer);
-	lameFEOutModule.GetProfileString("OGG_out.dll_maxbitrate", buffer, sizeof(buffer), FALSE);
+	lameFEOutModule.GetProfileString("OGG_out.dll_nMaxBitrate", buffer, sizeof(buffer), FALSE);
 	dlg.m_nMaxBitrate	= atoi(buffer);
+	lameFEOutModule.GetProfileString("Ogg_out.dll_nQuality", buffer, sizeof(buffer), FALSE);
+	dlg.m_nQuality = atoi(buffer);
+	lameFEOutModule.GetProfileString("Ogg_out.dll_nMode", buffer, sizeof(buffer), FALSE);
+	dlg.m_nMode = atoi(buffer);
 
 	int nResult = dlg.DoModal();
 
 	if(nResult == IDOK){
 
 		itoa(dlg.m_nMinBitrate, buffer, 10);
-		lameFEOutModule.SetProfileString("OGG_out.dll_minbitrate", buffer);
-		itoa(dlg.m_nMaxBitrate, buffer, 10);
-		lameFEOutModule.SetProfileString("OGG_out.dll_maxbitrate", buffer);
+		lameFEOutModule.SetProfileString("OGG_out.dll_nMinBitrate", buffer);
 		itoa(dlg.m_nNomBitrate, buffer, 10);
-		lameFEOutModule.SetProfileString("OGG_out.dll_nombitrate", buffer);
+		lameFEOutModule.SetProfileString("OGG_out.dll_nNomBitrate", buffer);
+		itoa(dlg.m_nMaxBitrate, buffer, 10);
+		lameFEOutModule.SetProfileString("OGG_out.dll_nMaxBitrate", buffer);
+		itoa(dlg.m_nQuality, buffer, 10);
+		lameFEOutModule.SetProfileString("OGG_out.dll_nQuality", buffer);
+		itoa(dlg.m_nMode, buffer, 10);
+		lameFEOutModule.SetProfileString("Ogg_out.dll_nMode", buffer);
 	}
+
+	delete buffer;
+	buffer = 0;
 }
 
 ////////////////////////////////////////////////////////////////////////
@@ -963,10 +560,8 @@ void configure(){
 ////////////////////////////////////////////////////////////////////////
 void about(){
 
-	MessageBox(lameFEOutModule.hMainWindow, 
-			"OGG/Vorbis Encoder Plugin for LameFE (c) 2002 by Thees Ch. Winkler\nDistributed under GPL.",
-			"OGG/Vorbis Encoder Plugin", MB_OK+MB_ICONINFORMATION);
-
+	CAboutDlg dlg;
+	dlg.DoModal();
 }
 
 

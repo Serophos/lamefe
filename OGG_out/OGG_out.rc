@@ -80,8 +80,9 @@ VS_VERSION_INFO VERSIONINFO
 BEGIN
     BLOCK "StringFileInfo"
     BEGIN
-        BLOCK "040704B0"
+        BLOCK "040704b0"
         BEGIN
+            VALUE "Comments", "\0"
             VALUE "CompanyName", "\0"
             VALUE "FileDescription", "OGG_out DLL\0"
             VALUE "FileVersion", "1, 0, 0, 1\0"
@@ -89,8 +90,10 @@ BEGIN
             VALUE "LegalCopyright", "Copyright (C) 2002\0"
             VALUE "LegalTrademarks", "\0"
             VALUE "OriginalFilename", "OGG_out.DLL\0"
+            VALUE "PrivateBuild", "\0"
             VALUE "ProductName", "OGG_out Dynamic Link Library\0"
             VALUE "ProductVersion", "1, 0, 0, 1\0"
+            VALUE "SpecialBuild", "\0"
         END
     END
     BLOCK "VarFileInfo"
@@ -107,23 +110,63 @@ END
 // Dialog
 //
 
-IDD_CONFIG DIALOG DISCARDABLE  0, 0, 347, 95
+IDD_CONFIG DIALOG DISCARDABLE  0, 0, 349, 138
 STYLE DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
-CAPTION "Ogg Vorbis Encoder Plugin Configuration"
+CAPTION "Ogg Vorbis Encoder Configuration"
 FONT 8, "MS Sans Serif"
 BEGIN
-    DEFPUSHBUTTON   "OK",IDOK,290,7,50,14
-    PUSHBUTTON      "Cancel",IDCANCEL,290,24,50,14
-    GROUPBOX        "Encoder Options",IDC_STATIC,7,7,278,81
-    COMBOBOX        IDC_MIN_BITRATE,100,26,116,62,CBS_DROPDOWNLIST | 
+    DEFPUSHBUTTON   "OK",IDOK,290,7,52,14
+    PUSHBUTTON      "Cancel",IDCANCEL,290,24,52,14
+    GROUPBOX        "Encoder Options",IDC_STATIC_ENC_OPTIONS,7,7,278,124
+    COMBOBOX        IDC_MIN_BITRATE,212,80,67,62,CBS_DROPDOWNLIST | 
                     WS_VSCROLL | WS_TABSTOP
-    COMBOBOX        IDC_NOMINAL_BITRATE,100,44,116,64,CBS_DROPDOWNLIST | 
+    COMBOBOX        IDC_NOMINAL_BITRATE,212,97,67,64,CBS_DROPDOWNLIST | 
                     WS_VSCROLL | WS_TABSTOP
-    COMBOBOX        IDC_MAX_BITRATE,100,61,116,61,CBS_DROPDOWNLIST | 
+    COMBOBOX        IDC_MAX_BITRATE,212,113,67,61,CBS_DROPDOWNLIST | 
                     WS_VSCROLL | WS_TABSTOP
-    RTEXT           "Minimum Bitrate:",IDC_STATIC,15,27,79,11,SS_CENTERIMAGE
-    RTEXT           "Nominal Bitrate:",IDC_STATIC,15,44,79,12,SS_CENTERIMAGE
-    RTEXT           "Maximum Bitrate:",IDC_STATIC,15,61,79,12,SS_CENTERIMAGE
+    RTEXT           "Minimum Bitrate:",IDC_STATIC_MIN,148,81,59,11,
+                    SS_CENTERIMAGE
+    RTEXT           "Nominal Bitrate:",IDC_STATIC_NOM,148,97,59,12,
+                    SS_CENTERIMAGE
+    RTEXT           "Maximum Bitrate:",IDC_STATIC_AMX,148,113,59,12,
+                    SS_CENTERIMAGE
+    CONTROL         "variable Bitrate",IDC_VARIABLE,"Button",
+                    BS_AUTORADIOBUTTON,15,82,81,10
+    CONTROL         "average Bitrate",IDC_AVERAGE,"Button",
+                    BS_AUTORADIOBUTTON,15,99,81,10
+    CONTROL         "constant Bitrate",IDC_CONSTANT,"Button",
+                    BS_AUTORADIOBUTTON,15,115,81,10
+    CONTROL         "Quality Settings",IDC_QUALITYMANAGED,"Button",
+                    BS_AUTORADIOBUTTON,15,32,76,10
+    LTEXT           "Bitrate Settings",IDC_STATIC_BITRATE,15,67,48,8
+    CONTROL         "",IDC_STATIC,"Static",SS_BLACKFRAME | SS_SUNKEN,69,72,
+                    210,1
+    LTEXT           "Quality Management (recommended)",IDC_STATIC_QUALITY,15,
+                    18,116,8
+    CONTROL         "",IDC_STATIC,"Static",SS_BLACKFRAME | SS_SUNKEN,139,23,
+                    140,1
+    CONTROL         "Slider1",IDC_QUALITY_SLIDER,"msctls_trackbar32",
+                    TBS_AUTOTICKS | WS_TABSTOP,107,30,172,12
+    LTEXT           "Worst",IDC_STATIC_WORST,107,47,20,8
+    LTEXT           "Best",IDC_STATIC_BEST,264,47,15,8
+    LTEXT           "Bitrate: 0.0 kbps",IDC_QUALITY_BITRATE,107,56,75,8
+    LTEXT           "Quality: %",IDC_QUALITY,207,56,72,8
+END
+
+IDD_ABOUT DIALOG DISCARDABLE  0, 0, 237, 129
+STYLE DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "About Ogg/Vorbis for LameFE"
+FONT 8, "MS Sans Serif"
+BEGIN
+    DEFPUSHBUTTON   "OK",IDOK,93,108,50,14
+    CONTROL         5002,IDC_STATIC,"Static",SS_BITMAP,97,7,43,22
+    LTEXT           "OGG/Vorbis Encoder for LameFE 2.2",IDC_STATIC,59,32,118,
+                    8
+    LTEXT           "(c) 2003 by Thees Christian Winkler",IDC_STATIC,62,51,
+                    113,8
+    LTEXT           "This plugin is free software; you can redistribute it and/or modify\nit under the terms of the GNU General Public License as published by\nthe Free Software Foundation; either version 2 of the License, or\n(at your option) any later version.",
+                    IDC_STATIC,7,64,223,38,SS_SUNKEN
+    LTEXT           "Plugin Version 2.0",IDC_STATIC,89,41,58,8
 END
 
 
@@ -138,21 +181,33 @@ BEGIN
     IDD_CONFIG, DIALOG
     BEGIN
         LEFTMARGIN, 7
-        RIGHTMARGIN, 340
+        RIGHTMARGIN, 342
         VERTGUIDE, 15
-        VERTGUIDE, 94
-        VERTGUIDE, 100
-        VERTGUIDE, 216
+        VERTGUIDE, 91
+        VERTGUIDE, 107
+        VERTGUIDE, 148
+        VERTGUIDE, 207
+        VERTGUIDE, 212
+        VERTGUIDE, 279
         VERTGUIDE, 285
         VERTGUIDE, 290
         TOPMARGIN, 7
-        BOTTOMMARGIN, 88
-        HORZGUIDE, 27
-        HORZGUIDE, 38
-        HORZGUIDE, 44
-        HORZGUIDE, 56
-        HORZGUIDE, 61
-        HORZGUIDE, 73
+        BOTTOMMARGIN, 131
+        HORZGUIDE, 32
+        HORZGUIDE, 42
+        HORZGUIDE, 55
+        HORZGUIDE, 92
+        HORZGUIDE, 109
+        HORZGUIDE, 125
+    END
+
+    IDD_ABOUT, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 230
+        VERTGUIDE, 118
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 122
     END
 END
 #endif    // APSTUDIO_INVOKED
@@ -234,6 +289,13 @@ BEGIN
     0
 END
 
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Bitmap
+//
+
+IDB_VORBIS              BITMAP  DISCARDABLE     "res\\oggvorbis_logo_small.BMP"
 #endif    // Deutsch (Deutschland) resources
 /////////////////////////////////////////////////////////////////////////////
 
