@@ -449,7 +449,11 @@
 #define IDS_TOOL_INPUTDEVICE            40170
 #define IDS_TOOL_OUTPUTDEVICE           40171
 #define IDS_TOOL_ALWAYSTAGEDIT          40172
-
+#define IDS_BKSLHWARN					40173
+#define IDS_DBLBACKSLASH				40174
+#define IDS_CDDB_UPDATEDSERVERS			40175
+#define IDS_CDDB_UPDATEFAILED			40176
+#define IDS_OLDCOMTL32DLL				40177
 // Next default values for new objects
 // 
 #ifdef APSTUDIO_INVOKED
