@@ -1,0 +1,9 @@
+LIBRARY  DSIPLAYER.DLL
+
+EXPORTS
+	DSIP_Open				@1
+	DSIP_Pause				@2
+	DSIP_Play		    	@3
+	DSIP_Stop			    @4
+	DSIP_IsAudioPlaying     @5
+	DSIP_Init				@6

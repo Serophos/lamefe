@@ -1,0 +1,50 @@
+EINFÜHRUNG:
+===============================================================
+lameFE ist ein Programm mit dem man Audio CDs digital auslesen
+und als WAVE oder MP3 Dateien auf der Festplatte abspeichern
+kann.
+
+
+SYSTEM VORAUSSETZUNGEN:
+===============================================================
+
+1)	Microsoft Windows 95/98/ME & Windows NT (4.5) 2000 / XP
+2)	Adaptec ASPI für Win32 Manager
+3)	CD Laufwerk mit Digital Audio Extracting Unterstützung
+4)	Intel Pentium oder kompatibler Prozessor
+5)    Internet Verbindung um freeDB (CDdb) Server zu kontaktieren.
+
+
+
+BEKANNTE PROBLEME:
+===============================================================
+ -/-
+
+FEHLER, KOMMENTARE / VORSCHLÄGE:
+===============================================================
+Bitte melden Sie Fehler, unerwünschtes Programmverhalten oder
+Anregungen an thees@uni.de
+
+
+
+Garantie & Lizenz:
+===============================================================
+
+Das Programm steht unter der GNU GENERAL PUBLIC LICENSE
+Lesen Sie die Hilfe oder die Datei "license.txt" Datei
+für den genauen Litzentext. 
+
+
+Nach der Installation sollten im Installationsordner folgende
+Dateien vorhanden sein
+===============================================================
+
+tagWriter.dll (Bibliothek zum schreiben von ID3 Tags)
+lame_enc.dll (MPEG-I Layer 3 Encoder)
+CDRip.dll (Bibliothek mit den CD-Ripper Routinen)
+lameFE.exe (lameFE ausführbare Datei)
+lameFE.cnt (lameFE Hilfe Inhaltsverzeichnis)
+lameFE.hlp (lameFE Hilfe Datei)
+Liesmich.txt (Diese Datei)
+lameFE.ini (lameFE Konfigurationsdatei)
+cddb.cfg (Liste der verfügbaren freeDB Server)
