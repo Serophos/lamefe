@@ -258,14 +258,8 @@ int CCompactDisc::CalculateVolID()
 	// Add number of audio tracks to MCDI string
 	m_strMCDI = strTmp + m_strMCDI;
 
-	// If this contains only one track, add track length, IN SECTORS!
-	/*if (m_nTocEntries < 2)
-	{
-		// Add to total
-		dwVolID += m_cdTracks[i].m_dwStartSector;
-	}*/
 
-// end (c) A.L. Faber
+	// end (c) A.L. Faber
 /////////////////
 
 	return dwVolID;
@@ -300,6 +294,7 @@ int CCompactDisc::CalculateDiscID()
 
 	//Get total playing time
 	//m_dwTotalSecs=(GetEndSector(m_nNumTracks)+1+150)/75;
+
 	return dwRet;
 }
 
@@ -509,27 +504,19 @@ CString CCompactDisc::GetAlbumString(CString wdir, CString ext)
 	strFormat = (LPCSTR)cfg.GetStringValue("albumstr");
 
 	CString tmp;
-/*	int lastMatch = 0;
-	int actualMatch = 0;
-	while(TRUE){
 
-		actualMatch = strFormat.Find("%", lastMatch);
-		if(actualMatch != -1){
-
-			tmp += strFormat.Mid(lastMatch, actualMatch - lastMatch) += GetValue(0, strFormat.Mid(actualMatch, 2));
-			lastMatch = actualMatch + 2;
-		}
-		else{
-			
-			tmp += strFormat.Mid(lastMatch, strFormat.GetLength());
-			break;
-		}
-	}
-*/	
-	strFormat.Replace("%1", GetCDTrack(0)->m_id3Info.GetArtist());
-	strFormat.Replace("%2", GetCDTrack(0)->m_id3Info.GetSong());
-	strFormat.Replace("%3", GetCDTrack(0)->m_id3Info.GetAlbum());
-	strFormat.Replace("%5", GetCDTrack(0)->m_id3Info.GetGenre());
+	tmp = GetCDTrack(0)->m_id3Info.GetArtist();
+	tmp.Remove('\\');
+	strFormat.Replace("%1", tmp);
+	tmp =  GetCDTrack(0)->m_id3Info.GetSong();
+	tmp.Remove('\\');
+	strFormat.Replace("%2", tmp);
+	tmp =  GetCDTrack(0)->m_id3Info.GetAlbum();
+	tmp.Remove('\\');
+	strFormat.Replace("%3", tmp);
+	tmp = GetCDTrack(0)->m_id3Info.GetGenre();
+	tmp.Remove('\\');
+	strFormat.Replace("%5", tmp);
 
 	tmp.Format("0x%X", GetDiscID());
 	strFormat.Replace("%c", tmp);
@@ -538,8 +525,8 @@ CString CCompactDisc::GetAlbumString(CString wdir, CString ext)
 	
 	tmp.Format("%d", GetCDTrack(0)->m_id3Info.GetYear());
 	strFormat.Replace("%4", tmp);
-	//tmp.Format("%02d", 1);
-	strFormat.Replace("%a", "01");
+	tmp.Format("%02d", 1);
+	strFormat.Replace("%a", tmp);
 	tmp.Format("%02d", GetNumAudioTracks());
 	strFormat.Replace("%b", tmp);
 
@@ -551,7 +538,7 @@ CString CCompactDisc::GetAlbumString(CString wdir, CString ext)
 	strFormat.Replace('>', ')');
 	strFormat.Replace('|', '-');
 	strFormat.Remove(':');
-	strFormat.Remove('\\');
+	//strFormat.Remove('\\');
 	strFormat.Remove('.');
 
 	if(strFormat.GetLength() > _MAX_FNAME){
@@ -588,59 +575,6 @@ CString CCompactDisc::GetAlbumString(CString wdir, CString ext)
 	return strSaveAs;
 }
 
-//DEL CString CCompactDisc::GetValue(int nTrack, CString val)
-//DEL {
-//DEL 
-//DEL 	CString tmp = "";
-//DEL 	if(val == "%1"){
-//DEL 
-//DEL 		tmp = GetCDTrack(nTrack)->m_id3Info.GetArtist();
-//DEL 	}
-//DEL 	if(val == "%2"){
-//DEL 
-//DEL 		tmp = GetCDTrack(nTrack)->m_id3Info.GetSong();
-//DEL 	}
-//DEL 	if(val == "%3"){
-//DEL 
-//DEL 		tmp = GetCDTrack(nTrack)->m_id3Info.GetAlbum();
-//DEL 	}
-//DEL 	if(val == "%4"){
-//DEL 
-//DEL 		tmp.Format("%d", GetCDTrack(nTrack)->m_id3Info.GetYear());
-//DEL 	}
-//DEL 	if(val == "%5"){
-//DEL 
-//DEL 		tmp.Format("%s", GetCDTrack(nTrack)->m_id3Info.GetGenre());
-//DEL 	}
-//DEL 	if(val == "%a"){
-//DEL 
-//DEL 		tmp.Format("%02d", nTrack + 1);
-//DEL 	}
-//DEL 	if(val == "%b"){
-//DEL 
-//DEL 		tmp.Format("%02d", GetNumAudioTracks());
-//DEL 	}
-//DEL 	if(val == "%c"){
-//DEL 
-//DEL 		tmp.Format("0x%X", GetDiscID());
-//DEL 	}
-//DEL 	if(val == "%d"){
-//DEL 
-//DEL 		tmp.Format("0x%X", GetVolID());
-//DEL 	}
-//DEL 
-//DEL 	tmp.Replace('/', '-');
-//DEL 	tmp.Remove('*');
-//DEL 	tmp.Remove('?');
-//DEL 	tmp.Replace('\"', '\'');
-//DEL 	tmp.Replace('<', '(');
-//DEL 	tmp.Replace('>', ')');
-//DEL 	tmp.Replace('|', '-');
-//DEL 	tmp.Remove(':');
-//DEL 	tmp.Remove('\\');
-//DEL 	return tmp;
-//DEL }
-
 CString CCompactDisc::GetSaveAs(int nTrack, CString wd, CString ext)
 {
 
@@ -663,23 +597,7 @@ CString CCompactDisc::GetSaveAs(int nTrack, CString wd, CString ext)
 	strFormat = (LPCSTR)cfg.GetStringValue("formatstr");
 
 	CString tmp;
-/*	int lastMatch = 0;
-	int actualMatch = 0;
-	while(TRUE){
 
-		actualMatch = strFormat.Find("%", lastMatch);
-		if(actualMatch != -1){
-
-			tmp += strFormat.Mid(lastMatch, actualMatch - lastMatch) += GetValue(nTrack, strFormat.Mid(actualMatch, 2));
-			lastMatch = actualMatch + 2;
-		}
-		else{
-			
-			tmp += strFormat.Mid(lastMatch, strFormat.GetLength());
-			break;
-		}
-	}
-*/
 	tmp = GetCDTrack(nTrack)->m_id3Info.GetArtist();
 	tmp.Remove('\\');
 	strFormat.Replace("%1", tmp);
