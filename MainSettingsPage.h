@@ -46,6 +46,7 @@ public:
 // Dialogfelddaten
 	//{{AFX_DATA(CMainSettingsPage)
 	enum { IDD = IDD_LAMEFE_PAGE };
+	CButton	c_hideMainWnd;
 	CButton	c_enqueueFiles;
 	CButton	c_cdTextRead;
 	CButton	c_writeCDPlayerIni;

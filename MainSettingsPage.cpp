@@ -53,16 +53,12 @@ void CMainSettingsPage::DoDataExchange(CDataExchange* pDX)
 {
 	CPropertyPage::DoDataExchange(pDX);
 	//{{AFX_DATA_MAP(CMainSettingsPage)
-	DDX_Control(pDX, IDC_FOCUS, c_getfocus);
-	DDX_Control(pDX, IDC_PLAY_SOUND, c_playSound);
-	DDX_Control(pDX, IDC_SAVE_WINDOW_STATE, c_saveWinPos);
-	DDX_Control(pDX, IDC_USE_HIGH_COLOR_ICONS, c_highColBar);
+	DDX_Control(pDX, IDC_HIDEMWND_ENC, c_hideMainWnd);
 	DDX_Control(pDX, IDC_ENQUEUE_FILES, c_enqueueFiles);
 	DDX_Control(pDX, IDC_CDTEXT_ALWAYSREAD, c_cdTextRead);
 	DDX_Control(pDX, IDC_CPLAYERINI_ALWAYS_WRITE, c_writeCDPlayerIni);
 	DDX_Control(pDX, IDC_CPLAYERINI_ALWAYS_READ, c_readCDPlayerIni);
 	DDX_Control(pDX, IDC_PLAYER_PATH, c_playerPath);
-	//DDX_Control(pDX, IDC_OUTPUT_PATH, c_outputPath);
 	DDX_Control(pDX, IDC_SILENT, c_silent);
 	DDX_Control(pDX, IDC_SHUTDOWN, c_shutdownOnFinished);
 	DDX_Control(pDX, IDC_PLAY_FILES, c_playFiles);
@@ -70,9 +66,13 @@ void CMainSettingsPage::DoDataExchange(CDataExchange* pDX)
 	DDX_Control(pDX, IDC_FINISH_DLG, c_finishedDialog);
 	DDX_Control(pDX, IDC_EXIT_FINISHED, c_quitOnFinished);
 	DDX_Control(pDX, IDC_BEEP, c_beep);
+	DDX_Control(pDX, IDC_FOCUS, c_getfocus);
+	DDX_Control(pDX, IDC_PLAY_SOUND, c_playSound);
+	DDX_Control(pDX, IDC_SAVE_WINDOW_STATE, c_saveWinPos);
+	DDX_Control(pDX, IDC_USE_HIGH_COLOR_ICONS, c_highColBar);
+	DDX_Text(pDX, IDC_PLAYER_PATH, m_playerPath);
 	DDX_Control(pDX, IDC_SHOW_SPLASH, c_showSplash);
 	DDX_Control(pDX, IDC_ALBUMEDIT, c_showAlbumEditor);
-	DDX_Text(pDX, IDC_PLAYER_PATH, m_playerPath);
 	//}}AFX_DATA_MAP
 }
 
@@ -107,7 +107,6 @@ BOOL CMainSettingsPage::OnInitDialog()
 	   return TRUE;
 	}
 
-	//m_pToolTip->AddTool(this, "Encoder Settings");
 	m_pToolTip->AddTool(&c_beep, IDS_TOOL_BEEP);
 	m_pToolTip->AddTool(&c_finishedDialog, IDS_TOOL_NOTIFICATION);
 	m_pToolTip->AddTool(&c_m3u, IDS_TOOL_M3U);
@@ -115,7 +114,6 @@ BOOL CMainSettingsPage::OnInitDialog()
 	m_pToolTip->AddTool(&c_quitOnFinished, IDS_TOOL_QUIT);
 	m_pToolTip->AddTool(&c_shutdownOnFinished, IDS_TOOL_SHUTDOWN);
 	m_pToolTip->AddTool(&c_silent, IDS_TOOL_SILENT);
-//	m_pToolTip->AddTool(&c_outputPath, IDS_TOOL_OUTPUTPATH);
 	m_pToolTip->AddTool(&c_playerPath, IDS_TOOL_EXTPLAYER);
 	m_pToolTip->AddTool(&c_readCDPlayerIni, IDS_TOOL_READCDPINI);
 	m_pToolTip->AddTool(&c_writeCDPlayerIni, IDS_TOOL_WRITECDPINI);
@@ -126,6 +124,8 @@ BOOL CMainSettingsPage::OnInitDialog()
 	m_pToolTip->AddTool(&c_getfocus, IDS_TOOL_GETFOCUS);
 	m_pToolTip->AddTool(&c_showSplash, IDS_TOOL_SHOWSPLASH);
 	m_pToolTip->AddTool(&c_showAlbumEditor, IDS_TOOL_ALWAYSTAGEDIT);
+	m_pToolTip->AddTool(&c_hideMainWnd, IDS_TOOL_HIDEMAINWND);
+	m_pToolTip->AddTool(&c_enqueueFiles, IDS_TOOL_ENQUEUE);
 	m_pToolTip->Activate(TRUE);
 
 	
@@ -138,7 +138,6 @@ BOOL CMainSettingsPage::OnInitDialog()
 	c_enqueueFiles.SetCheck(cfg.GetValue("enqueue"));
 	c_quitOnFinished.SetCheck(cfg.GetValue("quit"));
 	c_shutdownOnFinished.SetCheck(cfg.GetValue("shutdown"));
-	//m_outputPath = cfg.GetStringValue("output");
 	m_playerPath = cfg.GetStringValue("extplayer");
 	c_silent.SetCheck(cfg.GetValue("silent"));
 	c_readCDPlayerIni.SetCheck(cfg.GetValue("readcdplayerini"));
@@ -150,6 +149,7 @@ BOOL CMainSettingsPage::OnInitDialog()
 	c_highColBar.SetCheck(cfg.GetValue("usehighcoloricons"));
 	c_showSplash.SetCheck(cfg.GetValue("showsplashscr"));
 	c_showAlbumEditor.SetCheck(cfg.GetValue("showtagedit"));
+	c_hideMainWnd.SetCheck(cfg.GetValue("hideduringenc"));
 	UpdateData(FALSE);
 	
 	c_enqueueFiles.EnableWindow(c_playFiles.GetCheck());
@@ -168,7 +168,6 @@ void CMainSettingsPage::OnOK()
 	cfg.SetValue("play", c_playFiles.GetCheck());
 	cfg.SetValue("quit", c_quitOnFinished.GetCheck());
 	cfg.SetValue("shutdown", c_shutdownOnFinished.GetCheck());
-	//cfg.SetStringValue("output", m_outputPath);
 	cfg.SetStringValue("extplayer", m_playerPath);
 	cfg.SetValue("silent", c_silent.GetCheck());
 	cfg.SetValue("readcdplayerini", c_readCDPlayerIni.GetCheck());
@@ -181,13 +180,9 @@ void CMainSettingsPage::OnOK()
 	cfg.SetValue("usehighcoloricons", c_highColBar.GetCheck());
 	cfg.SetValue("showsplashscr", c_showSplash.GetCheck());
 	cfg.SetValue("showtagedit", c_showAlbumEditor.GetCheck());
+	cfg.SetValue("hideduringenc", c_hideMainWnd.GetCheck());
 }
 
-//DEL void CMainSettingsPage::OnOutput() 
-//DEL {
-//DEL 
-//DEL 
-//DEL }
 
 void CMainSettingsPage::OnPlayer() 
 {
