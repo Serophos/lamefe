@@ -1,0 +1,178 @@
+//
+// LAMEFE.RC2 - Ressourcen, die Microsoft Visual C++ nicht direkt bearbeitet
+//
+
+#ifdef APSTUDIO_INVOKED
+	#error this file is not editable by Microsoft Visual C++
+#endif //APSTUDIO_INVOKED
+
+
+/////////////////////////////////////////////////////////////////////////////
+// Fügen Sie hier manuell bearbeitete Ressourcen hinzu...
+
+/////////////////////////////////////////////////////////////////////////////
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// String Table
+//
+
+#ifdef _ENGLISH
+
+STRINGTABLE DISCARDABLE 
+BEGIN
+    IDS_ABOUTBOX            "&About lameFE..."
+END
+
+STRINGTABLE DISCARDABLE 
+BEGIN
+    ID_EXIT                 "Exit lameFE"
+    IDS_MAIN_ADDFILECD      "To choose tracks you (don't) want to extract, just (de-)select them in the list-box.\nRead documentation for more details.\nIf you want to encode WAVE Audio files switch to \\""Wave to MP3 Mode\\"" first."
+    IDS_NOFILESSELECTED     "No file(s) selected."
+    IDS_EMPTYLIST           "No file(s) in list."
+    IDS_MAIN_NOAUDIOCD      "No Audiotracks selected, or no Audio CD in drive. "
+    IDS_NOTRACKSSELECTED    "Please select track(s) you want to extract from the Audio CD."
+    IDS_DATATRACK           "Track %d is a Data Track and will be ignored"
+    IDS_DRIVENOTREADY       "Drive error or drive not ready (%d)."
+    IDS_ERRTOC              "Error reading Table of Content of CD (Errornumber: %d)"
+    IDS_MAIN_LIST_TITLE     "CD in Drive [%s]"
+END
+
+STRINGTABLE DISCARDABLE 
+BEGIN
+    IDS_ENC_ID3FAILED       "Could not write id3-tag. Initialisation of tagWriter.dll failed."
+    IDS_ENC_WRITEID3        "Rendering id3 frames to file."
+    IDS_ENC_ID3INTERR       "Could not write id3-tag. Internal error."
+    IDS_ENC_LOGENTRY        "Input: %s\nSave as: %s\nInput format: %d kHz, %d bit %d channels\nStatus: %s\n\n"
+    IDS_ENC_LOGFAILED       "Could not write data to lameFE.log"
+    IDS_ENC_FILEEXISTS      "File %s already exists. Overwrite?"
+    IDS_ENC_DENIEDOVWR      "File already exists. User denied overwriting. File skipped."
+    IDS_ENC_ERRDIRCREATE    "Error creating directory "
+    IDS_ENC_TOOLTIP         "lameFE 2.0 | Working on file / track"
+    IDS_ENC_INITERR         "Fatal: Encoder-engine initialisation failed."
+    IDS_ENC_SUCCESS         "Encoded successfully"
+    IDS_ENC_PREPARING       "Preparing..."
+    IDS_ENC_RIPPING         "Ripping Audio CD"
+    IDS_ENC_RIPPERROR       "Error ripping audiotrack"
+    IDS_ENC_NUMERRORS       "%d error(s)"
+    IDS_ENC_VIEW_LOG_ERR    "There have been errors during encoding. View logfile?"
+END
+
+STRINGTABLE DISCARDABLE 
+BEGIN
+    IDS_ENC_VIEW_LOG        "Encoding process finished successfully. View logfile?"
+    IDS_ENC_FILE_XOFY       "File %d of %d"
+    IDS_ENC_TRACK_XOFY      "Track %d of %d"
+    IDS_ENC_EXTRACT_TRACK   "Extracting Audio Track %d"
+    IDS_ENC_JITTER_ERR      "Jitter error (Sectors %d <-> %d)"
+    IDS_ENC_FINISHED        "Finished."
+    IDS_ENC_CLOSE_BTN       "&Close"
+    IDS_ENC_WRITE_M3U       "Writing Playlist"
+    IDS_ENC_SAVED_M3U       "Saved playlist to "
+    IDS_ENC_FAILED_M3U      "Could not create "
+    IDS_ENC_WAVE_ENC        "Encoding..."
+    IDS_ENC_WAVE_FILES      "Encoding files..."
+    IDS_CDDB_ERR_CFGWRITE   "Error writing cddb.cfg"
+    IDS_CDDB_ERR_CFGREAD    "Error reading cddb.cfg"
+    IDS_CDDB_ERR_WINSOCK    "Error initializinh Winsock!"
+    IDS_CDDB_ERR            "Could not connect to server.\n[Error: %d, Response:%s]"
+END
+
+STRINGTABLE DISCARDABLE 
+BEGIN
+    IDS_MAIN_LIST_TITLE2    "Files to convert"
+    IDS_MAIN_DATATRACK      "Data Track"
+    IDS_CDDBONWAVERR        "CDdb(tm) stands for Compact Disc Data Base. For that reason this feature works not in Wave to Mp3 Mode :-P"
+    IDS_ID3_ALBUMMODE       "Apply album information of for all files?"
+    IDS_NOSELECTION         "No file selected."
+    IDS_ID3_ARTISTMODE      "Apply artist information for all files?"
+    IDS_ID3_COMMENTMODE     "Apply comment information for all files?"
+    IDS_ID3_GENREMODE       "Apply genre information for all files?"
+    IDS_ID3_YEARMODE        "Apply year information for all files?"
+    IDS_FILEOPENERR         "Error opening file %s"
+    IDS_INVBITRATE          "Invalid bitrate. Only 16bit files are currently supported. This has %d bits per sample"
+    IDS_RESTARTLAME         "You have to Restart lameFE before this setting takes into effect"
+END
+
+#endif //_ENGLISH
+/////////////////////////////////////////////////////////////////////////////
+
+
+#ifdef _GERMAN
+STRINGTABLE DISCARDABLE 
+BEGIN
+    IDS_ABOUTBOX            "&Über lameFE..."
+END
+
+STRINGTABLE DISCARDABLE 
+BEGIN
+    ID_EXIT                 "lameFE beenden."
+    IDS_MAIN_ADDFILECD      "Markieren Sie die Stücke, die Sie extrahieren möchten.\nWenn Sie Wave Dateien encodieren wollen, müssen Sie erst in den ""Wave nach MP3"" Modus wechseln.\nFür weitere Informationen lesen die Hilfe / F.A.Q."
+    IDS_NOFILESSELECTED     "Keine Datei(en) markiert"
+    IDS_EMPTYLIST           "Keine Datei(en) in der Liste"
+    IDS_MAIN_NOAUDIOCD      "Keine Audiotracks ausgewählt oder keine Audio CD im Laufwerk. "
+    IDS_NOTRACKSSELECTED    "Bitte markieren Sie die Stücke, die Sie extrahieren möchten."
+    IDS_DATATRACK           "Track %d ist ein Datentrack und wird ignoriert."
+    IDS_DRIVENOTREADY       "Laufwerk nicht bereit (%d)."
+    IDS_ERRTOC              "Fehler beim Lesen des Inhaltsverzeichnisses der CD (TOC). (Fehlercode: %d)"
+    IDS_MAIN_LIST_TITLE     "CD im Laufwerk [%s]"
+END
+
+STRINGTABLE DISCARDABLE 
+BEGIN
+    IDS_ENC_ID3FAILED       "Während der Initialisierung von tagWriter.dll ist ein Fehler aufgetreten. Id3Tag konnte nicht geschrieben werden."
+    IDS_ENC_WRITEID3        "Schreibe id3 Tag."
+    IDS_ENC_ID3INTERR       "Konnte id3 Tag nicht schreiben: Interner Fehler."
+    IDS_ENC_LOGENTRY        "Original Datei: %s\nAusgabe Datei: %s\nFormat: %d kHz, %d bit %d Kanäle\nStatus: %s\n\n"
+    IDS_ENC_LOGFAILED       "Konnte nicht in lameFE.log schreiben"
+    IDS_ENC_FILEEXISTS      "Die Datei %s existiert bereits. Überschreiben?"
+    IDS_ENC_DENIEDOVWR      "Datei existiert bereits. Benutzer hat Überschreiben verboten. Übersprungen."
+    IDS_ENC_ERRDIRCREATE    "Fehler beim Erstellen des Verzeichnisses "
+    IDS_ENC_TOOLTIP         "lameFE 2.0 | Arbeite an Datei / Stück"
+    IDS_ENC_INITERR         "Initialisierungsfehler beim Starten des Encoders. Vorgang abgebrochen."
+    IDS_ENC_SUCCESS         "Erfolgreich abgeschlossen."
+    IDS_ENC_PREPARING       "Bereite vor..."
+    IDS_ENC_RIPPING         "Lese Audio CD."
+    IDS_ENC_RIPPERROR       "Fehler beim Lesen des Audiotracks."
+    IDS_ENC_NUMERRORS       "%d Fehler."
+    IDS_ENC_VIEW_LOG_ERR    "Währen des Vorgangs sind Fehler aufgetreten. Logdatei ansehen?"
+END
+
+STRINGTABLE DISCARDABLE 
+BEGIN
+    IDS_ENC_VIEW_LOG        "Vorgang erfolgreich abgeschlossen. Logdatei ansehen?"
+    IDS_ENC_FILE_XOFY       "Datei %d von %d"
+    IDS_ENC_TRACK_XOFY      "Stück %d von %d"
+    IDS_ENC_EXTRACT_TRACK   "Lese Audiotrack %d"
+    IDS_ENC_JITTER_ERR      "Jitter Fehler (Sektoren %d <-> %d)"
+    IDS_ENC_FINISHED        "Abgeschlossen."
+    IDS_ENC_CLOSE_BTN       "&Schließen"
+    IDS_ENC_WRITE_M3U       "Schreibe Wiedergabeliste"
+    IDS_ENC_SAVED_M3U       "Wiedergabeliste gespeichert als "
+    IDS_ENC_FAILED_M3U      "Fehler beim Erstellen der Wiedergabeliste: "
+    IDS_ENC_WAVE_ENC        "Encodiere..."
+    IDS_ENC_WAVE_FILES      "Encodiere Datei(en)..."
+    IDS_CDDB_ERR_CFGWRITE   "Fehler beim Schreiben von cddb.cfg"
+    IDS_CDDB_ERR_CFGREAD    "Fehler beim Lesen von cddb.cfg"
+    IDS_CDDB_ERR_WINSOCK    "Winsock konnte nicht initialisiert werden!"
+    IDS_CDDB_ERR            "Die Verbindung zum freeDB Server konnte nicht aufgebaut werden bzw. wurde getrennt.\n[Fehlernummer: %d, Letzte Antwort:%s]"
+END
+
+STRINGTABLE DISCARDABLE 
+BEGIN
+    IDS_MAIN_LIST_TITLE2    "Dateien"
+    IDS_MAIN_DATATRACK      "Daten Track"
+    IDS_CDDBONWAVERR        "CDdb(tm) steht für Compact Disc Databank. Aus diesem Grund steht dieses Feature nur im CD Modus zur Verfügung.:-P"
+    IDS_ID3_ALBUMMODE       "Album Information für alle Dateien übernehmen?"
+    IDS_NOSELECTION         "Keine Datei(en) ausgewählt."
+    IDS_ID3_ARTISTMODE      "Artist Information für alle Dateien übernehmen?"
+    IDS_ID3_COMMENTMODE     "Kommentar Information für alle Dateien übernehmen?"
+    IDS_ID3_GENREMODE       "Genre Information für alle Dateien übernehmen?"
+    IDS_ID3_YEARMODE        "Jahres Information für alle Dateien übernehmen?"
+    IDS_FILEOPENERR         "Fehler beim Öffnen der Datei %s"
+    IDS_INVBITRATE          "Ungültige Bitrate. Zur Zeit werden nur 16bit Wave Dateien unterstüzt. Diese Datei hat %d bits pro Sample"
+    IDS_RESTARTLAME         "Sie müssen lameFE neu starten um diese Einstellung zu übernehmen."
+END
+#endif    // _GERMAN
+/////////////////////////////////////////////////////////////////////////////
+
