@@ -32,17 +32,17 @@
 class InternalPlayer  
 {
 public:
-	BOOL isCDPlaying();
-	void pause();
-	void deInit();
-	void prev();
-	void next();
-	void setPlaylist(CCompactDisc *cd);
-	void stop();
-	static UINT playback(LPVOID lParam);
-	void play();
+	BOOL IsCDPlaying();
+	void Pause();
+	void DeInit();
+	void Prev();
+	void Next();
+	void SetPlaylist(CCompactDisc *cd);
+	void Stop();
+	static UINT Playback(LPVOID lParam);
+	void Play();
 	InternalPlayer(int playerMode, HWND hWnd);
-	void playInternal();
+	void PlayInternal();
 	virtual ~InternalPlayer();
 
 protected:

@@ -56,26 +56,26 @@ InternalPlayer::~InternalPlayer()
 }
 
 
-UINT InternalPlayer::playback(LPVOID lParam){  // This is the internal Thread func
+UINT InternalPlayer::Playback(LPVOID lParam){  // This is the internal Thread func
 	
 	TRACE("Starting Internal Player Thread\n");
 	InternalPlayer *ip = (InternalPlayer*)lParam;
 
-	ip->playInternal();
+	ip->PlayInternal();
 	
 	//AfxEndThread(0, TRUE);
 	TRACE("------- Terminating Internal Player Thread ---------\n");
 	return 0;
 }
 
-void InternalPlayer::play()
+void InternalPlayer::Play()
 {
     
 	m_bStopped = FALSE;
-	thread = AfxBeginThread(playback, (void*)this);
+	thread = AfxBeginThread(Playback, (void*)this);
 }
 
-void InternalPlayer::stop()
+void InternalPlayer::Stop()
 {
 	
 	if(!m_cd){
@@ -96,13 +96,13 @@ void InternalPlayer::stop()
 
 
 
-void InternalPlayer::setPlaylist(CCompactDisc *cd)
+void InternalPlayer::SetPlaylist(CCompactDisc *cd)
 {
 
 	m_cd = cd;
 }
 
-void InternalPlayer::next()
+void InternalPlayer::Next()
 {
 
 	if(!m_cd){
@@ -125,7 +125,7 @@ void InternalPlayer::next()
 	CR_StopPlayTrack();
 }
 
-void InternalPlayer::prev()
+void InternalPlayer::Prev()
 {
 	if(!m_cd){
 		return;
@@ -142,10 +142,10 @@ void InternalPlayer::prev()
 
 		currentTrack--;
 	}
-	play();
+	Play();
 }
 
-void InternalPlayer::playInternal()
+void InternalPlayer::PlayInternal()
 {
 
 	if(!m_cd){
@@ -159,7 +159,7 @@ void InternalPlayer::playInternal()
 		
 		if(m_bPaused){
 
-			pause();
+			Pause();
 			return;
 		}
 
@@ -167,7 +167,7 @@ void InternalPlayer::playInternal()
 			
 			TRACE("Starting playback of Audio Track %d\n", currentTrack);
 			CR_PlayTrack(m_cd->GetCDTrack(currentTrack)->m_btTrack);
-			while(isCDPlaying()){
+			while(IsCDPlaying()){
 
 				Sleep(500);
 				//TRACE("Sleep %d\n", i);
@@ -177,13 +177,13 @@ void InternalPlayer::playInternal()
 }
 
 
-void InternalPlayer::deInit()
+void InternalPlayer::DeInit()
 {
 
-	stop();
+	Stop();
 }
 
-void InternalPlayer::pause()
+void InternalPlayer::Pause()
 {
 
 
@@ -196,7 +196,7 @@ void InternalPlayer::pause()
 
 }
 
-BOOL InternalPlayer::isCDPlaying()
+BOOL InternalPlayer::IsCDPlaying()
 {
 
 	BOOL bReturn = TRUE;
