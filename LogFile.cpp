@@ -65,7 +65,7 @@ void CLogFile::StartSession(int numEntries, CString outModule)
 	tLocalTime = localtime(&m_tStartTime);
 
 	CString	strTmp;
-	strTmp.Format("%02d:%02d:%02d Starting Session (%s)", tLocalTime->tm_hour, tLocalTime->tm_min, tLocalTime->tm_sec, outModule);
+	strTmp.Format("%02d:%02d:%02d Starting Session (%02d tasks, %s)", tLocalTime->tm_hour, tLocalTime->tm_min, tLocalTime->tm_sec, numEntries, outModule);
 	
 	m_msgOut->InsertItem(nLog, strTmp, 0);
 	m_msgOut->EnsureVisible(nLog++, FALSE);
@@ -124,7 +124,7 @@ void CLogFile::StartEntry(CString strInFile, CString strOutFile, CString inModul
 	tLocalTime = localtime(&m_tTmpStartTime);
 
 	CString	strTmp;
-	strTmp.Format("%02d:%02d:%02d Starting File: %s (Module %s)", tLocalTime->tm_hour, tLocalTime->tm_min, tLocalTime->tm_sec, strInFile, inModule);
+	strTmp.Format("%02d:%02d:%02d Starting File (%02d/%02d): %s (Module %s)", tLocalTime->tm_hour, tLocalTime->tm_min, tLocalTime->tm_sec, m_nCurrentEntry, m_nNumEntries, strInFile, inModule);
 	
 	m_msgOut->InsertItem(nLog++, strTmp, 0);
 	m_msgOut->InsertItem(nLog, "Save as: " + strOutFile, 2);
