@@ -76,7 +76,6 @@ IDI_CONFIG_IN           ICON    DISCARDABLE     "res\\config_i.ico"
 
 LAMEFE                  BITMAP  DISCARDABLE     "res\\bmp00001.bmp"
 IDB_FREEDB              BITMAP  DISCARDABLE     "res\\bmp00002.bmp"
-IDR_CD_PLAYER           BITMAP  DISCARDABLE     "res\\toolbar1.bmp"
 IDB_IMAGES              BITMAP  DISCARDABLE     "res\\bmp00003.bmp"
 IDB_LIST_BK             BITMAP  DISCARDABLE     "res\\list_bk.bmp"
 IDB_LOG_IMAGES          BITMAP  DISCARDABLE     "res\\log_images.bmp"
@@ -194,6 +193,7 @@ IDR_MAINFRAME           ICON    DISCARDABLE     "res\\lameFE.ico"
 //
 
 IDR_MAINFRAME           BITMAP  MOVEABLE PURE   "res\\Toolbar.bmp"
+IDR_INT_PLAYER          BITMAP  DISCARDABLE     "res\\int_play.bmp"
 
 /////////////////////////////////////////////////////////////////////////////
 //
@@ -214,6 +214,7 @@ BEGIN
     POPUP "&View"
     BEGIN
         MENUITEM "Show Toolbar",                ID_VIEW_SHOWTOOLBAR
+        MENUITEM "Show Playpack Toolbar",       IDS_SHOW_PLAYER
         MENUITEM "Show Statusline",             ID_VIEW_SHOWSTATUSLINE
         MENUITEM SEPARATOR
         MENUITEM "Reload CD\tF5",               ID_VIEW_RELOADCD
@@ -397,7 +398,7 @@ END
 IDD_FILENAMES DIALOGEX 0, 0, 405, 214
 STYLE WS_CHILD | WS_DISABLED | WS_CAPTION
 CAPTION "Path && Filenames"
-FONT 8, "MS Sans Serif"
+FONT 8, "MS Sans Serif", 0, 0, 0x1
 BEGIN
     CONTROL         "&Save files as:",IDC_RENAME,"Button",BS_AUTOCHECKBOX | 
                     BS_RIGHT | BS_VCENTER | BS_MULTILINE | WS_TABSTOP,14,65,
@@ -784,6 +785,16 @@ BEGIN
     BUTTON      ID_APP_ABOUT
 END
 
+IDR_INT_PLAYER TOOLBAR DISCARDABLE  16, 15
+BEGIN
+    BUTTON      ID_PREVIOUS
+    BUTTON      ID_PLAY
+    BUTTON      ID_PAUSE
+    BUTTON      ID_STOP
+    BUTTON      ID_NEXT
+    BUTTON      ID_OPENEJECT
+END
+
 
 /////////////////////////////////////////////////////////////////////////////
 //
@@ -1036,7 +1047,7 @@ BEGIN
             VALUE "OriginalFilename", "lameFE.EXE\0"
             VALUE "PrivateBuild", "\0"
             VALUE "ProductName", "lameFE 2 - Not Just Another L.A.M.E. Front End\0"
-            VALUE "ProductVersion", "2,1, 0, 1\0"
+            VALUE "ProductVersion", "2,2, 0, 5\0"
             VALUE "SpecialBuild", "486\0"
         END
     END
@@ -1186,6 +1197,15 @@ BEGIN
     ID_SETTINGS_FREEDBSETUP "Configure FreeDB / Setup Proxy Server\nConfigure FreeDB"
     ID_FILE_STARTENCODING   "Start Encoding Process\nStart Encoding"
     ID_START_TO_SINGLE_FILE "Rip the complete album to a single file (Album backup, cuesheet writing optional)\nAlbum Backup"
+END
+
+STRINGTABLE DISCARDABLE 
+BEGIN
+    ID_PLAY                 "Start playback"
+    ID_STOP                 "Stop playback"
+    ID_NEXT                 "Next track"
+    ID_PREVIOUS             "One Track back"
+    ID_PAUSE                "Pause playback"
 END
 
 #endif    // Englisch (USA) resources
