@@ -1,0 +1,845 @@
+//Microsoft Developer Studio generated resource script.
+//
+#include "resource.h"
+
+#define APSTUDIO_READONLY_SYMBOLS
+/////////////////////////////////////////////////////////////////////////////
+//
+// Generated from the TEXTINCLUDE 2 resource.
+//
+#include "afxres.h"
+
+/////////////////////////////////////////////////////////////////////////////
+#undef APSTUDIO_READONLY_SYMBOLS
+
+/////////////////////////////////////////////////////////////////////////////
+// Deutsch (Deutschland) resources
+
+#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_DEU)
+#ifdef _WIN32
+LANGUAGE LANG_GERMAN, SUBLANG_GERMAN
+#pragma code_page(1252)
+#endif //_WIN32
+
+#ifdef APSTUDIO_INVOKED
+/////////////////////////////////////////////////////////////////////////////
+//
+// TEXTINCLUDE
+//
+
+1 TEXTINCLUDE DISCARDABLE 
+BEGIN
+    "resource.h\0"
+END
+
+2 TEXTINCLUDE DISCARDABLE 
+BEGIN
+    "#include ""afxres.h""\r\n"
+    "\0"
+END
+
+3 TEXTINCLUDE DISCARDABLE 
+BEGIN
+    "#define _AFX_NO_SPLITTER_RESOURCES\r\n"
+    "#define _AFX_NO_OLE_RESOURCES\r\n"
+    "#define _AFX_NO_TRACKER_RESOURCES\r\n"
+    "#define _AFX_NO_PROPERTY_RESOURCES\r\n"
+    "\r\n"
+    "#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_ENU)\r\n"
+    "#ifdef _WIN32\r\n"
+    "LANGUAGE 9, 1\r\n"
+    "#pragma code_page(1252)\r\n"
+    "#endif //_WIN32\r\n"
+    "#include ""res\\lameFE.rc2""  // Nicht mit Microsoft Visual C++ bearbeitete Ressourcen\r\n"
+    "#include ""afxres.rc""         // Standardkomponenten\r\n"
+    "#endif\r\n"
+    "\0"
+END
+
+#endif    // APSTUDIO_INVOKED
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Icon
+//
+
+// Icon with lowest ID value placed first to ensure application icon
+// remains consistent on all systems.
+IDR_MAINFRAME           ICON    DISCARDABLE     "res\\lameFE.ico"
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Accelerator
+//
+
+IDR_ACCELERATOR1 ACCELERATORS DISCARDABLE 
+BEGIN
+    "3",            ID_TAGEDIT,             VIRTKEY, CONTROL, NOINVERT
+    "N",            ID_ADD_FILE,            VIRTKEY, CONTROL, NOINVERT
+    "R",            ID_REMOVE_FILE,         VIRTKEY, CONTROL, NOINVERT
+    "S",            ID_SETTINGS,            VIRTKEY, CONTROL, NOINVERT
+    VK_F1,          ID_HELP,                VIRTKEY, NOINVERT
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// String Table
+//
+
+STRINGTABLE DISCARDABLE 
+BEGIN
+    ID_ADD_FILE             "Add file(s) to list\nAdd File(s)"
+    ID_REMOVE_FILE          "Remove selected file(s) from list\nRemove Files"
+    ID_TAGEDIT              "Edit ID3 Tag of selected file(s)\nID3 Tageditor"
+END
+
+#endif    // Deutsch (Deutschland) resources
+/////////////////////////////////////////////////////////////////////////////
+
+
+/////////////////////////////////////////////////////////////////////////////
+// Englisch (USA) resources
+
+#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_ENU)
+#ifdef _WIN32
+LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_US
+#pragma code_page(1252)
+#endif //_WIN32
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Dialog
+//
+
+IDD_ABOUTBOX DIALOG DISCARDABLE  0, 0, 316, 164
+STYLE DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "About lameFE Professional"
+FONT 8, "MS Sans Serif"
+BEGIN
+    ICON            IDR_MAINFRAME,IDC_STATIC,11,17,21,20
+    LTEXT           "lameFE Professional Version 1.0",IDC_STATIC,40,10,119,8,
+                    SS_NOPREFIX
+    LTEXT           "Copyright (C) 2001 by Nauta Clarus Software",IDC_STATIC,
+                    39,21,188,8
+    DEFPUSHBUTTON   "OK",IDOK,259,7,50,14,WS_GROUP
+    LTEXT           "Please report any bugs to winkler@nauta-clarus-media.de",
+                    IDC_STATIC,39,31,196,10
+    LTEXT           "This program is free software; you can redistribute it and/or modify\nit under the terms of the GNU General Public License as published by\nthe Free Software Foundation; either version 2 of the License, or\n(at your option) any later version.",
+                    IDC_STATIC,46,52,232,34
+    LTEXT           "This program is distributed in the hope that it will be useful,\nbut WITHOUT ANY WARRANTY; without even the implied warranty of\nMERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the\nGNU General Public License for more details.",
+                    IDC_STATIC,46,88,252,34
+    LTEXT           "You should have received a copy of the GNU General Public License\nalong with this program; if not, write to the Free Software\nFoundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.",
+                    IDC_STATIC,46,123,257,30
+    CONTROL         "",IDC_STATIC,"Static",SS_ETCHEDFRAME,39,49,270,108
+END
+
+IDD_LAMEFE_DIALOG DIALOGEX 0, 0, 382, 255
+STYLE DS_MODALFRAME | DS_3DLOOK | WS_MINIMIZEBOX | WS_POPUP | WS_VISIBLE | 
+    WS_CAPTION | WS_SYSMENU
+EXSTYLE WS_EX_APPWINDOW
+CAPTION "lameFE Professional"
+MENU IDR_MAIN_MENU
+FONT 8, "MS Sans Serif"
+BEGIN
+    GROUPBOX        "Files",IDC_STATIC,7,46,368,151
+    COMBOBOX        IDC_PRESET,71,27,134,95,CBS_DROPDOWNLIST | WS_VSCROLL | 
+                    WS_TABSTOP
+    LTEXT           "&Preset",IDC_STATIC,27,25,39,14,SS_CENTERIMAGE
+    LTEXT           "Launch Preseteditor to create or edit a preset or select a preset from list below.",
+                    IDC_STATIC,27,7,253,14,SS_CENTERIMAGE
+    LISTBOX         IDC_LIST,12,55,358,137,LBS_NOINTEGRALHEIGHT | 
+                    LBS_EXTENDEDSEL | WS_VSCROLL | WS_TABSTOP,
+                    WS_EX_ACCEPTFILES
+    PUSHBUTTON      "Start &encoding",IDC_ENCODE,12,207,59,14
+    CONTROL         "Progress1",IDC_PROGRESS_FILE,"msctls_progress32",
+                    WS_BORDER,163,200,191,9
+    CONTROL         "Progress1",IDC_PROGRESS_LIST,"msctls_progress32",
+                    WS_BORDER,163,218,191,9
+    RTEXT           "File:     0% ",IDC_STATIC,76,200,84,8
+    RTEXT           "List:     0%   ",IDC_STATIC,76,219,87,8
+    RTEXT           "Progress: ",IDC_STATIC,71,209,51,10,SS_CENTERIMAGE
+    LTEXT           "100%",IDC_STATIC,357,200,18,8
+    LTEXT           "100%",IDC_STATIC,357,218,18,8
+    RTEXT           "",IDC_STATUS,76,232,299,16
+    ICON            IDR_MAINFRAME,IDC_STATIC,12,228,20,20
+END
+
+IDD_TAGEDITOR DIALOG DISCARDABLE  0, 0, 368, 161
+STYLE DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "lameFE Id3-Tageditor"
+FONT 8, "MS Sans Serif"
+BEGIN
+    GROUPBOX        "&Files",IDC_STATIC,7,7,101,147
+    LISTBOX         IDC_FILES,11,21,91,129,LBS_NOINTEGRALHEIGHT | WS_VSCROLL | 
+                    WS_TABSTOP
+    LTEXT           "&Title",IDC_STATIC,113,26,64,12
+    EDITTEXT        IDC_TITLE,181,24,127,14,ES_AUTOHSCROLL
+    LTEXT           "&Interpret",IDC_STATIC,113,41,64,12
+    EDITTEXT        IDC_INTERPRET,181,39,127,14,ES_AUTOHSCROLL
+    LTEXT           "&Album",IDC_STATIC,113,57,64,11
+    EDITTEXT        IDC_ALBUM,181,54,127,14,ES_AUTOHSCROLL
+    LTEXT           "&Genre",IDC_STATIC,113,71,64,11
+    COMBOBOX        IDC_GENRE,181,68,127,86,CBS_DROPDOWNLIST | CBS_SORT | 
+                    CBS_UPPERCASE | WS_VSCROLL | WS_TABSTOP
+    LTEXT           "T&rack",IDC_STATIC,113,86,64,11
+    EDITTEXT        IDC_TRACK,181,83,127,14,ES_AUTOHSCROLL
+    LTEXT           "&Year",IDC_STATIC,113,101,64,11
+    EDITTEXT        IDC_YEAR,181,98,127,14,ES_AUTOHSCROLL
+    LTEXT           "&Comment",IDC_STATIC,113,116,64,11
+    EDITTEXT        IDC_COMMENT,181,112,127,14,ES_AUTOHSCROLL
+    DEFPUSHBUTTON   "&Update Tag",IDC_UPDATE,252,140,50,14
+    PUSHBUTTON      "Done",IDOK,308,140,50,14
+    CTEXT           "Select a file from list and edit. Click the ""update"" to save changes.",
+                    IDC_STATIC,113,7,248,14,SS_CENTERIMAGE
+END
+
+IDD_PRESET DIALOG DISCARDABLE  0, 0, 324, 135
+STYLE DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "lameFE Preset-Editor"
+FONT 8, "MS Sans Serif"
+BEGIN
+    LTEXT           "&Preset Name",IDC_STATIC,7,12,73,11
+    COMBOBOX        IDC_PRESET,86,11,158,71,CBS_DROPDOWN | WS_VSCROLL | 
+                    WS_TABSTOP
+    LTEXT           "&Encoding Mode",IDC_STATIC,7,27,73,11
+    COMBOBOX        IDC_ENCODING,86,26,158,41,CBS_DROPDOWNLIST | WS_VSCROLL | 
+                    WS_TABSTOP
+    LTEXT           "&Sampling Rate",IDC_STATIC,7,41,73,11
+    COMBOBOX        IDC_SAMPLES,86,40,158,71,CBS_DROPDOWNLIST | WS_VSCROLL | 
+                    WS_TABSTOP
+    LTEXT           "&Bitrate",IDC_STATIC,7,56,73,11
+    COMBOBOX        IDC_BITRATE,86,55,158,70,CBS_DROPDOWNLIST | WS_VSCROLL | 
+                    WS_TABSTOP
+    LTEXT           "S&tereo Mode",IDC_STATIC,7,71,73,11,WS_DISABLED
+    COMBOBOX        IDC_STEREOMODE,86,70,158,55,CBS_DROPDOWNLIST | 
+                    WS_DISABLED | WS_VSCROLL | WS_TABSTOP
+    CONTROL         "Full &ISO Compliance (for hardware players usefull)",
+                    IDC_ISO,"Button",BS_AUTOCHECKBOX | WS_DISABLED | 
+                    WS_TABSTOP,86,86,176,10
+    CONTROL         "&Original (Set ""copyright"" bit)",IDC_ORIG,"Button",
+                    BS_AUTOCHECKBOX | WS_TABSTOP,86,99,167,12
+    CONTROL         "&Copy (Set ""Non-Original"" bit)",IDC_COPY,"Button",
+                    BS_AUTOCHECKBOX | WS_TABSTOP,86,114,167,11
+    PUSHBUTTON      "Save Preset",IDC_SAVE,267,7,50,14
+    DEFPUSHBUTTON   "Done",IDOK,267,51,50,16
+    ICON            IDR_MAINFRAME,IDC_STATIC,297,108,20,20
+    PUSHBUTTON      "Delete Preset",IDC_DELETE,267,24,50,14
+END
+
+IDD_SETTINGS DIALOG DISCARDABLE  0, 0, 338, 82
+STYLE DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "lameFE Settings"
+FONT 8, "MS Sans Serif"
+BEGIN
+    DEFPUSHBUTTON   "Done",IDOK,281,7,50,14
+    PUSHBUTTON      "Cancel",IDCANCEL,281,24,50,14
+    CONTROL         "Genrate &M3U-Playlist",IDC_M3U,"Button",BS_AUTOCHECKBOX | 
+                    WS_TABSTOP,7,7,95,14
+    CONTROL         "&Play files after encoding",IDC_PLAY,"Button",
+                    BS_AUTOCHECKBOX | WS_TABSTOP,7,21,95,17
+    CONTROL         "&Beep when finished",IDC_BEEP,"Button",BS_AUTOCHECKBOX | 
+                    WS_TABSTOP,102,7,101,14
+    CONTROL         "Show finished dialog",IDC_DLG,"Button",BS_AUTOCHECKBOX | 
+                    WS_TABSTOP,102,21,101,17
+    CONTROL         "Save to &path:",IDC_PATHCHK,"Button",BS_AUTOCHECKBOX | 
+                    WS_TABSTOP,7,38,95,14
+    ICON            IDR_MAINFRAME,IDC_STATIC,311,55,21,20
+    EDITTEXT        IDC_PATH,102,38,171,14,ES_AUTOHSCROLL | WS_DISABLED
+    PUSHBUTTON      "&Choose audioplayer",IDC_AUDIO,7,55,70,14
+    LTEXT           "",IDC_PLAYERPT,102,57,172,13
+END
+
+
+#ifndef _MAC
+/////////////////////////////////////////////////////////////////////////////
+//
+// Version
+//
+
+VS_VERSION_INFO VERSIONINFO
+ FILEVERSION 1,0,0,1
+ PRODUCTVERSION 1,0,0,1
+ FILEFLAGSMASK 0x3fL
+#ifdef _DEBUG
+ FILEFLAGS 0x1L
+#else
+ FILEFLAGS 0x0L
+#endif
+ FILEOS 0x4L
+ FILETYPE 0x1L
+ FILESUBTYPE 0x0L
+BEGIN
+    BLOCK "StringFileInfo"
+    BEGIN
+        BLOCK "040904B0"
+        BEGIN
+            VALUE "CompanyName", "\0"
+            VALUE "FileDescription", "lameFE MFC Application\0"
+            VALUE "FileVersion", "1, 0, 0, 1\0"
+            VALUE "InternalName", "lameFE\0"
+            VALUE "LegalCopyright", "Copyright (C) 2001\0"
+            VALUE "LegalTrademarks", "\0"
+            VALUE "OriginalFilename", "lameFE.EXE\0"
+            VALUE "ProductName", "lameFE Application\0"
+            VALUE "ProductVersion", "1, 0, 0, 1\0"
+        END
+    END
+    BLOCK "VarFileInfo"
+    BEGIN
+        VALUE "Translation", 0x409, 1200
+    END
+END
+
+#endif    // !_MAC
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// DESIGNINFO
+//
+
+#ifdef APSTUDIO_INVOKED
+GUIDELINES DESIGNINFO DISCARDABLE 
+BEGIN
+    IDD_ABOUTBOX, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 309
+        VERTGUIDE, 39
+        VERTGUIDE, 46
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 157
+    END
+
+    IDD_LAMEFE_DIALOG, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 375
+        VERTGUIDE, 12
+        VERTGUIDE, 27
+        VERTGUIDE, 71
+        VERTGUIDE, 76
+        VERTGUIDE, 163
+        VERTGUIDE, 205
+        VERTGUIDE, 210
+        VERTGUIDE, 280
+        VERTGUIDE, 284
+        VERTGUIDE, 354
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 248
+        HORZGUIDE, 39
+        HORZGUIDE, 41
+        HORZGUIDE, 46
+        HORZGUIDE, 197
+        HORZGUIDE, 200
+    END
+
+    IDD_TAGEDITOR, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 361
+        VERTGUIDE, 11
+        VERTGUIDE, 102
+        VERTGUIDE, 108
+        VERTGUIDE, 113
+        VERTGUIDE, 177
+        VERTGUIDE, 181
+        VERTGUIDE, 308
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 154
+        HORZGUIDE, 21
+        HORZGUIDE, 38
+        HORZGUIDE, 53
+        HORZGUIDE, 68
+        HORZGUIDE, 82
+        HORZGUIDE, 97
+        HORZGUIDE, 112
+        HORZGUIDE, 127
+    END
+
+    IDD_PRESET, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 317
+        VERTGUIDE, 80
+        VERTGUIDE, 86
+        VERTGUIDE, 265
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 128
+        HORZGUIDE, 23
+        HORZGUIDE, 38
+        HORZGUIDE, 52
+        HORZGUIDE, 67
+        HORZGUIDE, 82
+        HORZGUIDE, 96
+        HORZGUIDE, 111
+        HORZGUIDE, 125
+    END
+
+    IDD_SETTINGS, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 331
+        VERTGUIDE, 102
+        VERTGUIDE, 282
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 75
+        HORZGUIDE, 21
+        HORZGUIDE, 38
+        HORZGUIDE, 52
+    END
+END
+#endif    // APSTUDIO_INVOKED
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Menu
+//
+
+IDR_MAIN_MENU MENU DISCARDABLE 
+BEGIN
+    POPUP "&File"
+    BEGIN
+        MENUITEM "&Add File(s) \tCtrl+N",       ID_ADD_FILE
+        MENUITEM "&Remove File(s) \tCtrl+R",    ID_REMOVE_FILE
+        MENUITEM SEPARATOR
+        MENUITEM "&Exit",                       ID_EXIT
+    END
+    POPUP "&Lame"
+    BEGIN
+        MENUITEM "ID&3 Tageditor \tCtrl+3",     ID_LAME_ID3TAGEDITOR, GRAYED
+        MENUITEM "&Preseteditor",               ID_PRESET
+        MENUITEM SEPARATOR
+        MENUITEM "&Settings \tCtrl+S",          ID_SETTINGS
+    END
+    POPUP "&Help"
+    BEGIN
+        MENUITEM "&Index... \tF1",              ID_HELP
+        MENUITEM "&About",                      ID_ABOUT
+    END
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Dialog Info
+//
+
+IDD_TAGEDITOR DLGINIT
+BEGIN
+    IDC_GENRE, 0x403, 6, 0
+0x6c42, 0x6575, 0x0073, 
+    IDC_GENRE, 0x403, 13, 0
+0x6c43, 0x7361, 0x6973, 0x2063, 0x6f72, 0x6b63, "\000" 
+    IDC_GENRE, 0x403, 8, 0
+0x6f43, 0x6e75, 0x7274, 0x0079, 
+    IDC_GENRE, 0x403, 6, 0
+0x6144, 0x636e, 0x0065, 
+    IDC_GENRE, 0x403, 6, 0
+0x6944, 0x6373, 0x006f, 
+    IDC_GENRE, 0x403, 5, 0
+0x7546, 0x6b6e, "\000" 
+    IDC_GENRE, 0x403, 7, 0
+0x7247, 0x6e75, 0x6567, "\000" 
+    IDC_GENRE, 0x403, 8, 0
+0x6948, 0x2d70, 0x6f48, 0x0070, 
+    IDC_GENRE, 0x403, 5, 0
+0x614a, 0x7a7a, "\000" 
+    IDC_GENRE, 0x403, 6, 0
+0x654d, 0x6174, 0x006c, 
+    IDC_GENRE, 0x403, 8, 0
+0x654e, 0x2077, 0x6741, 0x0065, 
+    IDC_GENRE, 0x403, 7, 0
+0x6c4f, 0x6964, 0x7365, "\000" 
+    IDC_GENRE, 0x403, 6, 0
+0x744f, 0x6568, 0x0072, 
+    IDC_GENRE, 0x403, 4, 0
+0x6f50, 0x0070, 
+    IDC_GENRE, 0x403, 4, 0
+0x2652, 0x0042, 
+    IDC_GENRE, 0x403, 4, 0
+0x6152, 0x0070, 
+    IDC_GENRE, 0x403, 7, 0
+0x6552, 0x6767, 0x6561, "\000" 
+    IDC_GENRE, 0x403, 5, 0
+0x6f52, 0x6b63, "\000" 
+    IDC_GENRE, 0x403, 7, 0
+0x6554, 0x6863, 0x6f6e, "\000" 
+    IDC_GENRE, 0x403, 11, 0
+0x6e49, 0x7564, 0x7473, 0x6972, 0x6c61, "\000" 
+    IDC_GENRE, 0x403, 12, 0
+0x6c41, 0x6574, 0x6e72, 0x7461, 0x7669, 0x0065, 
+    IDC_GENRE, 0x403, 4, 0
+0x6b53, 0x0061, 
+    IDC_GENRE, 0x403, 12, 0
+0x6544, 0x7461, 0x2068, 0x654d, 0x6174, 0x006c, 
+    IDC_GENRE, 0x403, 7, 0
+0x7250, 0x6e61, 0x736b, "\000" 
+    IDC_GENRE, 0x403, 11, 0
+0x6f53, 0x6e75, 0x7464, 0x6172, 0x6b63, "\000" 
+    IDC_GENRE, 0x403, 12, 0
+0x7545, 0x6f72, 0x542d, 0x6365, 0x6e68, 0x006f, 
+    IDC_GENRE, 0x403, 8, 0
+0x6d41, 0x6962, 0x6e65, 0x0074, 
+    IDC_GENRE, 0x403, 9, 0
+0x7254, 0x7069, 0x4820, 0x706f, "\000" 
+    IDC_GENRE, 0x403, 6, 0
+0x6f56, 0x6163, 0x006c, 
+    IDC_GENRE, 0x403, 10, 0
+0x614a, 0x7a7a, 0x462b, 0x6e75, 0x006b, 
+    IDC_GENRE, 0x403, 7, 0
+0x7546, 0x6973, 0x6e6f, "\000" 
+    IDC_GENRE, 0x403, 7, 0
+0x7254, 0x6e61, 0x6563, "\000" 
+    IDC_GENRE, 0x403, 10, 0
+0x6c43, 0x7361, 0x6973, 0x6163, 0x006c, 
+    IDC_GENRE, 0x403, 13, 0
+0x6e49, 0x7473, 0x7572, 0x656d, 0x746e, 0x6c61, "\000" 
+    IDC_GENRE, 0x403, 5, 0
+0x6341, 0x6469, "\000" 
+    IDC_GENRE, 0x403, 6, 0
+0x6f48, 0x7375, 0x0065, 
+    IDC_GENRE, 0x403, 5, 0
+0x6147, 0x656d, "\000" 
+    IDC_GENRE, 0x403, 11, 0
+0x6f53, 0x6e75, 0x2064, 0x6c43, 0x7069, "\000" 
+    IDC_GENRE, 0x403, 7, 0
+0x6f47, 0x7073, 0x6c65, "\000" 
+    IDC_GENRE, 0x403, 6, 0
+0x6f4e, 0x7369, 0x0065, 
+    IDC_GENRE, 0x403, 17, 0
+0x6c41, 0x6574, 0x6e72, 0x7461, 0x7669, 0x2065, 0x6f52, 0x6b63, "\000" 
+    IDC_GENRE, 0x403, 5, 0
+0x6142, 0x7373, "\000" 
+    IDC_GENRE, 0x403, 5, 0
+0x7550, 0x6b6e, "\000" 
+    IDC_GENRE, 0x403, 6, 0
+0x7053, 0x6361, 0x0065, 
+    IDC_GENRE, 0x403, 11, 0
+0x654d, 0x6964, 0x6174, 0x6974, 0x6576, "\000" 
+    IDC_GENRE, 0x403, 17, 0
+0x6e49, 0x7473, 0x7572, 0x656d, 0x746e, 0x6c61, 0x5020, 0x706f, "\000" 
+    IDC_GENRE, 0x403, 18, 0
+0x6e49, 0x7473, 0x7572, 0x656d, 0x746e, 0x6c61, 0x5220, 0x636f, 0x006b, 
+
+    IDC_GENRE, 0x403, 7, 0
+0x7445, 0x6e68, 0x6369, "\000" 
+    IDC_GENRE, 0x403, 7, 0
+0x6f47, 0x6874, 0x6369, "\000" 
+    IDC_GENRE, 0x403, 9, 0
+0x6144, 0x6b72, 0x6177, 0x6576, "\000" 
+    IDC_GENRE, 0x403, 18, 0
+0x6554, 0x6863, 0x6f6e, 0x492d, 0x646e, 0x7375, 0x7274, 0x6169, 0x006c, 
+
+    IDC_GENRE, 0x403, 11, 0
+0x6c45, 0x6365, 0x7274, 0x6e6f, 0x6369, "\000" 
+    IDC_GENRE, 0x403, 9, 0
+0x6f50, 0x2d70, 0x6f46, 0x6b6c, "\000" 
+    IDC_GENRE, 0x403, 10, 0
+0x7545, 0x6f72, 0x6164, 0x636e, 0x0065, 
+    IDC_GENRE, 0x403, 6, 0
+0x7244, 0x6165, 0x006d, 
+    IDC_GENRE, 0x403, 14, 0
+0x6f53, 0x7475, 0x6568, 0x6e72, 0x5220, 0x636f, 0x006b, 
+    IDC_GENRE, 0x403, 7, 0
+0x6f43, 0x656d, 0x7964, "\000" 
+    IDC_GENRE, 0x403, 5, 0
+0x7543, 0x746c, "\000" 
+    IDC_GENRE, 0x403, 8, 0
+0x6147, 0x676e, 0x7473, 0x0061, 
+    IDC_GENRE, 0x403, 7, 0
+0x6f54, 0x2070, 0x3034, "\000" 
+    IDC_GENRE, 0x403, 14, 0
+0x6843, 0x6972, 0x7473, 0x6169, 0x206e, 0x6152, 0x0070, 
+    IDC_GENRE, 0x403, 9, 0
+0x6f50, 0x2f70, 0x7546, 0x6b6e, "\000" 
+    IDC_GENRE, 0x403, 7, 0
+0x754a, 0x676e, 0x656c, "\000" 
+    IDC_GENRE, 0x403, 10, 0
+0x614e, 0x6974, 0x6576, 0x5520, 0x0053, 
+    IDC_GENRE, 0x403, 8, 0
+0x6143, 0x6162, 0x6572, 0x0074, 
+    IDC_GENRE, 0x403, 9, 0
+0x654e, 0x2077, 0x6157, 0x6576, "\000" 
+    IDC_GENRE, 0x403, 12, 0
+0x7350, 0x6379, 0x6168, 0x6564, 0x696c, 0x0063, 
+    IDC_GENRE, 0x403, 5, 0
+0x6152, 0x6576, "\000" 
+    IDC_GENRE, 0x403, 10, 0
+0x6853, 0x776f, 0x7574, 0x656e, 0x0073, 
+    IDC_GENRE, 0x403, 8, 0
+0x7254, 0x6961, 0x656c, 0x0072, 
+    IDC_GENRE, 0x403, 6, 0
+0x6f4c, 0x462d, 0x0069, 
+    IDC_GENRE, 0x403, 7, 0
+0x7254, 0x6269, 0x6c61, "\000" 
+    IDC_GENRE, 0x403, 10, 0
+0x6341, 0x6469, 0x5020, 0x6e75, 0x006b, 
+    IDC_GENRE, 0x403, 10, 0
+0x6341, 0x6469, 0x4a20, 0x7a61, 0x007a, 
+    IDC_GENRE, 0x403, 6, 0
+0x6f50, 0x6b6c, 0x0061, 
+    IDC_GENRE, 0x403, 6, 0
+0x6552, 0x7274, 0x006f, 
+    IDC_GENRE, 0x403, 8, 0
+0x754d, 0x6973, 0x6163, 0x006c, 
+    IDC_GENRE, 0x403, 12, 0
+0x6f52, 0x6b63, 0x2620, 0x5220, 0x6c6f, 0x006c, 
+    IDC_GENRE, 0x403, 10, 0
+0x6148, 0x6472, 0x5220, 0x636f, 0x006b, 
+    IDC_GENRE, 0x403, 5, 0
+0x6f46, 0x6b6c, "\000" 
+    IDC_GENRE, 0x403, 10, 0
+0x6f46, 0x6b6c, 0x522d, 0x636f, 0x006b, 
+    IDC_GENRE, 0x403, 14, 0
+0x614e, 0x6974, 0x6e6f, 0x6c61, 0x4620, 0x6c6f, 0x006b, 
+    IDC_GENRE, 0x403, 6, 0
+0x7753, 0x6e69, 0x0067, 
+    IDC_GENRE, 0x403, 12, 0
+0x6146, 0x7473, 0x4620, 0x7375, 0x6f69, 0x006e, 
+    IDC_GENRE, 0x403, 6, 0
+0x6542, 0x6f62, 0x0062, 
+    IDC_GENRE, 0x403, 6, 0
+0x614c, 0x6974, 0x006e, 
+    IDC_GENRE, 0x403, 8, 0
+0x6552, 0x6976, 0x6176, 0x006c, 
+    IDC_GENRE, 0x403, 7, 0
+0x6543, 0x746c, 0x6369, "\000" 
+    IDC_GENRE, 0x403, 10, 0
+0x6c42, 0x6575, 0x7267, 0x7361, 0x0073, 
+    IDC_GENRE, 0x403, 11, 0
+0x7641, 0x6e61, 0x6774, 0x7261, 0x6564, "\000" 
+    IDC_GENRE, 0x403, 12, 0
+0x6f47, 0x6874, 0x6369, 0x5220, 0x636f, 0x006b, 
+    IDC_GENRE, 0x403, 16, 0
+0x7250, 0x676f, 0x7365, 0x6973, 0x6576, 0x5220, 0x636f, 0x006b, 
+    IDC_GENRE, 0x403, 17, 0
+0x7350, 0x6379, 0x6568, 0x6564, 0x696c, 0x2063, 0x6f52, 0x6b63, "\000" 
+    IDC_GENRE, 0x403, 15, 0
+0x7953, 0x706d, 0x6f68, 0x696e, 0x2063, 0x6f52, 0x6b63, "\000" 
+    IDC_GENRE, 0x403, 10, 0
+0x6c53, 0x776f, 0x5220, 0x636f, 0x006b, 
+    IDC_GENRE, 0x403, 9, 0
+0x6942, 0x2067, 0x6142, 0x646e, "\000" 
+    IDC_GENRE, 0x403, 7, 0
+0x6843, 0x726f, 0x7375, "\000" 
+    IDC_GENRE, 0x403, 15, 0
+0x6145, 0x7973, 0x4c20, 0x7369, 0x6574, 0x696e, 0x676e, "\000" 
+    IDC_GENRE, 0x403, 9, 0
+0x6341, 0x756f, 0x7473, 0x6369, "\000" 
+    IDC_GENRE, 0x403, 7, 0
+0x6f48, 0x6f6d, 0x7275, "\000" 
+    IDC_GENRE, 0x403, 7, 0
+0x7053, 0x6565, 0x6863, "\000" 
+    IDC_GENRE, 0x403, 8, 0
+0x6843, 0x6e61, 0x6f73, 0x006e, 
+    IDC_GENRE, 0x403, 6, 0
+0x704f, 0x7265, 0x0061, 
+    IDC_GENRE, 0x403, 14, 0
+0x6843, 0x6d61, 0x6562, 0x2072, 0x754d, 0x6973, 0x0063, 
+    IDC_GENRE, 0x403, 7, 0
+0x6f53, 0x616e, 0x6174, "\000" 
+    IDC_GENRE, 0x403, 9, 0
+0x7953, 0x706d, 0x6f68, 0x796e, "\000" 
+    IDC_GENRE, 0x403, 11, 0
+0x6f42, 0x746f, 0x2079, 0x6142, 0x7373, "\000" 
+    IDC_GENRE, 0x403, 7, 0
+0x7250, 0x6d69, 0x7375, "\000" 
+    IDC_GENRE, 0x403, 12, 0
+0x6f50, 0x6e72, 0x4720, 0x6f72, 0x766f, 0x0065, 
+    IDC_GENRE, 0x403, 7, 0
+0x6153, 0x6974, 0x6572, "\000" 
+    IDC_GENRE, 0x403, 9, 0
+0x6c53, 0x776f, 0x4a20, 0x6d61, "\000" 
+    IDC_GENRE, 0x403, 5, 0
+0x6c43, 0x6275, "\000" 
+    IDC_GENRE, 0x403, 6, 0
+0x6154, 0x676e, 0x006f, 
+    IDC_GENRE, 0x403, 6, 0
+0x6153, 0x626d, 0x0061, 
+    IDC_GENRE, 0x403, 9, 0
+0x6f46, 0x6b6c, 0x6f6c, 0x6572, "\000" 
+    IDC_GENRE, 0x403, 7, 0
+0x6142, 0x6c6c, 0x6461, "\000" 
+    IDC_GENRE, 0x403, 13, 0
+0x6f50, 0x6577, 0x2072, 0x6142, 0x6c6c, 0x6461, "\000" 
+    IDC_GENRE, 0x403, 14, 0
+0x6852, 0x7479, 0x6d68, 0x6369, 0x5320, 0x756f, 0x006c, 
+    IDC_GENRE, 0x403, 10, 0
+0x7246, 0x6565, 0x7473, 0x6c79, 0x0065, 
+    IDC_GENRE, 0x403, 5, 0
+0x7544, 0x7465, "\000" 
+    IDC_GENRE, 0x403, 10, 0
+0x7550, 0x6b6e, 0x5220, 0x636f, 0x006b, 
+    IDC_GENRE, 0x403, 10, 0
+0x7244, 0x6d75, 0x5320, 0x6c6f, 0x006f, 
+    IDC_GENRE, 0x403, 9, 0
+0x6341, 0x7061, 0x6c65, 0x616c, "\000" 
+    IDC_GENRE, 0x403, 11, 0
+0x7545, 0x6f72, 0x482d, 0x756f, 0x6573, "\000" 
+    IDC_GENRE, 0x403, 11, 0
+0x6144, 0x636e, 0x2065, 0x6148, 0x6c6c, "\000" 
+    IDC_GENRE, 0x403, 4, 0
+0x6f47, 0x0061, 
+    IDC_GENRE, 0x403, 12, 0
+0x7244, 0x6d75, 0x2620, 0x4220, 0x7361, 0x0073, 
+    IDC_GENRE, 0x403, 11, 0
+0x6c43, 0x6275, 0x482d, 0x756f, 0x6573, "\000" 
+    IDC_GENRE, 0x403, 9, 0
+0x6148, 0x6472, 0x6f63, 0x6572, "\000" 
+    IDC_GENRE, 0x403, 7, 0
+0x6554, 0x7272, 0x726f, "\000" 
+    IDC_GENRE, 0x403, 6, 0
+0x6e49, 0x6964, 0x0065, 
+    IDC_GENRE, 0x403, 8, 0
+0x7242, 0x7469, 0x6f50, 0x0070, 
+    IDC_GENRE, 0x403, 10, 0
+0x654e, 0x6567, 0x7072, 0x6e75, 0x006b, 
+    IDC_GENRE, 0x403, 11, 0
+0x6f50, 0x736c, 0x206b, 0x7550, 0x6b6e, "\000" 
+    IDC_GENRE, 0x403, 5, 0
+0x6542, 0x7461, "\000" 
+    IDC_GENRE, 0x403, 18, 0
+0x6843, 0x6972, 0x7473, 0x6169, 0x206e, 0x6147, 0x676e, 0x7473, 0x0061, 
+
+    IDC_GENRE, 0x403, 12, 0
+0x6548, 0x7661, 0x2079, 0x654d, 0x6174, 0x006c, 
+    IDC_GENRE, 0x403, 12, 0
+0x6c42, 0x6361, 0x206b, 0x654d, 0x6174, 0x006c, 
+    IDC_GENRE, 0x403, 10, 0
+0x7243, 0x736f, 0x6f73, 0x6576, 0x0072, 
+    IDC_GENRE, 0x403, 15, 0
+0x6f43, 0x746e, 0x6d65, 0x6f70, 0x6172, 0x7972, 0x4320, "\000" 
+    IDC_GENRE, 0x403, 15, 0
+0x6843, 0x6972, 0x7473, 0x6169, 0x206e, 0x6f52, 0x6b63, "\000" 
+    IDC_GENRE, 0x403, 9, 0
+0x654d, 0x6572, 0x676e, 0x6575, "\000" 
+    IDC_GENRE, 0x403, 6, 0
+0x6153, 0x736c, 0x0061, 
+    IDC_GENRE, 0x403, 12, 0
+0x7254, 0x7361, 0x2068, 0x654d, 0x6174, 0x006c, 
+    IDC_GENRE, 0x403, 6, 0
+0x6e41, 0x6d69, 0x0065, 
+    IDC_GENRE, 0x403, 5, 0
+0x504a, 0x706f, "\000" 
+    IDC_GENRE, 0x403, 9, 0
+0x7953, 0x746e, 0x5068, 0x706f, "\000" 
+    0
+END
+
+IDD_PRESET DLGINIT
+BEGIN
+    IDC_ENCODING, 0x403, 20, 0
+0x6166, 0x7473, 0x202c, 0x6f6c, 0x6577, 0x2072, 0x7571, 0x6c61, 0x7469, 
+0x0079, 
+    IDC_ENCODING, 0x403, 31, 0
+0x6c73, 0x776f, 0x202c, 0x6968, 0x6867, 0x7265, 0x7120, 0x6175, 0x696c, 
+0x7974, 0x2820, 0x6564, 0x6166, 0x6c75, 0x2974, "\000" 
+    IDC_SAMPLES, 0x403, 6, 0
+0x2038, 0x486b, 0x007a, 
+    IDC_SAMPLES, 0x403, 11, 0
+0x3131, 0x302e, 0x3532, 0x6b20, 0x7a48, "\000" 
+    IDC_SAMPLES, 0x403, 7, 0
+0x3231, 0x6b20, 0x7a48, "\000" 
+    IDC_SAMPLES, 0x403, 7, 0
+0x3631, 0x6b20, 0x7a48, "\000" 
+    IDC_SAMPLES, 0x403, 10, 0
+0x3232, 0x302e, 0x2035, 0x486b, 0x007a, 
+    IDC_SAMPLES, 0x403, 7, 0
+0x3432, 0x6b20, 0x7a48, "\000" 
+    IDC_SAMPLES, 0x403, 7, 0
+0x3233, 0x6b20, 0x7a48, "\000" 
+    IDC_SAMPLES, 0x403, 19, 0
+0x3434, 0x312e, 0x6b20, 0x7a48, 0x2820, 0x6564, 0x6166, 0x6c75, 0x2974, 
+"\000" 
+    IDC_SAMPLES, 0x403, 7, 0
+0x3834, 0x6b20, 0x7a48, "\000" 
+    IDC_BITRATE, 0x403, 7, 0
+0x3233, 0x6b20, 0x7362, "\000" 
+    IDC_BITRATE, 0x403, 7, 0
+0x3034, 0x6b20, 0x7362, "\000" 
+    IDC_BITRATE, 0x403, 7, 0
+0x3834, 0x6b20, 0x7362, "\000" 
+    IDC_BITRATE, 0x403, 7, 0
+0x3635, 0x6b20, 0x7362, "\000" 
+    IDC_BITRATE, 0x403, 7, 0
+0x3436, 0x6b20, 0x7362, "\000" 
+    IDC_BITRATE, 0x403, 7, 0
+0x3038, 0x6b20, 0x7362, "\000" 
+    IDC_BITRATE, 0x403, 7, 0
+0x3639, 0x6b20, 0x7362, "\000" 
+    IDC_BITRATE, 0x403, 8, 0
+0x3131, 0x2032, 0x626b, 0x0073, 
+    IDC_BITRATE, 0x403, 18, 0
+0x3231, 0x2038, 0x626b, 0x2073, 0x4428, 0x6665, 0x7561, 0x746c, 0x0029, 
+
+    IDC_BITRATE, 0x403, 8, 0
+0x3631, 0x2030, 0x626b, 0x0073, 
+    IDC_BITRATE, 0x403, 8, 0
+0x3931, 0x2032, 0x626b, 0x0073, 
+    IDC_BITRATE, 0x403, 8, 0
+0x3232, 0x2034, 0x626b, 0x0073, 
+    IDC_BITRATE, 0x403, 8, 0
+0x3532, 0x2036, 0x626b, 0x0073, 
+    IDC_BITRATE, 0x403, 8, 0
+0x3233, 0x2030, 0x626b, 0x0073, 
+    IDC_STEREOMODE, 0x403, 17, 0
+0x7473, 0x7265, 0x6f65, 0x2820, 0x6564, 0x6166, 0x6c75, 0x2974, "\000" 
+    IDC_STEREOMODE, 0x403, 13, 0
+0x6f6a, 0x6e69, 0x2074, 0x7473, 0x7265, 0x6f65, "\000" 
+    IDC_STEREOMODE, 0x403, 20, 0
+0x6f66, 0x6372, 0x6465, 0x6a20, 0x696f, 0x746e, 0x7320, 0x6574, 0x6572, 
+0x006f, 
+    IDC_STEREOMODE, 0x403, 14, 0
+0x7564, 0x6c61, 0x6320, 0x6168, 0x6e6e, 0x6c65, 0x0073, 
+    IDC_STEREOMODE, 0x403, 5, 0
+0x6f6d, 0x6f6e, "\000" 
+    0
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// String Table
+//
+
+STRINGTABLE DISCARDABLE 
+BEGIN
+    IDS_ABOUTBOX            "&About lameFE..."
+END
+
+STRINGTABLE DISCARDABLE 
+BEGIN
+    ID_EXIT                 "Exit lameFE Proffessional"
+END
+
+#endif    // Englisch (USA) resources
+/////////////////////////////////////////////////////////////////////////////
+
+
+
+#ifndef APSTUDIO_INVOKED
+/////////////////////////////////////////////////////////////////////////////
+//
+// Generated from the TEXTINCLUDE 3 resource.
+//
+#define _AFX_NO_SPLITTER_RESOURCES
+#define _AFX_NO_OLE_RESOURCES
+#define _AFX_NO_TRACKER_RESOURCES
+#define _AFX_NO_PROPERTY_RESOURCES
+
+#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_ENU)
+#ifdef _WIN32
+LANGUAGE 9, 1
+#pragma code_page(1252)
+#endif //_WIN32
+#include "res\lameFE.rc2"  // Nicht mit Microsoft Visual C++ bearbeitete Ressourcen
+#include "afxres.rc"         // Standardkomponenten
+#endif
+
+/////////////////////////////////////////////////////////////////////////////
+#endif    // not APSTUDIO_INVOKED
+

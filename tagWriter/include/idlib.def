@@ -1,0 +1,10 @@
+LIBRARY id3lib
+
+
+EXPORTS 
+ 
+ID3Tag_New @1
+ID3Tag_Link @2
+ID3Tag_FindFrameWithID @3
+ID3Frame_GetField @4
+ID3Field_GetASCII @5

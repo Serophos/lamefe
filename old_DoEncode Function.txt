@@ -1,0 +1,437 @@
+/*
+	//Init Progress bars
+	m_prgFile.SetRange32(0,100);
+	m_prgFile.SetPos(0);
+	m_prgList.SetRange32(0, 100);
+	m_prgList.SetPos(0);
+
+	//Init Lame_enc.dll-stuff
+	HINSTANCE		hDLL			= NULL;
+	FILE*			pFileIn			= NULL;
+	FILE*			pFileOut		= NULL;
+	BE_VERSION		Version			= {0,};
+	BE_CONFIG		beConfig		= {0,};
+
+	CHAR			strFileIn[255]	= {'0',};
+	CHAR			strFileOut[255]	= {'0',};
+
+	DWORD			dwSamples		= 0;
+	DWORD			dwMP3Buffer		= 0;
+	HBE_STREAM		hbeStream		= 0;
+	BE_ERR			err				= 0;
+
+	PBYTE			pMP3Buffer		= NULL;
+	PSHORT			pWAVBuffer		= NULL;
+
+	//Init tagWriter.dll-stuff
+	HINSTANCE		hDLL2			= NULL;
+	MP3_CONFIG		mp3Config		= {0,};
+
+	//error-handling-stuff
+	CStringArray	errorList;
+	CString			errorBuff;
+	BOOL			isError			= FALSE;
+
+///////////////////////////////
+////// Load lame_enc.dll
+	hDLL=LoadLibrary(wd + "\\lame_enc.dll");
+
+	if(hDLL==NULL)
+	{
+		AfxMessageBox("Error loading lame_enc.dll. Please check your installation.",MB_OK+MB_ICONEXCLAMATION,0);
+		return FALSE;
+	}
+
+	// Get Interface functions
+	beInitStream	= (BEINITSTREAM) GetProcAddress(hDLL, TEXT_BEINITSTREAM);
+	beEncodeChunk	= (BEENCODECHUNK) GetProcAddress(hDLL, TEXT_BEENCODECHUNK);
+	beDeinitStream	= (BEDEINITSTREAM) GetProcAddress(hDLL, TEXT_BEDEINITSTREAM);
+	beCloseStream	= (BECLOSESTREAM) GetProcAddress(hDLL, TEXT_BECLOSESTREAM);
+	beVersion		= (BEVERSION) GetProcAddress(hDLL, TEXT_BEVERSION);
+	beWriteVBRHeader= (BEWRITEVBRHEADER) GetProcAddress(hDLL,TEXT_BEWRITEVBRHEADER);
+
+	// Check if all interfaces are present
+	if(!beInitStream || !beEncodeChunk || !beDeinitStream || !beCloseStream || !beVersion || !beWriteVBRHeader)
+	{
+
+		AfxMessageBox("Error: Unable to get LAME interfaces.",MB_OK+MB_ICONEXCLAMATION,0);
+		return FALSE;
+	}
+
+///////////////////////////////
+////// Load tagWriter.dll
+	hDLL2		= NULL;
+	
+	hDLL2 = LoadLibrary("tagWriter.dll");
+	if (hDLL2 == NULL){
+		AfxMessageBox("Fatal error: couldn't load tagWriter. Please check your installation", MB_OK+MB_ICONEXCLAMATION,0);
+		return FALSE;
+	}
+
+	id3ReadTag		= (MP3READTAG)		GetProcAddress(hDLL, TEXT_MP3READTAG);
+	id3WriteTag		= (MP3WRITETAG)		GetProcAddress(hDLL, TEXT_MP3WRITETAG);
+	id3GetVersion	= (MP3GETVERSION)	GetProcAddress(hDLL, TEXT_MP3GETVERSION);
+	
+	if (!id3ReadTag || !id3WriteTag || !id3GetVersion){
+		AfxMessageBox("Error: Unable to get tagWriter interfaces.",MB_OK+MB_ICONEXCLAMATION,0);
+		return FALSE;
+	}
+
+
+////////////////////////////////////////////////////
+/////////////// HANDLE PRESET
+	cfgFile cfg(wd);
+	
+	if (files.GetSize() == 0){
+		AfxMessageBox("No files in list",MB_OK+MB_ICONSTOP,0);
+		return FALSE;
+	}
+	if (m_ctrlPreset.GetCount() == 0){
+		AfxMessageBox("No presets defined in lameFE.ini! Please create preset in the preset editor first.",MB_OK+MB_ICONSTOP,0);
+		return FALSE;
+	}
+
+
+////// END HANDLE PRESET
+///////////////////////////////////////////////////////////////////////////
+
+///////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////
+////// START ENCODING
+	int			n			= 0;
+	int			m;
+	float		listDone	= 0;
+	//CString	error;
+  
+	cmdl		tmp;
+	while(n < files.GetSize()){ 
+		m = 0;
+		// Setup the file names
+
+		tmp = files.getLameCmdl(n++);				//Get current filename from list
+
+		LPCTSTR test = tmp.file.GetBuffer(10);		//Get the C-Style String from CString buffer
+		strcpy(strFileIn ,test);					//Copy to fileIn
+		tmp.file.ReleaseBuffer();					//release CString buffer
+
+		test = tmp.saveAs.GetBuffer(10);			
+		strcpy(strFileOut,test);
+		tmp.saveAs.ReleaseBuffer();
+
+		CHAR	strFileName[255];					//get the filename without path
+		test = tmp.id3Name.GetBuffer(10);
+		strcpy(strFileName, test);
+		tmp.id3Name.ReleaseBuffer();
+
+
+//////////////////////////////////////////////////////////////////////////
+////// Analyse the waveform-header to check wether wavefile is valid
+
+		m_Status.Format("Reading header of waveform...");
+		UpdateData(FALSE);
+		WaveFile wave;
+		char	*buff = NULL;
+		
+		WAVEFORMATEX wfx;				//init the WAVEFORMATEX structure
+		wfx.wFormatTag = NULL; 
+		wfx.nChannels = NULL; 
+		wfx.nSamplesPerSec = NULL; 
+		wfx.nAvgBytesPerSec = NULL; 
+		wfx.nBlockAlign = NULL; 
+		wfx.wBitsPerSample = NULL; 
+		wfx.cbSize = NULL; 
+
+		wave.Open(strFileIn, &wfx, buff);
+
+		if (wfx.wBitsPerSample != 16){   // valid bitrate?
+			
+		 	errorBuff.Format("Invalid fileformat! Only 16 bit waveform-files are currently supported.\n" 
+					"%s has %d bits. Scipped file." ,strFileName, wfx.wBitsPerSample);
+			errorList.Add(errorBuff);
+			isError = TRUE;
+			/*			
+			AfxMessageBox(error, MB_OK+MB_ICONEXCLAMATION,0);
+			m_prgFile.SetPos(0);
+			m_prgList.SetPos(0);
+			m_Status.Format("Error, aborted.");
+			UpdateData(FALSE);
+			return FALSE;
+
+		}
+		
+/////// end waveformcheck
+///////////////////////////////////////////////////////////////////////////
+
+///////////////////////////////////////////////////////////////////////////	
+////// Try to open the WAV file as a binary file!	
+		pFileIn = fopen(strFileIn,"rb");
+
+		// Check file open result
+		if(pFileIn == NULL)
+		{		
+			errorBuff.Format("Error opening %s", pFileIn);
+			AfxMessageBox(error, MB_OK+MB_ICONSTOP,0);
+			m_prgFile.SetPos(0);
+			m_prgList.SetPos(0);
+			m_Status.Format("Error, aborted.");
+			UpdateData(FALSE);
+			return -1;
+		}
+
+		// Open MP3 file
+		pFileOut= fopen(strFileOut,"wb+");
+
+		// Check file open result
+		if(pFileOut == NULL)
+		{
+			error.Format("Error creating file %s", strFileOut);
+			AfxMessageBox(error,MB_ICONSTOP+MB_OK,0);
+			m_prgFile.SetPos(0);
+			m_prgList.SetPos(0);
+			m_Status.Format("Error, aborted.");
+			UpdateData(FALSE);
+
+			return FALSE;
+		}
+
+		memset(&beConfig,0,sizeof(beConfig));					// clear all fields
+
+
+	////////////////////////////////////////////////////////////////////////////////
+	/*  handle stereomode
+	Stereomode for MP3 file. This can be either 
+				BE_MP3_MODE_STEREO, BE_MP3_MODE_JSTEREO, 
+				BE_MP3_MODE_DUALCHANNEL or BE_MP3_MODE_MONO.
+	*/	/*
+		int nMode;
+
+		switch(wfx.nChannels){
+		case 1: nMode = BE_MP3_MODE_MONO;
+			break;
+		case 2: nMode = BE_MP3_MODE_STEREO;
+			break;
+		default:
+			AfxMessageBox("Invalid fileformat! Bad number of channels: %d", wfx.nChannels);
+			return FALSE;
+		}
+	////////////////////////////////////////////////////////////////////////////////
+	///////////// Now start encoding
+
+
+		// fill lame config structure
+		beConfig.dwConfig = BE_CONFIG_LAME;
+		beConfig.format.LHV1.dwStructVersion	= 1;
+		beConfig.format.LHV1.dwStructSize		= sizeof(beConfig);		
+		beConfig.format.LHV1.dwSampleRate		= (int)wfx.nSamplesPerSec;
+		beConfig.format.LHV1.dwReSampleRate		= cfg.GetValue(SAMPLES,m_ctrlPreset.GetCurSel(),TRUE);
+		beConfig.format.LHV1.nMode				= nMode;			
+		beConfig.format.LHV1.dwBitrate			= cfg.GetValue(BITRATE, m_ctrlPreset.GetCurSel(), TRUE);				
+		beConfig.format.LHV1.nPreset			= LQP_HIGH_QUALITY;		
+		beConfig.format.LHV1.dwMpegVersion		= MPEG2;				
+		beConfig.format.LHV1.dwPsyModel			= 0;					
+		beConfig.format.LHV1.dwEmphasis			= 0;					
+		beConfig.format.LHV1.bOriginal			= FALSE;					// SET ORIGINAL FLAG
+		beConfig.format.LHV1.bCopyright			= cfg.GetValue(ORIGINAL, m_ctrlPreset.GetCurSel(), FALSE);					// SET COPYRIGHT FLAG	
+		beConfig.format.LHV1.bPrivate			= cfg.GetValue(COPY, m_ctrlPreset.GetCurSel(), FALSE);					// SET PRIVATE FLAG
+		beConfig.format.LHV1.bNoRes				= TRUE;					// No Bit resorvoir
+
+		// Init the MP3 Stream
+		err = beInitStream(&beConfig, &dwSamples, &dwMP3Buffer, &hbeStream);
+		
+		// Check result
+		if(err != BE_ERR_SUCCESSFUL)
+		{
+			error.Format("Error opening encoding stream (%lu)", err);
+			AfxMessageBox(error, MB_OK+MB_ICONSTOP,0);
+			m_prgFile.SetPos(0);
+				m_prgList.SetPos(0);
+			m_Status.Format("Error, aborted.");
+			UpdateData(FALSE);
+			return FALSE;
+		}
+
+		//alocate wave and mp3 buffers
+		pMP3Buffer = new BYTE[dwMP3Buffer];
+
+		pWAVBuffer = new SHORT[dwSamples];
+
+		if(!pMP3Buffer || !pWAVBuffer)
+		{
+			AfxMessageBox("Not enough memory", MB_ICONEXCLAMATION+MB_OK,0);
+			m_prgFile.SetPos(0);
+			m_prgList.SetPos(0);
+			m_Status.Format("Error, aborted.");
+			UpdateData(FALSE);
+			return FALSE;
+		}
+
+		DWORD dwRead=0;
+		DWORD dwWrite=0;
+		DWORD dwDone=0;
+		DWORD dwFileSize=0;
+
+		// Seek to end of file
+		fseek(pFileIn,0,SEEK_END);
+
+		// Get the file size
+		dwFileSize=ftell(pFileIn);
+
+		// seek to begin of wave-file data-chunk (first 44 bytes are wave-header)
+		fseek(pFileIn,44,SEEK_SET);
+
+		// Let's rock: Convert All PCM samples
+		while ( (dwRead=fread(pWAVBuffer,sizeof(SHORT),dwSamples,pFileIn)) >0 )
+		{
+			// Encode samples
+			err = beEncodeChunk(hbeStream, dwRead, pWAVBuffer, pMP3Buffer, &dwWrite);
+
+			// Check result
+			if(err != BE_ERR_SUCCESSFUL)
+			{
+				beCloseStream(hbeStream);
+				error.Format("Internal error: beEncodeChunk() failed (%lu)", err);
+				AfxMessageBox(error, MB_ICONSTOP+MB_OK, 0);
+				m_prgFile.SetPos(0);
+				m_prgList.SetPos(0);
+				m_Status.Format("Error, aborted.");
+				UpdateData(FALSE);
+				return FALSE;
+			}
+			
+			// write encoded samples to disk
+			if(fwrite(pMP3Buffer,1,dwWrite,pFileOut) != dwWrite)
+			{
+				error.Format("Output file write error");
+				AfxMessageBox(error, MB_ICONSTOP+MB_OK, 0);
+				m_prgFile.SetPos(0);
+				m_prgList.SetPos(0);
+				m_Status.Format("Error, aborted.");
+				UpdateData(FALSE);
+				return FALSE;
+			}
+
+			//Update Progressbars
+			dwDone += dwRead*sizeof(SHORT);
+			m_prgFile.SetPos(100 * (float)dwDone/(float)(dwFileSize));
+			listDone += dwDone - m;
+			m = dwDone;
+			m_prgList.SetPos(100 * listDone/files.kbSize);
+			m_Status.Format("Working on File " + tmp.id3Name + ": %.0f KB of %.0f KB\nTotal: %.0f kB of %.0f KB",
+								(float)dwDone/1024, (float)dwFileSize/1024,listDone/1024, files.kbSize/1024);
+			UpdateData(FALSE);
+
+		} //File is done:-)
+		
+		// Deinit the stream
+		err = beDeinitStream(hbeStream, pMP3Buffer, &dwWrite);
+
+		// Check result
+		if(err != BE_ERR_SUCCESSFUL)
+		{
+
+			beCloseStream(hbeStream);
+			error.Format("Internal error: beExitStream failed (%lu)", err);
+			AfxMessageBox(error,MB_OK+MB_ICONEXCLAMATION,0);
+			m_prgFile.SetPos(0);
+			m_prgList.SetPos(0);
+			m_Status.Format("Error, aborted.");
+			UpdateData(FALSE);
+			return FALSE;
+		}
+
+		//some bytes left (returned by Deinitbla...) -> Write to disk!
+		if(dwWrite)
+		{
+			if(fwrite(pMP3Buffer,1,dwWrite,pFileOut) != dwWrite)
+			{
+				AfxMessageBox("Output file write error", MB_OK+MB_ICONEXCLAMATION,0);
+				m_prgFile.SetPos(0);
+				m_prgList.SetPos(0);
+				m_Status.Format("Error, aborted.");
+				UpdateData(FALSE);
+				return FALSE;
+			}
+		}
+
+		// close the MP3 Stream
+		beCloseStream(hbeStream);
+
+		// Delete WAV buffer
+		delete [] pWAVBuffer;
+
+		// Delete MP3 Buffer
+		delete [] pMP3Buffer;
+
+		// Close input file
+		fclose(pFileIn);
+
+		// Close output file
+		fclose(pFileOut);
+
+		// Write the VBR Tag
+		beWriteVBRHeader(strFileOut);
+
+		//Write ID3 Tag
+    }
+
+///////////////////////////////////////////////////////////////////////////////////////
+/////ALL FILES HAVE BEEN ENCODED
+///////////////////////////////////////////////////////////////////////////////////////
+
+	
+	//check what to be done after encoding
+	cfgFile lcfg(wd);
+
+	if (lcfg.GetValue(BEEP, 0, FALSE) == TRUE){  //beep
+		Beep(500,500);
+	}
+	
+	if (lcfg.GetValue(DIALOG, 0, FALSE) == TRUE){  //show dialog
+		beVersion(&Version);
+		CString version;
+		version.Format("lame_enc.dll version %u.%02u (%u/%u/%u)\n"
+				"lame_enc Engine %u.%02u\n"
+				"lame_enc homepage at %s\n\n",	
+				Version.byDLLMajorVersion, Version.byDLLMinorVersion,
+				Version.byDay, Version.byMonth, Version.wYear,
+				Version.byMajorVersion, Version.byMinorVersion,
+				Version.zHomepage);
+		AfxMessageBox("All files have been successully encoded by:\n\n"  + version,MB_OK+MB_ICONINFORMATION,0);
+	}
+	
+	if (lcfg.GetValue(M3U, 0, FALSE) == TRUE){  //create m3u-playlist with encoded files
+		n = files.writeM3U(lcfg.GetPath(OUTPUT) + "\\lameFE.m3u");
+		if (n != FALSE){
+			m_Status.Format("Saved list to: "+ lcfg.GetPath(OUTPUT) + "\\lameFE.m3u");
+		}
+		else{
+			m_Status.Format("Could write: " + lcfg.GetPath(OUTPUT) + "\\lameFE.m3u");
+			AfxMessageBox(m_Status, MB_OK+MB_ICONSTOP, 0);
+		}
+		UpdateData(FALSE);
+		
+	}
+
+	if (lcfg.GetValue(M3U, 0, FALSE) == TRUE){ //play encoded files
+		n = files.writeM3U(wd + "\\lameFE.m3u");
+		if (n == FALSE){
+			m_Status.Format("Could write: " + lcfg.GetPath(OUTPUT) + "\\lameFE.m3u");
+			AfxMessageBox(m_Status, MB_OK+MB_ICONSTOP, 0);
+		}
+		else{
+			int bla = WinExec(lcfg.GetPath(PLAYER)  + " \"" + wd + "\\lameFE.m3u\"",SW_SHOW);
+			if (bla < 31){
+				AfxMessageBox("Could not play files",MB_OK+MB_ICONSTOP,0);
+			}
+		}
+	}
+	
+	//reset Controls
+	m_prgFile.SetPos(0);
+	m_prgList.SetPos(0);
+	m_ctrlList.ResetContent();
+	files.ResetContent();
+	m_Status = "lameFE Professional (c) 2001 by Thees Winkler";
+	UpdateData(FALSE);*/
+	// Were done, return OK result
