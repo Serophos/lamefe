@@ -3,79 +3,14 @@
 <pre>
 <h1>Erstellungsprotokoll</h1>
 <h3>
---------------------Konfiguration: lameFE - Win32 Debug--------------------
+--------------------Konfiguration: lameFE - Win32 Release--------------------
 </h3>
 <h3>Befehlszeilen</h3>
-Erstellen der temporären Datei  "C:\DOKUME~1\tw\LOKALE~1\Temp\RSP535.tmp" mit Inhalten
-[
-/nologo /MDd /W3 /Gm /GX /ZI /Od /I "LibSndFile\src" /D "WIN32" /D "NDEBUG" /D "_WINDOWS" /D "_AFXDLL" /D "_MBCS" /FR"Debug/" /Fp"Debug/lameFE.pch" /Yu"stdafx.h" /Fo"Debug/" /Fd"Debug/" /FD /GZ /c 
-"C:\cpp\lameFE2\OutPlugin.cpp"
-]
-Creating command line "cl.exe @C:\DOKUME~1\tw\LOKALE~1\Temp\RSP535.tmp" 
-Erstellen der temporären Datei  "C:\DOKUME~1\tw\LOKALE~1\Temp\RSP536.tmp" mit Inhalten
-[
-winmm.lib htmlhelp.lib id3libD.lib zlibD.lib delayimp.lib /nologo /subsystem:windows /pdb:none /map:"Debug/lameFE.map" /debug /machine:I386 /out:"Debug/lameFE.exe" /libpath:"ID3Lib\libprj\Debug" /libpath:"ID3Lib/zlib" 
-.\Debug\AlbumInfoCtrl.obj
-.\Debug\Buffer.obj
-.\Debug\CDDBPage.obj
-.\Debug\CDdbQueryDlg.obj
-.\Debug\CDPlayerIni.obj
-.\Debug\CDROMPage.obj
-.\Debug\CDTrack.obj
-.\Debug\cfgFile.obj
-.\Debug\CompactDisk.obj
-.\Debug\CPlugin.obj
-.\Debug\Encoder.obj
-.\Debug\EncoderFeeder.obj
-.\Debug\EncoderSheet.obj
-.\Debug\EncodingStatusDlg.obj
-.\Debug\ExtButton.obj
-.\Debug\ExtListCtrl.obj
-.\Debug\FilenamePage.obj
-.\Debug\FolderDialog.obj
-.\Debug\FreeDBStatusDlg.obj
-.\Debug\ID3Info.obj
-.\Debug\Ini.obj
-.\Debug\InternalPlayer.obj
-.\Debug\lameFE.obj
-.\Debug\lameFEDoc.obj
-.\Debug\LameFEPlugin.obj
-.\Debug\LameFESplash.obj
-.\Debug\lameFEView.obj
-.\Debug\LogFile.obj
-.\Debug\LogginPage.obj
-.\Debug\MainFrm.obj
-.\Debug\MainSettingsPage.obj
-.\Debug\Mfccddb.obj
-.\Debug\MultimediaFile.obj
-.\Debug\MyComboBox.obj
-.\Debug\MyEditCtrl.obj
-.\Debug\MyFileDialog.obj
-.\Debug\OutPlugin.obj
-.\Debug\PathDialog.obj
-.\Debug\PlayList.obj
-.\Debug\PluginPage.obj
-.\Debug\SettingsSheet.obj
-.\Debug\StdAfx.obj
-.\Debug\TimeStatus.obj
-.\Debug\TrayDialog.obj
-.\Debug\Utils.obj
-.\Debug\lameFE.res
-.\CDRip\Debug\CDRip.lib
-.\ID3Lib\libprj\Debug\id3libD.lib
-.\ID3Lib\zlib\zlibD.lib
-]
-Erstellen der Befehlzeile "link.exe @C:\DOKUME~1\tw\LOKALE~1\Temp\RSP536.tmp"
-<h3>Ausgabefenster</h3>
-Kompilierung läuft...
-OutPlugin.cpp
-Linker-Vorgang läuft...
-LINK : warning LNK4098: Standardbibliothek "LIBCMTD" steht in Konflikt mit anderen Bibliotheken; /NODEFAULT:Bibliothek verwenden
 
 
 
 <h3>Ergebnisse</h3>
-lameFE.exe - 0 Fehler, 1 Warnung(en)
+lameFE.exe - 0 Fehler, 0 Warnung(en)
 </pre>
 </body>
 </html>

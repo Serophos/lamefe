@@ -126,6 +126,7 @@
 #define IDC_EST_SIZE                    1073
 #define IDC_CHECK2                      1073
 #define IDC_ALBUMEDIT                   1073
+#define IDC_BATCH_BEEP                  1073
 #define IDC_IN_SIZE                     1074
 #define IDC_FILE_STATUS_BAR             1075
 #define IDC_FILE_X_OF_Y                 1076
@@ -138,12 +139,21 @@
 #define IDC_ID3_TAG                     1083
 #define IDC_PRESETS                     1084
 #define IDC_COMBO2                      1086
+#define IDC_THREADPRIORITY              1087
+#define IDC_HIDEMWND_ENC                1088
 #define IDC_SONG_A                      1089
+#define IDC_BATCH_FREEDB                1089
 #define IDC_ARTIST_A                    1090
+#define IDC_BATCHTIMEOUT                1090
 #define IDC_ALBUM_A                     1091
+#define IDC_BATCH_TIMEOUTEDIT           1091
 #define IDC_COMMENT_A                   1092
+#define IDC_BATCHALLDRIVES              1092
 #define IDC_GENRE_A                     1093
 #define IDC_YEAR_A                      1094
+#define IDC_NUMBUFFERS                  1094
+#define IDC_CHECK3                      1095
+#define IDC_CHECKFORNEWCD               1095
 #define IDC_TRACK_A                     1096
 #define IDC_AM_ARTIST                   1097
 #define IDC_AM_ALBUM                    1098
@@ -268,6 +278,7 @@
 #define ID_PAUSE                        32806
 #define IDS_SHOW_PLAYER                 32807
 #define ID_OPENEJECT                    32808
+#define ID_BATCH_ALBUM                  32809
 #define ID_ADD_FILE                     40001
 #define ID_EXIT                         40003
 #define ID_TAGEDIT                      40004
@@ -462,6 +473,19 @@
 #define IDS_CDDB_UPDATEDSERVERS         40175
 #define IDS_CDDB_UPDATEFAILED           40176
 #define IDS_OLDCOMTL32DLL               40177
+#define IDS_BATCHNEXTCD					40178
+#define IDS_BATCHTIMEDOUT				40179
+#define IDS_BATCHCDDRIVE				40180
+#define	IDS_TOOL_READBUFFERS			40181	
+#define	IDS_TOOL_BATCHALLCDS			40182
+#define	IDS_TOOL_BATCHFREEDB			40183	
+#define	IDS_TOOL_BATCHTIMESOUT			40184
+#define	IDS_TOOL_BATCHBEEP				40185
+#define	IDS_TOOL_BATCHTIME				40186
+#define	IDS_TOOL_ENCTHREADP				40187
+#define	IDS_TOOL_WRITECUE				40188
+#define	IDS_TOOL_HIDEMAINWND			40189
+#define	IDS_TOOL_ENQUEUE				40190
 
 // Next default values for new objects
 // 
@@ -469,8 +493,8 @@
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_3D_CONTROLS                     1
 #define _APS_NEXT_RESOURCE_VALUE        174
-#define _APS_NEXT_COMMAND_VALUE         32809
-#define _APS_NEXT_CONTROL_VALUE         1087
+#define _APS_NEXT_COMMAND_VALUE         32810
+#define _APS_NEXT_CONTROL_VALUE         1096
 #define _APS_NEXT_SYMED_VALUE           101
 #endif
 #endif

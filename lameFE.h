@@ -38,7 +38,6 @@
 class CLameFEApp : public CWinApp
 {
 public:
-	BOOL InitCDRipDLL();
 	CLameFEApp();
 
 // Überladungen
