@@ -36,7 +36,7 @@ class CCDdbQueryDlg : public CDialog
 // Konstruktion
 public:
 	BOOL QueryCDDB();
-	CCDdbQueryDlg(CWnd* pParent = NULL, CCompactDisc *cd = NULL, int nActiveCD = 0, CString wd = "");   // Standardkonstruktor
+	CCDdbQueryDlg(CWnd* pParent = NULL, CCompactDisc *cd = NULL, int nActiveCD = 0, CString wd = "", BOOL bAutoSelect = FALSE);   // Standardkonstruktor
 
 // Dialogfelddaten
 	//{{AFX_DATA(CCDdbQueryDlg)
@@ -73,7 +73,8 @@ private:
 	CString		wd;
 	int			nActiveCD;
 	CCDDB		cddb;
-	CStringArray drives;
+	BOOL		m_bAutoSelect;
+	//CStringArray drives;
 	DWORD discID;
 	CCDDBSite site;
 	CArray<CCDDBQueryResult, CCDDBQueryResult&> results;

@@ -39,13 +39,14 @@ static char THIS_FILE[] = __FILE__;
 // Dialogfeld CCDdbQueryDlg 
 
 
-CCDdbQueryDlg::CCDdbQueryDlg(CWnd* pParent /*=NULL*/, CCompactDisc *cd, int activeCD, CString wdir)
+CCDdbQueryDlg::CCDdbQueryDlg(CWnd* pParent /*=NULL*/, CCompactDisc *cd, int activeCD, CString wdir, BOOL bAutoSelect /* = FALSE */)
 	: CDialog(CCDdbQueryDlg::IDD, pParent)
 {
 	//{{AFX_DATA_INIT(CCDdbQueryDlg)
 	//}}AFX_DATA_INIT
 	m_cd = cd;
 	nActiveCD = activeCD;
+	m_bAutoSelect = bAutoSelect;
 	wd = wdir;
 }
 
@@ -197,7 +198,7 @@ BOOL CCDdbQueryDlg::OnInitDialog()
 	
 	m_Protocoll.SetCurSel(0);
 	
-	if(m_Protocoll.GetCount() == 1){
+	if(m_Protocoll.GetCount() == 1 || m_bAutoSelect){
 
 		QueryCDDB();
 	}
